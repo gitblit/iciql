@@ -31,8 +31,7 @@ import com.iciql.Iciql.IndexType;
  */
 
 @IQTable(name = "AnnotatedProduct", primaryKey = "id")
-@IQIndexes({ @IQIndex({ "name", "cat" }),
-		@IQIndex(name = "nameidx", type = IndexType.HASH, value = "name") })
+@IQIndexes({ @IQIndex({ "name", "cat" }), @IQIndex(name = "nameidx", type = IndexType.HASH, value = "name") })
 public class ProductAnnotationOnly {
 
 	@IQColumn(autoIncrement = true)

@@ -17,12 +17,15 @@
 
 package com.iciql.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Blob;
 import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -148,6 +151,12 @@ public class Utils {
 			return (T) new java.sql.Timestamp(COUNTER.getAndIncrement());
 		} else if (clazz == java.util.Date.class) {
 			return (T) new java.util.Date(COUNTER.getAndIncrement());
+		} else if (clazz == byte[].class) {
+			return (T) new byte[0];
+		} else if (clazz.isEnum()) {
+			// enums can not be instantiated reflectively
+			// return first constant as reference
+			return clazz.getEnumConstants()[0];
 		} else if (clazz == List.class) {
 			return (T) new ArrayList();
 		}
@@ -200,6 +209,11 @@ public class Utils {
 		if (targetType.isAssignableFrom(currentType)) {
 			return o;
 		}
+		// convert enum
+		if (targetType.isEnum()) {
+			return convertEnum(o, targetType);
+		}
+		// convert from CLOB/TEXT/VARCHAR to String
 		if (targetType == String.class) {
 			if (Clob.class.isAssignableFrom(currentType)) {
 				Clob c = (Clob) o;
@@ -212,6 +226,8 @@ public class Utils {
 			}
 			return o.toString();
 		}
+
+		// convert from number to number
 		if (Number.class.isAssignableFrom(currentType)) {
 			Number n = (Number) o;
 			if (targetType == Byte.class) {
@@ -226,6 +242,67 @@ public class Utils {
 				return n.doubleValue();
 			} else if (targetType == Float.class) {
 				return n.floatValue();
+			}
+		}
+
+		// convert from BLOB
+		if (targetType == byte[].class) {
+			if (Blob.class.isAssignableFrom(currentType)) {
+				Blob b = (Blob) o;
+				try {
+					InputStream is = b.getBinaryStream();
+					return readBlobAndClose(is, -1);
+				} catch (Exception e) {
+					throw new IciqlException("Error converting BLOB to byte[]: " + e.toString(), e);
+				}
+			}
+		}
+
+		throw new IciqlException("Can not convert the value " + o + " from " + currentType + " to "
+				+ targetType);
+	}
+	
+	private static Object convertEnum(Object o, Class<?> targetType) {
+		if (o == null) {
+			return null;
+		}
+		Class<?> currentType = o.getClass();
+		// convert from VARCHAR/TEXT/INT to Enum
+		Enum<?>[] values = (Enum[]) targetType.getEnumConstants();
+		if (Clob.class.isAssignableFrom(currentType)) {
+			// TEXT/CLOB field
+			Clob c = (Clob) o;
+			String name = null;
+			try {
+				Reader r = c.getCharacterStream();
+				name = readStringAndClose(r, -1);
+			} catch (Exception e) {
+				throw new IciqlException("Error converting CLOB to String: " + e.toString(), e);
+			}
+
+			// find name match
+			for (Enum<?> value : values) {
+				if (value.name().equalsIgnoreCase(name)) {
+					return value;
+				}
+			}
+		} else if (String.class.isAssignableFrom(currentType)) {
+			// VARCHAR field
+			String name = (String) o;
+			for (Enum<?> value : values) {
+				if (value.name().equalsIgnoreCase(name)) {
+					return value;
+				}
+			}
+		} else if (Number.class.isAssignableFrom(currentType)) {
+			// INT field
+			int n = ((Number) o).intValue();
+
+			// ORDINAL mapping
+			for (Enum<?> value : values) {
+				if (value.ordinal() == n) {
+					return value;
+				}
 			}
 		}
 		throw new IciqlException("Can not convert the value " + o + " from " + currentType + " to "
@@ -260,6 +337,40 @@ public class Utils {
 				length -= len;
 			}
 			return out.toString();
+		} finally {
+			in.close();
+		}
+	}
+
+	/**
+	 * Read a number of bytes from a stream and close it.
+	 * 
+	 * @param in
+	 *            the stream
+	 * @param length
+	 *            the maximum number of bytes to read, or -1 to read until the
+	 *            end of file
+	 * @return the string read
+	 */
+	public static byte[] readBlobAndClose(InputStream in, int length) throws IOException {
+		try {
+			if (length <= 0) {
+				length = Integer.MAX_VALUE;
+			}
+			int block = Math.min(BUFFER_BLOCK_SIZE, length);
+			ByteArrayOutputStream out = new ByteArrayOutputStream(length == Integer.MAX_VALUE ? block
+					: length);
+			byte[] buff = new byte[block];
+			while (length > 0) {
+				int len = Math.min(block, length);
+				len = in.read(buff, 0, len);
+				if (len < 0) {
+					break;
+				}
+				out.write(buff, 0, len);
+				length -= len;
+			}
+			return out.toByteArray();
 		} finally {
 			in.close();
 		}

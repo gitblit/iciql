@@ -324,8 +324,12 @@ public class TableInspector {
 			clazz = Object.class;
 			sb.append("// unsupported type " + col.type);
 		} else {
+			// Imports
+			// don't import byte []
+			if (!clazz.equals(byte[].class)) {
+				imports.add(clazz.getCanonicalName());
+			}
 			// @IQColumn
-			imports.add(clazz.getCanonicalName());
 			sb.append('@').append(IQColumn.class.getSimpleName());
 
 			// IQColumn annotation parameters

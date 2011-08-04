@@ -27,7 +27,9 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
+import com.iciql.Iciql.IQEnum;
 import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQSchema;
@@ -74,6 +76,7 @@ class TableDefinition<T> {
 		boolean trimString;
 		boolean allowNull;
 		String defaultValue;
+		EnumType enumType;
 
 		Object getValue(Object obj) {
 			try {
@@ -264,6 +267,7 @@ class TableDefinition<T> {
 			int maxLength = 0;
 			boolean trimString = false;
 			boolean allowNull = true;
+			EnumType enumType = null;
 			String defaultValue = "";
 			boolean hasAnnotation = f.isAnnotationPresent(IQColumn.class);
 			if (hasAnnotation) {
@@ -278,6 +282,21 @@ class TableDefinition<T> {
 				allowNull = col.allowNull();
 				defaultValue = col.defaultValue();
 			}
+
+			// configure Java -> SQL enum mapping
+			if (f.getType().isEnum()) {
+				if (f.getType().isAnnotationPresent(IQEnum.class)) {
+					// enum definition is annotated for all instances
+					IQEnum iqenum = f.getType().getAnnotation(IQEnum.class);
+					enumType = iqenum.value();
+				}
+				if (f.isAnnotationPresent(IQEnum.class)) {
+					// this instance of the enum is annotated
+					IQEnum iqenum = f.getAnnotation(IQEnum.class);
+					enumType = iqenum.value();
+				}
+			}
+
 			boolean isPublic = Modifier.isPublic(f.getModifiers());
 			boolean reflectiveMatch = isPublic && !byAnnotationsOnly;
 			if (reflectiveMatch || hasAnnotation) {
@@ -290,6 +309,7 @@ class TableDefinition<T> {
 				fieldDef.trimString = trimString;
 				fieldDef.allowNull = allowNull;
 				fieldDef.defaultValue = defaultValue;
+				fieldDef.enumType = enumType;
 				fieldDef.dataType = ModelUtils.getDataType(fieldDef, strictTypeMapping);
 				fields.add(fieldDef);
 			}
@@ -306,10 +326,26 @@ class TableDefinition<T> {
 	}
 
 	/**
-	 * Optionally truncates strings to the maximum length
+	 * Optionally truncates strings to the maximum length and converts
+	 * java.lang.Enum types to Strings or Integers.
 	 */
 	private Object getValue(Object obj, FieldDefinition field) {
 		Object value = field.getValue(obj);
+		if (field.enumType != null) {
+			// convert enumeration to INT or STRING
+			Enum<?> iqenum = (Enum<?>) value;
+			switch (field.enumType) {
+			case STRING:
+				if (field.trimString && field.maxLength > 0) {
+					if (iqenum.name().length() > field.maxLength) {
+						return iqenum.name().substring(0, field.maxLength);
+					}
+				}
+				return iqenum.name();
+			case ORDINAL:
+				return iqenum.ordinal();			
+			}
+		}
 		if (field.trimString && field.maxLength > 0) {
 			if (value instanceof String) {
 				// clip strings

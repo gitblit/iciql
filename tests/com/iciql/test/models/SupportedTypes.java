@@ -21,7 +21,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 
+import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
+import com.iciql.Iciql.IQEnum;
 import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQTable;
@@ -38,6 +40,29 @@ import com.iciql.util.Utils;
 public class SupportedTypes {
 
 	public static final SupportedTypes SAMPLE = new SupportedTypes();
+
+	/**
+	 * Test of plain enumeration.
+	 * 
+	 * Each field declaraton of this enum must specify a mapping strategy.
+	 */
+	public enum Flower {
+		ROSE, TULIP, MUM, PETUNIA, MARIGOLD, DAFFODIL;
+	}
+
+	/**
+	 * Test of @IQEnum annotated enumeration.
+	 * This strategy is the default strategy for all fields of the Tree enum.
+	 * 
+	 * Individual Tree field declarations can override this strategy by
+	 * specifying a different @IQEnum annotation.
+	 * 
+	 * Here ORDINAL specifies that this enum will be mapped to an INT column.
+	 */
+	@IQEnum(EnumType.ORDINAL)
+	public enum Tree {
+		PINE, OAK, BIRCH, WALNUT, MAPLE;
+	}
 
 	@IQColumn(primaryKey = true, autoIncrement = true)
 	public Integer id;
@@ -81,6 +106,22 @@ public class SupportedTypes {
 	@IQColumn
 	private java.sql.Timestamp mySqlTimestamp;
 
+	@IQColumn
+	private byte[] myBlob;
+
+	@IQEnum(EnumType.STRING)
+	@IQColumn(trimString = true, maxLength = 25)
+	private Flower myFavoriteFlower;
+
+	@IQEnum(EnumType.ORDINAL)
+	@IQColumn
+	private Flower myOtherFavoriteFlower;
+
+	@IQColumn(maxLength = 25)
+	// @IQEnum is set on the enumeration definition and is shared
+	// by all uses of Tree as an @IQColumn
+	private Tree myFavoriteTree;
+
 	public static List<SupportedTypes> createList() {
 		List<SupportedTypes> list = Utils.newArrayList();
 		for (int i = 0; i < 10; i++) {
@@ -105,6 +146,10 @@ public class SupportedTypes {
 		s.mySqlDate = new java.sql.Date(rand.nextLong());
 		s.mySqlTime = new java.sql.Time(rand.nextLong());
 		s.mySqlTimestamp = new java.sql.Timestamp(rand.nextLong());
+		s.myBlob = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		s.myFavoriteFlower = Flower.MUM;
+		s.myOtherFavoriteFlower = Flower.MARIGOLD;
+		s.myFavoriteTree = Tree.BIRCH;
 		return s;
 	}
 
@@ -123,7 +168,26 @@ public class SupportedTypes {
 		same &= mySqlDate.toString().equals(s.mySqlDate.toString());
 		same &= mySqlTime.toString().equals(s.mySqlTime.toString());
 		same &= myString.equals(s.myString);
+		same &= compare(myBlob, s.myBlob);
+		same &= myFavoriteFlower.equals(s.myFavoriteFlower);
+		same &= myOtherFavoriteFlower.equals(s.myOtherFavoriteFlower);
+		same &= myFavoriteTree.equals(s.myFavoriteTree);
 		return same;
+	}
+
+	private boolean compare(byte[] a, byte[] b) {
+		if (b == null) {
+			return false;
+		}
+		if (a.length != b.length) {
+			return false;
+		}
+		for (int i = 0; i < a.length; i++) {
+			if (a[i] != b[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

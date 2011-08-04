@@ -189,6 +189,10 @@ public class BuildSite {
 						String[] kv = token.split("=", 2);
 						content = content.replace(kv[0], kv[1]);
 					}
+					for (String token : params.regex) {
+						String[] kv = token.split("!!!", 2);
+						content = content.replaceAll(kv[0], kv[1]);
+					}
 
 					OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File(destinationFolder,
 							fileName)), Charset.forName("UTF-8"));
@@ -315,6 +319,9 @@ public class BuildSite {
 
 		@Parameter(names = { "--nomarkdown" }, description = "%STARTTOKEN%:%ENDTOKEN%", required = false)
 		public List<String> nomarkdown = new ArrayList<String>();
+		
+		@Parameter(names = { "--regex" }, description = "searchPattern!!!replacePattern", required = false)
+		public List<String> regex = new ArrayList<String>();
 
 	}
 }

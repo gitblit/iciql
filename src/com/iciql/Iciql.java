@@ -87,9 +87,13 @@ import java.lang.annotation.Target;
  * <td>java.util.Date</td>
  * <td>TIMESTAMP</td>
  * </tr>
+ * <tr>
+ * <td>byte []</td>
+ * <td>BLOB</td>
+ * </tr>
  * </table>
  * <p>
- * Unsupported data types: binary types (BLOB, etc), and custom types.
+ * Unsupported data types: java.lang.Enum, Array Types, and custom types.
  * <p>
  * Table and field mapping: by default, the mapped table name is the class name
  * and the public fields are reflectively mapped, by their name, to columns. As
@@ -142,6 +146,7 @@ public interface Iciql {
 	/**
 	 * An annotation for an iciql version.
 	 * <p>
+	 * 
 	 * @IQVersion(1)
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
@@ -162,6 +167,7 @@ public interface Iciql {
 	/**
 	 * An annotation for a schema.
 	 * <p>
+	 * 
 	 * @IQSchema("PUBLIC")
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
@@ -189,7 +195,8 @@ public interface Iciql {
 	 * <li>@IQIndex("name")
 	 * <li>@IQIndex({"street", "city"})
 	 * <li>@IQIndex(name="streetidx", value={"street", "city"})
-	 * <li>@IQIndex(name="addressidx", type=IndexType.UNIQUE, value={"house_number", "street", "city"})
+	 * <li>@IQIndex(name="addressidx", type=IndexType.UNIQUE,
+	 * value={"house_number", "street", "city"})
 	 * </ul>
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
@@ -363,6 +370,47 @@ public interface Iciql {
 		 */
 		String defaultValue() default "";
 
+	}
+
+	/**
+	 * Enumeration representing now to map a java.lang.Enum to a column.
+	 * <p>
+	 * <ul>
+	 * <li>STRING
+	 * <li>ORDINAL
+	 * </ul>
+	 */
+	public enum EnumType {
+		STRING, ORDINAL;
+	}
+
+	/**
+	 * Annotation to define how a java.lang.Enum is mapped to a column.
+	 * <p>
+	 * This annotation can be used on:
+	 * <ul>
+	 * <li>a field instance of an enumeration type
+	 * <li>on the enumeration class declaration
+	 * </ul>
+	 * If you choose to annotate the class declaration, that will be the default
+	 * mapping strategy for all @IQColumn instances of the enum. This can still
+	 * be overridden for an individual field by specifying the IQEnum
+	 * annotation.
+	 * <p>
+	 * The default mapping is by STRING.
+	 * 
+	 * <pre>
+	 * IQEnum(EnumType.STRING)
+	 * </pre>
+	 * 
+	 * A string mapping will generate either a VARCHAR, if IQColumn.maxLength >
+	 * 0 or a TEXT column if IQColumn.maxLength == 0
+	 * 
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ ElementType.FIELD, ElementType.TYPE })
+	public @interface IQEnum {
+		EnumType value() default EnumType.STRING;
 	}
 
 	/**

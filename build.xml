@@ -282,6 +282,10 @@
 
 			<arg value="--substitute" />
 			<arg value="%ENDCODE%=&lt;/pre&gt;" />
+			
+			<arg value="--regex" />
+			<arg value="&quot;\b(issue)(\s*[#]?|-){0,1}(\d+)\b!!!&lt;a href='http://code.google.com/p/iciql/issues/detail?id=$3'&gt;issue $3&lt;/a&gt;&quot;" />
+
 		</java>	
 	</target>
 

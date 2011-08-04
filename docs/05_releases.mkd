@@ -3,6 +3,8 @@
 ### Current Release
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- added BLOB support (issue 1)
+- added java.lang.Enum support (issue 2)
 - api change release (API v2)
 - annotations overhaul to reduce verbosity
     - @IQSchema(name="public") -> @IQSchema("public")

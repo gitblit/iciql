@@ -18,6 +18,7 @@
 package com.iciql;
 
 import java.lang.reflect.Field;
+import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -223,6 +224,8 @@ public class Query<T> {
 					Object o = rs.getObject(1);
 					if (Clob.class.isAssignableFrom(o.getClass())) {
 						value = (X) Utils.convert(o, String.class);
+					} else if (Blob.class.isAssignableFrom(o.getClass())) {
+						value = (X) Utils.convert(o, byte[].class);
 					} else {
 						value = (X) o;
 					}

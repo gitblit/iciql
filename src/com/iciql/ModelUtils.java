@@ -57,7 +57,7 @@ class ModelUtils {
 		m.put(java.util.Date.class, "TIMESTAMP");
 		m.put(java.sql.Date.class, "DATE");
 		m.put(java.sql.Time.class, "TIME");
-		// TODO add blobs, binary types, custom types?
+		m.put(byte[].class, "BLOB");
 	}
 
 	/**
@@ -111,14 +111,21 @@ class ModelUtils {
 		// date
 		m.put("DATETIME", "TIMESTAMP");
 		m.put("SMALLDATETIME", "TIMESTAMP");
+
+		// binary types
+		m.put("TINYBLOB", "BLOB");
+		m.put("MEDIUMBLOB", "BLOB");
+		m.put("LONGBLOB", "BLOB");
+		m.put("IMAGE", "BLOB");
+		m.put("OID", "BLOB");
 	}
 
-	private static final List<String> KEYWORDS = Arrays.asList("abstract", "assert", "boolean", "break", "byte",
-			"case", "catch", "char", "class", "const", "continue", "default", "do", "double", "else", "enum",
-			"extends", "final", "finally", "float", "for", "goto", "if", "implements", "import", "instanceof", "int",
-			"interface", "long", "native", "new", "package", "private", "protected", "public", "return", "short",
-			"static", "strictfp", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "try",
-			"void", "volatile", "while", "false", "null", "true");
+	private static final List<String> KEYWORDS = Arrays.asList("abstract", "assert", "boolean", "break",
+			"byte", "case", "catch", "char", "class", "const", "continue", "default", "do", "double", "else",
+			"enum", "extends", "final", "finally", "float", "for", "goto", "if", "implements", "import",
+			"instanceof", "int", "interface", "long", "native", "new", "package", "private", "protected",
+			"public", "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this",
+			"throw", "throws", "transient", "try", "void", "volatile", "while", "false", "null", "true");
 
 	/**
 	 * Returns a SQL type mapping for a Java class.
@@ -131,6 +138,20 @@ class ModelUtils {
 	 */
 	static String getDataType(FieldDefinition fieldDef, boolean strictTypeMapping) {
 		Class<?> fieldClass = fieldDef.field.getType();
+		if (fieldClass.isEnum()) {
+			if (fieldDef.enumType == null) {
+				throw new IciqlException(fieldDef.field.getName() + " enum field does not specify @IQEnum!");
+			}
+			switch (fieldDef.enumType) {
+			case STRING:
+				if (fieldDef.maxLength <= 0) {
+					return "TEXT";
+				}
+				return "VARCHAR";
+			case ORDINAL:
+				return "INT";
+			}
+		}
 		if (SUPPORTED_TYPES.containsKey(fieldClass)) {
 			String type = SUPPORTED_TYPES.get(fieldClass);
 			if (type.equals("VARCHAR") && fieldDef.maxLength <= 0) {
@@ -228,7 +249,8 @@ class ModelUtils {
 		}
 		Pattern literalDefault = Pattern.compile("'.*'");
 		Pattern functionDefault = Pattern.compile("[^'].*[^']");
-		return literalDefault.matcher(defaultValue).matches() || functionDefault.matcher(defaultValue).matches();
+		return literalDefault.matcher(defaultValue).matches()
+				|| functionDefault.matcher(defaultValue).matches();
 	}
 
 	/**
