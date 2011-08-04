@@ -1,0 +1,62 @@
+iciql
+Copyright 2004-2011 H2 Group
+Copyright 2011 James Moger
+
+This is an aggregated NOTICE file for the projects included
+in this distribution or linked to by this distribution.
+
+---------------------------------------------------------------------------
+google-code-prettify
+---------------------------------------------------------------------------
+   google-code-prettify, released under the
+   Apache Software License, Version 2.0.
+
+   http://code.google.com/p/google-code-prettify
+
+---------------------------------------------------------------------------
+JUnit
+---------------------------------------------------------------------------
+   JUnit, released under the
+   Common Public License.
+
+   http://junit.org
+
+---------------------------------------------------------------------------
+ant-googlecode
+---------------------------------------------------------------------------
+   ant-googlecode, released under the
+   New BSD License
+   
+   http://code.google.com/p/ant-googlecode
+
+---------------------------------------------------------------------------
+H2 Database
+---------------------------------------------------------------------------
+   h2database, released under the
+   Eclipse Public License, Version 1.0.
+   
+   http://code.google.com/p/h2database
+
+---------------------------------------------------------------------------
+MarkdownPapers
+---------------------------------------------------------------------------
+   MarkdownPapers, released under the
+   Apache Software License, Version 2.0.
+
+   http://markdown.tautua.org
+
+---------------------------------------------------------------------------
+doclava
+---------------------------------------------------------------------------
+   doclava, released under the
+   Apache Software License, Version 2.0.
+   
+   http://code.google.com/p/doclava
+
+---------------------------------------------------------------------------
+SLF4J
+---------------------------------------------------------------------------
+   SLF4J, released under the
+   MIT/X11 License.
+
+   http://www.slf4j.org

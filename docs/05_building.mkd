@@ -1,0 +1,33 @@
+## Building from Source
+
+[Eclipse](http://eclipse.org) is recommended for development as the project settings are preconfigured.
+
+Additionally, [eclipse-cs](http://eclipse-cs.sourceforge.net), [FindBugs](http://findbugs.sourceforge.net), and [EclEmma](http://www.eclemma.org) are recommended development tools.
+
+### Build Dependencies (bundled)
+- [google-code-prettify](http://code.google.com/p/google-code-prettify) (Apache 2.0)
+
+### Build Dependencies (downloaded during build)
+- [H2 Database](http://h2database.com) (Eclipse Public License 1.0)
+- [JUnit](http://junit.org) (Common Public License)
+- [commons-net](http://commons.apache.org/net) (Apache 2.0)
+- [ant-googlecode](http://code.google.com/p/ant-googlecode) (New BSD)
+- [MarkdownPapers](http://markdown.tautua.org) (Apache 2.0)
+- [doclava](http://code.google.com/p/doclava) (Apache 2.0)
+- [SLF4J](http://www.slf4j.org) (MIT/X11)
+
+### Instructions
+1. Clone the git repository from [GoogleCode][iciqlsrc].
+2. Import the iciql project into your Eclipse workspace.<br/>
+*There will be some build errors.*
+3. Using Ant, execute the `build.xml` script in the project root.<br/>
+*This will download all necessary build dependencies.*
+4. Select your iciql project root and **Refresh** the project, this should correct all build problems.
+
+## Contributing
+Patches welcome in any form.
+
+Contributions must be your own original work and must licensed under the [Apache License, Version 2.0][apachelicense], the same license used by iciql.
+
+[iciqlsrc]: https://code.google.com/p/iciql/ "iciql git repository"
+[apachelicense]: http://www.apache.org/licenses/LICENSE-2.0 "Apache License, Version 2.0"

@@ -1,0 +1,8 @@
+/build
+/doclava
+/ext
+/javadoc
+/site
+/*.zip
+/*.jar
+/build.properties

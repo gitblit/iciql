@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iciql" default="buildAll" basedir=".">
+
+	<!-- Google Code upload task -->
+	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" 
+		classpath="${basedir}/tools/ant-googlecode-0.0.3.jar" name="gcupload"/>
+
+	<!-- Project Properties -->
+	<property name="project.build.dir" value="${basedir}/build" />
+	<property name="project.site.dir" value="${basedir}/site" />
+
+	<!-- Load publication servers, paths, and credentials --> 
+	<loadproperties srcfile="${basedir}/build.properties" />
+	
+	
+	<!--
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Scrape the version info from code and setup the build properties 
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="buildinfo">
+	
+		<!-- extract iciql version number from source code -->
+		<loadfile property="iq.version" srcfile="${basedir}/src/com/iciql/Constants.java">
+			<filterchain>
+				<linecontains>
+					<contains value="public static final String VERSION = " />
+				</linecontains>
+				<striplinebreaks />
+				<tokenfilter>
+					<replacestring from="public static final String VERSION = &quot;" to="" />
+					<replacestring from="&quot;;" to="" />
+					<trim />
+				</tokenfilter>
+			</filterchain>
+		</loadfile>
+
+		<!-- extract iciql version date from source code -->
+		<loadfile property="iq.versionDate" srcfile="${basedir}/src/com/iciql/Constants.java">
+			<filterchain>
+				<linecontains>
+					<contains value="public static final String VERSION_DATE = " />
+				</linecontains>
+				<striplinebreaks />
+				<tokenfilter>
+					<replacestring from="public static final String VERSION_DATE = &quot;" to="" />
+					<replacestring from="&quot;;" to="" />
+					<trim />
+				</tokenfilter>
+			</filterchain>
+		</loadfile>
+		
+		<!-- extract iciql current api version from source code -->
+		<loadfile property="iq.apiCurrent" srcfile="${basedir}/src/com/iciql/Constants.java">
+			<filterchain>
+				<linecontains>
+					<contains value="public static final String API_CURRENT = " />
+				</linecontains>
+				<striplinebreaks />
+				<tokenfilter>
+					<replacestring from="public static final String API_CURRENT = &quot;" to="" />
+					<replacestring from="&quot;;" to="" />
+					<trim />
+				</tokenfilter>
+			</filterchain>
+		</loadfile>
+
+		<!-- extract iciql previous api version from source code -->
+		<loadfile property="iq.apiPrevious" srcfile="${basedir}/src/com/iciql/Constants.java">
+			<filterchain>
+				<linecontains>
+					<contains value="public static final String API_PREVIOUS = " />
+				</linecontains>
+				<striplinebreaks />
+				<tokenfilter>
+					<replacestring from="public static final String API_PREVIOUS = &quot;" to="" />
+					<replacestring from="&quot;;" to="" />
+					<trim />
+				</tokenfilter>
+			</filterchain>
+		</loadfile>
+
+		<property name="library.jar" value="${basedir}/iciql-${iq.version}.jar" />
+		<property name="javadoc.jar" value="${basedir}/iciql-${iq.version}-javadoc.jar" />
+		<property name="sources.jar" value="${basedir}/iciql-${iq.version}-sources.jar" />
+		<property name="distribution.zip" value="${basedir}/iciql-${iq.version}.zip" />
+	</target>
+
+	
+	<!--
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Compile
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="compile" depends="buildinfo" description="Retrieves dependencies and compiles iciql from source">
+		<!-- Compile the build tool and execute it.
+			 This downloads missing compile-time dependencies from Maven. -->
+
+		<delete dir="${project.build.dir}" />
+		<mkdir dir="${project.build.dir}" />
+		<javac srcdir="${basedir}/src" destdir="${project.build.dir}">
+			<include name="com/iciql/build/Build.java" />
+			<include name="com/iciql/Constants.java" />
+			<include name="com/iciql/utils/Utils.java" />
+			<include name="com/iciql/utils/StringUtils.java" />
+		</javac>
+		<java classpath="${project.build.dir}" classname="com.iciql.build.Build" />
+
+		<!-- Compile Project -->
+		<path id="master-classpath">
+			<fileset dir="${basedir}/ext">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+		<javac destdir="${project.build.dir}" failonerror="false">
+			<src path="${basedir}/src" />
+			<classpath refid="master-classpath" />
+		</javac>
+		<copy todir="${project.build.dir}">
+			<fileset dir="${basedir}/src" excludes="**/*.java,**/thumbs.db" />
+		</copy>
+
+		<!-- Build Standard Javadoc -->
+		<delete dir="${basedir}/javadoc" />
+		<javadoc destdir="${basedir}/javadoc" nonavbar="true" stylesheetfile="${basedir}/docs/resources/javadoc.css">
+			<fileset dir="${basedir}/src" defaultexcludes="yes">
+		  		<include name="com/iciql/**/*.java"/>
+		  		<exclude name="com/iciql/build/**"/>
+			</fileset>
+		</javadoc>
+
+		<!-- Build Doclava Javadoc -->
+		<!-- Build API XML file -->
+		<delete dir="${basedir}/doclava" />
+		<javadoc destdir="${basedir}/doclava" 
+			docletpath="${basedir}/ext/doclava-1.0.3.jar"
+			bootclasspath="${java.home}/lib/rt.jar">
+		 	<doclet name="com.google.doclava.Doclava">
+		        <param name="-hdf"/> <param name="project.name"/> <param name="iciql"/>
+		 		
+		        <!-- versioning -->
+		        <!--<param name="-since"/> <param name="api/v${iq.apiPrevious}.xml"/> <param name="v${iq.apiPrevious}" />-->
+		        <param name="-apiversion" value="v${iq.apiCurrent}"/>
+		 		
+		 		<param name="-apixml" value="api/v${iq.apiCurrent}.xml"/>
+		 		
+		        <!-- federation -->
+		        <param name="-federate" /><param name="JDK"/>
+		        <param name="http://download.oracle.com/javase/6/docs/api/index.html?"/>
+		        <param name="-federationxml"/><param name="JDK"/>
+		        <param name="http://doclava.googlecode.com/svn/static/api/openjdk-6.xml"/>
+		      </doclet>
+			<fileset dir="${basedir}/src" defaultexcludes="yes">
+			  <include name="com/iciql/**/*.java"/>
+			  <exclude name="com/iciql/build/**"/>
+			</fileset>
+		</javadoc>
+	</target>
+
+	
+	<!--
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Build
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="build" depends="compile" description="Builds iciql from source">
+		
+		<echo>Building iciql binaries ${iq.version}</echo>
+		
+		<!-- library jar -->
+		<jar destfile="${library.jar}">
+			<manifest>
+				<attribute name="Main-Class" value="com.iciql.util.GenerateModels" />
+			</manifest>
+			<fileset dir="${project.build.dir}">
+				<include name="**/*" />
+				<exclude name="com/iciql/build/" />
+				<exclude name="**/*.html" />
+			</fileset>
+		</jar>
+		
+		<!-- standard javadoc jar -->
+		<jar destfile="${javadoc.jar}">
+			<fileset dir="${basedir}/javadoc">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+		
+		<!-- sources jar -->		
+		<jar destfile="${sources.jar}">
+			<fileset dir="${basedir}/src">
+				<include name="**/*" />
+				<exclude name="com/iciql/build/" />
+				<exclude name="**/*.html" />
+			</fileset>
+		</jar>
+		
+		<!-- zip distribution file -->
+		<jar destfile="${distribution.zip}">
+			<fileset dir="${basedir}">
+				<include name="*.jar" />
+				<include name="LICENSE" />
+				<include name="NOTICE" />
+				<include name="javadoc/**/*" />
+			</fileset>
+		</jar>
+	</target>
+
+	
+	<!-- 
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Build the iciql website
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="buildSite" depends="compile" description="Build the iciql website">
+		
+		<echo>Building iciql website ${iq.version}</echo>
+
+		<!-- Build Site -->
+		<delete dir="${project.site.dir}" />
+		<mkdir dir="${project.site.dir}" />
+		<copy todir="${project.site.dir}">
+			<fileset dir="${basedir}/docs/resources">
+				<include name="*.png" />
+				<include name="*.css" />
+				<include name="*.js" />
+			</fileset>
+		</copy>
+		
+		<!-- Copy standard javadoc -->
+		<mkdir dir="${project.site.dir}/javadoc" />
+		<copy todir="${project.site.dir}/javadoc">
+			<fileset dir="${basedir}/javadoc">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<!-- Build site pages -->
+		<java classpath="${project.build.dir}" classname="com.iciql.build.BuildSite">
+			<classpath refid="master-classpath" />
+			<arg value="--sourceFolder" />
+			<arg value="${basedir}/docs" />
+
+			<arg value="--outputFolder" />
+			<arg value="${project.site.dir}" />
+
+			<arg value="--pageHeader" />
+			<arg value="${basedir}/docs/resources/site_header.html" />
+			
+			<arg value="--pageFooter" />
+			<arg value="${basedir}/docs/resources/site_footer.html" />
+
+			<arg value="--analyticsSnippet" />
+			<arg value="${basedir}/docs/resources/site_analytics.html" />
+
+			<arg value="--adSnippet" />
+			<arg value="${basedir}/docs/resources/site_ads.html" />
+
+			<arg value="--alias" />
+			<arg value="index=overview" />
+
+			<arg value="--alias" />
+			<arg value="table_versioning=versioning" />
+
+			<arg value="--nomarkdown" />
+			<arg value="%BEGINCODE%:%ENDCODE%" />
+
+			<arg value="--substitute" />
+			<arg value="%VERSION%=${iq.version}" />
+
+			<arg value="--substitute" />
+			<arg value="%BUILDDATE%=${iq.versionDate}" />
+
+			<arg value="--substitute" />
+			<arg value="%JAR%=${library.jar}" />
+
+			<arg value="--substitute" />
+			<arg value="%ZIP%=${distribution.zip}" />
+
+			<arg value="--substitute" />
+			<arg value="&quot;%BEGINCODE%=&lt;pre class='prettyprint lang-java'&gt;&quot;" />
+
+			<arg value="--substitute" />
+			<arg value="%ENDCODE%=&lt;/pre&gt;" />
+		</java>	
+	</target>
+
+	
+	<!-- 
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Build binary artifacts and site 
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="buildAll" description="Build the iciql artifacts and the site" depends="build,buildSite">
+	</target>
+
+	<!-- 
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Publish binaries to Google Code
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="publishBinaries" depends="build" description="Publish the iciql binaries to Google Code">
+
+		<echo>Uploading iciql ${iq.version} binaries</echo>
+
+		<gcupload 
+			 username="${googlecode.user}" 
+			 password="${googlecode.password}" 
+			 projectname="iciql" 
+			 filename="${distribution.zip}" 
+			 targetfilename="iciql-${iq.version}.zip"
+			 summary="Version ${iq.version} -- library, sources, javadoc, and docs"
+			 labels="Featured, Type-Package, OpSys-All" />
+	
+		<gcupload 
+			 username="${googlecode.user}" 
+			 password="${googlecode.password}" 
+			 projectname="iciql" 
+			 filename="${library.jar}" 
+			 targetfilename="iciql-${iq.version}.jar"
+			 summary="Version ${iq.version} -- library"
+			 labels="Featured, Type-Package, OpSys-All" />
+	</target>
+
+	
+	<!--
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+		Publish site to hosting service
+		You must add ext/commons-net-1.4.0.jar to your ANT classpath.
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="publishSite" depends="buildSite" description="Publish the iciql site to a webserver (requires ext/commons-net-1.4.0.jar)" >
+
+		<echo>Uploading iciql ${iq.version} website</echo>
+
+		<ftp server="${ftp.server}"
+			userid="${ftp.user}"
+			password="${ftp.password}"
+			remotedir="${ftp.dir}"
+			passive="true"
+			verbose="yes">
+			<fileset dir="${project.site.dir}" />
+		</ftp>
+	</target>
+
+
+	<!--
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+		Compile from source, publish binaries, and build & deploy site
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="publishAll" depends="publishBinaries,publishSite">
+		<!-- Cleanup -->
+		<delete dir="${project.build.dir}" />
+	</target>
+</project>

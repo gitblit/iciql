@@ -1,0 +1,118 @@
+## Select Statements
+
+%BEGINCODE%
+// select * from products
+List&lt;Product&gt; allProducts = db.from(p).select();
+
+// select * from customers where region='WA'
+Customer c = new Customer();
+List&lt;Customer&gt; waCustomers = db.from(c). where(c.region).is("WA").select();
+
+// select with generation of new anonymous inner class
+List&lt;ProductPrice&gt; productPrices =
+    db.from(p).
+    orderBy(p.productId).
+    select(new ProductPrice() {{
+        productName = p.productName;
+        category = p.category;
+        price = p.unitPrice;
+    }});
+%ENDCODE%
+
+## Insert Statements
+
+%BEGINCODE%
+// single record insertion
+db.insert(singleProduct);
+
+// single record insertion with primary key retrieval
+Long key = db.insertAndGetKey(singleProduct);
+
+// batch record insertion
+db.insertAll(myProducts);
+
+// batch insertion with primary key retrieval
+List&lt;Long&gt; myKeys = db.insertAllAndGetKeys(list);
+%ENDCODE%
+
+## Update Statements
+
+%BEGINCODE%
+// single record update
+db.update(singleProduct);
+
+// batch record updates
+db.updateAll(myProducts);
+
+// update query
+db.from(p).set(p.productName).to("updated")
+	.increment(p.unitPrice).by(3.14)
+	.increment(p.unitsInStock).by(2)
+	.where(p.productId).is(1).update();
+%ENDCODE%
+
+## Merge Statements
+Merge statements currently generate the [H2 merge syntax](http://h2database.com/html/grammar.html#merge).
+ 
+%BEGINCODE%
+Product pChang = db.from(p).where(p.productName).is("Chang").selectFirst();
+pChang.unitPrice = 19.5;
+pChang.unitsInStock = 16;
+db.merge(pChang);
+%ENDCODE%
+
+## Delete Statements
+
+%BEGINCODE%
+// single record deletion
+db.delete(singleProduct);  
+
+// batch record deletion
+db.deleteAll(myProducts);
+
+// delete query
+db.from(p).where(p.productId).atLeast(10).delete();
+
+%ENDCODE%
+
+## Inner Join Statements
+
+%BEGINCODE%
+final Customer c = new Customer();
+final Order o = new Order();
+List&lt;CustOrder&gt; orders =
+    db.from(c).
+    innerJoin(o).on(c.customerId).is(o.customerId).
+    where(o.total).lessThan(new BigDecimal("500.00")).
+    orderBy(1).
+    select(new CustOrder() {{
+        customerId = c.customerId;
+        orderId = o.orderId;
+        total = o.total;
+    }});
+%ENDCODE%
+
+## Dynamic Queries
+
+Dynamic queries skip all field type checking and, depending on which approach you use, may skip model class/table name checking too.
+
+%BEGINCODE%
+// where fragment with object parameters
+List&lt;Product&gt; restock = db.from(p).where("unitsInStock=? and productName like ? order by productId", 0, "Chef%").select();
+
+// statement with binding to your model class
+List&lt;Product&gt; allProducts = db.executeQuery(Product.class, "select * from products");
+
+// statement with object parameters and binding to your model class
+List&lt;Product&gt; restock = db.executeQuery(Product.class, "select * from products where unitsInStock=?", 0);
+
+/**
+ * If you want to process the intermediate ResultSet
+ * yourself make sure to use the <i>closeSilently()</i> method 
+ * to ensure the parent statement is closed too.
+ */
+ResultSet rs = db.executeQuery("select * from products");
+List&lt;Product&gt; allProducts = db.buildObjects(Product.class, rs);
+JdbcUtils.closeSilently(rs, true);
+
+%ENDCODE%

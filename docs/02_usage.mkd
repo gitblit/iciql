@@ -1,0 +1,164 @@
+## Usage
+
+Aside from this brief usage guide, please consult the [examples](examples.html), the [javadoc](javadoc.html) and the [source code](https://code.google.com/p/iciql/source/browse).
+
+### Instantiating a Db
+
+Use one of the static utility methods to instantiate a Db instance:
+
+    Db.open(String url, String user, String password);
+    Db.open(String url, String user, char[] password);
+    Db.open(Connection conn);
+    Db.open(DataSource dataSource);
+ 
+### Compile-Time Statements
+
+You compose your statements using the builder pattern where each method call returns an object that is used to specify the next part of the statement.  Through clever usage of generics, pioneered by the original JaQu project, compile-time safety flows through the statement.
+
+%BEGINCODE%
+Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+db.insertAll(Product.getList());
+db.insertAll(Customer.getList());
+
+List&lt;Product&gt; restock =
+	db.from(p).
+	where(p.unitsInStock).
+	is(0).orderBy(p.productId).select();
+		
+for (Product product : restock) {
+	db.from(p).
+	set(p.unitsInStock).to(25).
+	where(p.productId).is(product.productId).update();
+}
+db.close();
+%ENDCODE%
+ 
+Please see the [examples](examples.html) page for more code samples. 
+ 
+### Dynamic Runtime Queries
+
+Iciql gives you compile-time type-safety, but it becomes inconvenient if your design requires more dynamic statement generation.  For these scenarios iciql offers some runtime query support through a hybrid approach or a pure JDBC approach.
+
+#### Where String Fragment Approach
+This approach is a mixture of iciql and jdbc.  It uses the traditional prepared statement *field=?* tokens with iciql compile-time model class type checking.  There is no field token type-safety checking.
+%BEGINCODE%
+List&lt;Product&gt; restock = db.from(p).where("unitsInStock=? and productName like ? order by productId", 0, "Chef%").select();
+%ENDCODE%
+
+#### Db.executeQuery Approaches
+There may be times when the hybrid approach is still too restrictive and you'd prefer to write straight SQL.  You can do that too and use iciql to build objects from your ResultSet, but be careful:
+
+1. Make sure to _select *_ in your query otherwise db.bindResultSet() will throw a RuntimeException
+2. There is no model class type checking nor field type checking. 
+
+%BEGINCODE%
+List&lt;Product&gt; allProducts = db.executeQuery(Product.class, "select * from products");
+List&lt;Product&gt; restock = db.executeQuery(Product.class, "select * from products where unitsInStock=?", 0);
+%ENDCODE% 
+
+Or if you want access to the raw *ResultSet* before building your model object instances...
+
+%BEGINCODE%
+ResultSet rs = db.executeQuery("select * from products");
+List&lt;Product&gt; allProducts = db.buildObjects(Product.class, rs);
+// This method ensures the creating statement is closed
+JdbcUtils.closeSilently(rs, true);
+%ENDCODE% 
+
+### JDBC Statements, ResultSets, and Exception Handling
+
+Iciql opens and closes all JDBC objects automatically.  SQLExceptions thrown during execution of a statement (except for *close()* calls), will be caught, wrapped, and rethrown as an `IciqlException`, which is a RuntimeException.
+
+Iciql does not throw any [checked exceptions](http://en.wikipedia.org/wiki/Exception_handling#Checked_exceptions).
+
+### Statement Logging
+
+Iciql provides a mechanism to log generated statements to the console, to SLF4J, or to your own logging framework.  Exceptions are not logged using this mechanism; exceptions are wrapped and rethrown as `IciqlException`, which is a RuntimeException.
+
+#### Console Logging
+%BEGINCODE%
+StatmentLogger.activeConsoleLogger();
+StatmentLogger.deactiveConsoleLogger();
+%ENDCODE%
+
+#### SLF4J Logging
+%BEGINCODE%
+Slf4jStatementListener slf4j = new Slf4jStatementListener();
+slf4j.setLevel(StatementType.CREATE, Level.WARN);
+slf4j.setLevel(StatementType.DELETE, Level.WARN);
+slf4j.setLevel(StatementType.MERGE, Level.OFF);
+StatmentLogger.registerListener(slf4j);
+StatmentLogger.unregisterListener(slf4j);
+%ENDCODE%
+
+#### Custom Logging
+%BEGINCODE%
+StatementListener custom = new StatementListener() {
+    public void logStatement(StatementType type, String statement) {
+        // do log
+    }
+};
+StatmentLogger.registerListener(custom);
+StatmentLogger.unregisterListener(custom);
+%ENDCODE%
+
+## Understanding Aliases and Model Classes
+Consider the following example:
+%BEGINCODE%
+Product p = new Product();
+List&lt;Product&gt; restock = db.from(p).where(p.unitsInStock).is(0).select();
+%ENDCODE%
+
+The Product model class instance named **p** is an *alias* object.  An *alias* is simply an instance of your model class that is only used to build the compile-time/runtime representation of your table.
+
+1. *Alias* instances are **NOT** thread-safe and must not be used concurrently.
+2. *Alias* instances have no other purpose than to provide a compile-time/runtime map of your table.
+3. If you inspected an *alias* instance after using one you would find that it's fields have been assigned numeric values.<br/>These values have no meaning.  They are assigned from a static counter in `com.iciql.Utils.newObject()` during execution of the *db.from()* method.
+
+If your statement is a query, like in the above example, iciql will generate new instances of your *alias* model class and return them as a list where each entry of the list represents a row from the JDBC `ResultSet`.
+ 
+### Why are Aliases not thread-safe?
+
+The _db.from(p)_ call reinstantiates each member field of p.  Those reinstantiated fields are then subsequently used in clauses like _where(p.unitsInStock)_.  If your *alias* instance is shared concurrently then its highly probable that when _queryA_ executes, _queryC_ has reinstantiated all the *alias* fields and broken _queryA's_ runtime field mapping.
+
+Depending on your design, you might consider using a [ThreadLocal](http://download.oracle.com/javase/6/docs/api/java/lang/ThreadLocal.html) variable if you do not want to keep instantiating *alias* instances.  A utility function is included for easily creating ThreadLocal variables.
+
+%BEGINCODE%
+final ThreadLocal&lt;Product&gt; p = Utils.newThreadLocal(Product.class);
+db.from(p.get()).select();
+%ENDCODE%
+
+## Best Practices
+
+1. Close your *Db* instances when you are done with them, this closes the underlying connection or directs the pool to "close" the connection.
+2. Aliases instances are not thread-safe so DO NOT SHARE an alias!<br/>Consider using a *ThreadLocal* alias instance with the `com.iciql.Utils.newThreadLocal()` utility method.
+<table>
+<tr><th>Not Thread-Safe</th><th>Thread-Safe</th></tr>
+<tr><td>
+%BEGINCODE%
+final Product p = new Product();
+for (int i = 0; i < 5; i++) {
+    Thread thread = new Thread(new Runnable() {
+        public void run() {
+            // from(p) reinstantiates p's fields
+            db.from(p).select();
+        }
+    }, "Thread-" + i);
+    thread.start();
+}
+%ENDCODE%
+</td><td>
+%BEGINCODE%
+final ThreadLocal&lt;Product&gt; p = Utils.newThreadLocal(Product.class);
+for (int i = 0; i < 5; i++) {
+    Thread thread = new Thread(new Runnable() {
+        public void run() {
+            // p.get() returns a Product instance unique to this thread            
+            db.from(p.get()).select();
+        }
+    }, "Thread-" + i);
+    thread.start();
+}
+%ENDCODE%
+</td></tr>
+</table>

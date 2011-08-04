@@ -1,0 +1,38 @@
+## Release History
+
+### Current Release
+**%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
+
+- initial release (API v1)
+
+*API changes compared to JaQu from H2 1.3.157 sources*
+
+- deprecated model class interface configuration
+- added *Db.open(Connection conn)* method, changed constructor to default scope
+- added *Db.registerDialect* static methods to register custom dialects
+- added *Query.where(String fragment, Object... args)* method to build a runtime query fragment when compile-time queries are too strict
+- added *Db.executeQuery(String query, Object... args)* to execute a complete sql query with optional arguments
+- added *Db.executeQuery(Class modelClass, String query, Object... args)* to execute a complete sql query, with optional arguments, and build objects from the result
+- added *Db.buildObjects(Class modelClass, ResultSet rs)* method to build objects from the ResultSet of a plain sql query
+- added *ThreadLocal&lt;T&gt; com.iciql.Utils.newThreadLocal(final Class&lt;? extends T&gt; clazz)* method
+- added optional console statement logger and SLF4J statement logger
+- throw *IciqlException* (which is a RuntimeException) instead of RuntimeException
+- synchronized *Db.classMap* for concurrent sharing of a Db instance
+- Database/table versioning uses the <b>_iq_versions </b> table, the <b>_ jq_versions</b> table, if present, is ignored
+- Changed the following class names:
+    - org.h2.jaqu.Table =&gt; com.iciql.Iciql
+    - org.h2.jaqu.JQSchema =&gt; com.iciql.IQSchema
+    - org.h2.jaqu.JQDatabase =&gt; com.iciql.IQDatabase
+    - org.h2.jaqu.JQIndex =&gt; com.iciql.IQIndex
+    - org.h2.jaqu.JQTable =&gt; com.iciql.IQTable
+    - org.h2.jaqu.JQColumn =&gt; com.iciql.IQColumn
+- Changed the following method names:
+    - org.h2.jaqu.Table.define() =&gt; com.iciql.Iciql.defineIQ()
+    - QueryConditon.bigger =&gt; QueryCondition.exceeds
+    - QueryConditon.biggerEqual =&gt; QueryCondition.atLeast
+    - QueryConditon.smaller =&gt; QueryCondition.lessThan
+    - QueryConditon.smallEqual =&gt; QueryCondition.atMost
+
+### Older Releases
+
+none
