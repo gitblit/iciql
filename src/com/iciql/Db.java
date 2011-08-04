@@ -34,7 +34,7 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import com.iciql.DbUpgrader.DefaultDbUpgrader;
-import com.iciql.Iciql.IQDatabase;
+import com.iciql.Iciql.IQVersion;
 import com.iciql.Iciql.IQTable;
 import com.iciql.SQLDialect.DefaultSQLDialect;
 import com.iciql.SQLDialect.H2Dialect;
@@ -230,8 +230,8 @@ public class Db {
 			// flag as checked immediately because calls are nested.
 			upgradeChecked.add(dbUpgrader.getClass());
 
-			IQDatabase model = dbUpgrader.getClass().getAnnotation(IQDatabase.class);
-			if (model.version() > 0) {
+			IQVersion model = dbUpgrader.getClass().getAnnotation(IQVersion.class);
+			if (model.value() > 0) {
 				DbVersion v = new DbVersion();
 				DbVersion dbVersion =
 				// (SCHEMA="" && TABLE="") == DATABASE
@@ -239,17 +239,17 @@ public class Db {
 				if (dbVersion == null) {
 					// database has no version registration, but model specifies
 					// version: insert DbVersion entry and return.
-					DbVersion newDb = new DbVersion(model.version());
+					DbVersion newDb = new DbVersion(model.value());
 					insert(newDb);
 				} else {
 					// database has a version registration:
 					// check to see if upgrade is required.
-					if ((model.version() > dbVersion.version) && (dbUpgrader != null)) {
+					if ((model.value() > dbVersion.version) && (dbUpgrader != null)) {
 						// database is an older version than the model
 						boolean success = dbUpgrader
-								.upgradeDatabase(this, dbVersion.version, model.version());
+								.upgradeDatabase(this, dbVersion.version, model.value());
 						if (success) {
-							dbVersion.version = model.version();
+							dbVersion.version = model.value();
 							update(dbVersion);
 						}
 					}
@@ -316,8 +316,8 @@ public class Db {
 	}
 
 	public synchronized void setDbUpgrader(DbUpgrader upgrader) {
-		if (!upgrader.getClass().isAnnotationPresent(IQDatabase.class)) {
-			throw new IciqlException("DbUpgrader must be annotated with " + IQDatabase.class.getSimpleName());
+		if (!upgrader.getClass().isAnnotationPresent(IQVersion.class)) {
+			throw new IciqlException("DbUpgrader must be annotated with " + IQVersion.class.getSimpleName());
 		}
 		this.dbUpgrader = upgrader;
 		upgradeChecked.clear();

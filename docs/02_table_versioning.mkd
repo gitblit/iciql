@@ -3,9 +3,9 @@
 Iciql supports an optional, simple versioning mechanism.  There are two parts to the mechanism.
 
 1. You must supply an implementation of `com.iciql.DbUpgrader` to your `com.iciql.Db` instance.
-2. One or more of your table model classes must set the *version* field of the `com.iciql.IQTable` annotation<br>
+2. One or more of your table model classes must specify the `IQVersion(version)` annotation<br>
 AND/OR<br/>
-Your `com.iciql.DbUpgrader` implementation must set the *version* field of the `com.iciql.IQDatabase` annotation
+Your `com.iciql.DbUpgrader` implementation must specify the `IQVersion(version)` annotation
 
 ### How does it work?
 If you choose to use versioning, iciql will maintain a table within your database named *_iq_versions* which is defined as:

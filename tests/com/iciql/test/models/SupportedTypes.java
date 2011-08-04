@@ -22,13 +22,19 @@ import java.util.List;
 import java.util.Random;
 
 import com.iciql.Iciql.IQColumn;
+import com.iciql.Iciql.IQIndex;
+import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQTable;
+import com.iciql.Iciql.IQVersion;
+import com.iciql.Iciql.IndexType;
 import com.iciql.util.Utils;
 
 /**
  * A data class that contains a column for each data type.
  */
-@IQTable(strictTypeMapping = true, version = 1)
+@IQTable(strictTypeMapping = true)
+@IQIndexes({ @IQIndex({ "myLong", "myInteger" }), @IQIndex(type = IndexType.HASH, value = "myString") })
+@IQVersion(1)
 public class SupportedTypes {
 
 	public static final SupportedTypes SAMPLE = new SupportedTypes();
@@ -123,7 +129,8 @@ public class SupportedTypes {
 	/**
 	 * This class demonstrates the table upgrade.
 	 */
-	@IQTable(name = "SupportedTypes", version = 2, inheritColumns = true, strictTypeMapping = true)
+	@IQTable(name = "SupportedTypes", inheritColumns = true, strictTypeMapping = true)
+	@IQVersion(2)
 	public static class SupportedTypes2 extends SupportedTypes {
 
 		public SupportedTypes2() {

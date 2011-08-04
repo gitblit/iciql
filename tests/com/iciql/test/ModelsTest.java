@@ -34,7 +34,7 @@ import com.iciql.Db;
 import com.iciql.DbInspector;
 import com.iciql.DbUpgrader;
 import com.iciql.DbVersion;
-import com.iciql.Iciql.IQDatabase;
+import com.iciql.Iciql.IQVersion;
 import com.iciql.ValidationRemark;
 import com.iciql.test.models.Product;
 import com.iciql.test.models.ProductAnnotationOnly;
@@ -115,7 +115,7 @@ public class ModelsTest {
 				true);
 		assertEquals(1, models.size());
 		// a poor test, but a start
-		assertEquals(1361, models.get(0).length());
+		assertEquals(1564, models.get(0).length());
 	}
 
 	@Test
@@ -157,7 +157,7 @@ public class ModelsTest {
 	/**
 	 * A sample database upgrader class.
 	 */
-	@IQDatabase(version = 2)
+	@IQVersion(2)
 	class TestDbUpgrader implements DbUpgrader {
 		final AtomicInteger oldVersion = new AtomicInteger(0);
 		final AtomicInteger newVersion = new AtomicInteger(0);

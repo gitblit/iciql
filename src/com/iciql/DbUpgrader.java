@@ -17,7 +17,7 @@
 
 package com.iciql;
 
-import com.iciql.Iciql.IQDatabase;
+import com.iciql.Iciql.IQVersion;
 
 /**
  * Interface which defines a class to handle table changes based on model
@@ -65,7 +65,7 @@ public interface DbUpgrader {
 	 * The default database upgrader. It throws runtime exception instead of
 	 * handling upgrade requests.
 	 */
-	@IQDatabase(version = 0)
+	@IQVersion(0)
 	public static class DefaultDbUpgrader implements DbUpgrader {
 
 		public boolean upgradeDatabase(Db db, int fromVersion, int toVersion) {

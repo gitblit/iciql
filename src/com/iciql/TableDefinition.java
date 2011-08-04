@@ -27,11 +27,13 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.iciql.Iciql.IndexType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQIndex;
+import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQSchema;
 import com.iciql.Iciql.IQTable;
+import com.iciql.Iciql.IQVersion;
+import com.iciql.Iciql.IndexType;
 import com.iciql.util.StatementBuilder;
 import com.iciql.util.StatementLogger;
 import com.iciql.util.StringUtils;
@@ -133,9 +135,9 @@ class TableDefinition<T> {
 	List<FieldDefinition> getFields() {
 		return fields;
 	}
-	
+
 	FieldDefinition getField(String name) {
-		for (FieldDefinition field:fields) {
+		for (FieldDefinition field : fields) {
 			if (field.columnName.equalsIgnoreCase(name)) {
 				return field;
 			}
@@ -199,7 +201,7 @@ class TableDefinition<T> {
 	 */
 	void addIndex(IndexType type, Object[] modelFields) {
 		List<String> columnNames = mapColumnNames(modelFields);
-		addIndex(type, columnNames);
+		addIndex(null, type, columnNames);
 	}
 
 	/**
@@ -210,9 +212,13 @@ class TableDefinition<T> {
 	 * @param columnNames
 	 *            the ordered list of column names
 	 */
-	void addIndex(IndexType type, List<String> columnNames) {
+	void addIndex(String name, IndexType type, List<String> columnNames) {
 		IndexDefinition index = new IndexDefinition();
-		index.indexName = tableName + "_" + indexes.size();
+		if (StringUtils.isNullOrEmpty(name)) {
+			index.indexName = tableName + "_" + indexes.size();
+		} else {
+			index.indexName = name;
+		}
 		index.columnNames = Utils.newArrayList(columnNames);
 		index.type = type;
 		indexes.add(index);
@@ -376,7 +382,7 @@ class TableDefinition<T> {
 		}
 		buff.append(')');
 		stat.setSQL(buff.toString());
-		
+
 		StatementLogger.merge(stat.getSQL());
 		stat.executeUpdate();
 	}
@@ -524,10 +530,10 @@ class TableDefinition<T> {
 	}
 
 	/**
-	 * Retrieve list of columns from index definition.
+	 * Retrieve list of columns from primary key definition.
 	 * 
 	 * @param index
-	 *            the index columns, separated by space
+	 *            the primary key columns, separated by space
 	 * @return the column list
 	 */
 	private List<String> getColumns(String index) {
@@ -554,8 +560,8 @@ class TableDefinition<T> {
 		if (clazz.isAnnotationPresent(IQSchema.class)) {
 			IQSchema schemaAnnotation = clazz.getAnnotation(IQSchema.class);
 			// setup schema name mapping, if properly annotated
-			if (!StringUtils.isNullOrEmpty(schemaAnnotation.name())) {
-				schemaName = schemaAnnotation.name();
+			if (!StringUtils.isNullOrEmpty(schemaAnnotation.value())) {
+				schemaName = schemaAnnotation.value();
 			}
 		}
 
@@ -571,8 +577,11 @@ class TableDefinition<T> {
 			createTableIfRequired = tableAnnotation.createIfRequired();
 
 			// model version
-			if (tableAnnotation.version() > 0) {
-				tableVersion = tableAnnotation.version();
+			if (clazz.isAnnotationPresent(IQVersion.class)) {
+				IQVersion versionAnnotation = clazz.getAnnotation(IQVersion.class);
+				if (versionAnnotation.value() > 0) {
+					tableVersion = versionAnnotation.value();
+				}
 			}
 
 			// setup the primary index, if properly annotated
@@ -583,34 +592,27 @@ class TableDefinition<T> {
 		}
 
 		if (clazz.isAnnotationPresent(IQIndex.class)) {
-			IQIndex indexAnnotation = clazz.getAnnotation(IQIndex.class);
+			// single table index
+			IQIndex index = clazz.getAnnotation(IQIndex.class);
+			addIndex(index);
+		}
 
-			// setup the indexes, if properly annotated
-			addIndexes(IndexType.STANDARD, indexAnnotation.standard());
-			addIndexes(IndexType.UNIQUE, indexAnnotation.unique());
-			addIndexes(IndexType.HASH, indexAnnotation.hash());
-			addIndexes(IndexType.UNIQUE_HASH, indexAnnotation.uniqueHash());
+		if (clazz.isAnnotationPresent(IQIndexes.class)) {
+			// multiple table indexes
+			IQIndexes indexes = clazz.getAnnotation(IQIndexes.class);
+			for (IQIndex index : indexes.value()) {
+				addIndex(index);
+			}
 		}
 	}
 
-	void addIndexes(IndexType type, String[] indexes) {
-		for (String index : indexes) {
-			List<String> validatedColumns = getColumns(index);
-			if (validatedColumns == null) {
-				return;
-			}
-			addIndex(type, validatedColumns);
-		}
+	void addIndex(IQIndex index) {
+		List<String> columns = Arrays.asList(index.value());
+		addIndex(index.name(), index.type(), columns);
 	}
 
-	List<IndexDefinition> getIndexes(IndexType type) {
-		List<IndexDefinition> list = Utils.newArrayList();
-		for (IndexDefinition def : indexes) {
-			if (def.type.equals(type)) {
-				list.add(def);
-			}
-		}
-		return list;
+	List<IndexDefinition> getIndexes() {
+		return indexes;
 	}
 
 	void initObject(Object obj, Map<Object, FieldDefinition> map) {

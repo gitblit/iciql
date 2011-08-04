@@ -69,15 +69,18 @@ public class AnnotationsTest {
 	public void testIndexCreation() throws SQLException {
 		// test indexes are created, and columns are in the right order
 		DatabaseMetaData meta = db.getConnection().getMetaData();
-		ResultSet rs = meta.getIndexInfo(null, "PUBLIC", "ANNOTATED" + "PRODUCT", false, true);
+		ResultSet rs = meta.getIndexInfo(null, "PUBLIC", "ANNOTATEDPRODUCT", false, true);
 		assertTrue(rs.next());
 		assertStartsWith(rs.getString("INDEX_NAME"), "PRIMARY_KEY");
 		assertTrue(rs.next());
-		assertStartsWith(rs.getString("INDEX_NAME"), "ANNOTATED" + "PRODUCT_");
+		assertStartsWith(rs.getString("INDEX_NAME"), "ANNOTATEDPRODUCT_0");
 		assertStartsWith(rs.getString("COLUMN_NAME"), "NAME");
 		assertTrue(rs.next());
-		assertStartsWith(rs.getString("INDEX_NAME"), "ANNOTATED" + "PRODUCT_");
+		assertStartsWith(rs.getString("INDEX_NAME"), "ANNOTATEDPRODUCT_0");
 		assertStartsWith(rs.getString("COLUMN_NAME"), "CAT");
+		assertTrue(rs.next());
+		assertStartsWith(rs.getString("INDEX_NAME"), "NAMEIDX");
+		assertStartsWith(rs.getString("COLUMN_NAME"), "NAME");
 		assertFalse(rs.next());
 	}
 

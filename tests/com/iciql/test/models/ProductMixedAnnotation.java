@@ -29,7 +29,7 @@ import com.iciql.Iciql.IQTable;
  */
 
 @IQTable(annotationsOnly = false)
-@IQIndex(standard = "name, cat")
+@IQIndex({"name", "cat" })
 public class ProductMixedAnnotation {
 
 	public Double unitPrice;

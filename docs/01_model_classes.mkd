@@ -64,8 +64,7 @@ Please consult the `com.iciql.ModelUtils` class for details.
 2. the model class must have a default public constructor
 
 ### Configuration Limitations
-1. index names can not be specified
-2. triggers, views, and other advanced database features are unimplemented
+Triggers, views, and other advanced database features are unimplemented.
 
 ## Annotation Configuration
 The recommended approach to setup a model class is to annotate the class and field declarations.
@@ -89,7 +88,10 @@ import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQTable;
 
 @IQTable
-@IQIndex(standard = {"productName", "category"})
+@IQIndexes({
+  @IQIndex({"productName", "category"}),
+  @IQIndex(name="nameindex", value="productName")
+})
 public class Product {
 
 	@IQColumn(primaryKey = true)

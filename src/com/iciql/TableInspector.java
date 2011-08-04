@@ -23,6 +23,7 @@ import static com.iciql.ValidationRemark.warn;
 import static com.iciql.util.JdbcUtils.closeSilently;
 import static com.iciql.util.StringUtils.isNullOrEmpty;
 import static java.text.MessageFormat.format;
+
 import java.lang.reflect.Modifier;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -34,14 +35,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.iciql.Iciql.IndexType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQIndex;
+import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQSchema;
 import com.iciql.Iciql.IQTable;
+import com.iciql.Iciql.IndexType;
 import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.StatementBuilder;
+import com.iciql.util.StringUtils;
 import com.iciql.util.Utils;
 
 /**
@@ -175,8 +178,10 @@ public class TableInspector {
 		Set<String> imports = Utils.newHashSet();
 		imports.add(IQSchema.class.getCanonicalName());
 		imports.add(IQTable.class.getCanonicalName());
+		imports.add(IQIndexes.class.getCanonicalName());
 		imports.add(IQIndex.class.getCanonicalName());
-		imports.add(IQColumn.class.getCanonicalName());
+		imports.add(IQColumn.class.getCanonicalName());		
+		imports.add(IndexType.class.getCanonicalName());
 
 		// fields
 		StringBuilder fields = new StringBuilder();
@@ -207,7 +212,7 @@ public class TableInspector {
 			model.append('@').append(IQSchema.class.getSimpleName());
 			model.append('(');
 			AnnotationBuilder ap = new AnnotationBuilder();
-			ap.addParameter("name", schema);
+			ap.addParameter(null, schema);
 			model.append(ap);
 			model.append(')').append(eol);
 		}
@@ -233,17 +238,11 @@ public class TableInspector {
 		model.append(ap);
 		model.append(')').append(eol);
 
+		// @IQIndexes
 		// @IQIndex
-		ap = new AnnotationBuilder();
-		generateIndexAnnotations(ap, "standard", IndexType.STANDARD);
-		generateIndexAnnotations(ap, "unique", IndexType.UNIQUE);
-		generateIndexAnnotations(ap, "hash", IndexType.HASH);
-		generateIndexAnnotations(ap, "uniqueHash", IndexType.UNIQUE_HASH);
-		if (ap.length() > 0) {
-			model.append('@').append(IQIndex.class.getSimpleName());
-			model.append('(');
-			model.append(ap);
-			model.append(')').append(eol);
+		String indexAnnotations = generateIndexAnnotations();
+		if (!StringUtils.isNullOrEmpty(indexAnnotations)) {
+			model.append(indexAnnotations);
 		}
 
 		// class declaration
@@ -269,32 +268,50 @@ public class TableInspector {
 	 * 
 	 * @param ap
 	 */
-	void generateIndexAnnotations(AnnotationBuilder ap, String parameter, IndexType type) {
-		List<IndexInspector> list = getIndexes(type);
-		if (list.size() == 0) {
+	String generateIndexAnnotations() {
+		if (indexes == null || indexes.size() == 0) {
 			// no matching indexes
-			return;
+			return null;
 		}
-		if (list.size() == 1) {
-			ap.addParameter(parameter, list.get(0).getColumnsString());
+		AnnotationBuilder ap = new AnnotationBuilder();
+		if (indexes.size() == 1) {
+			// single index
+			ap.append(generateIndexAnnotation(indexes.get(0)));
+			ap.append(eol);
 		} else {
-			List<String> parameters = Utils.newArrayList();
-			for (IndexInspector index : list) {
-				parameters.add(index.getColumnsString());
+			// multiple indexes
+			ap.append('@').append(IQIndexes.class.getSimpleName());
+			ap.append("({");
+			ap.resetCount();
+			for (IndexInspector index : indexes.values()) {
+				ap.appendExceptFirst(", ");
+				ap.append(generateIndexAnnotation(index));
 			}
-			ap.addParameter(parameter, parameters);
+			ap.append("})").append(eol);
 		}
-
+		return ap.toString();
 	}
 
-	private List<IndexInspector> getIndexes(IndexType type) {
-		List<IndexInspector> list = Utils.newArrayList();
-		for (IndexInspector index : indexes.values()) {
-			if (index.type.equals(type)) {
-				list.add(index);
-			}
+	private String generateIndexAnnotation(IndexInspector index) {
+		AnnotationBuilder ap = new AnnotationBuilder();
+		ap.append('@').append(IQIndex.class.getSimpleName());
+		ap.append('(');
+		ap.resetCount();
+		if (!StringUtils.isNullOrEmpty(index.name)) {
+			ap.addParameter("name", index.name);
 		}
-		return list;
+		if (!index.type.equals(IndexType.STANDARD)) {
+			ap.addParameter("type", IndexType.class.getSimpleName() + "." + index.type.name());
+		}
+		if (ap.getCount() > 0) {
+			// multiple fields specified
+			ap.addParameter("values", index.columns);
+		} else {
+			// default value
+			ap.addParameter(null, index.columns);
+		}
+		ap.append(')');
+		return ap.toString();
 	}
 
 	private StatementBuilder generateColumn(Set<String> imports, ColumnInspector col, boolean trimStrings) {
@@ -424,11 +441,10 @@ public class TableInspector {
 	 */
 	private <T> void validate(List<ValidationRemark> remarks, TableDefinition<T> def, IndexInspector index,
 			boolean throwError) {
-		List<IndexDefinition> defIndexes = def.getIndexes(IndexType.STANDARD);
-		List<IndexInspector> dbIndexes = getIndexes(IndexType.STANDARD);
-		if (defIndexes.size() > dbIndexes.size()) {
+		List<IndexDefinition> defIndexes = def.getIndexes();
+		if (defIndexes.size() > indexes.size()) {
 			remarks.add(warn(table, IndexType.STANDARD.name(), "More model indexes  than database indexes"));
-		} else if (defIndexes.size() < dbIndexes.size()) {
+		} else if (defIndexes.size() < indexes.size()) {
 			remarks.add(warn(table, IndexType.STANDARD.name(), "Model class is missing indexes"));
 		}
 		// TODO complete index validation.
@@ -583,15 +599,6 @@ public class TableInspector {
 		public void addColumn(ResultSet rs) throws SQLException {
 			columns.add(rs.getString("COLUMN_NAME"));
 		}
-
-		public String getColumnsString() {
-			StatementBuilder sb = new StatementBuilder();
-			for (String col : columns) {
-				sb.appendExceptFirst(", ");
-				sb.append(col);
-			}
-			return sb.toString().trim();
-		}
 	}
 
 	/**
@@ -629,19 +636,23 @@ public class TableInspector {
 	 * parameter list.
 	 */
 	private static class AnnotationBuilder extends StatementBuilder {
+
 		AnnotationBuilder() {
 			super();
 		}
 
 		void addParameter(String parameter) {
+
 			appendExceptFirst(", ");
 			append(parameter);
 		}
 
 		<T> void addParameter(String parameter, T value) {
 			appendExceptFirst(", ");
-			append(parameter);
-			append('=');
+			if (!StringUtils.isNullOrEmpty(parameter)) {
+				append(parameter);
+				append('=');
+			}
 			if (value instanceof List) {
 				append("{ ");
 				List<?> list = (List<?>) value;
@@ -663,7 +674,7 @@ public class TableInspector {
 				if (value instanceof String) {
 					append('\"');
 				}
-				// TODO escape				
+				// TODO escape
 				append(value.toString().trim());
 				if (value instanceof String) {
 					append('\"');

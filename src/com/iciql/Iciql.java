@@ -140,11 +140,13 @@ import java.lang.annotation.Target;
 public interface Iciql {
 
 	/**
-	 * An annotation for a database.
+	 * An annotation for an iciql version.
+	 * <p>
+	 * @IQVersion(1)
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
-	public @interface IQDatabase {
+	public @interface IQVersion {
 
 		/**
 		 * If set to a non-zero value, iciql maintains a "_iq_versions" table
@@ -153,12 +155,14 @@ public interface Iciql {
 		 * statements. Default: 0. You must specify a DbUpgrader on your Db
 		 * object to use this parameter.
 		 */
-		int version() default 0;
+		int value() default 0;
 
 	}
 
 	/**
 	 * An annotation for a schema.
+	 * <p>
+	 * @IQSchema("PUBLIC")
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
@@ -167,7 +171,7 @@ public interface Iciql {
 		/**
 		 * The schema may be optionally specified. Default: unspecified.
 		 */
-		String name() default "";
+		String value() default "";
 
 	}
 
@@ -180,58 +184,54 @@ public interface Iciql {
 
 	/**
 	 * An index annotation.
+	 * <p>
+	 * <ul>
+	 * <li>@IQIndex("name")
+	 * <li>@IQIndex({"street", "city"})
+	 * <li>@IQIndex(name="streetidx", value={"street", "city"})
+	 * <li>@IQIndex(name="addressidx", type=IndexType.UNIQUE, value={"house_number", "street", "city"})
+	 * </ul>
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	public @interface IQIndex {
 
 		/**
-		 * Standard indexes may be optionally specified.
-		 * <ul>
-		 * <li>standard = "id, name"</li>
-		 * <li>standard = "id name"</li>
-		 * <li>standard = { "id name", "date" }</li>
-		 * </ul>
-		 * Standard indexes may still be added in the define() method if the
-		 * model class is not annotated with IQTable. Default: unspecified.
+		 * Index name. If null or empty, iciql will generate one.
 		 */
-		String[] standard() default {};
+		String name() default "";
 
 		/**
-		 * Unique indexes may be optionally specified.
+		 * Type of the index.
 		 * <ul>
-		 * <li>unique = "id, name"</li>
-		 * <li>unique = "id name"</li>
-		 * <li>unique = { "id name", "date" }</li>
+		 * <li>com.iciql.iciql.IndexType.STANDARD
+		 * <li>com.iciql.iciql.IndexType.UNIQUE
+		 * <li>com.iciql.iciql.IndexType.HASH
+		 * <li>com.iciql.iciql.IndexType.UNIQUE_HASH
 		 * </ul>
-		 * Unique indexes may still be added in the define() method if the model
-		 * class is not annotated with IQTable. Default: unspecified.
+		 * 
+		 * HASH indexes may only be valid for single column indexes.
+		 * 
 		 */
-		String[] unique() default {};
+		IndexType type() default IndexType.STANDARD;
 
 		/**
-		 * Hash indexes may be optionally specified.
+		 * Columns to include in index.
 		 * <ul>
-		 * <li>hash = "name"
-		 * <li>hash = { "name", "date" }
+		 * <li>single column index: value = "id"
+		 * <li>multiple column index: value = { "id", "name", "date" }
 		 * </ul>
-		 * Hash indexes may still be added in the define() method if the model
-		 * class is not annotated with IQTable. Default: unspecified.
 		 */
-		String[] hash() default {};
+		String[] value() default {};
+	}
 
-		/**
-		 * Unique hash indexes may be optionally specified.
-		 * <ul>
-		 * <li>uniqueHash = "id"
-		 * <li>uniqueHash = "name"
-		 * <li>uniqueHash = { "id", "name" }
-		 * </ul>
-		 * Unique hash indexes may still be added in the define() method if the
-		 * model class is not annotated with IQTable. Default: unspecified.
-		 */
-		String[] uniqueHash() default {};
-
+	/**
+	 * Annotation to specify multiple indexes.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public @interface IQIndexes {
+		IQIndex[] value() default {};
 	}
 
 	/**
@@ -295,15 +295,6 @@ public interface Iciql {
 		 * databases. Default: false.
 		 */
 		boolean memoryTable() default false;
-
-		/**
-		 * If non-zero, iciql will maintain a "_iq_versions" table within your
-		 * database. The version number is used to call to a registered
-		 * DbUpgrader implementation to perform relevant ALTER statements.
-		 * Default: 0. You must specify a DbUpgrader on your Db object to use
-		 * this parameter.
-		 */
-		int version() default 0;
 	}
 
 	/**

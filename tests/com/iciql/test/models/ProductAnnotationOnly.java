@@ -22,14 +22,17 @@ import java.util.List;
 
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQIndex;
+import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQTable;
+import com.iciql.Iciql.IndexType;
 
 /**
  * A table containing product data.
  */
 
 @IQTable(name = "AnnotatedProduct", primaryKey = "id")
-@IQIndex(standard = "name, cat")
+@IQIndexes({ @IQIndex({ "name", "cat" }),
+		@IQIndex(name = "nameidx", type = IndexType.HASH, value = "name") })
 public class ProductAnnotationOnly {
 
 	@IQColumn(autoIncrement = true)
@@ -67,9 +70,10 @@ public class ProductAnnotationOnly {
 		this.unmappedField = unmappedField;
 	}
 
-	private static ProductAnnotationOnly create(int productId, String productName, String category, double unitPrice,
-			int unitsInStock, String unmappedField) {
-		return new ProductAnnotationOnly(productId, productName, category, unitPrice, unitsInStock, unmappedField);
+	private static ProductAnnotationOnly create(int productId, String productName, String category,
+			double unitPrice, int unitsInStock, String unmappedField) {
+		return new ProductAnnotationOnly(productId, productName, category, unitPrice, unitsInStock,
+				unmappedField);
 	}
 
 	public static List<ProductAnnotationOnly> getList() {
