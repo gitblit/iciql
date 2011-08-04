@@ -7,39 +7,39 @@ iciql **is**...
 - for those who want to write code, instead of SQL, using IDE completion and compile-time type-safety
 - small (100KB) with no runtime dependencies
 - pronounced *icicle* (although it could be French: *ici ql* - here query language)
-- a friendly fork of the H2 [JaQu][jaqu] project
+- a friendly fork of the H2 [JaQu](http://h2database.com/html/jaqu.html) project
 
 iciql **is not**...
 
 - a complete alternative to JDBC
-- designed to compete with more powerful database query tools like [jOOQ][jooq] or [Querydsl][querydsl]
-- designed to compete with enterprise [ORM][orm] tools like [Hibernate][hibernate] or [mybatis][mybatis]
+- designed to compete with more powerful database query tools like [jOOQ](http://jooq.sourceforge.net) or [Querydsl](http://source.mysema.com/display/querydsl/Querydsl)
+- designed to compete with enterprise ORM tools like [Hibernate](http://www.hibernate.org) or [mybatis](http://www.mybatis.org)
 
 Supported Databases
 -------
 - [H2](http://h2database.com)
 - Support for others is planned and should only require creating a simple "dialect" class.
 
+License
+-------
+iciql is distributed under the terms of the [Apache Software Foundation license, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).<br/>
+The text of the license is included in the file LICENSE in the root of the project.
+
 Java Runtime Requirement
 -------
 iciql requires a Java 6 Runtime Environment (JRE) or a Java 6 Development Kit (JDK).
  
-Current Release
+Getting help
 -------
-documentation @ [iciql.com](http://iciql.com)
-issues, binaries, & source @ [Google Code][googlecode]<br/>
-sources @ [Github][iciqlsrc]
+Read the online documentation available at the [iciql website](http://iciql.com)<br/>
+Issues, binaries, & sources @ [Google Code](http://code.google.com/p/iciql)
 
-License
--------
-iciql is distributed under the terms of the [Apache Software Foundation license, version 2.0][apachelicense]
+Building iciql
+----------------
+[Eclipse](http://eclipse.org) is recommended for development as the project settings are preconfigured.
 
-[jaqu]: http://h2database.com/html/jaqu.html "H2 JaQu project"
-[orm]: http://en.wikipedia.org/wiki/Object-relational_mapping "Object Relational Mapping"
-[jooq]: http://jooq.sourceforge.net "jOOQ"
-[querydsl]: http://source.mysema.com/display/querydsl/Querydsl "Querydsl"
-[hibernate]: http://www.hibernate.org "Hibernate"
-[mybatis]: http://www.mybatis.org "mybatis"
-[iciqlsrc]: http://github.com/gitblit/iciql "iciql git repository"
-[googlecode]: http://code.google.com/p/iciql "iciql project management"
-[apachelicense]: http://www.apache.org/licenses/LICENSE-2.0 "Apache License, Version 2.0"
+1. Import the iciql project into your Eclipse workspace.<br/>
+*There will be lots of build errors.*
+2. Using Ant, execute the `build.xml` script in the project root.<br/>
+*This will download all necessary build dependencies.*
+3. Select your iciql project root and **Refresh** the project, this should correct all build problems.
