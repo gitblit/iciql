@@ -16,22 +16,22 @@ iciql **is not**...
 - designed to compete with enterprise [ORM][orm] tools like [Hibernate][hibernate] or [mybatis][mybatis]
 
 Supported Databases
-=================
+-------
 - [H2](http://h2database.com)
 - Support for others is planned and should only require creating a simple "dialect" class.
 
 Java Runtime Requirement
-=================
+-------
 iciql requires a Java 6 Runtime Environment (JRE) or a Java 6 Development Kit (JDK).
  
 Current Release
-=================
+-------
 documentation @ [iciql.com](http://iciql.com)
 issues, binaries, & source @ [Google Code][googlecode]<br/>
 sources @ [Github][iciqlsrc]
 
 License
-=================
+-------
 iciql is distributed under the terms of the [Apache Software Foundation license, version 2.0][apachelicense]
 
 [jaqu]: http://h2database.com/html/jaqu.html "H2 JaQu project"
