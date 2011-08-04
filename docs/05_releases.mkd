@@ -16,6 +16,7 @@
 - added *Db.buildObjects(Class modelClass, ResultSet rs)* method to build objects from the ResultSet of a plain sql query
 - added *ThreadLocal&lt;T&gt; com.iciql.Utils.newThreadLocal(final Class&lt;? extends T&gt; clazz)* method
 - added optional console statement logger and SLF4J statement logger
+- refactored dialect support
 - throw *IciqlException* (which is a RuntimeException) instead of RuntimeException
 - synchronized *Db.classMap* for concurrent sharing of a Db instance
 - Database/table versioning uses the <b>_iq_versions </b> table, the <b>_ jq_versions</b> table, if present, is ignored
