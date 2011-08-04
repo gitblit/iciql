@@ -139,7 +139,7 @@
 		        <param name="-hdf"/> <param name="project.name"/> <param name="iciql"/>
 		 		
 		        <!-- versioning -->
-		        <!--<param name="-since"/> <param name="api/v${iq.apiPrevious}.xml"/> <param name="v${iq.apiPrevious}" />-->
+		        <param name="-since"/> <param name="api/v${iq.apiPrevious}.xml"/> <param name="v${iq.apiPrevious}" />
 		        <param name="-apiversion" value="v${iq.apiCurrent}"/>
 		 		
 		 		<param name="-apixml" value="api/v${iq.apiCurrent}.xml"/>
