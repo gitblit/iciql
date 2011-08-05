@@ -25,11 +25,11 @@ public class Constants {
 
 	// The build script extracts this exact line so be careful editing it
 	// and only use A-Z a-z 0-9 .-_ in the string.
-	public static final String VERSION = "0.6.0-SNAPSHOT";
+	public static final String VERSION = "0.6.0";
 
 	// The build script extracts this exact line so be careful editing it
 	// and only use A-Z a-z 0-9 .-_ in the string.
-	public static final String VERSION_DATE = "PENDING";
+	public static final String VERSION_DATE = "2011-08-05";
 	
 	// The build script extracts this exact line so be careful editing it
 	// and only use A-Z a-z 0-9 .-_ in the string.
