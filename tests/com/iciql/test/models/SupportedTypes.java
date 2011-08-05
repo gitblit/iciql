@@ -80,10 +80,10 @@ public class SupportedTypes {
 	public Integer id;
 
 	@IQColumn
-	private Boolean myBool = false;
+	private Boolean myBool;
 
 	@IQColumn
-	private Byte myByte = 2;
+	private Byte myByte;
 
 	@IQColumn
 	private Short myShort;
@@ -95,7 +95,7 @@ public class SupportedTypes {
 	private Long myLong;
 
 	@IQColumn
-	private Float myFloat = 1.0f;
+	private Float myFloat;
 
 	@IQColumn
 	private Double myDouble;
@@ -122,14 +122,14 @@ public class SupportedTypes {
 	private byte[] myBlob;
 
 	@IQEnum(EnumType.STRING)
-	@IQColumn(trimString = true, maxLength = 25)
+	@IQColumn(trim = true, length = 25)
 	private Flower myFavoriteFlower;
 
 	@IQEnum(EnumType.ORDINAL)
 	@IQColumn
 	private Flower myOtherFavoriteFlower;
 
-	@IQColumn(maxLength = 25)
+	@IQColumn(length = 25)
 	// @IQEnum is set on the enumeration definition and is shared
 	// by all uses of Tree as an @IQColumn
 	private Tree myFavoriteTree;

@@ -36,7 +36,7 @@ public class ProductMixedAnnotation {
 	public Integer unitsInStock;
 	public String mappedField;
 
-	@IQColumn(name = "cat", maxLength = 255)
+	@IQColumn(name = "cat", length = 255)
 	public String category;
 
 	@IQColumn(name = "id", primaryKey = true)

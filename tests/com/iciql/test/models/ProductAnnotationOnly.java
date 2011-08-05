@@ -42,7 +42,7 @@ public class ProductAnnotationOnly {
 	@IQColumn(name = "id")
 	public Integer productId;
 
-	@IQColumn(name = "cat", maxLength = 15, trimString = true)
+	@IQColumn(name = "cat", length = 15, trim = true)
 	public String category;
 
 	@IQColumn(name = "name")

@@ -222,6 +222,7 @@ public class Query<T> {
 				try {
 					X value;
 					Object o = rs.getObject(1);
+					// Convert CLOB and BLOB now because we close the resultset
 					if (Clob.class.isAssignableFrom(o.getClass())) {
 						value = (X) Utils.convert(o, String.class);
 					} else if (Blob.class.isAssignableFrom(o.getClass())) {

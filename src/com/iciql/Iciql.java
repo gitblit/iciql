@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  * <table>
  * <tr>
  * <td>java.lang.String</td>
- * <td>VARCHAR (maxLength > 0) or TEXT (maxLength == 0)</td>
+ * <td>VARCHAR (length > 0) or TEXT (length == 0)</td>
  * </tr>
  * <tr>
  * <td>java.lang.Boolean</td>
@@ -93,15 +93,19 @@ import java.lang.annotation.Target;
  * </tr>
  * <tr>
  * <td>java.lang.Enum.name()</td>
- * <td>VARCHAR (maxLength > 0) or TEXT (maxLength == 0)<br/>EnumType.STRING</td>
+ * <td>VARCHAR (length > 0) or TEXT (length == 0)<br/>
+ * EnumType.STRING</td>
  * </tr>
  * <tr>
  * <td>java.lang.Enum.ordinal()</td>
- * <td>INT<br/>EnumType.ORDINAL</td>
+ * <td>INT<br/>
+ * EnumType.ORDINAL</td>
  * </tr>
  * <tr>
- * <td>java.lang.Enum implements<br/>com.iciql.Iciql.EnumID.enumId()</td>
- * <td>INT<br/>EnumType.ENUMID</td>
+ * <td>java.lang.Enum implements<br/>
+ * com.iciql.Iciql.EnumID.enumId()</td>
+ * <td>INT<br/>
+ * EnumType.ENUMID</td>
  * </tr>
  * </tr>
  * </table>
@@ -346,18 +350,18 @@ public interface Iciql {
 		/**
 		 * If larger than zero, it is used during the CREATE TABLE phase. It may
 		 * also be used to prevent database exceptions on INSERT and UPDATE
-		 * statements (see trimString).
+		 * statements (see trim).
 		 * <p>
-		 * Any maxLength set in define() may override this annotation setting if
+		 * Any length set in define() may override this annotation setting if
 		 * the model class is not annotated with IQTable. Default: 0.
 		 */
-		int maxLength() default 0;
+		int length() default 0;
 
 		/**
 		 * If true, iciql will automatically trim the string if it exceeds
-		 * maxLength (value.substring(0, maxLength)). Default: false.
+		 * length (value.substring(0, length)). Default: false.
 		 */
-		boolean trimString() default false;
+		boolean trim() default false;
 
 		/**
 		 * If false, iciql will set the column NOT NULL during the CREATE TABLE
@@ -403,7 +407,8 @@ public interface Iciql {
 	 * <li>ORDINAL - ordinal() : int
 	 * <li>ENUMID - enumId() : int
 	 * </ul>
-	 *  @see com.iciql.Iciql.EnumId interface
+	 * 
+	 * @see com.iciql.Iciql.EnumId interface
 	 */
 	public enum EnumType {
 		STRING, ORDINAL, ENUMID;
@@ -428,8 +433,8 @@ public interface Iciql {
 	 * IQEnum(EnumType.STRING)
 	 * </pre>
 	 * 
-	 * A string mapping will generate either a VARCHAR, if IQColumn.maxLength >
-	 * 0 or a TEXT column if IQColumn.maxLength == 0
+	 * A string mapping will generate either a VARCHAR, if IQColumn.length >
+	 * 0 or a TEXT column if IQColumn.length == 0
 	 * 
 	 */
 	@Retention(RetentionPolicy.RUNTIME)

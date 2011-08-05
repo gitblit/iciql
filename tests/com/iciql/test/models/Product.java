@@ -18,7 +18,7 @@
 package com.iciql.test.models;
 
 import static com.iciql.Define.index;
-import static com.iciql.Define.maxLength;
+import static com.iciql.Define.length;
 import static com.iciql.Define.primaryKey;
 import static com.iciql.Define.tableName;
 
@@ -54,7 +54,7 @@ public class Product implements Iciql {
 	public void defineIQ() {
 		tableName("Product");
 		primaryKey(productId);
-		maxLength(category, 255);
+		length(category, 255);
 		index(productName, category);
 	}
 

@@ -25,8 +25,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({ AliasMapTest.class, AnnotationsTest.class, ClobTest.class, ConcurrencyTest.class,
-		ModelsTest.class, SamplesTest.class, UpdateTest.class, RuntimeQueryTest.class,
+@SuiteClasses({ AliasMapTest.class, AnnotationsTest.class, BooleanModelTest.class, ClobTest.class,
+		ConcurrencyTest.class, ModelsTest.class, SamplesTest.class, UpdateTest.class, RuntimeQueryTest.class,
 		StatementLoggerTest.class })
 public class IciqlSuite {
 

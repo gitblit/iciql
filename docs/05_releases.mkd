@@ -3,9 +3,11 @@
 ### Current Release
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- api change release (API v2)
 - added BLOB support (issue 1)
 - added java.lang.Enum support (issue 2)
-- api change release (API v2)
+- allow runtime flexible mapping of BOOL columns to Integer fields
+- allow runtime flexible mapping of INT columns to Boolean fields
 - annotations overhaul to reduce verbosity
     - @IQSchema(name="public") -> @IQSchema("public")
     - @IQDatabase(version=2) -> @IQVersion(2)
@@ -15,6 +17,8 @@
 %BEGINCODE%
 @IQIndexes({ @IQIndex("name"), @IQIndex(name="myindexname" value={"name", "nickname"}) })
 %ENDCODE%
+    - @IQColumn(maxLength=20) -> @IQColumn(length=20)
+    - @IQColumn(trimString=true) -> @IQColumn(trim=true)
 
 ### Older Releases
 

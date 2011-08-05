@@ -346,13 +346,13 @@ public class TableInspector {
 				ap.addParameter("primaryKey=true");
 			}
 
-			// IQColumn.maxLength
+			// IQColumn.length
 			if ((clazz == String.class) && (col.size > 0) && (col.size < Integer.MAX_VALUE)) {
-				ap.addParameter("maxLength", col.size);
+				ap.addParameter("length", col.size);
 
-				// IQColumn.trimStrings
+				// IQColumn.trim
 				if (trimStrings) {
-					ap.addParameter("trimString=true");
+					ap.addParameter("trim=true");
 				}
 			} else {
 				// IQColumn.AutoIncrement

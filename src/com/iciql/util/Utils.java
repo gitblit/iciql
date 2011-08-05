@@ -226,6 +226,22 @@ public class Utils {
 			return o.toString();
 		}
 
+		// convert from number to boolean
+		if (Boolean.class.isAssignableFrom(targetType)) {
+			if (Number.class.isAssignableFrom(currentType)) {
+				Number n = (Number) o;
+				return n.intValue() > 0;
+			}
+		}
+
+		// convert from boolean to number
+		if (Boolean.class.isAssignableFrom(currentType)) {
+			if (Number.class.isAssignableFrom(targetType)) {
+				Boolean b = (Boolean) o;
+				return b ? 1 : 0;
+			}
+		}
+
 		// convert from number to number
 		if (Number.class.isAssignableFrom(currentType)) {
 			Number n = (Number) o;

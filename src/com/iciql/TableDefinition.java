@@ -285,8 +285,8 @@ class TableDefinition<T> {
 				}
 				isAutoIncrement = col.autoIncrement();
 				isPrimaryKey = col.primaryKey();
-				maxLength = col.maxLength();
-				trimString = col.trimString();
+				maxLength = col.length();
+				trimString = col.trim();
 				allowNull = col.allowNull();
 				defaultValue = col.defaultValue();
 			}

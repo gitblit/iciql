@@ -59,7 +59,7 @@ public class Define {
 		currentTableDefinition.setColumnName(column, columnName);
 	}
 
-	public static void maxLength(Object column, int length) {
+	public static void length(Object column, int length) {
 		checkInDefine();
 		currentTableDefinition.setMaxLength(column, length);
 	}

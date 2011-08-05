@@ -115,7 +115,7 @@ public class ModelsTest {
 				true);
 		assertEquals(1, models.size());
 		// a poor test, but a start
-		assertEquals(1904, models.get(0).length());
+		assertEquals(1895, models.get(0).length());
 	}
 
 	@Test
