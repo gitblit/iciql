@@ -231,6 +231,8 @@ public class Query<T> {
 						value = (X) o;
 					}
 					result.add(value);
+				} catch (IciqlException e) {
+					throw e;
 				} catch (Exception e) {
 					throw new IciqlException(e);
 				}
