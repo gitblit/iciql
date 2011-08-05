@@ -4,6 +4,7 @@
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
 - api change release (API v2)
+- fix to versioning to support H2 1.3.158+
 - added BLOB support (issue 1)
 - added java.lang.Enum support (issue 2)
 - allow runtime flexible mapping of BOOL columns to Integer fields
