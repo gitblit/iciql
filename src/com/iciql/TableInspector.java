@@ -180,7 +180,7 @@ public class TableInspector {
 		imports.add(IQTable.class.getCanonicalName());
 		imports.add(IQIndexes.class.getCanonicalName());
 		imports.add(IQIndex.class.getCanonicalName());
-		imports.add(IQColumn.class.getCanonicalName());		
+		imports.add(IQColumn.class.getCanonicalName());
 		imports.add(IndexType.class.getCanonicalName());
 
 		// fields
@@ -276,7 +276,8 @@ public class TableInspector {
 		AnnotationBuilder ap = new AnnotationBuilder();
 		if (indexes.size() == 1) {
 			// single index
-			ap.append(generateIndexAnnotation(indexes.get(0)));
+			IndexInspector index = indexes.values().toArray(new IndexInspector[1])[0];
+			ap.append(generateIndexAnnotation(index));
 			ap.append(eol);
 		} else {
 			// multiple indexes
@@ -301,11 +302,11 @@ public class TableInspector {
 			ap.addParameter("name", index.name);
 		}
 		if (!index.type.equals(IndexType.STANDARD)) {
-			ap.addParameter("type", IndexType.class.getSimpleName() + "." + index.type.name());
+			ap.addEnum("type", index.type);
 		}
 		if (ap.getCount() > 0) {
 			// multiple fields specified
-			ap.addParameter("values", index.columns);
+			ap.addParameter("value", index.columns);
 		} else {
 			// default value
 			ap.addParameter(null, index.columns);
@@ -684,6 +685,15 @@ public class TableInspector {
 					append('\"');
 				}
 			}
+		}
+
+		void addEnum(String parameter, Enum value) {
+			appendExceptFirst(", ");
+			if (!StringUtils.isNullOrEmpty(parameter)) {
+				append(parameter);
+				append('=');
+			}
+			append(value.getClass().getSimpleName() + "." + value.name());
 		}
 	}
 }
