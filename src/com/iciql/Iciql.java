@@ -91,9 +91,22 @@ import java.lang.annotation.Target;
  * <td>byte []</td>
  * <td>BLOB</td>
  * </tr>
+ * <tr>
+ * <td>java.lang.Enum.name()</td>
+ * <td>VARCHAR (maxLength > 0) or TEXT (maxLength == 0)<br/>EnumType.STRING</td>
+ * </tr>
+ * <tr>
+ * <td>java.lang.Enum.ordinal()</td>
+ * <td>INT<br/>EnumType.ORDINAL</td>
+ * </tr>
+ * <tr>
+ * <td>java.lang.Enum implements<br/>com.iciql.Iciql.EnumID.enumId()</td>
+ * <td>INT<br/>EnumType.ENUMID</td>
+ * </tr>
+ * </tr>
  * </table>
  * <p>
- * Unsupported data types: java.lang.Enum, Array Types, and custom types.
+ * Unsupported data types: primitives, Array Types, and custom types.
  * <p>
  * Table and field mapping: by default, the mapped table name is the class name
  * and the public fields are reflectively mapped, by their name, to columns. As
@@ -373,15 +386,27 @@ public interface Iciql {
 	}
 
 	/**
-	 * Enumeration representing now to map a java.lang.Enum to a column.
+	 * Interface for using the EnumType.ENUMID enumeration mapping strategy.
+	 * <p>
+	 * Enumerations wishing to use EnumType.ENUMID must implement this
+	 * interface.
+	 */
+	public interface EnumId {
+		int enumId();
+	}
+
+	/**
+	 * Enumeration representing how to map a java.lang.Enum to a column.
 	 * <p>
 	 * <ul>
-	 * <li>STRING
-	 * <li>ORDINAL
+	 * <li>STRING - name() : string
+	 * <li>ORDINAL - ordinal() : int
+	 * <li>ENUMID - enumId() : int
 	 * </ul>
+	 *  @see com.iciql.Iciql.EnumId interface
 	 */
 	public enum EnumType {
-		STRING, ORDINAL;
+		STRING, ORDINAL, ENUMID;
 	}
 
 	/**

@@ -16,6 +16,8 @@
 
 package com.iciql;
 
+import java.text.MessageFormat;
+
 /**
  * Iciql wraps all exceptions with this class.
  */
@@ -23,8 +25,9 @@ public class IciqlException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	public IciqlException(String message) {
-		super(message);
+	public IciqlException(String message, Object... parameters) {
+		super(parameters.length > 0 ? MessageFormat.format(message, parameters) : message);
+
 	}
 
 	public IciqlException(Throwable t) {

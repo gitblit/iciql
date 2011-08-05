@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 
+import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQEnum;
@@ -51,8 +52,8 @@ public class SupportedTypes {
 	}
 
 	/**
-	 * Test of @IQEnum annotated enumeration.
-	 * This strategy is the default strategy for all fields of the Tree enum.
+	 * Test of @IQEnum annotated enumeration. This strategy is the default
+	 * strategy for all fields of the Tree enum.
 	 * 
 	 * Individual Tree field declarations can override this strategy by
 	 * specifying a different @IQEnum annotation.
@@ -60,8 +61,19 @@ public class SupportedTypes {
 	 * Here ORDINAL specifies that this enum will be mapped to an INT column.
 	 */
 	@IQEnum(EnumType.ORDINAL)
-	public enum Tree {
-		PINE, OAK, BIRCH, WALNUT, MAPLE;
+	public enum Tree implements EnumId {
+		PINE(10), OAK(20), BIRCH(30), WALNUT(40), MAPLE(50);
+
+		private int enumid;
+
+		Tree(int id) {
+			this.enumid = id;
+		}
+
+		@Override
+		public int enumId() {
+			return enumid;
+		}
 	}
 
 	@IQColumn(primaryKey = true, autoIncrement = true)
@@ -121,6 +133,11 @@ public class SupportedTypes {
 	// @IQEnum is set on the enumeration definition and is shared
 	// by all uses of Tree as an @IQColumn
 	private Tree myFavoriteTree;
+	
+	@IQEnum(EnumType.ENUMID)
+	@IQColumn
+	// override the default enum strategy and use the custom enumid
+	private Tree myOtherFavoriteTree;
 
 	public static List<SupportedTypes> createList() {
 		List<SupportedTypes> list = Utils.newArrayList();
@@ -150,6 +167,7 @@ public class SupportedTypes {
 		s.myFavoriteFlower = Flower.MUM;
 		s.myOtherFavoriteFlower = Flower.MARIGOLD;
 		s.myFavoriteTree = Tree.BIRCH;
+		s.myOtherFavoriteTree = Tree.WALNUT;
 		return s;
 	}
 
@@ -172,6 +190,7 @@ public class SupportedTypes {
 		same &= myFavoriteFlower.equals(s.myFavoriteFlower);
 		same &= myOtherFavoriteFlower.equals(s.myOtherFavoriteFlower);
 		same &= myFavoriteTree.equals(s.myFavoriteTree);
+		same &= myOtherFavoriteTree.equals(s.myOtherFavoriteTree);
 		return same;
 	}
 

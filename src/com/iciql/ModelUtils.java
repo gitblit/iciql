@@ -149,6 +149,7 @@ class ModelUtils {
 				}
 				return "VARCHAR";
 			case ORDINAL:
+			case ENUMID:
 				return "INT";
 			}
 		}

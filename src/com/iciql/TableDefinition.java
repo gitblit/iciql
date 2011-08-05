@@ -27,6 +27,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQEnum;
@@ -97,8 +98,15 @@ class TableDefinition<T> {
 				if (!field.isAccessible()) {
 					field.setAccessible(true);
 				}
-				o = Utils.convert(o, field.getType());
+				Class<?> targetType = field.getType();
+				if (targetType.isEnum()) {
+					o = Utils.convertEnum(o, targetType, enumType);
+				} else {
+					o = Utils.convert(o, targetType);
+				}
 				field.set(obj, o);
+			} catch (IciqlException e) {
+				throw e;
 			} catch (Exception e) {
 				throw new IciqlException(e);
 			}
@@ -344,6 +352,12 @@ class TableDefinition<T> {
 				return iqenum.name();
 			case ORDINAL:
 				return iqenum.ordinal();			
+			case ENUMID:
+				if (!EnumId.class.isAssignableFrom(value.getClass())) {
+					throw new IciqlException(field.field.getName() + " does not implement EnumId!");
+				}
+				EnumId enumid = (EnumId) value;
+				return enumid.enumId();			
 			}
 		}
 		if (field.trimString && field.maxLength > 0) {

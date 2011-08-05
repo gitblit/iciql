@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.iciql.Iciql.EnumId;
+import com.iciql.Iciql.EnumType;
 import com.iciql.IciqlException;
 
 /**
@@ -209,10 +211,7 @@ public class Utils {
 		if (targetType.isAssignableFrom(currentType)) {
 			return o;
 		}
-		// convert enum
-		if (targetType.isEnum()) {
-			return convertEnum(o, targetType);
-		}
+
 		// convert from CLOB/TEXT/VARCHAR to String
 		if (targetType == String.class) {
 			if (Clob.class.isAssignableFrom(currentType)) {
@@ -257,16 +256,18 @@ public class Utils {
 				}
 			}
 		}
-
-		throw new IciqlException("Can not convert the value " + o + " from " + currentType + " to "
-				+ targetType);
+		throw new IciqlException("Can not convert the value {0} from {1} to {2}", o, currentType, targetType);
 	}
-	
-	private static Object convertEnum(Object o, Class<?> targetType) {
+
+	public static Object convertEnum(Object o, Class<?> targetType, EnumType type) {
 		if (o == null) {
 			return null;
 		}
 		Class<?> currentType = o.getClass();
+		if (targetType.isAssignableFrom(currentType)) {
+			return o;
+		}
+
 		// convert from VARCHAR/TEXT/INT to Enum
 		Enum<?>[] values = (Enum[]) targetType.getEnumConstants();
 		if (Clob.class.isAssignableFrom(currentType)) {
@@ -297,16 +298,28 @@ public class Utils {
 		} else if (Number.class.isAssignableFrom(currentType)) {
 			// INT field
 			int n = ((Number) o).intValue();
-
-			// ORDINAL mapping
-			for (Enum<?> value : values) {
-				if (value.ordinal() == n) {
-					return value;
+			if (type.equals(EnumType.ORDINAL)) {
+				// ORDINAL mapping
+				for (Enum<?> value : values) {
+					if (value.ordinal() == n) {
+						return value;
+					}
+				}
+			} else if (type.equals(EnumType.ENUMID)) {
+				if (!EnumId.class.isAssignableFrom(targetType)) {
+					throw new IciqlException("Can not convert the value {0} from {1} to {2} using ENUMID", o,
+							currentType, targetType);
+				}
+				// ENUMID mapping
+				for (Enum<?> value : values) {
+					EnumId enumid = (EnumId) value;
+					if (enumid.enumId() == n) {
+						return value;
+					}
 				}
 			}
 		}
-		throw new IciqlException("Can not convert the value " + o + " from " + currentType + " to "
-				+ targetType);
+		throw new IciqlException("Can not convert the value {0} from {1} to {2}", o, currentType, targetType);
 	}
 
 	/**
