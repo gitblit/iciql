@@ -45,6 +45,16 @@ public class QueryCondition<T, A> {
 		query.addConditionToken(new Condition<A>(x, y, CompareType.NOT_EQUAL));
 		return new QueryWhere<T>(query);
 	}
+	
+	public QueryWhere<T> isNull() {
+		query.addConditionToken(new Condition<A>(x, null, CompareType.IS_NULL));
+		return new QueryWhere<T>(query);
+	}
+
+	public QueryWhere<T> isNotNull() {
+		query.addConditionToken(new Condition<A>(x, null, CompareType.IS_NOT_NULL));
+		return new QueryWhere<T>(query);
+	}
 
 	public QueryWhere<T> exceeds(A y) {
 		query.addConditionToken(new Condition<A>(x, y, CompareType.EXCEEDS));
@@ -63,6 +73,11 @@ public class QueryCondition<T, A> {
 
 	public QueryWhere<T> atMost(A y) {
 		query.addConditionToken(new Condition<A>(x, y, CompareType.AT_MOST));
+		return new QueryWhere<T>(query);
+	}
+	
+	public QueryWhere<T> between(A y, A z) {
+		query.addConditionToken(new Condition<A>(x, y, z, CompareType.BETWEEN));
 		return new QueryWhere<T>(query);
 	}
 	

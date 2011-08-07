@@ -365,8 +365,32 @@ public class Query<T> {
 			return;
 		}
 		stat.appendSQL("?");
+		addParameter(stat, alias, value);
+	}
+	
+	/**
+	 * INTERNAL
+	 * 
+	 * @param stat
+	 *            the statement
+	 * @param alias
+	 *            the alias object (can be null)
+	 * @param value
+	 *            the value
+	 */
+	public void appendSQL(SQLStatement stat, Object alias, Object valueLeft, Object valueRight, CompareType compareType) {
+		stat.appendSQL("?");
+		stat.appendSQL(" ");
+		stat.appendSQL("AND");
+		stat.appendSQL(" ");
+		stat.appendSQL("?");
+		addParameter(stat, alias, valueLeft);
+		addParameter(stat, alias, valueRight);
+	}
+	
+	private void addParameter(SQLStatement stat, Object alias, Object value) {
 		if (alias != null && value.getClass().isEnum()) {
-			col = aliasMap.get(alias);
+			SelectColumn<T> col = aliasMap.get(alias);
 			EnumType type = col.getFieldDefinition().enumType;
 			Enum<?> anEnum = (Enum<?>) value;
 			Object y = Utils.convertEnum(anEnum, type);

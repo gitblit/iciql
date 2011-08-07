@@ -26,12 +26,17 @@ package com.iciql;
 
 class Condition<A> implements Token {
 	CompareType compareType;
-	A x, y;
+	A x, y, z;
 
 	Condition(A x, A y, CompareType compareType) {
+		this(x, y, null, compareType);
+	}
+
+	Condition(A x, A y, A z, CompareType compareType) {
 		this.compareType = compareType;
 		this.x = x;
 		this.y = y;
+		this.z = z;
 	}
 
 	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
@@ -40,7 +45,11 @@ class Condition<A> implements Token {
 		stat.appendSQL(compareType.getString());
 		if (compareType.hasRightExpression()) {
 			stat.appendSQL(" ");
-			query.appendSQL(stat, x, y);
+			if (z == null) {
+				query.appendSQL(stat, x, y);
+			} else {
+				query.appendSQL(stat, x, y, z, compareType);
+			}
 		}
 	}
 }
