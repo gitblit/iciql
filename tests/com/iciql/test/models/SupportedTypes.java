@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 
-import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQEnum;
@@ -30,6 +29,7 @@ import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.Iciql.IndexType;
+import com.iciql.test.models.EnumModels.Tree;
 import com.iciql.util.Utils;
 
 /**
@@ -49,31 +49,6 @@ public class SupportedTypes {
 	 */
 	public enum Flower {
 		ROSE, TULIP, MUM, PETUNIA, MARIGOLD, DAFFODIL;
-	}
-
-	/**
-	 * Test of @IQEnum annotated enumeration. This strategy is the default
-	 * strategy for all fields of the Tree enum.
-	 * 
-	 * Individual Tree field declarations can override this strategy by
-	 * specifying a different @IQEnum annotation.
-	 * 
-	 * Here ORDINAL specifies that this enum will be mapped to an INT column.
-	 */
-	@IQEnum(EnumType.ORDINAL)
-	public enum Tree implements EnumId {
-		PINE(10), OAK(20), BIRCH(30), WALNUT(40), MAPLE(50);
-
-		private int enumid;
-
-		Tree(int id) {
-			this.enumid = id;
-		}
-
-		@Override
-		public int enumId() {
-			return enumid;
-		}
 	}
 
 	@IQColumn(primaryKey = true, autoIncrement = true)
@@ -129,14 +104,14 @@ public class SupportedTypes {
 	@IQColumn
 	private Flower myOtherFavoriteFlower;
 
-	@IQColumn(length = 25)
+	@IQEnum(EnumType.ORDINAL)
+	@IQColumn
+	// override the default enum strategy and use the ordinal value
+	private Tree myFavoriteTree;
+
 	// @IQEnum is set on the enumeration definition and is shared
 	// by all uses of Tree as an @IQColumn
-	private Tree myFavoriteTree;
-	
-	@IQEnum(EnumType.ENUMID)
 	@IQColumn
-	// override the default enum strategy and use the custom enumid
 	private Tree myOtherFavoriteTree;
 
 	public static List<SupportedTypes> createList() {

@@ -63,7 +63,7 @@ public class SQLStatement {
 		}
 		return sql;
 	}
-
+	
 	SQLStatement addParameter(Object o) {
 		params.add(o);
 		return this;

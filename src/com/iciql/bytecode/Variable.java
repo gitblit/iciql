@@ -45,7 +45,7 @@ public class Variable implements Token {
 	}
 
 	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		query.appendSQL(stat, obj);
+		query.appendSQL(stat, null, obj);
 	}
 
 }

@@ -44,11 +44,11 @@ public class UpdateColumnIncrement<T, A> implements UpdateColumn {
 	}
 
 	public void appendSQL(SQLStatement stat) {
-		query.appendSQL(stat, x);
+		query.appendSQL(stat, null, x);
 		stat.appendSQL("=(");
-		query.appendSQL(stat, x);
+		query.appendSQL(stat, null, x);
 		stat.appendSQL("+");
-		query.appendSQL(stat, y);
+		query.appendSQL(stat, x, y);
 		stat.appendSQL(")");
 	}
 

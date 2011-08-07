@@ -275,6 +275,25 @@ public class Utils {
 		throw new IciqlException("Can not convert the value {0} from {1} to {2}", o, currentType, targetType);
 	}
 
+	public static Object convertEnum(Enum<?> o, EnumType type) {
+		if (o == null || type == null) {
+			return null;
+		}
+		switch (type) {
+		case ORDINAL:
+			return o.ordinal();
+		case ENUMID:
+			if (!EnumId.class.isAssignableFrom(o.getClass())) {
+				throw new IciqlException("Can not convert the enum {0} using ENUMID", o);
+			}
+			EnumId enumid = (EnumId) o;
+			return enumid.enumId();
+		case STRING:
+		default:
+			return o.name();
+		}
+	}
+
 	public static Object convertEnum(Object o, Class<?> targetType, EnumType type) {
 		if (o == null) {
 			return null;

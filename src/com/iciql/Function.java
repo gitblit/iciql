@@ -42,7 +42,7 @@ public class Function implements Token {
 			if (i++ > 0) {
 				stat.appendSQL(",");
 			}
-			query.appendSQL(stat, o);
+			query.appendSQL(stat, null, o);
 		}
 		stat.appendSQL(")");
 	}
@@ -67,7 +67,7 @@ public class Function implements Token {
 	public static Boolean isNull(Object x) {
 		return Db.registerToken(Utils.newObject(Boolean.class), new Function("", x) {
 			public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-				query.appendSQL(stat, x[0]);
+				query.appendSQL(stat, null, x[0]);
 				stat.appendSQL(" IS NULL");
 			}
 		});
@@ -76,7 +76,7 @@ public class Function implements Token {
 	public static Boolean isNotNull(Object x) {
 		return Db.registerToken(Utils.newObject(Boolean.class), new Function("", x) {
 			public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-				query.appendSQL(stat, x[0]);
+				query.appendSQL(stat, null, x[0]);
 				stat.appendSQL(" IS NOT NULL");
 			}
 		});
@@ -86,7 +86,7 @@ public class Function implements Token {
 		return Db.registerToken(Utils.newObject(Boolean.class), new Function("", x) {
 			public <T> void appendSQL(SQLStatement stat, Query<T> query) {
 				stat.appendSQL("NOT ");
-				query.appendSQL(stat, x[0]);
+				query.appendSQL(stat, null, x[0]);
 			}
 		});
 	}
@@ -99,7 +99,7 @@ public class Function implements Token {
 					if (i++ > 0) {
 						stat.appendSQL(" OR ");
 					}
-					query.appendSQL(stat, o);
+					query.appendSQL(stat, null, o);
 				}
 			}
 		});
@@ -113,7 +113,7 @@ public class Function implements Token {
 					if (i++ > 0) {
 						stat.appendSQL(" AND ");
 					}
-					query.appendSQL(stat, o);
+					query.appendSQL(stat, null, o);
 				}
 			}
 		});
@@ -138,9 +138,9 @@ public class Function implements Token {
 		return Db.registerToken(o, new Function("LIKE", x, pattern) {
 			public <T> void appendSQL(SQLStatement stat, Query<T> query) {
 				stat.appendSQL("(");
-				query.appendSQL(stat, x[0]);
+				query.appendSQL(stat, null, x[0]);
 				stat.appendSQL(" LIKE ");
-				query.appendSQL(stat, x[1]);
+				query.appendSQL(stat, x[0], x[1]);
 				stat.appendSQL(")");
 			}
 		});

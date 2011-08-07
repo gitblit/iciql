@@ -35,12 +35,12 @@ class Condition<A> implements Token {
 	}
 
 	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		query.appendSQL(stat, x);
+		query.appendSQL(stat, null, x);
 		stat.appendSQL(" ");
 		stat.appendSQL(compareType.getString());
 		if (compareType.hasRightExpression()) {
 			stat.appendSQL(" ");
-			query.appendSQL(stat, y);
+			query.appendSQL(stat, x, y);
 		}
 	}
 }

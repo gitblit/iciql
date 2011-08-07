@@ -39,61 +39,61 @@ public class TestCondition<A> {
 		return Db.registerToken(o, new Function("=", x, y) {
 			public <T> void appendSQL(SQLStatement stat, Query<T> query) {
 				stat.appendSQL("(");
-				query.appendSQL(stat, x[0]);
+				query.appendSQL(stat, null, x[0]);
 				stat.appendSQL(" = ");
-				query.appendSQL(stat, x[1]);
+				query.appendSQL(stat, x[0], x[1]);
 				stat.appendSQL(")");
 			}
 		});
 	}
 
-	public Boolean bigger(A y) {
+	public Boolean exceeds(A y) {
 		Boolean o = Utils.newObject(Boolean.class);
 		return Db.registerToken(o, new Function(">", x, y) {
 			public <T> void appendSQL(SQLStatement stat, Query<T> query) {
 				stat.appendSQL("(");
-				query.appendSQL(stat, x[0]);
+				query.appendSQL(stat, null, x[0]);
 				stat.appendSQL(" > ");
-				query.appendSQL(stat, x[1]);
+				query.appendSQL(stat, x[0], x[1]);
 				stat.appendSQL(")");
 			}
 		});
 	}
 
-	public Boolean biggerEqual(A y) {
+	public Boolean atLeast(A y) {
 		Boolean o = Utils.newObject(Boolean.class);
 		return Db.registerToken(o, new Function(">=", x, y) {
 			public <T> void appendSQL(SQLStatement stat, Query<T> query) {
 				stat.appendSQL("(");
-				query.appendSQL(stat, x[0]);
+				query.appendSQL(stat, null, x[0]);
 				stat.appendSQL(" >= ");
-				query.appendSQL(stat, x[1]);
+				query.appendSQL(stat, x[0], x[1]);
 				stat.appendSQL(")");
 			}
 		});
 	}
 
-	public Boolean smaller(A y) {
+	public Boolean lessThan(A y) {
 		Boolean o = Utils.newObject(Boolean.class);
 		return Db.registerToken(o, new Function("<", x, y) {
 			public <T> void appendSQL(SQLStatement stat, Query<T> query) {
 				stat.appendSQL("(");
-				query.appendSQL(stat, x[0]);
+				query.appendSQL(stat, null, x[0]);
 				stat.appendSQL(" < ");
-				query.appendSQL(stat, x[1]);
+				query.appendSQL(stat, x[0], x[1]);
 				stat.appendSQL(")");
 			}
 		});
 	}
 
-	public Boolean smallerEqual(A y) {
+	public Boolean atMost(A y) {
 		Boolean o = Utils.newObject(Boolean.class);
 		return Db.registerToken(o, new Function("<=", x, y) {
 			public <T> void appendSQL(SQLStatement stat, Query<T> query) {
 				stat.appendSQL("(");
-				query.appendSQL(stat, x[0]);
+				query.appendSQL(stat, null, x[0]);
 				stat.appendSQL(" <= ");
-				query.appendSQL(stat, x[1]);
+				query.appendSQL(stat, x[0], x[1]);
 				stat.appendSQL(")");
 			}
 		});
@@ -104,9 +104,9 @@ public class TestCondition<A> {
 		return Db.registerToken(o, new Function("LIKE", x, pattern) {
 			public <T> void appendSQL(SQLStatement stat, Query<T> query) {
 				stat.appendSQL("(");
-				query.appendSQL(stat, x[0]);
+				query.appendSQL(stat, null, x[0]);
 				stat.appendSQL(" LIKE ");
-				query.appendSQL(stat, x[1]);
+				query.appendSQL(stat, x[0], x[1]);
 				stat.appendSQL(")");
 			}
 		});

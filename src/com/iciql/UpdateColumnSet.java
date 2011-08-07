@@ -17,6 +17,7 @@
 
 package com.iciql;
 
+
 /**
  * This class represents "SET column = value" in an UPDATE statement.
  * 
@@ -44,9 +45,9 @@ public class UpdateColumnSet<T, A> implements UpdateColumn {
 	}
 
 	public void appendSQL(SQLStatement stat) {
-		query.appendSQL(stat, x);
-		stat.appendSQL("=?");
-		stat.addParameter(y);
+		query.appendSQL(stat, null, x);
+		stat.appendSQL("=");
+		query.appendSQL(stat, x, y);
 	}
 
 }

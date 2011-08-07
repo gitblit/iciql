@@ -705,7 +705,7 @@ class TableDefinition<T> {
 			}
 			FieldDefinition def = fields.get(i);
 			Object obj = def.getValue(x);
-			query.appendSQL(stat, obj);
+			query.appendSQL(stat, x, obj);
 		}
 	}
 

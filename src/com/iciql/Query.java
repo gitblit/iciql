@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 
+import com.iciql.Iciql.EnumType;
 import com.iciql.bytecode.ClassReader;
 import com.iciql.util.JdbcUtils;
 import com.iciql.util.StatementLogger;
@@ -213,7 +214,7 @@ public class Query<T> {
 	@SuppressWarnings("unchecked")
 	private <X> List<X> selectSimple(X x, boolean distinct) {
 		SQLStatement stat = getSelectStatement(distinct);
-		appendSQL(stat, x);
+		appendSQL(stat, null, x);
 		appendFromWhere(stat);
 		ResultSet rs = stat.executeQuery();
 		List<X> result = Utils.newArrayList();
@@ -343,26 +344,36 @@ public class Query<T> {
 	 * 
 	 * @param stat
 	 *            the statement
-	 * @param x
-	 *            the alias object
+	 * @param alias
+	 *            the alias object (can be null)
+	 * @param value
+	 *            the value
 	 */
-	public void appendSQL(SQLStatement stat, Object x) {
-		if (x == Function.count()) {
+	public void appendSQL(SQLStatement stat, Object alias, Object value) {
+		if (value == Function.count()) {
 			stat.appendSQL("COUNT(*)");
 			return;
 		}
-		Token token = Db.getToken(x);
+		Token token = Db.getToken(value);
 		if (token != null) {
 			token.appendSQL(stat, this);
 			return;
 		}
-		SelectColumn<T> col = aliasMap.get(x);
+		SelectColumn<T> col = aliasMap.get(value);
 		if (col != null) {
 			col.appendSQL(stat);
 			return;
 		}
 		stat.appendSQL("?");
-		stat.addParameter(x);
+		if (alias != null && value.getClass().isEnum()) {
+			col = aliasMap.get(alias);
+			EnumType type = col.getFieldDefinition().enumType;
+			Enum<?> anEnum = (Enum<?>) value;
+			Object y = Utils.convertEnum(anEnum, type);
+			stat.addParameter(y);
+		} else {
+			stat.addParameter(value);
+		}
 	}
 
 	void addConditionToken(Token condition) {
@@ -397,7 +408,7 @@ public class Query<T> {
 				if (i++ > 0) {
 					stat.appendSQL(", ");
 				}
-				appendSQL(stat, obj);
+				appendSQL(stat, null, obj);
 				stat.appendSQL(" ");
 			}
 		}

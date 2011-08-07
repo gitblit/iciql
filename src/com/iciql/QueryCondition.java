@@ -41,6 +41,11 @@ public class QueryCondition<T, A> {
 		return new QueryWhere<T>(query);
 	}
 
+	public QueryWhere<T> isNot(A y) {
+		query.addConditionToken(new Condition<A>(x, y, CompareType.NOT_EQUAL));
+		return new QueryWhere<T>(query);
+	}
+
 	public QueryWhere<T> exceeds(A y) {
 		query.addConditionToken(new Condition<A>(x, y, CompareType.EXCEEDS));
 		return new QueryWhere<T>(query);
@@ -60,7 +65,7 @@ public class QueryCondition<T, A> {
 		query.addConditionToken(new Condition<A>(x, y, CompareType.AT_MOST));
 		return new QueryWhere<T>(query);
 	}
-
+	
 	public QueryWhere<T> like(A pattern) {
 		query.addConditionToken(new Condition<A>(x, pattern, CompareType.LIKE));
 		return new QueryWhere<T>(query);
