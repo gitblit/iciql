@@ -125,21 +125,21 @@ public class Utils {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> T newObject(Class<T> clazz) {
 		// must create new instances
-		if (clazz == Integer.class) {
+		if (clazz == int.class || clazz == Integer.class) {
 			return (T) new Integer((int) COUNTER.getAndIncrement());
 		} else if (clazz == String.class) {
 			return (T) ("" + COUNTER.getAndIncrement());
-		} else if (clazz == Long.class) {
+		} else if (clazz == long.class || clazz == Long.class) {
 			return (T) new Long(COUNTER.getAndIncrement());
-		} else if (clazz == Short.class) {
+		} else if (clazz == short.class || clazz == Short.class) {
 			return (T) new Short((short) COUNTER.getAndIncrement());
-		} else if (clazz == Byte.class) {
+		} else if (clazz == byte.class || clazz == Byte.class) {
 			return (T) new Byte((byte) COUNTER.getAndIncrement());
-		} else if (clazz == Float.class) {
+		} else if (clazz == float.class || clazz == Float.class) {
 			return (T) new Float(COUNTER.getAndIncrement());
-		} else if (clazz == Double.class) {
+		} else if (clazz == double.class || clazz == Double.class) {
 			return (T) new Double(COUNTER.getAndIncrement());
-		} else if (clazz == Boolean.class) {
+		} else if (clazz == boolean.class || clazz == Boolean.class) {
 			return (T) new Boolean(false);
 		} else if (clazz == BigDecimal.class) {
 			return (T) new BigDecimal(COUNTER.getAndIncrement());
@@ -227,7 +227,7 @@ public class Utils {
 		}
 
 		// convert from number to boolean
-		if (Boolean.class.isAssignableFrom(targetType)) {
+		if (Boolean.class.isAssignableFrom(targetType) || boolean.class.isAssignableFrom(targetType)) {
 			if (Number.class.isAssignableFrom(currentType)) {
 				Number n = (Number) o;
 				return n.intValue() > 0;
@@ -236,26 +236,29 @@ public class Utils {
 
 		// convert from boolean to number
 		if (Boolean.class.isAssignableFrom(currentType)) {
+			Boolean b = (Boolean) o;
 			if (Number.class.isAssignableFrom(targetType)) {
-				Boolean b = (Boolean) o;
 				return b ? 1 : 0;
+			}
+			if (boolean.class.isAssignableFrom(targetType)) {
+				return b.booleanValue();
 			}
 		}
 
 		// convert from number to number
 		if (Number.class.isAssignableFrom(currentType)) {
 			Number n = (Number) o;
-			if (targetType == Byte.class) {
+			if (targetType == byte.class || targetType == Byte.class) {
 				return n.byteValue();
-			} else if (targetType == Short.class) {
+			} else if (targetType == short.class || targetType == Short.class) {
 				return n.shortValue();
-			} else if (targetType == Integer.class) {
+			} else if (targetType == int.class || targetType == Integer.class) {
 				return n.intValue();
-			} else if (targetType == Long.class) {
+			} else if (targetType == long.class || targetType == Long.class) {
 				return n.longValue();
-			} else if (targetType == Double.class) {
+			} else if (targetType == double.class || targetType == Double.class) {
 				return n.doubleValue();
-			} else if (targetType == Float.class) {
+			} else if (targetType == float.class || targetType == Float.class) {
 				return n.floatValue();
 			}
 		}

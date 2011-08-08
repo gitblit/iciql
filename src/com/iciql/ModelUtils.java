@@ -58,6 +58,15 @@ class ModelUtils {
 		m.put(java.sql.Date.class, "DATE");
 		m.put(java.sql.Time.class, "TIME");
 		m.put(byte[].class, "BLOB");
+		
+		// map primitives
+		m.put(boolean.class, m.get(Boolean.class));
+		m.put(byte.class, m.get(Byte.class));
+		m.put(short.class, m.get(Short.class));
+		m.put(int.class, m.get(Integer.class));
+		m.put(long.class, m.get(Long.class));
+		m.put(float.class, m.get(Float.class));
+		m.put(double.class, m.get(Double.class));
 	}
 
 	/**
