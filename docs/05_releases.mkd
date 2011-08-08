@@ -9,6 +9,7 @@
 - added UUID type support (H2 databases only)
 - added partial primitives support *(primitives may not be used for compile-time condition clauses)*
 - added *between(A y).and(A z)* condition syntax
+- moved dialects into separate package
 
 ### Older Releases
 

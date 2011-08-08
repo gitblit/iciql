@@ -50,17 +50,17 @@ import com.iciql.util.Utils;
  *            the table type
  */
 
-class TableDefinition<T> {
+public class TableDefinition<T> {
 
 	/**
 	 * The meta data of an index.
 	 */
 
-	static class IndexDefinition {
-		IndexType type;
-		String indexName;
+	public static class IndexDefinition {
+		public IndexType type;
+		public String indexName;
 
-		List<String> columnNames;
+		public List<String> columnNames;
 	}
 
 	/**

@@ -34,10 +34,10 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import com.iciql.DbUpgrader.DefaultDbUpgrader;
-import com.iciql.Iciql.IQVersion;
 import com.iciql.Iciql.IQTable;
-import com.iciql.SQLDialect.DefaultSQLDialect;
-import com.iciql.SQLDialect.H2Dialect;
+import com.iciql.Iciql.IQVersion;
+import com.iciql.dialect.DefaultSQLDialect;
+import com.iciql.dialect.H2Dialect;
 import com.iciql.util.JdbcUtils;
 import com.iciql.util.StringUtils;
 import com.iciql.util.Utils;
