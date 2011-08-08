@@ -131,13 +131,13 @@ public class ModelsTest {
 
 		List<EnumModels> list = db.from(e).where(e.tree()).atLeast(Tree.BIRCH).select();
 		assertEquals(3, list.size());
-		
+
 		// between is an int compare
-		list = db.from(e).where(e.tree()).between(Tree.BIRCH, Tree.WALNUT).select();
+		list = db.from(e).where(e.tree()).between(Tree.BIRCH).and(Tree.WALNUT).select();
 		assertEquals(2, list.size());
 
 	}
-	
+
 	private void testStringEnums(EnumModels e, List<?> models) {
 		db.insertAll(models);
 
@@ -148,9 +148,9 @@ public class ModelsTest {
 
 		List<EnumModels> list = db.from(e).where(e.tree()).isNot(Tree.BIRCH).select();
 		assertEquals(models.size() - 1, list.size());
-		
+
 		// between is a string compare
-		list = db.from(e).where(e.tree()).between(Tree.MAPLE, Tree.PINE).select();
+		list = db.from(e).where(e.tree()).between(Tree.MAPLE).and(Tree.PINE).select();
 		assertEquals(3, list.size());
 	}
 

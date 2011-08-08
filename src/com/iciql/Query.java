@@ -367,7 +367,7 @@ public class Query<T> {
 		stat.appendSQL("?");
 		addParameter(stat, alias, value);
 	}
-	
+
 	/**
 	 * INTERNAL
 	 * 
@@ -375,19 +375,28 @@ public class Query<T> {
 	 *            the statement
 	 * @param alias
 	 *            the alias object (can be null)
-	 * @param value
-	 *            the value
+	 * @param valueLeft
+	 *            the value on the left of the compound clause
+	 * @param valueRight
+	 *            the value on the right of the compound clause
+	 * @param compareType
+	 *            the current compare type (e.g. BETWEEN)
 	 */
-	public void appendSQL(SQLStatement stat, Object alias, Object valueLeft, Object valueRight, CompareType compareType) {
+	public void appendSQL(SQLStatement stat, Object alias, Object valueLeft, Object valueRight,
+			CompareType compareType) {
 		stat.appendSQL("?");
 		stat.appendSQL(" ");
-		stat.appendSQL("AND");
+		switch (compareType) {
+		case BETWEEN:
+			stat.appendSQL("AND");
+			break;
+		}
 		stat.appendSQL(" ");
 		stat.appendSQL("?");
 		addParameter(stat, alias, valueLeft);
 		addParameter(stat, alias, valueRight);
 	}
-	
+
 	private void addParameter(SQLStatement stat, Object alias, Object value) {
 		if (alias != null && value.getClass().isEnum()) {
 			SelectColumn<T> col = aliasMap.get(alias);
