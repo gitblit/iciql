@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.iciql.Iciql.EnumId;
@@ -159,6 +160,8 @@ public class Utils {
 			// enums can not be instantiated reflectively
 			// return first constant as reference
 			return clazz.getEnumConstants()[0];
+		} else if (clazz == java.util.UUID.class) {
+			return (T) UUID.randomUUID();
 		} else if (clazz == List.class) {
 			return (T) new ArrayList();
 		}

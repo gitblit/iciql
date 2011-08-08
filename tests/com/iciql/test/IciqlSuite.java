@@ -26,8 +26,8 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ AliasMapTest.class, AnnotationsTest.class, BooleanModelTest.class, ClobTest.class,
-		ConcurrencyTest.class, ModelsTest.class, SamplesTest.class, UpdateTest.class, RuntimeQueryTest.class,
-		StatementLoggerTest.class })
+		ConcurrencyTest.class, ModelsTest.class, PrimitivesTest.class, RuntimeQueryTest.class,
+		SamplesTest.class, StatementLoggerTest.class, UpdateTest.class, UUIDTest.class })
 public class IciqlSuite {
 
 	public static void assertStartsWith(String a, String b) {

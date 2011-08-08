@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import com.iciql.TableDefinition.FieldDefinition;
@@ -58,6 +59,7 @@ class ModelUtils {
 		m.put(java.sql.Date.class, "DATE");
 		m.put(java.sql.Time.class, "TIME");
 		m.put(byte[].class, "BLOB");
+		m.put(UUID.class, "UUID");
 		
 		// map primitives
 		m.put(boolean.class, m.get(Boolean.class));

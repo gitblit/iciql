@@ -326,8 +326,11 @@ public class TableInspector {
 			sb.append("// unsupported type " + col.type);
 		} else {
 			// Imports
-			// don't import byte []
-			if (!clazz.equals(byte[].class)) {
+			// don't import primitives, java.lang classes, or byte []
+			if (clazz.getPackage() == null) {
+			} else if (clazz.getPackage().getName().equals("java.lang")) {				
+			} else if (clazz.equals(byte[].class)) {				
+			} else {
 				imports.add(clazz.getCanonicalName());
 			}
 			// @IQColumn
