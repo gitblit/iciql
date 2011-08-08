@@ -359,6 +359,15 @@ public class Query<T> {
 			token.appendSQL(stat, this);
 			return;
 		}
+		if (alias != null && value.getClass().isEnum()) {
+			// special case:
+			// value is first enum constant which is also the alias object.
+			// the first enum constant is used as the alias because we can not
+			// instantiate an enum reflectively.
+			stat.appendSQL("?");
+			addParameter(stat, alias, value);
+			return;
+		}
 		SelectColumn<T> col = aliasMap.get(value);
 		if (col != null) {
 			col.appendSQL(stat);

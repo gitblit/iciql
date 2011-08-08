@@ -36,17 +36,11 @@ import com.iciql.DbUpgrader;
 import com.iciql.DbVersion;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.ValidationRemark;
-import com.iciql.test.models.EnumModels;
-import com.iciql.test.models.EnumModels.EnumIdModel;
-import com.iciql.test.models.EnumModels.EnumOrdinalModel;
-import com.iciql.test.models.EnumModels.EnumStringModel;
-import com.iciql.test.models.EnumModels.Tree;
 import com.iciql.test.models.Product;
 import com.iciql.test.models.ProductAnnotationOnly;
 import com.iciql.test.models.ProductMixedAnnotation;
 import com.iciql.test.models.SupportedTypes;
 import com.iciql.test.models.SupportedTypes.SupportedTypes2;
-import com.iciql.util.StatementLogger;
 
 /**
  * Test that the mapping between classes and tables is done correctly.
@@ -110,48 +104,6 @@ public class ModelsTest {
 			SupportedTypes r = retrieved.get(i);
 			assertTrue(o.equivalentTo(r));
 		}
-	}
-
-	@Test
-	public void testEnumQueries() {
-		StatementLogger.activateConsoleLogger();
-		testIntEnums(new EnumIdModel(), EnumIdModel.createList());
-		testIntEnums(new EnumOrdinalModel(), EnumOrdinalModel.createList());
-		testStringEnums(new EnumStringModel(), EnumStringModel.createList());
-		StatementLogger.deactivateConsoleLogger();
-	}
-
-	private void testIntEnums(EnumModels e, List<?> models) {
-		db.insertAll(models);
-
-		EnumModels model = db.from(e).where(e.tree()).is(Tree.WALNUT).selectFirst();
-
-		assertEquals(400, model.id.intValue());
-		assertEquals(Tree.WALNUT, model.tree());
-
-		List<EnumModels> list = db.from(e).where(e.tree()).atLeast(Tree.BIRCH).select();
-		assertEquals(3, list.size());
-
-		// between is an int compare
-		list = db.from(e).where(e.tree()).between(Tree.BIRCH).and(Tree.WALNUT).select();
-		assertEquals(2, list.size());
-
-	}
-
-	private void testStringEnums(EnumModels e, List<?> models) {
-		db.insertAll(models);
-
-		EnumModels model = db.from(e).where(e.tree()).is(Tree.WALNUT).selectFirst();
-
-		assertEquals(400, model.id.intValue());
-		assertEquals(Tree.WALNUT, model.tree());
-
-		List<EnumModels> list = db.from(e).where(e.tree()).isNot(Tree.BIRCH).select();
-		assertEquals(models.size() - 1, list.size());
-
-		// between is a string compare
-		list = db.from(e).where(e.tree()).between(Tree.MAPLE).and(Tree.PINE).select();
-		assertEquals(3, list.size());
 	}
 
 	@Test

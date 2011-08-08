@@ -54,7 +54,7 @@ public abstract class EnumModels {
 
 	@IQColumn(primaryKey = true)
 	public Integer id;
-	
+
 	public abstract Tree tree();
 
 	/**
@@ -106,7 +106,7 @@ public abstract class EnumModels {
 			this.id = id;
 			this.tree = tree;
 		}
-		
+
 		@Override
 		public Tree tree() {
 			return tree;
@@ -143,7 +143,7 @@ public abstract class EnumModels {
 		public Tree tree() {
 			return tree;
 		}
-		
+
 		public static List<EnumStringModel> createList() {
 			return Arrays.asList(new EnumStringModel(400, Tree.WALNUT), new EnumStringModel(200, Tree.OAK),
 					new EnumStringModel(500, Tree.MAPLE), new EnumStringModel(300, Tree.BIRCH),
