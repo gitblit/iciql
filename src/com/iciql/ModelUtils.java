@@ -197,8 +197,13 @@ class ModelUtils {
 		}
 		Class<?> mappedClass = null;
 		for (Class<?> clazz : SUPPORTED_TYPES.keySet()) {
-			if (SUPPORTED_TYPES.get(clazz).equalsIgnoreCase(sqlType)) {
+			if (clazz.isPrimitive()) {
+				// do not map from SQL TYPE to primitive type
+				continue;
+			}
+			if (SUPPORTED_TYPES.get(clazz).equalsIgnoreCase(sqlType)) {				
 				mappedClass = clazz;
+				
 				break;
 			}
 		}

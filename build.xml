@@ -139,6 +139,7 @@
 		        <param name="-hdf"/> <param name="project.name"/> <param name="iciql"/>
 		 		
 		        <!-- versioning -->
+		 		<param name="-since"/> <param name="api/v1.xml"/> <param name="v1" />
 		        <param name="-since"/> <param name="api/v${iq.apiPrevious}.xml"/> <param name="v${iq.apiPrevious}" />
 		        <param name="-apiversion" value="v${iq.apiCurrent}"/>
 		 		
@@ -166,6 +167,14 @@
 	<target name="build" depends="compile" description="Builds iciql from source">
 		
 		<echo>Building iciql binaries ${iq.version}</echo>
+		
+		<!-- delete any old artifacts -->
+		<delete>
+			<fileset dir="${basedir}">
+				<include name="*.jar"/>
+				<include name="*.zip"/>
+			</fileset>
+		</delete>
 		
 		<!-- library jar -->
 		<jar destfile="${library.jar}">
