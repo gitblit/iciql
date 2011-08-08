@@ -89,15 +89,16 @@ public class Db {
 	SQLDialect getDialect(String clazz) {
 		// try dialect by connection class name
 		Class<? extends SQLDialect> dialectClass = DIALECTS.get(clazz);
-		int lastDot = 0;
 		while (dialectClass == null) {
-			// try dialect by package name
-			int nextDot = clazz.indexOf('.', lastDot);
-			if (nextDot > -1) {
-				String pkg = clazz.substring(0, nextDot);
-				lastDot = nextDot + 1;
-				dialectClass = DIALECTS.get(pkg);
-			} else {
+			// try dialect by registered name
+			for (String registeredName : DIALECTS.keySet()) {
+				if (clazz.indexOf(registeredName) > -1) {
+					dialectClass = DIALECTS.get(registeredName);
+					break;
+				}
+			}
+			if (dialectClass == null) {
+				// did not find a match, use default
 				dialectClass = DefaultSQLDialect.class;
 			}
 		}
@@ -246,8 +247,7 @@ public class Db {
 					// check to see if upgrade is required.
 					if ((model.value() > dbVersion.version) && (dbUpgrader != null)) {
 						// database is an older version than the model
-						boolean success = dbUpgrader
-								.upgradeDatabase(this, dbVersion.version, model.value());
+						boolean success = dbUpgrader.upgradeDatabase(this, dbVersion.version, model.value());
 						if (success) {
 							dbVersion.version = model.value();
 							update(dbVersion);
