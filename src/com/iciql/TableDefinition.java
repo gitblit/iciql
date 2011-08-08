@@ -293,6 +293,7 @@ class TableDefinition<T> {
 
 			// configure Java -> SQL enum mapping
 			if (f.getType().isEnum()) {
+				enumType = EnumType.DEFAULT_TYPE;
 				if (f.getType().isAnnotationPresent(IQEnum.class)) {
 					// enum definition is annotated for all instances
 					IQEnum iqenum = f.getType().getAnnotation(IQEnum.class);
@@ -343,7 +344,7 @@ class TableDefinition<T> {
 			// convert enumeration to INT or STRING
 			Enum<?> iqenum = (Enum<?>) value;
 			switch (field.enumType) {
-			case STRING:
+			case NAME:
 				if (field.trimString && field.maxLength > 0) {
 					if (iqenum.name().length() > field.maxLength) {
 						return iqenum.name().substring(0, field.maxLength);

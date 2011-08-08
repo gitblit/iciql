@@ -48,7 +48,7 @@ List&lt;Product&gt; restock = db.from(p).where("unitsInStock=? and productName l
 #### Db.executeQuery Approaches
 There may be times when the hybrid approach is still too restrictive and you'd prefer to write straight SQL.  You can do that too and use iciql to build objects from your ResultSet, but be careful:
 
-1. Make sure to _select *_ in your query otherwise db.bindResultSet() will throw a RuntimeException
+1. Make sure to _select *_ in your query otherwise db.buildObjects() will throw a RuntimeException
 2. There is no model class type checking nor field type checking. 
 
 %BEGINCODE%

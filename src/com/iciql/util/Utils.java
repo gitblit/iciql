@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -162,8 +161,6 @@ public class Utils {
 			return clazz.getEnumConstants()[0];
 		} else if (clazz == java.util.UUID.class) {
 			return (T) UUID.randomUUID();
-		} else if (clazz == List.class) {
-			return (T) new ArrayList();
 		}
 		try {
 			return clazz.newInstance();
@@ -282,7 +279,7 @@ public class Utils {
 	}
 
 	public static Object convertEnum(Enum<?> o, EnumType type) {
-		if (o == null || type == null) {
+		if (o == null) {
 			return null;
 		}
 		switch (type) {
@@ -294,7 +291,7 @@ public class Utils {
 			}
 			EnumId enumid = (EnumId) o;
 			return enumid.enumId();
-		case STRING:
+		case NAME:
 		default:
 			return o.name();
 		}
@@ -308,7 +305,6 @@ public class Utils {
 		if (targetType.isAssignableFrom(currentType)) {
 			return o;
 		}
-
 		// convert from VARCHAR/TEXT/INT to Enum
 		Enum<?>[] values = (Enum[]) targetType.getEnumConstants();
 		if (Clob.class.isAssignableFrom(currentType)) {

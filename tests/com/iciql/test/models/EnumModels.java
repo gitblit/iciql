@@ -127,7 +127,7 @@ public abstract class EnumModels {
 
 		// override the enumtype to string
 		// ensure that we specify a length so that the column is VARCHAR
-		@IQEnum(EnumType.STRING)
+		@IQEnum(EnumType.NAME)
 		@IQColumn(length = 25)
 		private Tree tree;
 

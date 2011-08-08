@@ -96,7 +96,11 @@ public class SupportedTypes {
 	@IQColumn
 	private byte[] myBlob;
 
-	@IQEnum(EnumType.STRING)
+	// test default enum type NAME
+	@IQColumn(trim = true, length = 25)
+	private Flower myDefaultFlower;
+
+	@IQEnum(EnumType.NAME)
 	@IQColumn(trim = true, length = 25)
 	private Flower myFavoriteFlower;
 
@@ -139,6 +143,7 @@ public class SupportedTypes {
 		s.mySqlTime = new java.sql.Time(rand.nextLong());
 		s.mySqlTimestamp = new java.sql.Timestamp(rand.nextLong());
 		s.myBlob = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		s.myDefaultFlower = Flower.DAFFODIL;
 		s.myFavoriteFlower = Flower.MUM;
 		s.myOtherFavoriteFlower = Flower.MARIGOLD;
 		s.myFavoriteTree = Tree.BIRCH;
@@ -162,6 +167,7 @@ public class SupportedTypes {
 		same &= mySqlTime.toString().equals(s.mySqlTime.toString());
 		same &= myString.equals(s.myString);
 		same &= compare(myBlob, s.myBlob);
+		same &= myDefaultFlower.equals(s.myDefaultFlower);
 		same &= myFavoriteFlower.equals(s.myFavoriteFlower);
 		same &= myOtherFavoriteFlower.equals(s.myOtherFavoriteFlower);
 		same &= myFavoriteTree.equals(s.myFavoriteTree);

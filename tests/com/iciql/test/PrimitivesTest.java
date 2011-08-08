@@ -37,22 +37,27 @@ public class PrimitivesTest {
 		db.insert(model);
 
 		PrimitivesModel p = new PrimitivesModel();
-		
+
 		// retrieve model and compare
 		PrimitivesModel retrievedModel = db.from(p).selectFirst();
 		assertTrue(model.equivalentTo(retrievedModel));
 
-		// retrieve with conditions and compare 
-//		StatementLogger.activateConsoleLogger();
-//		retrievedModel = db.from(p).where(p.myLong).is(model.myLong).and(p.myInteger).is(model.myInteger)
-//				.selectFirst();
-//		assertTrue(model.equivalentTo(retrievedModel));
-//		
-//		// update myInteger and compare
-//		db.from(p).set(p.myInteger).to(10).where(p.myLong).is(model.myLong).update();
-//		retrievedModel = db.from(p).selectFirst();
-		
-//		assertEquals(10, retrievedModel.myInteger);
+		retrievedModel = db.from(p).where("mylong = ? and myinteger = ?", model.myLong, model.myInteger)
+				.selectFirst();
+		assertTrue(model.equivalentTo(retrievedModel));
+
+		// retrieve with conditions and compare
+		// StatementLogger.activateConsoleLogger();
+		// retrievedModel =
+		// db.from(p).where(p.myLong).is(model.myLong).and(p.myInteger).is(model.myInteger)
+		// .selectFirst();
+		// assertTrue(model.equivalentTo(retrievedModel));
+		//
+		// // update myInteger and compare
+		// db.from(p).set(p.myInteger).to(10).where(p.myLong).is(model.myLong).update();
+		// retrievedModel = db.from(p).selectFirst();
+
+		// assertEquals(10, retrievedModel.myInteger);
 
 		db.close();
 	}

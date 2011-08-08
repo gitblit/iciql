@@ -33,8 +33,9 @@ import java.lang.annotation.Target;
  * If a class is annotated with IQTable and at the same time implements Table,
  * the define() method is not called.
  * <p>
- * Supported data types:
+ * Fully Supported Data Types:
  * <table>
+ * <tr><th colspan="2">All Databases</th></tr>
  * <tr>
  * <td>java.lang.String</td>
  * <td>VARCHAR (length > 0) or TEXT (length == 0)</td>
@@ -88,13 +89,9 @@ import java.lang.annotation.Target;
  * <td>TIMESTAMP</td>
  * </tr>
  * <tr>
- * <td>byte []</td>
- * <td>BLOB</td>
- * </tr>
- * <tr>
  * <td>java.lang.Enum.name()</td>
  * <td>VARCHAR (length > 0) or TEXT (length == 0)<br/>
- * EnumType.STRING</td>
+ * EnumType.NAME</td>
  * </tr>
  * <tr>
  * <td>java.lang.Enum.ordinal()</td>
@@ -107,10 +104,36 @@ import java.lang.annotation.Target;
  * <td>INT<br/>
  * EnumType.ENUMID</td>
  * </tr>
+ * <tr><th colspan="2">H2 Databases</th></tr>
+ * <tr>
+ * <td>java.util.UUID</td>
+ * <td>UUID</td>
  * </tr>
  * </table>
  * <p>
- * Unsupported data types: primitives, Array Types, and custom types.
+ * Partially Supported Data Types:
+ * <p>
+ * The following data types can be mapped to columns for all general statements
+ * BUT these field types may not be used to specify compile-time clauses or
+ * constraints.
+ * <table>
+ * <tr><td>byte []</td>
+ * <td>BLOB</td></tr>
+ * <tr><td>boolean</td>
+ * <td>BIT</td></tr>
+ * <tr><td>byte</td>
+ * <td>TINYINT</td></tr>
+ * <tr><td>short</td>
+ * <td>SMALLINT</td></tr>
+ * <tr><td>int</td>
+ * <td>INT</td></tr>
+ * <tr><td>long</td>
+ * <td>BIGINT</td></tr>
+ * <tr><td>float</td>
+ * <td>REAL</td></tr>
+ * <tr><td>double</td>
+ * <td>DOUBLE</td></tr>
+ * </table>
  * <p>
  * Table and field mapping: by default, the mapped table name is the class name
  * and the public fields are reflectively mapped, by their name, to columns. As
@@ -403,7 +426,7 @@ public interface Iciql {
 	 * Enumeration representing how to map a java.lang.Enum to a column.
 	 * <p>
 	 * <ul>
-	 * <li>STRING - name() : string
+	 * <li>NAME - name() : string
 	 * <li>ORDINAL - ordinal() : int
 	 * <li>ENUMID - enumId() : int
 	 * </ul>
@@ -411,7 +434,9 @@ public interface Iciql {
 	 * @see com.iciql.Iciql.EnumId interface
 	 */
 	public enum EnumType {
-		STRING, ORDINAL, ENUMID;
+		NAME, ORDINAL, ENUMID;
+		
+		public static final EnumType DEFAULT_TYPE = NAME;
 	}
 
 	/**
@@ -427,20 +452,20 @@ public interface Iciql {
 	 * be overridden for an individual field by specifying the IQEnum
 	 * annotation.
 	 * <p>
-	 * The default mapping is by STRING.
+	 * The default mapping is by NAME.
 	 * 
 	 * <pre>
-	 * IQEnum(EnumType.STRING)
+	 * IQEnum(EnumType.NAME)
 	 * </pre>
 	 * 
-	 * A string mapping will generate either a VARCHAR, if IQColumn.length >
-	 * 0 or a TEXT column if IQColumn.length == 0
+	 * A string mapping will generate either a VARCHAR, if IQColumn.length > 0
+	 * or a TEXT column if IQColumn.length == 0
 	 * 
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.FIELD, ElementType.TYPE })
 	public @interface IQEnum {
-		EnumType value() default EnumType.STRING;
+		EnumType value() default EnumType.NAME;
 	}
 
 	/**

@@ -10,7 +10,7 @@ Your `com.iciql.DbUpgrader` implementation must specify the `IQVersion(version)`
 ### How does it work?
 If you choose to use versioning, iciql will maintain a table within your database named *_iq_versions* which is defined as:
 
-    CREATE TABLE _IQ_VERSIONS(SCHEMANAME TEXT NOT NULL, TABLENAME TEXT NOT NULL, VERSION INT NOT NULL)
+    CREATE TABLE _IQ_VERSIONS(SCHEMANAME VARCHAR(255) NOT NULL, TABLENAME VARCHAR(255) NOT NULL, VERSION INT NOT NULL)
     
 This database table is automatically created if and only if at least one of your model classes specifies a *version* > 0.
 

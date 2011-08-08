@@ -1,7 +1,18 @@
 ## Release History
 
 ### Current Release
+
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
+
+- api change release (API v3)
+- finished enum support (issue 4)
+- added UUID type support (H2 databases only)
+- added partial primitives support *(primitives may not be used for compile-time condition clauses)*
+- added *between(A y).and(A z)* condition syntax
+
+### Older Releases
+
+**0.6.2** &nbsp; *released 2011-08-05*
 
 - api change release (API v2)
 - fix to versioning to support H2 1.3.158+
@@ -20,10 +31,8 @@
 %ENDCODE%
     - @IQColumn(maxLength=20) -> @IQColumn(length=20)
     - @IQColumn(trimString=true) -> @IQColumn(trim=true)
-
-### Older Releases
-
-**0.5.0** ([zip](http://code.google.com/p/iciql/downloads/detail?name=iciql-0.5.0.zip)|[jar](http://code.google.com/p/iciql/downloads/detail?name=iciql-0.5.0.jar)) &nbsp; *released 2011-08-03*
+    
+**0.5.0** &nbsp; *released 2011-08-03*
 
 - initial release (API v1)
 

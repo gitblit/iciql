@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import com.iciql.Iciql.EnumType;
 import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.util.StringUtils;
 
@@ -150,18 +151,16 @@ class ModelUtils {
 	static String getDataType(FieldDefinition fieldDef, boolean strictTypeMapping) {
 		Class<?> fieldClass = fieldDef.field.getType();
 		if (fieldClass.isEnum()) {
-			if (fieldDef.enumType == null) {
-				throw new IciqlException(fieldDef.field.getName() + " enum field does not specify @IQEnum!");
-			}
 			switch (fieldDef.enumType) {
-			case STRING:
+			case ORDINAL:
+			case ENUMID:
+				return "INT";
+			case NAME:
+			default:
 				if (fieldDef.maxLength <= 0) {
 					return "TEXT";
 				}
 				return "VARCHAR";
-			case ORDINAL:
-			case ENUMID:
-				return "INT";
 			}
 		}
 		if (SUPPORTED_TYPES.containsKey(fieldClass)) {
