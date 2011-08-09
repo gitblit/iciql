@@ -139,7 +139,7 @@ public class TableInspector {
 				col.type = rs.getString("TYPE_NAME");
 				col.clazz = ModelUtils.getClassForSqlType(col.type, dateTimeClass);
 				col.size = rs.getInt("COLUMN_SIZE");
-				col.allowNull = rs.getInt("NULLABLE") == DatabaseMetaData.columnNullable;
+				col.nullable = rs.getInt("NULLABLE") == DatabaseMetaData.columnNullable;
 				col.isAutoIncrement = rs.getBoolean("IS_AUTOINCREMENT");
 				if (primaryKeys.size() == 1) {
 					if (col.name.equalsIgnoreCase(primaryKeys.get(0))) {
@@ -158,7 +158,7 @@ public class TableInspector {
 
 	/**
 	 * Generates a model (class definition) from this table. The model includes
-	 * indexes, primary keys, default values, maxLengths, and allowNull
+	 * indexes, primary keys, default values, lengths, and nullables.
 	 * information.
 	 * <p>
 	 * The caller may optionally set a destination package name, whether or not
@@ -369,9 +369,9 @@ public class TableInspector {
 				}
 			}
 
-			// IQColumn.allowNull
-			if (!col.allowNull) {
-				ap.addParameter("allowNull=false");
+			// IQColumn.nullable
+			if (!col.nullable) {
+				ap.addParameter("nullable=false");
 			}
 
 			// IQColumn.defaultValue
@@ -622,7 +622,7 @@ public class TableInspector {
 		String name;
 		String type;
 		int size;
-		boolean allowNull;
+		boolean nullable;
 		Class<?> clazz;
 		boolean isPrimaryKey;
 		boolean isAutoIncrement;

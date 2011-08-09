@@ -408,9 +408,9 @@ public interface Iciql {
 
 		/**
 		 * If false, iciql will set the column NOT NULL during the CREATE TABLE
-		 * phase. Default: false.
+		 * phase. Default: true.
 		 */
-		boolean allowNull() default false;
+		boolean nullable() default true;
 
 		/**
 		 * The default value assigned to the column during the CREATE TABLE

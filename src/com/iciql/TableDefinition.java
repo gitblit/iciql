@@ -75,7 +75,7 @@ public class TableDefinition<T> {
 		boolean isPrimaryKey;
 		boolean isAutoIncrement;
 		boolean trimString;
-		boolean allowNull;
+		boolean nullable;
 		String defaultValue;
 		EnumType enumType;
 
@@ -275,7 +275,7 @@ public class TableDefinition<T> {
 			boolean isPrimaryKey = false;
 			int maxLength = 0;
 			boolean trimString = false;
-			boolean allowNull = true;
+			boolean nullable = true;
 			EnumType enumType = null;
 			String defaultValue = "";
 			// configure Java -> SQL enum mapping
@@ -303,7 +303,7 @@ public class TableDefinition<T> {
 				isPrimaryKey = col.primaryKey();
 				maxLength = col.length();
 				trimString = col.trim();
-				allowNull = col.allowNull();
+				nullable = col.nullable();
 
 				// try using default object
 				try {
@@ -340,7 +340,7 @@ public class TableDefinition<T> {
 				fieldDef.isPrimaryKey = isPrimaryKey;
 				fieldDef.maxLength = maxLength;
 				fieldDef.trimString = trimString;
-				fieldDef.allowNull = allowNull;
+				fieldDef.nullable = nullable;
 				fieldDef.defaultValue = defaultValue;
 				fieldDef.enumType = enumType;
 				fieldDef.dataType = ModelUtils.getDataType(fieldDef, strictTypeMapping);
@@ -562,7 +562,7 @@ public class TableDefinition<T> {
 				buff.append(" AUTO_INCREMENT");
 			}
 
-			if (!field.allowNull) {
+			if (!field.nullable) {
 				buff.append(" NOT NULL");
 			}
 

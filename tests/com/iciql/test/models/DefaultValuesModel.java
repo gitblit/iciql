@@ -50,7 +50,7 @@ public class DefaultValuesModel {
 	@IQEnum(EnumType.ORDINAL)
 	public Tree myOrdinalTree = Tree.PINE;
 
-	@IQColumn(allowNull = true)
+	@IQColumn(nullable = true)
 	public Tree myNullTree;
 
 	public DefaultValuesModel() {

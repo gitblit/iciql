@@ -26,13 +26,13 @@ import com.iciql.Iciql.IQTable;
 @IQTable(name = "_iq_versions", primaryKey = { "schemaName", "tableName"}, memoryTable = true)
 public class DbVersion {
 
-	@IQColumn(name = "schemaName", length = 255, allowNull = false)
-	String schema = "";
+	@IQColumn(length = 255)
+	String schemaName = "";
 
-	@IQColumn(name = "tableName", length = 255, allowNull = false)
-	String table = "";
+	@IQColumn(length = 255)
+	String tableName = "";
 
-	@IQColumn(name = "version")
+	@IQColumn
 	Integer version;
 
 	public DbVersion() {
@@ -47,8 +47,8 @@ public class DbVersion {
 	 *            the database version
 	 */
 	public DbVersion(int version) {
-		this.schema = "";
-		this.table = "";
+		this.schemaName = "";
+		this.tableName = "";
 		this.version = version;
 	}
 

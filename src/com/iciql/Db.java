@@ -236,7 +236,7 @@ public class Db {
 				DbVersion v = new DbVersion();
 				DbVersion dbVersion =
 				// (SCHEMA="" && TABLE="") == DATABASE
-				from(v).where(v.schema).is("").and(v.table).is("").selectFirst();
+				from(v).where(v.schemaName).is("").and(v.tableName).is("").selectFirst();
 				if (dbVersion == null) {
 					// database has no version registration, but model specifies
 					// version: insert DbVersion entry and return.
@@ -268,14 +268,14 @@ public class Db {
 				// table is using iciql version tracking.
 				DbVersion v = new DbVersion();
 				String schema = StringUtils.isNullOrEmpty(model.schemaName) ? "" : model.schemaName;
-				DbVersion dbVersion = from(v).where(v.schema).like(schema).and(v.table).like(model.tableName)
+				DbVersion dbVersion = from(v).where(v.schemaName).like(schema).and(v.tableName).like(model.tableName)
 						.selectFirst();
 				if (dbVersion == null) {
 					// table has no version registration, but model specifies
 					// version: insert DbVersion entry
 					DbVersion newTable = new DbVersion(model.tableVersion);
-					newTable.schema = schema;
-					newTable.table = model.tableName;
+					newTable.schemaName = schema;
+					newTable.tableName = model.tableName;
 					insert(newTable);
 				} else {
 					// table has a version registration:
