@@ -77,6 +77,11 @@ a:hover, a:visited, a:active {
 	color: #880000;
 }
 
+span.warning {
+	font-weight: bold;
+	color: #f00000;
+}
+
 img.logo {
 	margin-top:-8px;
 	float: right;

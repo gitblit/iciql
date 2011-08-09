@@ -267,6 +267,7 @@ public class TableDefinition<T> {
 			classFields.addAll(Arrays.asList(superClass.getDeclaredFields()));
 		}
 
+		T defaultObject = Db.instance(clazz);
 		for (Field f : classFields) {
 			// default to field name
 			String columnName = f.getName();
@@ -277,20 +278,6 @@ public class TableDefinition<T> {
 			boolean allowNull = true;
 			EnumType enumType = null;
 			String defaultValue = "";
-			boolean hasAnnotation = f.isAnnotationPresent(IQColumn.class);
-			if (hasAnnotation) {
-				IQColumn col = f.getAnnotation(IQColumn.class);
-				if (!StringUtils.isNullOrEmpty(col.name())) {
-					columnName = col.name();
-				}
-				isAutoIncrement = col.autoIncrement();
-				isPrimaryKey = col.primaryKey();
-				maxLength = col.length();
-				trimString = col.trim();
-				allowNull = col.allowNull();
-				defaultValue = col.defaultValue();
-			}
-
 			// configure Java -> SQL enum mapping
 			if (f.getType().isEnum()) {
 				enumType = EnumType.DEFAULT_TYPE;
@@ -303,6 +290,43 @@ public class TableDefinition<T> {
 					// this instance of the enum is annotated
 					IQEnum iqenum = f.getAnnotation(IQEnum.class);
 					enumType = iqenum.value();
+				}
+			}
+
+			boolean hasAnnotation = f.isAnnotationPresent(IQColumn.class);
+			if (hasAnnotation) {
+				IQColumn col = f.getAnnotation(IQColumn.class);
+				if (!StringUtils.isNullOrEmpty(col.name())) {
+					columnName = col.name();
+				}
+				isAutoIncrement = col.autoIncrement();
+				isPrimaryKey = col.primaryKey();
+				maxLength = col.length();
+				trimString = col.trim();
+				allowNull = col.allowNull();
+
+				// try using default object
+				try {
+					f.setAccessible(true);
+					Object value = f.get(defaultObject);
+					if (value != null) {
+						if (value.getClass().isEnum()) {
+							// enum default, convert to target type
+							Enum<?> anEnum = (Enum<?>) value;
+							Object o = Utils.convertEnum(anEnum, enumType);
+							defaultValue = ModelUtils.formatDefaultValue(o);
+						} else {
+							// object default
+							defaultValue = ModelUtils.formatDefaultValue(value);
+						}
+					}
+				} catch (IllegalAccessException e) {
+					throw new IciqlException(e, "Failed to get default object for {0}", columnName);
+				}
+
+				// annotation overrides
+				if (!StringUtils.isNullOrEmpty(col.defaultValue())) {
+					defaultValue = col.defaultValue();
 				}
 			}
 
@@ -340,6 +364,9 @@ public class TableDefinition<T> {
 	 */
 	private Object getValue(Object obj, FieldDefinition field) {
 		Object value = field.getValue(obj);
+		if (value == null) {
+			return value;
+		}
 		if (field.enumType != null) {
 			// convert enumeration to INT or STRING
 			Enum<?> iqenum = (Enum<?>) value;
@@ -352,13 +379,13 @@ public class TableDefinition<T> {
 				}
 				return iqenum.name();
 			case ORDINAL:
-				return iqenum.ordinal();			
+				return iqenum.ordinal();
 			case ENUMID:
 				if (!EnumId.class.isAssignableFrom(value.getClass())) {
 					throw new IciqlException(field.field.getName() + " does not implement EnumId!");
 				}
 				EnumId enumid = (EnumId) value;
-				return enumid.enumId();			
+				return enumid.enumId();
 			}
 		}
 		if (field.trimString && field.maxLength > 0) {
@@ -580,30 +607,6 @@ public class TableDefinition<T> {
 		return this;
 	}
 
-	/**
-	 * Retrieve list of columns from primary key definition.
-	 * 
-	 * @param index
-	 *            the primary key columns, separated by space
-	 * @return the column list
-	 */
-	private List<String> getColumns(String index) {
-		List<String> cols = Utils.newArrayList();
-		if (index == null || index.length() == 0) {
-			return null;
-		}
-		String[] cs = index.split("(,|\\s)");
-		for (String c : cs) {
-			if (c != null && c.trim().length() > 0) {
-				cols.add(c.trim());
-			}
-		}
-		if (cols.size() == 0) {
-			return null;
-		}
-		return cols;
-	}
-
 	void mapObject(Object obj) {
 		fieldMap.clear();
 		initObject(obj, fieldMap);
@@ -636,8 +639,9 @@ public class TableDefinition<T> {
 			}
 
 			// setup the primary index, if properly annotated
-			List<String> primaryKey = getColumns(tableAnnotation.primaryKey());
-			if (primaryKey != null) {
+			if (tableAnnotation.primaryKey().length > 0) {
+				List<String> primaryKey = Utils.newArrayList();
+				primaryKey.addAll(Arrays.asList(tableAnnotation.primaryKey()));
 				setPrimaryKey(primaryKey);
 			}
 		}

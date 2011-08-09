@@ -2,7 +2,25 @@
 
 ### Current Release
 
+<span class="warning">iciql is undergoing rapid development so api and configuration are subject to change from release to release</span>
+
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
+
+- api change release (API v4)
+- allow using objects to assign default values<br/>
+%BEGINCODE%
+// CREATE TABLE ... myDate DATETIME DEFAULT '2000-02-01 00:00:00'
+@IQColumn
+Date myDate = new Date(100, 1, 1);
+%ENDCODE%
+- changed @IQTable.primaryKey definition to use array of column names<br/>
+%BEGINCODE%
+@IQTable( primaryKey = {"name", "nickname"})
+%ENDCODE%
+
+### Older Releases
+
+**0.6.3** &nbsp; *released 2011-08-08*
 
 - api change release (API v3)
 - finished enum support (issue 4)
@@ -10,8 +28,6 @@
 - added partial primitives support *(primitives may not be used for compile-time condition clauses)*
 - added *between(A y).and(A z)* condition syntax
 - moved dialects into separate package
-
-### Older Releases
 
 **0.6.2** &nbsp; *released 2011-08-05*
 

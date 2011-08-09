@@ -143,6 +143,7 @@ The recommended approach to setup a model class is to annotate the class and fie
 ### advantages
 
 - annotated fields may have any scope
+- annotated fields may specify default values
 - annotated models support annotated field inheritance making it possible to design a single base class that defines the fields and then create table subclasses that specify the table mappings.
 - model runtime dependency is limited to the small, portable `com.iciql.Iciql` class file which contains the annotation definitions
 
@@ -151,6 +152,24 @@ The recommended approach to setup a model class is to annotate the class and fie
 - more verbose model classes
 - indexes are defined using "fragile" string column names
 - compound primary keys are defined using "fragile" string column names
+
+### default values
+
+You may specify default values for an @IQColumn by either:
+
+1. specifying the default value string within your annotation<br/>
+%BEGINCODE%
+// notice the single ticks!
+@IQColumn(defaultValue="'2000-01-01 00:00:00'")
+Date myDate;
+%ENDCODE%
+2. setting a default object on the field<br/>
+%BEGINCODE%
+@IQColumn
+Date myDate = new Date(100, 0, 1);
+%ENDCODE%
+
+If you want to specify a database-specific variable or function as your default value (e.g. CURRENT_TIMESTAMP) you must do that within the annotation.  Also note that the IQColumn.defaultValue must be a well-formatted SQL DEFAULT expression whereas object defaults will be automatically converted to an SQL DEFAULT expression.
  
 ### Example Annotated Model
 %BEGINCODE%

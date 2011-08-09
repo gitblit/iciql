@@ -46,6 +46,8 @@ iciql requires a Java 6 Runtime Environment (JRE) or a Java 6 Development Kit (J
  
 ### Current Release
 
+<span class="warning">iciql is undergoing rapid development so api and configuration are subject to change from release to release</span>
+
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
 issues, binaries, & source @ [Google Code][googlecode]<br/>

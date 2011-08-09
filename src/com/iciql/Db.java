@@ -114,7 +114,7 @@ public class Db {
 		return TOKENS.get(x);
 	}
 
-	private static <T> T instance(Class<T> clazz) {
+	static <T> T instance(Class<T> clazz) {
 		try {
 			return clazz.newInstance();
 		} catch (Exception e) {

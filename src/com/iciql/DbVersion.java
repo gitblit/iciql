@@ -23,7 +23,7 @@ import com.iciql.Iciql.IQTable;
 /**
  * A system table to track database and table versions.
  */
-@IQTable(name = "_iq_versions", primaryKey = "schemaName tableName", memoryTable = true)
+@IQTable(name = "_iq_versions", primaryKey = { "schemaName", "tableName"}, memoryTable = true)
 public class DbVersion {
 
 	@IQColumn(name = "schemaName", length = 255, allowNull = false)

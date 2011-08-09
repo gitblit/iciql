@@ -226,11 +226,15 @@ public class TableInspector {
 		ap.addParameter("name", table);
 
 		if (primaryKeys.size() > 1) {
-			StringBuilder pk = new StringBuilder();
+			StatementBuilder pk = new StatementBuilder();
+			pk.append("{ ");
 			for (String key : primaryKeys) {
-				pk.append(key).append(' ');
+				pk.appendExceptFirst(", ");
+				pk.append("\"");
+				pk.append(key);
+				pk.append("\"");
 			}
-			pk.trimToSize();
+			pk.append(" }");
 			ap.addParameter("primaryKey", pk.toString());
 		}
 
@@ -328,8 +332,8 @@ public class TableInspector {
 			// Imports
 			// don't import primitives, java.lang classes, or byte []
 			if (clazz.getPackage() == null) {
-			} else if (clazz.getPackage().getName().equals("java.lang")) {				
-			} else if (clazz.equals(byte[].class)) {				
+			} else if (clazz.getPackage().getName().equals("java.lang")) {
+			} else if (clazz.equals(byte[].class)) {
 			} else {
 				imports.add(clazz.getCanonicalName());
 			}
@@ -508,13 +512,12 @@ public class TableInspector {
 				remarks.add(warn(
 						table,
 						col,
-						format("{0}.maxLength={1}, ColumnMaxLength={2}", IQColumn.class.getSimpleName(),
+						format("{0}.length={1}, ColumnMaxLength={2}", IQColumn.class.getSimpleName(),
 								fieldDef.maxLength, col.size)));
 			}
 			if (fieldDef.maxLength > 0 && !fieldDef.trimString) {
-				remarks.add(consider(table, col,
-						format("{0}.truncateToMaxLength=true" + " will prevent IciqlExceptions on"
-								+ " INSERT or UPDATE, but will clip data!", IQColumn.class.getSimpleName())));
+				remarks.add(consider(table, col, format("{0}.trim=true will prevent IciqlExceptions on"
+						+ " INSERT or UPDATE, but will clip data!", IQColumn.class.getSimpleName())));
 			}
 		}
 
@@ -523,55 +526,58 @@ public class TableInspector {
 			remarks.add(warn(
 					table,
 					col,
-					format("{0}.isAutoIncrement={1}" + " while Column autoIncrement={2}",
+					format("{0}.autoIncrement={1}" + " while Column autoIncrement={2}",
 							IQColumn.class.getSimpleName(), fieldDef.isAutoIncrement, col.isAutoIncrement)));
 		}
 		// default value
 		if (!col.isAutoIncrement && !col.isPrimaryKey) {
+			String defaultValue = null;
+			if (fieldDef.defaultValue != null && fieldDef.defaultValue instanceof String) {
+				defaultValue = fieldDef.defaultValue.toString();
+			}
 			// check Model.defaultValue format
-			if (!ModelUtils.isProperlyFormattedDefaultValue(fieldDef.defaultValue)) {
+			if (!ModelUtils.isProperlyFormattedDefaultValue(defaultValue)) {
 				remarks.add(error(
 						table,
 						col,
 						format("{0}.defaultValue=\"{1}\"" + " is improperly formatted!",
-								IQColumn.class.getSimpleName(), fieldDef.defaultValue))
-						.throwError(throwError));
+								IQColumn.class.getSimpleName(), defaultValue)).throwError(throwError));
 				// next field
 				return;
 			}
 			// compare Model.defaultValue to Column.defaultValue
-			if (isNullOrEmpty(fieldDef.defaultValue) && !isNullOrEmpty(col.defaultValue)) {
+			if (isNullOrEmpty(defaultValue) && !isNullOrEmpty(col.defaultValue)) {
 				// Model.defaultValue is NULL, Column.defaultValue is NOT NULL
 				remarks.add(warn(
 						table,
 						col,
 						format("{0}.defaultValue=\"\"" + " while column default=\"{1}\"",
 								IQColumn.class.getSimpleName(), col.defaultValue)));
-			} else if (!isNullOrEmpty(fieldDef.defaultValue) && isNullOrEmpty(col.defaultValue)) {
+			} else if (!isNullOrEmpty(defaultValue) && isNullOrEmpty(col.defaultValue)) {
 				// Column.defaultValue is NULL, Model.defaultValue is NOT NULL
 				remarks.add(warn(
 						table,
 						col,
 						format("{0}.defaultValue=\"{1}\"" + " while column default=\"\"",
-								IQColumn.class.getSimpleName(), fieldDef.defaultValue)));
-			} else if (!isNullOrEmpty(fieldDef.defaultValue) && !isNullOrEmpty(col.defaultValue)) {
-				if (!fieldDef.defaultValue.equals(col.defaultValue)) {
+								IQColumn.class.getSimpleName(), defaultValue)));
+			} else if (!isNullOrEmpty(defaultValue) && !isNullOrEmpty(col.defaultValue)) {
+				if (!defaultValue.equals(col.defaultValue)) {
 					// Model.defaultValue != Column.defaultValue
 					remarks.add(warn(
 							table,
 							col,
 							format("{0}.defaultValue=\"{1}\"" + " while column default=\"{2}\"",
-									IQColumn.class.getSimpleName(), fieldDef.defaultValue, col.defaultValue)));
+									IQColumn.class.getSimpleName(), defaultValue, col.defaultValue)));
 				}
 			}
 
 			// sanity check Model.defaultValue literal value
-			if (!ModelUtils.isValidDefaultValue(fieldDef.field.getType(), fieldDef.defaultValue)) {
+			if (!ModelUtils.isValidDefaultValue(fieldDef.field.getType(), defaultValue)) {
 				remarks.add(error(
 						table,
 						col,
 						format("{0}.defaultValue=\"{1}\" is invalid!", IQColumn.class.getSimpleName(),
-								fieldDef.defaultValue)));
+								defaultValue)));
 			}
 		}
 	}

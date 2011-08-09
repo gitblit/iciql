@@ -21,14 +21,16 @@ import static com.iciql.util.StringUtils.isNullOrEmpty;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import com.iciql.Iciql.EnumType;
 import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.util.StringUtils;
 
@@ -61,7 +63,7 @@ class ModelUtils {
 		m.put(java.sql.Time.class, "TIME");
 		m.put(byte[].class, "BLOB");
 		m.put(UUID.class, "UUID");
-		
+
 		// map primitives
 		m.put(boolean.class, m.get(Boolean.class));
 		m.put(byte.class, m.get(Byte.class));
@@ -201,9 +203,9 @@ class ModelUtils {
 				// do not map from SQL TYPE to primitive type
 				continue;
 			}
-			if (SUPPORTED_TYPES.get(clazz).equalsIgnoreCase(sqlType)) {				
+			if (SUPPORTED_TYPES.get(clazz).equalsIgnoreCase(sqlType)) {
 				mappedClass = clazz;
-				
+
 				break;
 			}
 		}
@@ -250,6 +252,41 @@ class ModelUtils {
 			lower += "Value";
 		}
 		return lower;
+	}
+
+	/**
+	 * Converts the object into a DEFAULT clause value.
+	 * 
+	 * @param o
+	 *            the default object
+	 * @return the value formatted for a DEFAULT clause
+	 */
+	static String formatDefaultValue(Object o) {
+		Class<?> objectClass = o.getClass();
+		String value = null;
+		if (Number.class.isAssignableFrom(objectClass)) {
+			// NUMBER
+			value = ((Number) o).toString();
+		} else if (java.sql.Date.class.isAssignableFrom(objectClass)) {
+			// DATE
+			value = new SimpleDateFormat("yyyy-MM-dd").format((Date) o);
+		} else if (java.sql.Time.class.isAssignableFrom(objectClass)) {
+			// TIME
+			value = new SimpleDateFormat("HH:mm:ss").format((Date) o);
+		} else if (Date.class.isAssignableFrom(objectClass)) {
+			// DATETIME
+			value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) o);
+		} else if (String.class.isAssignableFrom(objectClass)) {
+			// STRING
+			value = o.toString();
+		} else if (Boolean.class.isAssignableFrom(objectClass)) {
+			// BOOLEAN
+			value = o.toString();
+		}
+		if (value == null) {
+			return "''";
+		}
+		return MessageFormat.format("''{0}''", value);
 	}
 
 	/**

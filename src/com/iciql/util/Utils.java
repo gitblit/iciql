@@ -116,7 +116,7 @@ public class Utils {
 							}
 						}
 					}
-					throw new IciqlException("Exception trying to create " + clazz.getName() + ": " + e, e);
+					throw new IciqlException("Missing default constructor?  Exception trying to create " + clazz.getName() + ": " + e, e);
 				}
 			}
 		};

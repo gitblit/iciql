@@ -35,7 +35,9 @@ import java.lang.annotation.Target;
  * <p>
  * Fully Supported Data Types:
  * <table>
- * <tr><th colspan="2">All Databases</th></tr>
+ * <tr>
+ * <th colspan="2">All Databases</th>
+ * </tr>
  * <tr>
  * <td>java.lang.String</td>
  * <td>VARCHAR (length > 0) or TEXT (length == 0)</td>
@@ -104,7 +106,9 @@ import java.lang.annotation.Target;
  * <td>INT<br/>
  * EnumType.ENUMID</td>
  * </tr>
- * <tr><th colspan="2">H2 Databases</th></tr>
+ * <tr>
+ * <th colspan="2">H2 Databases</th>
+ * </tr>
  * <tr>
  * <td>java.util.UUID</td>
  * <td>UUID</td>
@@ -117,22 +121,38 @@ import java.lang.annotation.Target;
  * BUT these field types may not be used to specify compile-time clauses or
  * constraints.
  * <table>
- * <tr><td>byte []</td>
- * <td>BLOB</td></tr>
- * <tr><td>boolean</td>
- * <td>BIT</td></tr>
- * <tr><td>byte</td>
- * <td>TINYINT</td></tr>
- * <tr><td>short</td>
- * <td>SMALLINT</td></tr>
- * <tr><td>int</td>
- * <td>INT</td></tr>
- * <tr><td>long</td>
- * <td>BIGINT</td></tr>
- * <tr><td>float</td>
- * <td>REAL</td></tr>
- * <tr><td>double</td>
- * <td>DOUBLE</td></tr>
+ * <tr>
+ * <td>byte []</td>
+ * <td>BLOB</td>
+ * </tr>
+ * <tr>
+ * <td>boolean</td>
+ * <td>BIT</td>
+ * </tr>
+ * <tr>
+ * <td>byte</td>
+ * <td>TINYINT</td>
+ * </tr>
+ * <tr>
+ * <td>short</td>
+ * <td>SMALLINT</td>
+ * </tr>
+ * <tr>
+ * <td>int</td>
+ * <td>INT</td>
+ * </tr>
+ * <tr>
+ * <td>long</td>
+ * <td>BIGINT</td>
+ * </tr>
+ * <tr>
+ * <td>float</td>
+ * <td>REAL</td>
+ * </tr>
+ * <tr>
+ * <td>double</td>
+ * <td>DOUBLE</td>
+ * </tr>
  * </table>
  * <p>
  * Table and field mapping: by default, the mapped table name is the class name
@@ -302,13 +322,13 @@ public interface Iciql {
 		 * then no primary key is set by the IQTable annotation. You may specify
 		 * a composite primary key.
 		 * <ul>
-		 * <li>primaryKey = "id, name"
-		 * <li>primaryKey = "id name"
+		 * <li>single column primaryKey: value = "id"
+		 * <li>compound primary key: value = { "id", "name" }
 		 * </ul>
 		 * The primary key may still be overridden in the define() method if the
 		 * model class is not annotated with IQTable. Default: unspecified.
 		 */
-		String primaryKey() default "";
+		String[] primaryKey() default {};
 
 		/**
 		 * The inherit columns allows this model class to inherit columns from
@@ -406,6 +426,11 @@ public interface Iciql {
 		 * if the default value is specified, and auto increment is disabled,
 		 * and primary key is disabled, then this value is included in the
 		 * "DEFAULT ..." phrase of a column during the CREATE TABLE process.
+		 * <p>
+		 * Alternatively, you may specify a default object value on the field
+		 * and this will be converted to a properly formatted DEFAULT expression
+		 * during the CREATE TABLE process.
+		 * <p>
 		 * Default: unspecified (null).
 		 */
 		String defaultValue() default "";
@@ -435,7 +460,7 @@ public interface Iciql {
 	 */
 	public enum EnumType {
 		NAME, ORDINAL, ENUMID;
-		
+
 		public static final EnumType DEFAULT_TYPE = NAME;
 	}
 

@@ -65,21 +65,6 @@
 			</filterchain>
 		</loadfile>
 
-		<!-- extract iciql previous api version from source code -->
-		<loadfile property="iq.apiPrevious" srcfile="${basedir}/src/com/iciql/Constants.java">
-			<filterchain>
-				<linecontains>
-					<contains value="public static final String API_PREVIOUS = " />
-				</linecontains>
-				<striplinebreaks />
-				<tokenfilter>
-					<replacestring from="public static final String API_PREVIOUS = &quot;" to="" />
-					<replacestring from="&quot;;" to="" />
-					<trim />
-				</tokenfilter>
-			</filterchain>
-		</loadfile>
-
 		<property name="library.jar" value="${basedir}/iciql-${iq.version}.jar" />
 		<property name="javadoc.jar" value="${basedir}/iciql-${iq.version}-javadoc.jar" />
 		<property name="sources.jar" value="${basedir}/iciql-${iq.version}-sources.jar" />
@@ -140,7 +125,8 @@
 		 		
 		        <!-- versioning -->
 		 		<param name="-since"/> <param name="api/v1.xml"/> <param name="v1" />
-		        <param name="-since"/> <param name="api/v${iq.apiPrevious}.xml"/> <param name="v${iq.apiPrevious}" />
+		 		<param name="-since"/> <param name="api/v2.xml"/> <param name="v2" />
+		 		<param name="-since"/> <param name="api/v3.xml"/> <param name="v3" />
 		        <param name="-apiversion" value="v${iq.apiCurrent}"/>
 		 		
 		 		<param name="-apixml" value="api/v${iq.apiCurrent}.xml"/>

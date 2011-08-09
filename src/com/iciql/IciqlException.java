@@ -30,6 +30,11 @@ public class IciqlException extends RuntimeException {
 
 	}
 
+	public IciqlException(Throwable t, String message, Object... parameters) {
+		super(parameters.length > 0 ? MessageFormat.format(message, parameters) : message, t);
+
+	}
+
 	public IciqlException(Throwable t) {
 		super(t);
 	}
