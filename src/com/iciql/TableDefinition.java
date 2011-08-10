@@ -67,12 +67,12 @@ public class TableDefinition<T> {
 	 * The meta data of a field.
 	 */
 
-	public static class FieldDefinition {
-		public String columnName;
+	static class FieldDefinition {
+		String columnName;
 		Field field;
 		String dataType;
 		int maxLength;
-		public boolean isPrimaryKey;
+		boolean isPrimaryKey;
 		boolean isAutoIncrement;
 		boolean trimString;
 		boolean nullable;
@@ -362,7 +362,7 @@ public class TableDefinition<T> {
 	 * Optionally truncates strings to the maximum length and converts
 	 * java.lang.Enum types to Strings or Integers.
 	 */
-	public Object getValue(Object obj, FieldDefinition field) {
+	Object getValue(Object obj, FieldDefinition field) {
 		Object value = field.getValue(obj);
 		if (value == null) {
 			return value;

@@ -1,12 +1,25 @@
-package com.iciql.dialect;
+/*
+ * Copyright 2004-2011 H2 Group.
+ * Copyright 2011 James Moger.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.iciql;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
-import com.iciql.IciqlException;
-import com.iciql.SQLDialect;
-import com.iciql.SQLStatement;
-import com.iciql.TableDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.StringUtils;
 
@@ -14,7 +27,7 @@ import com.iciql.util.StringUtils;
  * Default implementation of an SQL dialect. Does not support merge nor index
  * creation.
  */
-public class DefaultSQLDialect implements SQLDialect {
+public class SQLDialectDefault implements SQLDialect {
 	float databaseVersion;
 	String databaseName;
 	String productVersion;

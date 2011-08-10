@@ -18,6 +18,7 @@ iciql **is not**...
 Supported Databases
 -------
 - [H2](http://h2database.com)
+- [MySQL](http://mysql.com)
 - Support for others is planned and should only require creating a simple "dialect" class.
 
 License

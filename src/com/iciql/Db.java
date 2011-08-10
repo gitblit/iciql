@@ -37,8 +37,6 @@ import javax.sql.DataSource;
 import com.iciql.DbUpgrader.DefaultDbUpgrader;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
-import com.iciql.dialect.DefaultSQLDialect;
-import com.iciql.dialect.H2Dialect;
 import com.iciql.util.JdbcUtils;
 import com.iciql.util.StringUtils;
 import com.iciql.util.Utils;
@@ -73,7 +71,8 @@ public class Db {
 		// can register by...
 		// 1. Connection class name
 		// 2. DatabaseMetaData.getDatabaseProductName()
-		DIALECTS.put("h2", H2Dialect.class);
+		DIALECTS.put("H2", SQLDialectH2.class);
+		DIALECTS.put("MySQL", SQLDialectMySQL.class);
 	}
 
 	private Db(Connection conn) {
@@ -114,7 +113,7 @@ public class Db {
 			dialectClass = DIALECTS.get(databaseName);
 		} else {
 			// did not find a match, use default
-			dialectClass = DefaultSQLDialect.class;
+			dialectClass = SQLDialectDefault.class;
 		}
 		return instance(dialectClass);
 	}

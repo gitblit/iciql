@@ -7,6 +7,9 @@
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
 - api change release (API v4)
+- moved dialects back to main package
+- refined dialect loading for pooled connections
+- added a MySQL dialect
 - @IQColumn(allowNull=true) -> @IQColumn(nullable=true)
 - All columns are assumed NULLABLE unless explicitly set *@IQColumn(nullable = false)*
 - allow using objects to assign default values<br/>
