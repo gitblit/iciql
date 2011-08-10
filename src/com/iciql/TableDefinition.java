@@ -67,12 +67,12 @@ public class TableDefinition<T> {
 	 * The meta data of a field.
 	 */
 
-	static class FieldDefinition {
-		String columnName;
+	public static class FieldDefinition {
+		public String columnName;
 		Field field;
 		String dataType;
 		int maxLength;
-		boolean isPrimaryKey;
+		public boolean isPrimaryKey;
 		boolean isAutoIncrement;
 		boolean trimString;
 		boolean nullable;
@@ -121,12 +121,12 @@ public class TableDefinition<T> {
 		}
 	}
 
+	public ArrayList<FieldDefinition> fields = Utils.newArrayList();
 	String schemaName;
 	String tableName;
 	int tableVersion;
 	private boolean createTableIfRequired = true;
 	private Class<T> clazz;
-	private ArrayList<FieldDefinition> fields = Utils.newArrayList();
 	private IdentityHashMap<Object, FieldDefinition> fieldMap = Utils.newIdentityHashMap();
 
 	private List<String> primaryKeyColumnNames;
@@ -362,7 +362,7 @@ public class TableDefinition<T> {
 	 * Optionally truncates strings to the maximum length and converts
 	 * java.lang.Enum types to Strings or Integers.
 	 */
-	private Object getValue(Object obj, FieldDefinition field) {
+	public Object getValue(Object obj, FieldDefinition field) {
 		Object value = field.getValue(obj);
 		if (value == null) {
 			return value;
@@ -434,33 +434,7 @@ public class TableDefinition<T> {
 					+ " - no update possible");
 		}
 		SQLStatement stat = new SQLStatement(db);
-		StatementBuilder buff = new StatementBuilder("MERGE INTO ");
-		buff.append(db.getDialect().prepareTableName(schemaName, tableName)).append(" (");
-		buff.resetCount();
-		for (FieldDefinition field : fields) {
-			buff.appendExceptFirst(", ");
-			buff.append(db.getDialect().prepareColumnName(field.columnName));
-		}
-		buff.append(") KEY(");
-		buff.resetCount();
-		for (FieldDefinition field : fields) {
-			if (field.isPrimaryKey) {
-				buff.appendExceptFirst(", ");
-				buff.append(db.getDialect().prepareColumnName(field.columnName));
-			}
-		}
-		buff.append(") ");
-		buff.resetCount();
-		buff.append("VALUES (");
-		for (FieldDefinition field : fields) {
-			buff.appendExceptFirst(", ");
-			buff.append('?');
-			Object value = getValue(obj, field);
-			stat.addParameter(value);
-		}
-		buff.append(')');
-		stat.setSQL(buff.toString());
-
+		db.getDialect().prepareMerge(stat, schemaName, tableName, this, obj);
 		StatementLogger.merge(stat.getSQL());
 		stat.executeUpdate();
 	}

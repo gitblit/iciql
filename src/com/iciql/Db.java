@@ -18,6 +18,7 @@
 package com.iciql;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -69,38 +70,51 @@ public class Db {
 	static {
 		TOKENS = Collections.synchronizedMap(new WeakIdentityHashMap<Object, Token>());
 		DIALECTS = Collections.synchronizedMap(new HashMap<String, Class<? extends SQLDialect>>());
-		DIALECTS.put("org.h2", H2Dialect.class);
+		// can register by...
+		// 1. Connection class name
+		// 2. DatabaseMetaData.getDatabaseProductName()
+		DIALECTS.put("h2", H2Dialect.class);
 	}
 
 	private Db(Connection conn) {
 		this.conn = conn;
-		dialect = getDialect(conn.getClass().getCanonicalName());
-		dialect.configureDialect(conn);
+		String databaseName = null;
+		DatabaseMetaData data = null;
+		try {
+			data = conn.getMetaData();
+			databaseName = data.getDatabaseProductName();
+		} catch (SQLException s) {
+			throw new IciqlException("Failed to retrieve database metadata!", s);
+		}
+		dialect = getDialect(databaseName, conn.getClass().getName());
+		dialect.configureDialect(databaseName, data);
 	}
 
-	public static void registerDialect(Connection conn, Class<? extends SQLDialect> dialectClass) {
-		registerDialect(conn.getClass().getCanonicalName(), dialectClass);
+	/**
+	 * Register a new/custom dialect class. You can use this method to replace
+	 * any existing dialect or to add a new one.
+	 * 
+	 * @param token
+	 *            the fully qualified name of the connection class or the
+	 *            expected result of DatabaseMetaData.getDatabaseProductName()
+	 * @param dialectClass
+	 *            the dialect class to register
+	 */
+	public static void registerDialect(String token, Class<? extends SQLDialect> dialectClass) {
+		DIALECTS.put(token, dialectClass);
 	}
 
-	public static void registerDialect(String connClass, Class<? extends SQLDialect> dialectClass) {
-		DIALECTS.put(connClass, dialectClass);
-	}
-
-	SQLDialect getDialect(String clazz) {
-		// try dialect by connection class name
-		Class<? extends SQLDialect> dialectClass = DIALECTS.get(clazz);
-		while (dialectClass == null) {
-			// try dialect by registered name
-			for (String registeredName : DIALECTS.keySet()) {
-				if (clazz.indexOf(registeredName) > -1) {
-					dialectClass = DIALECTS.get(registeredName);
-					break;
-				}
-			}
-			if (dialectClass == null) {
-				// did not find a match, use default
-				dialectClass = DefaultSQLDialect.class;
-			}
+	SQLDialect getDialect(String databaseName, String className) {
+		Class<? extends SQLDialect> dialectClass = null;
+		if (DIALECTS.containsKey(className)) {
+			// dialect registered by connection class name
+			dialectClass = DIALECTS.get(className);
+		} else if (DIALECTS.containsKey(databaseName)) {
+			// dialect registered by database name
+			dialectClass = DIALECTS.get(databaseName);
+		} else {
+			// did not find a match, use default
+			dialectClass = DefaultSQLDialect.class;
 		}
 		return instance(dialectClass);
 	}
@@ -268,8 +282,8 @@ public class Db {
 				// table is using iciql version tracking.
 				DbVersion v = new DbVersion();
 				String schema = StringUtils.isNullOrEmpty(model.schemaName) ? "" : model.schemaName;
-				DbVersion dbVersion = from(v).where(v.schemaName).like(schema).and(v.tableName).like(model.tableName)
-						.selectFirst();
+				DbVersion dbVersion = from(v).where(v.schemaName).like(schema).and(v.tableName)
+						.like(model.tableName).selectFirst();
 				if (dbVersion == null) {
 					// table has no version registration, but model specifies
 					// version: insert DbVersion entry

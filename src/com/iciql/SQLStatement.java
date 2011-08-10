@@ -38,7 +38,7 @@ public class SQLStatement {
 		this.db = db;
 	}
 
-	void setSQL(String sql) {
+	public void setSQL(String sql) {
 		this.sql = sql;
 		buff = new StringBuilder(sql);
 	}
@@ -64,7 +64,7 @@ public class SQLStatement {
 		return sql;
 	}
 	
-	SQLStatement addParameter(Object o) {
+	public SQLStatement addParameter(Object o) {
 		params.add(o);
 		return this;
 	}

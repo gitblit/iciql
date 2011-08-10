@@ -9,11 +9,11 @@ import com.iciql.util.StatementBuilder;
 /**
  * H2 database dialect.
  */
-public class H2Dialect extends DefaultSQLDialect {
+public class MySQLDialect extends DefaultSQLDialect {
 
 	@Override
 	public boolean supportsMemoryTables() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -21,6 +21,11 @@ public class H2Dialect extends DefaultSQLDialect {
 		return true;
 	}
 
+	@Override
+	public String prepareColumnName(String name) {
+		return "`" + name + "`";
+	}
+	
 	@Override
 	public String prepareCreateIndex(String schema, String table, IndexDefinition index) {
 		StatementBuilder buff = new StatementBuilder();
@@ -31,46 +36,43 @@ public class H2Dialect extends DefaultSQLDialect {
 		case UNIQUE:
 			buff.append("UNIQUE ");
 			break;
-		case HASH:
-			buff.append("HASH ");
-			break;
 		case UNIQUE_HASH:
-			buff.append("UNIQUE HASH ");
+			buff.append("UNIQUE ");
 			break;
 		}
-		buff.append("INDEX IF NOT EXISTS ");
+		buff.append("INDEX ");
 		buff.append(index.indexName);
 		buff.append(" ON ");
 		buff.append(table);
 		buff.append("(");
 		for (String col : index.columnNames) {
 			buff.appendExceptFirst(", ");
-			buff.append(col);
+			buff.append(prepareColumnName(col));
 		}
-		buff.append(")");
-		return buff.toString();
+		buff.append(") ");
+		
+		// USING
+		switch (index.type) {
+		case HASH:
+			buff.append("USING HASH");
+			break;
+		case UNIQUE_HASH:
+			buff.append("USING HASH");
+			break;
+		}
+		return buff.toString().trim();
 	}
 	
 	@Override
-	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName, TableDefinition<T> def, Object obj) {
-		StatementBuilder buff = new StatementBuilder("MERGE INTO ");
-		buff.append(prepareTableName(schemaName, tableName)).append(" (");
-		buff.resetCount();
+	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName, TableDefinition<T> def, Object obj) {		
+		StatementBuilder buff = new StatementBuilder("REPLACE INTO ");
+		buff.append(prepareTableName(schemaName, tableName)).append('(');
 		for (FieldDefinition field : def.fields) {
 			buff.appendExceptFirst(", ");
-			buff.append(field.columnName);
+			buff.append(prepareColumnName(field.columnName));
 		}
-		buff.append(") KEY(");
+		buff.append(") VALUES(");
 		buff.resetCount();
-		for (FieldDefinition field : def.fields) {
-			if (field.isPrimaryKey) {
-				buff.appendExceptFirst(", ");
-				buff.append(field.columnName);
-			}
-		}
-		buff.append(") ");
-		buff.resetCount();
-		buff.append("VALUES (");
 		for (FieldDefinition field : def.fields) {
 			buff.appendExceptFirst(", ");
 			buff.append('?');

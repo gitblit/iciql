@@ -226,16 +226,7 @@ public class TableInspector {
 		ap.addParameter("name", table);
 
 		if (primaryKeys.size() > 1) {
-			StatementBuilder pk = new StatementBuilder();
-			pk.append("{ ");
-			for (String key : primaryKeys) {
-				pk.appendExceptFirst(", ");
-				pk.append("\"");
-				pk.append(key);
-				pk.append("\"");
-			}
-			pk.append(" }");
-			ap.addParameter("primaryKey", pk.toString());
+			ap.addParameter("primaryKey", primaryKeys);
 		}
 
 		// finish @IQTable annotation

@@ -17,7 +17,7 @@
 
 package com.iciql;
 
-import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 
 import com.iciql.TableDefinition.IndexDefinition;
 
@@ -28,22 +28,23 @@ import com.iciql.TableDefinition.IndexDefinition;
 public interface SQLDialect {
 
 	/**
-	 * Configure the dialect from the database connection.
+	 * Configure the dialect from the database metadata.
 	 * 
-	 * @param conn
+	 * @param databaseName
+	 * @param data
 	 */
-	void configureDialect(Connection conn);
+	void configureDialect(String databaseName, DatabaseMetaData data);
 
 	/**
 	 * Returns a properly formatted table name for the dialect.
 	 * 
-	 * @param schema
+	 * @param schemaName
 	 *            the schema name, or null for no schema
-	 * @param table
+	 * @param tableName
 	 *            the properly formatted table name
 	 * @return the SQL snippet
 	 */
-	String prepareTableName(String schema, String table);
+	String prepareTableName(String schemaName, String tableName);
 
 	/**
 	 * Returns a properly formatted column name for the dialect.
@@ -57,15 +58,27 @@ public interface SQLDialect {
 	/**
 	 * Get the CREATE INDEX statement.
 	 * 
-	 * @param schema
+	 * @param schemaName
 	 *            the schema name
-	 * @param table
+	 * @param tableName
 	 *            the table name
 	 * @param index
 	 *            the index definition
 	 * @return the SQL statement
 	 */
-	String prepareCreateIndex(String schema, String table, IndexDefinition index);
+	String prepareCreateIndex(String schemaName, String tableName, IndexDefinition index);
+	
+	/**
+	 * Get a MERGE or REPLACE INTO statement.
+	 * 
+	 * @param schemaName
+	 *            the schema name
+	 * @param tableName
+	 *            the table name
+	 * @param index
+	 *            the index definition
+	 */
+	<T> void prepareMerge(SQLStatement stat, String schemaName, String tableName, TableDefinition<T> def, Object obj);
 
 	/**
 	 * Append "LIMIT limit" to the SQL statement.

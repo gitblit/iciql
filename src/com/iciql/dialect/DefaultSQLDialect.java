@@ -1,12 +1,12 @@
 package com.iciql.dialect;
 
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import com.iciql.IciqlException;
 import com.iciql.SQLDialect;
 import com.iciql.SQLStatement;
+import com.iciql.TableDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.StringUtils;
 
@@ -16,25 +16,20 @@ import com.iciql.util.StringUtils;
  */
 public class DefaultSQLDialect implements SQLDialect {
 	float databaseVersion;
-	String productName;
+	String databaseName;
 	String productVersion;
 
 	@Override
 	public String toString() {
-		return getClass().getName() + ": " + productName + " " + productVersion;
+		return getClass().getName() + ": " + databaseName + " " + productVersion;
 	}
 
 	@Override
-	public void configureDialect(Connection conn) {
-		loadIdentity(conn);
-	}
-
-	protected void loadIdentity(Connection conn) {
+	public void configureDialect(String databaseName, DatabaseMetaData data) {
+		this.databaseName = databaseName;
 		try {
-			DatabaseMetaData data = conn.getMetaData();
 			databaseVersion = Float.parseFloat(data.getDatabaseMajorVersion() + "."
 					+ data.getDatabaseMinorVersion());
-			productName = data.getDatabaseProductName();
 			productVersion = data.getDatabaseProductVersion();
 		} catch (SQLException e) {
 			throw new IciqlException(e);
@@ -57,11 +52,11 @@ public class DefaultSQLDialect implements SQLDialect {
 	}
 
 	@Override
-	public String prepareTableName(String schema, String table) {
-		if (StringUtils.isNullOrEmpty(schema)) {
-			return table;
+	public String prepareTableName(String schemaName, String tableName) {
+		if (StringUtils.isNullOrEmpty(schemaName)) {
+			return tableName;
 		}
-		return schema + "." + table;
+		return schemaName + "." + tableName;
 	}
 
 	@Override
@@ -70,8 +65,13 @@ public class DefaultSQLDialect implements SQLDialect {
 	}
 
 	@Override
-	public String prepareCreateIndex(String schema, String table, IndexDefinition index) {
+	public String prepareCreateIndex(String schemaName, String tableName, IndexDefinition index) {
 		throw new IciqlException("Dialect does not support index creation!");
+	}
+
+	@Override
+	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName, TableDefinition<T> def, Object obj) {
+		throw new IciqlException("Dialect does not support merge statements!");
 	}
 
 	@Override
