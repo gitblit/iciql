@@ -40,7 +40,7 @@ public class EnumsTest {
 
 	@Before
 	public void setUp() {
-		db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		db = IciqlSuite.openDb();
 		db.insertAll(EnumIdModel.createList());
 		db.insertAll(EnumOrdinalModel.createList());
 		db.insertAll(EnumStringModel.createList());

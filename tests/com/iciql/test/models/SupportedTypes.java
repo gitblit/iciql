@@ -18,6 +18,9 @@
 package com.iciql.test.models;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -75,10 +78,11 @@ public class SupportedTypes {
 	@IQColumn
 	private Double myDouble;
 
-	@IQColumn
+	// scale change must match the test value scale
+	@IQColumn(length = 10, scale = 5)
 	private BigDecimal myBigDecimal;
 
-	@IQColumn
+	@IQColumn(length = 40)
 	private String myString;
 
 	@IQColumn
@@ -137,6 +141,8 @@ public class SupportedTypes {
 		s.myFloat = new Float(rand.nextFloat());
 		s.myDouble = new Double(rand.nextDouble());
 		s.myBigDecimal = new BigDecimal(rand.nextDouble());
+		// scale must match annotation
+		s.myBigDecimal = s.myBigDecimal.setScale(5, RoundingMode.UP);
 		s.myString = Long.toHexString(rand.nextLong());
 		s.myUtilDate = new java.util.Date(rand.nextLong());
 		s.mySqlDate = new java.sql.Date(rand.nextLong());
@@ -160,13 +166,14 @@ public class SupportedTypes {
 		same &= myLong.equals(s.myLong);
 		same &= myFloat.equals(s.myFloat);
 		same &= myDouble.equals(s.myDouble);
-		same &= myBigDecimal.equals(s.myBigDecimal);
-		same &= myUtilDate.getTime() == s.myUtilDate.getTime();
-		same &= mySqlTimestamp.getTime() == s.mySqlTimestamp.getTime();
+		same &= myBigDecimal.compareTo(s.myBigDecimal) == 0;
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		same &= df.format(myUtilDate).equals(df.format(s.myUtilDate));
+		same &= df.format(mySqlTimestamp).equals(df.format(s.mySqlTimestamp));
 		same &= mySqlDate.toString().equals(s.mySqlDate.toString());
 		same &= mySqlTime.toString().equals(s.mySqlTime.toString());
 		same &= myString.equals(s.myString);
-		same &= compare(myBlob, s.myBlob);
+		same &= Arrays.equals(myBlob, s.myBlob);
 		same &= myDefaultFlower.equals(s.myDefaultFlower);
 		same &= myFavoriteFlower.equals(s.myFavoriteFlower);
 		same &= myOtherFavoriteFlower.equals(s.myOtherFavoriteFlower);
@@ -174,22 +181,7 @@ public class SupportedTypes {
 		same &= myOtherFavoriteTree.equals(s.myOtherFavoriteTree);
 		return same;
 	}
-
-	private boolean compare(byte[] a, byte[] b) {
-		if (b == null) {
-			return false;
-		}
-		if (a.length != b.length) {
-			return false;
-		}
-		for (int i = 0; i < a.length; i++) {
-			if (a[i] != b[i]) {
-				return false;
-			}
-		}
-		return true;
-	}
-
+	
 	/**
 	 * This class demonstrates the table upgrade.
 	 */

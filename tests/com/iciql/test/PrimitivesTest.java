@@ -30,7 +30,7 @@ public class PrimitivesTest {
 
 	@Test
 	public void testPrimitives() {
-		Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		Db db = IciqlSuite.openDb();
 
 		// insert random model
 		PrimitivesModel model = new PrimitivesModel();

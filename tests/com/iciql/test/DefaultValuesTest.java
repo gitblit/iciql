@@ -34,7 +34,7 @@ public class DefaultValuesTest {
 
 	@Test
 	public void testDefaultObjectValues() {
-		Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		Db db = IciqlSuite.openDb();
 
 		// insert random model
 		DefaultValuesModel model = new DefaultValuesModel();

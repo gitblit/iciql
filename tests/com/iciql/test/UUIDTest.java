@@ -32,7 +32,9 @@ import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
 
 /**
- * Tests if UUID type.
+ * Tests of UUID type.
+ * <p>
+ * H2 only.
  */
 public class UUIDTest {
 

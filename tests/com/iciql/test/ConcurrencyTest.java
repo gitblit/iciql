@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.iciql.Db;
+import com.iciql.IciqlException;
 import com.iciql.Query;
 import com.iciql.test.models.Product;
 import com.iciql.util.Utils;
@@ -41,7 +42,7 @@ public class ConcurrencyTest {
 
 	@Before
 	public void setUp() {
-		db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		db = IciqlSuite.openDb();
 		db.insertAll(Product.getList());
 	}
 
@@ -58,7 +59,12 @@ public class ConcurrencyTest {
 		Query<Product> query2 = db.from(p);
 
 		// if you could share alias instances both counts should be equal
-		long count1 = query1.where(p.category).is("Beverages").selectCount();
+		long count1 = 0;
+		try {
+			count1 = query1.where(p.category).is("Beverages").selectCount();
+		} catch (IciqlException e) {
+			assertEquals(IciqlException.CODE_UNMAPPED_FIELD, e.getIciqlCode());
+		}
 		long count2 = query2.where(p.category).is("Beverages").selectCount();
 
 		// but they aren't
@@ -84,10 +90,14 @@ public class ConcurrencyTest {
 					try {
 						int testCase = testNumber % 10;
 						test(testCase, p);
-					} catch (Throwable rex) {
+					} catch (AssertionError e) {
 						failures.incrementAndGet();
-						System.err.println("EXPECTED ERROR");
-						rex.printStackTrace();
+					} catch (IciqlException e) {
+						failures.incrementAndGet();
+						if (e.getIciqlCode() != IciqlException.CODE_UNMAPPED_FIELD) {
+							System.err.println("UNEXPECTED ERROR in testConcurrencyFinal()");
+							e.printStackTrace();
+						}
 					}
 				}
 			}, "ICIQL-" + i);
@@ -115,9 +125,14 @@ public class ConcurrencyTest {
 					try {
 						int testCase = testNumber % 10;
 						test(testCase, tl.get());
-					} catch (Throwable rex) {
+					} catch (AssertionError e) {
 						failures.incrementAndGet();
-						rex.printStackTrace();
+					} catch (IciqlException e) {
+						failures.incrementAndGet();
+						if (e.getIciqlCode() != IciqlException.CODE_UNMAPPED_FIELD) {
+							System.err.println("UNEXPECTED ERROR in testConcurrencyThreadLocal()");
+							e.printStackTrace();
+						}
 					}
 				}
 			}, "ICIQL-" + i);

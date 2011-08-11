@@ -34,7 +34,7 @@ public class RuntimeQueryTest {
 
 	@Test
 	public void testRuntimeQuery() {
-		Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		Db db = IciqlSuite.openDb();
 		db.insertAll(Product.getList());
 
 		Product p = new Product();
@@ -50,7 +50,7 @@ public class RuntimeQueryTest {
 
 	@Test
 	public void testExecuteQuery() throws SQLException {
-		Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		Db db = IciqlSuite.openDb();
 		db.insertAll(Product.getList());
 
 		// test plain statement
@@ -68,7 +68,7 @@ public class RuntimeQueryTest {
 	
 	@Test
 	public void testBuildObjects() throws SQLException {
-		Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		Db db = IciqlSuite.openDb();
 		db.insertAll(Product.getList());
 
 		// test plain statement

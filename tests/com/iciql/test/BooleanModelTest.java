@@ -39,7 +39,7 @@ public class BooleanModelTest {
 
 	@Test
 	public void testBooleanColumn() {
-		Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		Db db = IciqlSuite.openDb();
 		db.insertAll(BooleanModel.getList());
 		BooleanAsIntModel b = new BooleanAsIntModel();
 		List<BooleanAsIntModel> models = db.from(b).select();
@@ -82,7 +82,7 @@ public class BooleanModelTest {
 
 	@Test
 	public void testIntColumn() {
-		Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		Db db = IciqlSuite.openDb();
 		// insert INT column
 		db.insertAll(BooleanAsIntModel.getList());
 

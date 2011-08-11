@@ -27,7 +27,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.h2.constant.ErrorCode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +38,8 @@ import com.iciql.test.models.ProductAnnotationOnly;
 import com.iciql.test.models.ProductInheritedAnnotation;
 import com.iciql.test.models.ProductMixedAnnotation;
 import com.iciql.test.models.ProductNoCreateTable;
+import com.iciql.util.JdbcUtils;
+import com.iciql.util.Utils;
 
 /**
  * Test annotation processing.
@@ -54,7 +55,7 @@ public class AnnotationsTest {
 
 	@Before
 	public void setUp() {
-		db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		db = IciqlSuite.openDb();
 		db.insertAll(Product.getList());
 		db.insertAll(ProductAnnotationOnly.getList());
 		db.insertAll(ProductMixedAnnotation.getList());
@@ -69,9 +70,14 @@ public class AnnotationsTest {
 	public void testIndexCreation() throws SQLException {
 		// test indexes are created, and columns are in the right order
 		DatabaseMetaData meta = db.getConnection().getMetaData();
+		boolean isH2 = meta.getDatabaseProductName().equals("H2");
 		ResultSet rs = meta.getIndexInfo(null, "PUBLIC", "ANNOTATEDPRODUCT", false, true);
+		// first index is primary key index
+		// H2 gives this a testable name.
 		assertTrue(rs.next());
-		assertStartsWith(rs.getString("INDEX_NAME"), "PRIMARY_KEY");
+		if (isH2) {
+			assertStartsWith(rs.getString("INDEX_NAME"), "PRIMARY_KEY");
+		}
 		assertTrue(rs.next());
 		assertStartsWith(rs.getString("INDEX_NAME"), "ANNOTATEDPRODUCT_0");
 		assertStartsWith(rs.getString("COLUMN_NAME"), "NAME");
@@ -94,18 +100,21 @@ public class AnnotationsTest {
 
 		// test IQTable.annotationsOnly=true
 		// public String unmappedField is ignored by iciql
-		assertEquals(0, db.from(p).where(p.unmappedField).is("unmapped").selectCount());
-
-		// test IQColumn.autoIncrement=true
+		try {
+			db.from(p).where(p.unmappedField).is("unmapped").selectCount();
+			assertTrue("this should never execute", false);
+		} catch (IciqlException e) {
+			assertEquals(IciqlException.CODE_UNMAPPED_FIELD, e.getIciqlCode());
+		}
+		
 		// 10 objects, 10 autoIncremented unique values
-		assertEquals(10, db.from(p).selectDistinct(p.autoIncrement).size());
+		assertEquals(10, db.from(p).selectDistinct(p.productName).size());
 
 		// test IQTable.primaryKey=id
 		try {
 			db.insertAll(ProductAnnotationOnly.getList());
-		} catch (IciqlException r) {
-			SQLException s = (SQLException) r.getCause();
-			assertEquals(ErrorCode.DUPLICATE_KEY_1, s.getErrorCode());
+		} catch (IciqlException e) {
+			assertEquals(IciqlException.CODE_DUPLICATE_KEY, e.getIciqlCode());
 		}
 	}
 
@@ -123,9 +132,8 @@ public class AnnotationsTest {
 		// test IQColumn.primaryKey=true
 		try {
 			db.insertAll(ProductMixedAnnotation.getList());
-		} catch (IciqlException r) {
-			SQLException s = (SQLException) r.getCause();
-			assertEquals(ErrorCode.DUPLICATE_KEY_1, s.getErrorCode());
+		} catch (IciqlException e) {
+			assertEquals(IciqlException.CODE_DUPLICATE_KEY, e.getIciqlCode());
 		}
 	}
 
@@ -171,9 +179,8 @@ public class AnnotationsTest {
 		// tests IQTable.createTableIfRequired=false
 		try {
 			db.insertAll(ProductNoCreateTable.getList());
-		} catch (IciqlException r) {
-			SQLException s = (SQLException) r.getCause();
-			assertEquals(ErrorCode.TABLE_OR_VIEW_NOT_FOUND_1, s.getErrorCode());
+		} catch (IciqlException e) {
+			assertEquals(IciqlException.CODE_TABLE_NOT_FOUND, e.getIciqlCode());
 		}
 	}
 

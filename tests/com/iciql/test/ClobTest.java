@@ -38,14 +38,14 @@ public class ClobTest {
 	@Test
 	public void testClob() throws Exception {
 		String create = "CREATE TABLE CLOB_TEST(ID INT PRIMARY KEY, WORDS {0})";
-		Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		Db db = IciqlSuite.openDb();
 		db.executeUpdate(MessageFormat.format(create, "VARCHAR(255)"));
 		db.insertAll(StringRecord.getList());
 		testSimpleUpdate(db, "VARCHAR fail");
 		db.close();
 
-		db = Db.open("jdbc:h2:mem:", "sa", "sa");
-		db.executeUpdate(MessageFormat.format(create, "TEXT"));
+		db = IciqlSuite.openDb();		
+		db.executeUpdate(MessageFormat.format(create, "CLOB"));
 		db.insertAll(StringRecord.getList());
 		testSimpleUpdate(db, "CLOB fail because of single quote artifacts");
 		db.close();

@@ -17,13 +17,16 @@
 
 package com.iciql.test.models;
 
+import static com.iciql.Define.length;
 import static com.iciql.Define.primaryKey;
+import static com.iciql.Define.scale;
 import static com.iciql.Define.tableName;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 
 import com.iciql.Iciql;
 
@@ -34,7 +37,7 @@ import com.iciql.Iciql;
 public class Order implements Iciql {
 	public String customerId;
 	public Integer orderId;
-	public Date orderDate;
+	public Date orderDate;	
 	public BigDecimal total;
 
 	public Order(String customerId, Integer orderId, String total, String orderDate) {
@@ -50,6 +53,9 @@ public class Order implements Iciql {
 
 	public void defineIQ() {
 		tableName("Orders");
+		length(customerId, 25);
+		length(total, 10);
+		scale(total, 2);
 		primaryKey(customerId, orderId);
 	}
 

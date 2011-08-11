@@ -54,6 +54,7 @@ public class Product implements Iciql {
 	public void defineIQ() {
 		tableName("Product");
 		primaryKey(productId);
+		length(productName, 255);
 		length(category, 255);
 		index(productName, category);
 	}

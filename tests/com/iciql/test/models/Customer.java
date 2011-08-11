@@ -20,12 +20,19 @@ package com.iciql.test.models;
 import java.util.Arrays;
 import java.util.List;
 
+import com.iciql.Iciql.IQColumn;
+import com.iciql.Iciql.IQTable;
+
 /**
  * A table containing customer data.
  */
+@IQTable
 public class Customer {
 
+	@IQColumn(length = 25)
 	public String customerId;
+	
+	@IQColumn(length = 2)
 	public String region;
 
 	public Customer() {
@@ -42,7 +49,8 @@ public class Customer {
 	}
 
 	public static List<Customer> getList() {
-		Customer[] list = { new Customer("ALFKI", "WA"), new Customer("ANATR", "WA"), new Customer("ANTON", "CA") };
+		Customer[] list = { new Customer("ALFKI", "WA"), new Customer("ANATR", "WA"),
+				new Customer("ANTON", "CA") };
 		return Arrays.asList(list);
 	}
 

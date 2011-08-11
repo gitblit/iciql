@@ -37,7 +37,7 @@ public class AliasMapTest {
 
 	@Test
 	public void testAliasMapping() throws Exception {
-		Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		Db db = IciqlSuite.openDb();
 		db.insertAll(Product.getList());
 
 		Product p = new Product();

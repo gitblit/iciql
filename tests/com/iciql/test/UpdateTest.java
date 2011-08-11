@@ -41,7 +41,7 @@ public class UpdateTest {
 
 	@Before
 	public void setUp() throws Exception {
-		db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		db = IciqlSuite.openDb();
 		db.insertAll(Product.getList());
 		db.insertAll(Customer.getList());
 		db.insertAll(Order.getList());

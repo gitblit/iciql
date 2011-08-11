@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +60,7 @@ public class SamplesTest {
 
 	@Before
 	public void setUp() {
-		db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		db = IciqlSuite.openDb();
 		db.insertAll(Product.getList());
 		db.insertAll(Customer.getList());
 		db.insertAll(Order.getList());
@@ -82,7 +83,7 @@ public class SamplesTest {
 
 	@Test
 	public void testReverseColumns() {
-		db.executeUpdate("create table TestReverse(id int, name varchar, additional varchar)");
+		db.executeUpdate("create table TestReverse(id int, name varchar(10), additional varchar(10))");
 		TestReverse t = new TestReverse();
 		t.id = 10;
 		t.name = "Hello";
@@ -222,7 +223,7 @@ public class SamplesTest {
 		final Customer c = new Customer();
 		final Order o = new Order();
 		List<CustOrder> orders = db.from(c).innerJoin(o).on(c.customerId).is(o.customerId).where(o.total)
-				.lessThan(new BigDecimal("100.00")).orderBy(1).select(new CustOrder() {
+				.lessThan(new BigDecimal("100.00")).orderBy(c.customerId).select(new CustOrder() {
 					{
 						customerId = c.customerId;
 						orderId = o.orderId;
@@ -267,8 +268,10 @@ public class SamplesTest {
 	@Test
 	public void testLength() {
 		Product p = new Product();
-		List<Integer> lengths = db.from(p).where(length(p.productName)).lessThan(10).orderBy(1)
+		List<Integer> lengths = db.from(p).where(length(p.productName)).lessThan(10)
 				.selectDistinct(length(p.productName));
+		// Formerly used orderBy(1) here, but that is not portable across DBs
+		Collections.sort(lengths);
 		assertEquals("[4, 5]", lengths.toString());
 	}
 
@@ -310,15 +313,17 @@ public class SamplesTest {
 		ComplexObject co = new ComplexObject();
 		String sql = db.from(co).where(co.id).is(1).and(co.amount).is(1L).and(co.birthday)
 				.lessThan(new java.util.Date()).and(co.created)
-				.lessThan(java.sql.Timestamp.valueOf("2005-05-05 05:05:05")).and(co.name).is("hello").and(co.time)
-				.lessThan(java.sql.Time.valueOf("23:23:23")).and(co.value).is(new BigDecimal("1")).getSQL();
-		assertEquals("SELECT * FROM ComplexObject " + "WHERE id = ? " + "AND amount = ? " + "AND birthday < ? "
-				+ "AND created < ? " + "AND name = ? " + "AND time < ? " + "AND value = ?", sql);
+				.lessThan(java.sql.Timestamp.valueOf("2005-05-05 05:05:05")).and(co.name).is("hello")
+				.and(co.time).lessThan(java.sql.Time.valueOf("23:23:23")).and(co.value)
+				.is(new BigDecimal("1")).getSQL();
+		assertEquals("SELECT * FROM ComplexObject WHERE id = ? AND amount = ? "
+				+ "AND birthday < ? AND created < ? AND name = ? AND time < ? AND value = ?", sql);
 
 		long count = db.from(co).where(co.id).is(1).and(co.amount).is(1L).and(co.birthday)
 				.lessThan(new java.util.Date()).and(co.created)
-				.lessThan(java.sql.Timestamp.valueOf("2005-05-05 05:05:05")).and(co.name).is("hello").and(co.time)
-				.lessThan(java.sql.Time.valueOf("23:23:23")).and(co.value).is(new BigDecimal("1")).selectCount();
+				.lessThan(java.sql.Timestamp.valueOf("2005-05-05 05:05:05")).and(co.name).is("hello")
+				.and(co.time).lessThan(java.sql.Time.valueOf("23:23:23")).and(co.value)
+				.is(new BigDecimal("1")).selectCount();
 		assertEquals(1, count);
 	}
 
@@ -335,7 +340,7 @@ public class SamplesTest {
 				return co.id == x && co.name.equals(name) && co.name.equals("hello");
 			}
 		}).getSQL();
-		assertEquals("SELECT * FROM ComplexObject " + "WHERE id=? " + "AND ?=name " + "AND 'hello'=name", sql);
+		assertEquals("SELECT * FROM ComplexObject WHERE id=? AND ?=name AND 'hello'=name", sql);
 
 		long count = db.from(co).where(new Filter() {
 			public boolean where() {
@@ -393,14 +398,15 @@ public class SamplesTest {
 		// };
 
 		final Product p = new Product();
-		List<ProductGroup> list = db.from(p).groupBy(p.category).orderBy(1).select(new ProductGroup() {
-			{
-				category = p.category;
-				productCount = count();
-			}
-		});
+		List<ProductGroup> list = db.from(p).groupBy(p.category).orderBy(p.category)
+				.select(new ProductGroup() {
+					{
+						category = p.category;
+						productCount = count();
+					}
+				});
 
-		assertEquals("[Beverages:2, Condiments:5, " + "Meat/Poultry:1, Produce:1, Seafood:1]", list.toString());
+		assertEquals("[Beverages:2, Condiments:5, Meat/Poultry:1, Produce:1, Seafood:1]", list.toString());
 	}
 
 }

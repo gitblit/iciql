@@ -42,7 +42,7 @@ public class ProductMixedAnnotation {
 	@IQColumn(name = "id", primaryKey = true)
 	private Integer productId;
 
-	@IQColumn(name = "name")
+	@IQColumn(name = "name", length = 255)
 	private String productName;
 
 	public ProductMixedAnnotation() {

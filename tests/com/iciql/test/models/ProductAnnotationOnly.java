@@ -45,8 +45,8 @@ public class ProductAnnotationOnly {
 	@IQColumn(name = "cat", length = 15, trim = true)
 	public String category;
 
-	@IQColumn(name = "name")
-	private String productName;
+	@IQColumn(name = "name", length = 50)
+	public String productName;
 
 	@SuppressWarnings("unused")
 	@IQColumn

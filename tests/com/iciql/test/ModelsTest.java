@@ -62,7 +62,7 @@ public class ModelsTest {
 
 	@Before
 	public void setUp() {
-		db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		db = IciqlSuite.openDb();
 		db.insertAll(Product.getList());
 		db.insertAll(ProductAnnotationOnly.getList());
 		db.insertAll(ProductMixedAnnotation.getList());
@@ -75,22 +75,28 @@ public class ModelsTest {
 
 	@Test
 	public void testValidateModels() {
+		boolean isH2 = IciqlSuite.getDatabaseName(db).equals("H2");
 		DbInspector inspector = new DbInspector(db);
-		validateModel(inspector, new Product());
-		validateModel(inspector, new ProductAnnotationOnly());
-		validateModel(inspector, new ProductMixedAnnotation());
+		validateModel(inspector, new Product(), 3);
+		validateModel(inspector, new ProductAnnotationOnly(), isH2 ? 2 : 3);
+		validateModel(inspector, new ProductMixedAnnotation(), isH2 ? 3 : 4);
 	}
 
-	private void validateModel(DbInspector inspector, Object o) {
+	private void validateModel(DbInspector inspector, Object o, int expected) {
 		List<ValidationRemark> remarks = inspector.validateModel(o, false);
-		assertTrue("Validation remarks are null for " + o.getClass().getName(), remarks != null);
-		log("Validation remarks for " + o.getClass().getName());
+		assertTrue("validation remarks are null for " + o.getClass().getName(), remarks != null);
+		StringBuilder sb = new StringBuilder();
+		sb.append("validation remarks for " + o.getClass().getName());
+		sb.append('\n');
 		for (ValidationRemark remark : remarks) {
-			log(remark.toString());
+			sb.append(remark.toString());
+			sb.append('\n');
 			if (remark.isError()) {
 				errorCollector.addError(new SQLException(remark.toString()));
 			}
 		}
+		assertTrue(remarks.get(0).message.equals("@IQSchema(name=PUBLIC)"));
+		assertEquals(sb.toString(), expected, remarks.size());
 	}
 
 	@Test
@@ -115,7 +121,13 @@ public class ModelsTest {
 				true);
 		assertEquals(1, models.size());
 		// a poor test, but a start
-		assertEquals(1456, models.get(0).length());
+		String dbName = IciqlSuite.getDatabaseName(db);
+		if (dbName.equals("H2")) {
+			assertEquals(1478, models.get(0).length());
+		} else if (dbName.startsWith("HSQL")) {
+			// HSQL uses Double instead of Float
+			assertEquals(1479, models.get(0).length());
+		}
 	}
 
 	@Test
@@ -135,7 +147,7 @@ public class ModelsTest {
 
 	@Test
 	public void testTableUpgrade() {
-		Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		Db db = IciqlSuite.openDb();
 
 		// insert first, this will create version record automatically
 		List<SupportedTypes> original = SupportedTypes.createList();
