@@ -30,7 +30,7 @@ public class IciqlException extends RuntimeException {
 	public static final int CODE_TABLE_NOT_FOUND = 3;
 	public static final int CODE_INDEX_ALREADY_EXISTS = 4;
 
-	private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";	
+	private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|\\<\\>|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";	
 
 	private static final long serialVersionUID = 1L;
 

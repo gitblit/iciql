@@ -100,7 +100,7 @@ public class SQLDialectDefault implements SQLDialect {
 			buff.appendExceptFirst(", ");
 			buff.append(prepareColumnName(field.columnName)).append(' ');
 			String dataType = field.dataType;
-			if (dataType.equals("VARCHAR")) {		
+			if (dataType.equals("VARCHAR")) {
 				// check to see if we should use VARCHAR or CLOB
 				if (field.length <= 0) {
 					dataType = "CLOB";
@@ -111,7 +111,7 @@ public class SQLDialectDefault implements SQLDialect {
 				}
 			} else if (dataType.equals("DECIMAL")) {
 				// DECIMAL(precision,scale)
-				buff.append(convertSqlType(dataType));				
+				buff.append(convertSqlType(dataType));
 				if (field.length > 0) {
 					buff.append('(').append(field.length);
 					if (field.scale > 0) {
@@ -173,13 +173,13 @@ public class SQLDialectDefault implements SQLDialect {
 	@Override
 	public void prepareCreateIndex(SQLStatement stat, String schemaName, String tableName,
 			IndexDefinition index) {
-		throw new IciqlException("Dialect does not support index creation!");
+		throw new IciqlException("{0} does not support index creation!", getClass().getSimpleName());
 	}
 
 	@Override
 	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName,
 			TableDefinition<T> def, Object obj) {
-		throw new IciqlException("Dialect does not support merge statements!");
+		throw new IciqlException("{0} does not support merge statements!", getClass().getSimpleName());
 	}
 
 	@Override

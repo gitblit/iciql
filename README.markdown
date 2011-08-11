@@ -17,9 +17,9 @@ iciql **is not**...
 
 Supported Databases
 -------
-- [H2 1.3+](http://h2database.com)
-- [HSQLDB 2.2+](http://hsqldb.org)
-- Support for others is planned and should only require creating a simple "dialect" class.
+- [H2 1.3](http://h2database.com)
+- [HSQLDB 2.2](http://hsqldb.org)
+- Support for others is planned and may only require creating a simple "dialect" class.
 
 License
 -------

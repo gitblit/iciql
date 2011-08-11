@@ -15,8 +15,8 @@
 - moved dialects back to main package
 - improved automatic dialect determination on pooled connections
 - moved create table and create index statement generation into dialects
-- added HSQL dialect.  HSQL fails 4 unit tests, 2 of which are unimplemented merge, 1 has been filed as a bug in HSQL.
-- added MySQL dialect.  Untested.
+- added HSQL dialect.  HSQL fails 4 out of 49 unit tests: 2 failures are unimplemented merge, 1 has been filed as a bug in HSQL.
+- added MySQL dialect.  untested.
 - renamed <b>_ iq_versions</b> table to *iq_versions* since leading _ character is troublesome for some databases.
 - @IQColumn(allowNull=true) -> @IQColumn(nullable=true)
 - All columns are assumed NULLABLE unless explicitly set *@IQColumn(nullable = false)*
