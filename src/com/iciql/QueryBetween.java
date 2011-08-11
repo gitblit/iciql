@@ -18,6 +18,10 @@ package com.iciql;
 
 /**
  * This class represents a "between y and z" condition.
+ * @param <T>
+ *            the return type of the query
+ * @param <A>
+ *            the incomplete condition data type
  */
 public class QueryBetween<T, A> {
 

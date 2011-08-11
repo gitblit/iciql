@@ -29,5 +29,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/iciql/ext/slf4j-api-1.6.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="ext/hsqldb-2.2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

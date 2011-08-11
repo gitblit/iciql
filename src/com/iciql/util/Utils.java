@@ -116,7 +116,7 @@ public class Utils {
 							}
 						}
 					}
-					throw new IciqlException("Missing default constructor?  Exception trying to create " + clazz.getName() + ": " + e, e);
+					throw new IciqlException(e, "Missing default constructor?  Exception trying to instantiate {0}: {1}", clazz.getName(), e.getMessage());
 				}
 			}
 		};
@@ -190,7 +190,7 @@ public class Utils {
 					}
 				}
 			}
-			throw new IciqlException("Exception trying to create " + clazz.getName() + ": " + e, e);
+			throw new IciqlException(e, "Missing default constructor?! Exception trying to instantiate {0}: {1}", clazz.getName(), e.getMessage());
 		}
 	}
 
@@ -220,17 +220,27 @@ public class Utils {
 					Reader r = c.getCharacterStream();
 					return readStringAndClose(r, -1);
 				} catch (Exception e) {
-					throw new IciqlException("Error converting CLOB to String: " + e.toString(), e);
+					throw new IciqlException(e, "error converting CLOB to String: ", e.toString());
 				}
 			}
 			return o.toString();
 		}
 
-		// convert from number to boolean
 		if (Boolean.class.isAssignableFrom(targetType) || boolean.class.isAssignableFrom(targetType)) {
+			// convert from number to boolean
 			if (Number.class.isAssignableFrom(currentType)) {
 				Number n = (Number) o;
 				return n.intValue() > 0;
+			}
+			// convert from string to boolean
+			if (String.class.isAssignableFrom(currentType)) {
+				String s = o.toString().toLowerCase();
+				float f = 0f;
+				try {
+					f = Float.parseFloat(s);
+				} catch (Exception e) {					
+				}
+				return f > 0 || s.equals("true") || s.equals("yes");
 			}
 		}
 
@@ -271,7 +281,7 @@ public class Utils {
 					InputStream is = b.getBinaryStream();
 					return readBlobAndClose(is, -1);
 				} catch (Exception e) {
-					throw new IciqlException("Error converting BLOB to byte[]: " + e.toString(), e);
+					throw new IciqlException(e, "error converting BLOB to byte[]: ", e.toString());
 				}
 			}
 		}
@@ -315,7 +325,7 @@ public class Utils {
 				Reader r = c.getCharacterStream();
 				name = readStringAndClose(r, -1);
 			} catch (Exception e) {
-				throw new IciqlException("Error converting CLOB to String: " + e.toString(), e);
+				throw new IciqlException(e, "error converting CLOB to String: ", e.toString());
 			}
 
 			// find name match

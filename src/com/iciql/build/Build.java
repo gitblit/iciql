@@ -56,6 +56,7 @@ public class Build {
 	public static void compiletime() {
 		downloadFromApache(MavenObject.H2, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.H2, BuildType.COMPILETIME);
+		downloadFromApache(MavenObject.HSQLDB, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.JCOMMANDER, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.JCOMMANDER, BuildType.COMPILETIME);
 		downloadFromApache(MavenObject.MARKDOWNPAPERS, BuildType.RUNTIME);
@@ -171,6 +172,10 @@ public class Build {
 		public static final MavenObject H2 = new MavenObject("com/h2database", "h2", "1.3.158",
 				"4bac13427caeb32ef6e93b70101e61f370c7b5e2", "6bb165156a0831879fa7797df6e18bdcd4421f2d",
 				"446d3f58c44992534cb54f67134532d95961904a");
+
+		public static final MavenObject HSQLDB = new MavenObject("org/hsqldb", "hsqldb", "2.2.4",
+				"6a6e040b07f5ee409fc825f1c5e5b574b1fa1428", "",
+				"");
 
 		public static final MavenObject JUNIT = new MavenObject("junit", "junit", "4.8.2",
 				"c94f54227b08100974c36170dcb53329435fe5ad", "", "");

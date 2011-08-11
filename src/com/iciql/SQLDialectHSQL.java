@@ -20,36 +20,25 @@ import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.StatementBuilder;
 
 /**
- * MySQL database dialect.
+ * HyperSQL database dialect.
  */
-public class SQLDialectMySQL extends SQLDialectDefault {
-
-	@Override
-	protected String convertSqlType(String sqlType) {
-		if (sqlType.equals("CLOB")) {
-			return "TEXT";
-		}
-		return sqlType;
-	}
-	
+public class SQLDialectHSQL extends SQLDialectDefault {
+		
 	@Override
 	public boolean supportsMemoryTables() {
-		return false;
+		return true;
 	}
-
-	@Override
-	public String prepareColumnName(String name) {
-		return "`" + name + "`";
-	}
-	
+		
 	@Override
 	protected boolean prepareColumnDefinition(StatementBuilder buff, boolean isAutoIncrement, boolean isPrimaryKey) {
-		if (isAutoIncrement) {
-			buff.append(" AUTO_INCREMENT");
+		boolean isIdentity = false;
+		if (isAutoIncrement && isPrimaryKey) {
+			buff.append(" IDENTITY");
+			isIdentity = true;
 		}
-		return false;
+		return isIdentity;
 	}
-	
+
 	@Override
 	public void prepareCreateIndex(SQLStatement stat, String schema, String table, IndexDefinition index) {
 		StatementBuilder buff = new StatementBuilder();
@@ -71,19 +60,9 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 		buff.append("(");
 		for (String col : index.columnNames) {
 			buff.appendExceptFirst(", ");
-			buff.append(prepareColumnName(col));
+			buff.append(col);
 		}
-		buff.append(") ");
-		
-		// USING
-		switch (index.type) {
-		case HASH:
-			buff.append("USING HASH");
-			break;
-		case UNIQUE_HASH:
-			buff.append("USING HASH");
-			break;
-		}
-		stat.setSQL(buff.toString().trim());
+		buff.append(")");
+		stat.setSQL(buff.toString());
 	}
 }

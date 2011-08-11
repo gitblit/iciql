@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
  * </tr>
  * <tr>
  * <td>java.lang.String</td>
- * <td>VARCHAR (length > 0) or TEXT (length == 0)</td>
+ * <td>VARCHAR (length > 0) or CLOB (length == 0)</td>
  * </tr>
  * <tr>
  * <td>java.lang.Boolean</td>
@@ -72,7 +72,7 @@ import java.lang.annotation.Target;
  * </tr>
  * <tr>
  * <td>java.math.BigDecimal</td>
- * <td>DECIMAL</td>
+ * <td>DECIMAL (length == 0)<br/>DECIMAL(length, scale)  (length > 0)</td>
  * </tr>
  * <tr>
  * <td>java.sql.Date</td>
@@ -92,7 +92,7 @@ import java.lang.annotation.Target;
  * </tr>
  * <tr>
  * <td>java.lang.Enum.name()</td>
- * <td>VARCHAR (length > 0) or TEXT (length == 0)<br/>
+ * <td>VARCHAR (length > 0) or CLOB (length == 0)<br/>
  * EnumType.NAME</td>
  * </tr>
  * <tr>
@@ -391,14 +391,26 @@ public interface Iciql {
 		boolean autoIncrement() default false;
 
 		/**
-		 * If larger than zero, it is used during the CREATE TABLE phase. It may
-		 * also be used to prevent database exceptions on INSERT and UPDATE
-		 * statements (see trim).
+		 * Length is used to define the length of a VARCHAR column or to define
+		 * the precision of a DECIMAL(precision, scale) expression.
+		 * <p>
+		 * If larger than zero, it is used during the CREATE TABLE phase. For
+		 * string values it may also be used to prevent database exceptions on
+		 * INSERT and UPDATE statements (see trim).
 		 * <p>
 		 * Any length set in define() may override this annotation setting if
 		 * the model class is not annotated with IQTable. Default: 0.
 		 */
 		int length() default 0;
+
+		/**
+		 * Scale is used during the CREATE TABLE phase to define the scale of a
+		 * DECIMAL(precision, scale) expression.
+		 * <p>
+		 * Any scale set in define() may override this annotation setting if
+		 * the model class is not annotated with IQTable. Default: 0.
+		 */
+		int scale() default 0;
 
 		/**
 		 * If true, iciql will automatically trim the string if it exceeds

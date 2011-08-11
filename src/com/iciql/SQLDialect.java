@@ -56,6 +56,14 @@ public interface SQLDialect {
 	String prepareColumnName(String name);
 
 	/**
+	 * Get the CREATE TABLE statement.
+	 * 
+	 * @param stat
+	 * @param def
+	 */
+	<T> void prepareCreateTable(SQLStatement stat, TableDefinition<T> def);
+	
+	/**
 	 * Get the CREATE INDEX statement.
 	 * 
 	 * @param schemaName
@@ -66,8 +74,8 @@ public interface SQLDialect {
 	 *            the index definition
 	 * @return the SQL statement
 	 */
-	String prepareCreateIndex(String schemaName, String tableName, IndexDefinition index);
-	
+	void prepareCreateIndex(SQLStatement stat, String schemaName, String tableName, IndexDefinition index);
+
 	/**
 	 * Get a MERGE or REPLACE INTO statement.
 	 * 
@@ -78,7 +86,8 @@ public interface SQLDialect {
 	 * @param index
 	 *            the index definition
 	 */
-	<T> void prepareMerge(SQLStatement stat, String schemaName, String tableName, TableDefinition<T> def, Object obj);
+	<T> void prepareMerge(SQLStatement stat, String schemaName, String tableName, TableDefinition<T> def,
+			Object obj);
 
 	/**
 	 * Append "LIMIT limit" to the SQL statement.
@@ -106,18 +115,12 @@ public interface SQLDialect {
 	 * @return true if they are
 	 */
 	boolean supportsMemoryTables();
-
-	/**
-	 * Whether merge is a supported function.
-	 * 
-	 * @return true if they are
-	 */
-	boolean supportsMerge();
-
+	
 	/**
 	 * Whether LIMIT/OFFSET notation is supported.
 	 * 
 	 * @return true if they are
 	 */
 	boolean supportsLimitOffset();
+
 }

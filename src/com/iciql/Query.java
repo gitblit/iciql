@@ -83,7 +83,7 @@ public class Query<T> {
 			long value = rs.getLong(1);
 			return value;
 		} catch (SQLException e) {
-			throw new IciqlException(e);
+			throw IciqlException.fromSQL(stat.getSQL(), e);
 		} finally {
 			JdbcUtils.closeSilently(rs, true);
 		}
@@ -128,7 +128,7 @@ public class Query<T> {
 				result.add(item);
 			}
 		} catch (SQLException e) {
-			throw new IciqlException(e);
+			throw IciqlException.fromSQL(stat.getSQL(), e);
 		} finally {
 			JdbcUtils.closeSilently(rs, true);
 		}
@@ -204,7 +204,7 @@ public class Query<T> {
 				result.add(row);
 			}
 		} catch (SQLException e) {
-			throw new IciqlException(e);
+			throw IciqlException.fromSQL(stat.getSQL(), e);
 		} finally {
 			JdbcUtils.closeSilently(rs, true);
 		}
@@ -220,26 +220,20 @@ public class Query<T> {
 		List<X> result = Utils.newArrayList();
 		try {
 			while (rs.next()) {
-				try {
-					X value;
-					Object o = rs.getObject(1);
-					// Convert CLOB and BLOB now because we close the resultset
-					if (Clob.class.isAssignableFrom(o.getClass())) {
-						value = (X) Utils.convert(o, String.class);
-					} else if (Blob.class.isAssignableFrom(o.getClass())) {
-						value = (X) Utils.convert(o, byte[].class);
-					} else {
-						value = (X) o;
-					}
-					result.add(value);
-				} catch (IciqlException e) {
-					throw e;
-				} catch (Exception e) {
-					throw new IciqlException(e);
+				X value;
+				Object o = rs.getObject(1);
+				// Convert CLOB and BLOB now because we close the resultset
+				if (Clob.class.isAssignableFrom(o.getClass())) {
+					value = (X) Utils.convert(o, String.class);
+				} else if (Blob.class.isAssignableFrom(o.getClass())) {
+					value = (X) Utils.convert(o, byte[].class);
+				} else {
+					value = (X) o;
 				}
+				result.add(value);
 			}
-		} catch (SQLException e) {
-			throw new IciqlException(e);
+		} catch (Exception e) {
+			throw IciqlException.fromSQL(stat.getSQL(), e);
 		} finally {
 			JdbcUtils.closeSilently(rs, true);
 		}

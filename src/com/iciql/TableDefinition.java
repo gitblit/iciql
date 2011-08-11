@@ -71,10 +71,11 @@ public class TableDefinition<T> {
 		String columnName;
 		Field field;
 		String dataType;
-		int maxLength;
+		int length;
+		int scale;
 		boolean isPrimaryKey;
 		boolean isAutoIncrement;
-		boolean trimString;
+		boolean trim;
 		boolean nullable;
 		String defaultValue;
 		EnumType enumType;
@@ -125,13 +126,14 @@ public class TableDefinition<T> {
 	String schemaName;
 	String tableName;
 	int tableVersion;
-	private boolean createTableIfRequired = true;
+	List<String> primaryKeyColumnNames;
+	boolean memoryTable;
+	
+	private boolean createTableIfRequired = true;	
 	private Class<T> clazz;
 	private IdentityHashMap<Object, FieldDefinition> fieldMap = Utils.newIdentityHashMap();
-
-	private List<String> primaryKeyColumnNames;
 	private ArrayList<IndexDefinition> indexes = Utils.newArrayList();
-	private boolean memoryTable;
+	
 
 	TableDefinition(Class<T> clazz) {
 		this.clazz = clazz;
@@ -242,10 +244,17 @@ public class TableDefinition<T> {
 		}
 	}
 
-	public void setMaxLength(Object column, int maxLength) {
+	public void setLength(Object column, int length) {
 		FieldDefinition def = fieldMap.get(column);
 		if (def != null) {
-			def.maxLength = maxLength;
+			def.length = length;
+		}
+	}
+	
+	public void setScale(Object column, int scale) {
+		FieldDefinition def = fieldMap.get(column);
+		if (def != null) {
+			def.scale = scale;
 		}
 	}
 
@@ -273,8 +282,9 @@ public class TableDefinition<T> {
 			String columnName = f.getName();
 			boolean isAutoIncrement = false;
 			boolean isPrimaryKey = false;
-			int maxLength = 0;
-			boolean trimString = false;
+			int length = 0;
+			int scale = 0;
+			boolean trim = false;
 			boolean nullable = true;
 			EnumType enumType = null;
 			String defaultValue = "";
@@ -301,8 +311,9 @@ public class TableDefinition<T> {
 				}
 				isAutoIncrement = col.autoIncrement();
 				isPrimaryKey = col.primaryKey();
-				maxLength = col.length();
-				trimString = col.trim();
+				length = col.length();
+				scale = col.scale();
+				trim = col.trim();
 				nullable = col.nullable();
 
 				// try using default object
@@ -321,7 +332,7 @@ public class TableDefinition<T> {
 						}
 					}
 				} catch (IllegalAccessException e) {
-					throw new IciqlException(e, "Failed to get default object for {0}", columnName);
+					throw new IciqlException(e, "failed to get default object for {0}", columnName);
 				}
 
 				// annotation overrides
@@ -338,8 +349,9 @@ public class TableDefinition<T> {
 				fieldDef.columnName = columnName;
 				fieldDef.isAutoIncrement = isAutoIncrement;
 				fieldDef.isPrimaryKey = isPrimaryKey;
-				fieldDef.maxLength = maxLength;
-				fieldDef.trimString = trimString;
+				fieldDef.length = length;
+				fieldDef.scale = scale;
+				fieldDef.trim = trim;
 				fieldDef.nullable = nullable;
 				fieldDef.defaultValue = defaultValue;
 				fieldDef.enumType = enumType;
@@ -372,9 +384,9 @@ public class TableDefinition<T> {
 			Enum<?> iqenum = (Enum<?>) value;
 			switch (field.enumType) {
 			case NAME:
-				if (field.trimString && field.maxLength > 0) {
-					if (iqenum.name().length() > field.maxLength) {
-						return iqenum.name().substring(0, field.maxLength);
+				if (field.trim && field.length > 0) {
+					if (iqenum.name().length() > field.length) {
+						return iqenum.name().substring(0, field.length);
 					}
 				}
 				return iqenum.name();
@@ -388,12 +400,13 @@ public class TableDefinition<T> {
 				return enumid.enumId();
 			}
 		}
-		if (field.trimString && field.maxLength > 0) {
+		
+		if (field.trim && field.length > 0) {
 			if (value instanceof String) {
 				// clip strings
 				String s = (String) value;
-				if (s.length() > field.maxLength) {
-					return s.substring(0, field.maxLength);
+				if (s.length() > field.length) {
+					return s.substring(0, field.length);
 				}
 				return s;
 			}
@@ -514,65 +527,23 @@ public class TableDefinition<T> {
 			db.upgradeTable(this);
 			return this;
 		}
-		SQLDialect dialect = db.getDialect();
 		SQLStatement stat = new SQLStatement(db);
-		StatementBuilder buff;
-		if (memoryTable && dialect.supportsMemoryTables()) {
-			buff = new StatementBuilder("CREATE MEMORY TABLE IF NOT EXISTS ");
-		} else {
-			buff = new StatementBuilder("CREATE TABLE IF NOT EXISTS ");
-		}
-
-		buff.append(dialect.prepareTableName(schemaName, tableName)).append('(');
-
-		for (FieldDefinition field : fields) {
-			buff.appendExceptFirst(", ");
-			buff.append(dialect.prepareColumnName(field.columnName)).append(' ').append(field.dataType);
-			if (field.maxLength > 0) {
-				buff.append('(').append(field.maxLength).append(')');
-			}
-
-			if (field.isAutoIncrement) {
-				buff.append(" AUTO_INCREMENT");
-			}
-
-			if (!field.nullable) {
-				buff.append(" NOT NULL");
-			}
-
-			// default values
-			if (!field.isAutoIncrement && !field.isPrimaryKey) {
-				String dv = field.defaultValue;
-				if (!StringUtils.isNullOrEmpty(dv)) {
-					if (ModelUtils.isProperlyFormattedDefaultValue(dv)
-							&& ModelUtils.isValidDefaultValue(field.field.getType(), dv)) {
-						buff.append(" DEFAULT " + dv);
-					}
-				}
-			}
-		}
-
-		// primary key
-		if (primaryKeyColumnNames != null && primaryKeyColumnNames.size() > 0) {
-			buff.append(", PRIMARY KEY(");
-			buff.resetCount();
-			for (String n : primaryKeyColumnNames) {
-				buff.appendExceptFirst(", ");
-				buff.append(n);
-			}
-			buff.append(')');
-		}
-		buff.append(')');
-		stat.setSQL(buff.toString());
+		db.getDialect().prepareCreateTable(stat, this);		
 		StatementLogger.create(stat.getSQL());
 		stat.executeUpdate();
 
 		// create indexes
 		for (IndexDefinition index : indexes) {
-			String sql = db.getDialect().prepareCreateIndex(schemaName, tableName, index);
-			stat.setSQL(sql);
+			stat = new SQLStatement(db);
+			db.getDialect().prepareCreateIndex(stat, schemaName, tableName, index);			
 			StatementLogger.create(stat.getSQL());
-			stat.executeUpdate();
+			try {
+				stat.executeUpdate();
+			} catch (IciqlException e) {
+				if (e.getIciqlCode() != IciqlException.CODE_INDEX_ALREADY_EXISTS) {
+					throw e;
+				}
+			}
 		}
 
 		// tables are created using IF NOT EXISTS

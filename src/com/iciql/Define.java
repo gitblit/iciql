@@ -61,7 +61,12 @@ public class Define {
 
 	public static void length(Object column, int length) {
 		checkInDefine();
-		currentTableDefinition.setMaxLength(column, length);
+		currentTableDefinition.setLength(column, length);
+	}
+	
+	public static void scale(Object column, int scale) {
+		checkInDefine();
+		currentTableDefinition.setScale(column, scale);
 	}
 
 	public static void tableName(String tableName) {

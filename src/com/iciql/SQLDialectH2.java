@@ -31,12 +31,7 @@ public class SQLDialectH2 extends SQLDialectDefault {
 	}
 
 	@Override
-	public boolean supportsMerge() {
-		return true;
-	}
-
-	@Override
-	public String prepareCreateIndex(String schema, String table, IndexDefinition index) {
+	public void prepareCreateIndex(SQLStatement stat, String schema, String table, IndexDefinition index) {
 		StatementBuilder buff = new StatementBuilder();
 		buff.append("CREATE ");
 		switch (index.type) {
@@ -62,7 +57,7 @@ public class SQLDialectH2 extends SQLDialectDefault {
 			buff.append(col);
 		}
 		buff.append(")");
-		return buff.toString();
+		stat.setSQL(buff.toString());		
 	}
 	
 	@Override

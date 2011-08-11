@@ -7,9 +7,17 @@
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
 - api change release (API v4)
+- DECIMAL(length, scale) support
+- unspecified length String fields are now CLOB instead of TEXT.  dialects can intercept this and convert to another type. e.g. MySQL dialect can change CLOB to TEXT.
+- Boolean now maps to BOOLEAN instead of BIT
+- expressions on unmapped fields will throw an IciqlException
+- improved exception reporting
 - moved dialects back to main package
-- refined dialect loading for pooled connections
-- added a MySQL dialect
+- improved automatic dialect determination on pooled connections
+- moved create table and create index statement generation into dialects
+- added HSQL dialect.  HSQL fails 4 unit tests, 2 of which are unimplemented merge, 1 has been filed as a bug in HSQL.
+- added MySQL dialect.  Untested.
+- renamed <b>_ iq_versions</b> table to *iq_versions* since leading _ character is troublesome for some databases.
 - @IQColumn(allowNull=true) -> @IQColumn(nullable=true)
 - All columns are assumed NULLABLE unless explicitly set *@IQColumn(nullable = false)*
 - allow using objects to assign default values<br/>

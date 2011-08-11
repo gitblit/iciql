@@ -118,9 +118,12 @@ public class TableInspector {
 			indexes = Utils.newHashMap();
 			while (rs.next()) {
 				IndexInspector info = new IndexInspector(rs);
-				if (info.type.equals(IndexType.UNIQUE) && info.name.toLowerCase().startsWith("primary")) {
-					// skip primary key indexes
-					continue;
+				if (info.type.equals(IndexType.UNIQUE)) {
+					String name = info.name.toLowerCase();
+					if (name.startsWith("primary") || name.startsWith("sys_idx_sys_pk")) {
+						// skip primary key indexes
+						continue;
+					}
 				}
 				if (indexes.containsKey(info.name)) {
 					indexes.get(info.name).addColumn(rs);
@@ -140,7 +143,20 @@ public class TableInspector {
 				col.clazz = ModelUtils.getClassForSqlType(col.type, dateTimeClass);
 				col.size = rs.getInt("COLUMN_SIZE");
 				col.nullable = rs.getInt("NULLABLE") == DatabaseMetaData.columnNullable;
-				col.isAutoIncrement = rs.getBoolean("IS_AUTOINCREMENT");
+				try {
+					Object autoIncrement = rs.getObject("IS_AUTOINCREMENT");
+					if (autoIncrement instanceof Boolean) {
+						col.isAutoIncrement = (Boolean) autoIncrement;
+					} else if (autoIncrement instanceof String) {
+						String val = autoIncrement.toString().toLowerCase();
+						col.isAutoIncrement = val.equals("true") | val.equals("yes");
+					} else if (autoIncrement instanceof Number) {
+						Number n = (Number) autoIncrement;
+						col.isAutoIncrement = n.intValue() > 0;
+					}
+				} catch (SQLException s) {
+					throw s;
+				}
 				if (primaryKeys.size() == 1) {
 					if (col.name.equalsIgnoreCase(primaryKeys.get(0))) {
 						col.isPrimaryKey = true;
@@ -499,14 +515,14 @@ public class TableInspector {
 
 		// string types
 		if (fieldClass == String.class) {
-			if ((fieldDef.maxLength != col.size) && (col.size < Integer.MAX_VALUE)) {
+			if ((fieldDef.length != col.size) && (col.size < Integer.MAX_VALUE)) {
 				remarks.add(warn(
 						table,
 						col,
 						format("{0}.length={1}, ColumnMaxLength={2}", IQColumn.class.getSimpleName(),
-								fieldDef.maxLength, col.size)));
+								fieldDef.length, col.size)));
 			}
-			if (fieldDef.maxLength > 0 && !fieldDef.trimString) {
+			if (fieldDef.length > 0 && !fieldDef.trim) {
 				remarks.add(consider(table, col, format("{0}.trim=true will prevent IciqlExceptions on"
 						+ " INSERT or UPDATE, but will clip data!", IQColumn.class.getSimpleName())));
 			}
@@ -687,7 +703,7 @@ public class TableInspector {
 			}
 		}
 
-		void addEnum(String parameter, Enum value) {
+		void addEnum(String parameter, Enum<?> value) {
 			appendExceptFirst(", ");
 			if (!StringUtils.isNullOrEmpty(parameter)) {
 				append(parameter);

@@ -8,22 +8,22 @@ AND/OR<br/>
 Your `com.iciql.DbUpgrader` implementation must specify the `IQVersion(version)` annotation
 
 ### How does it work?
-If you choose to use versioning, iciql will maintain a table within your database named *_iq_versions* which is defined as:
+If you choose to use versioning, iciql will maintain a table within your database named *iq_versions* which is defined as:
 
-    CREATE TABLE _IQ_VERSIONS(SCHEMANAME VARCHAR(255) NOT NULL, TABLENAME VARCHAR(255) NOT NULL, VERSION INT NOT NULL)
+    CREATE TABLE IQ_VERSIONS(SCHEMANAME VARCHAR(255) NOT NULL, TABLENAME VARCHAR(255) NOT NULL, VERSION INT NOT NULL)
     
 This database table is automatically created if and only if at least one of your model classes specifies a *version* > 0.
 
-When you generate a statement, iciql will compare the annotated version field of your model class to its last known value in the *_iq_versions* table.  If *_iq_versions* lags behind the model annotation, iciql will immediately call the registered `com.iciql.DbUpgrader` implementation before generating and executing the current statement.
+When you generate a statement, iciql will compare the annotated version field of your model class to its last known value in the *iq_versions* table.  If *iq_versions* lags behind the model annotation, iciql will immediately call the registered `com.iciql.DbUpgrader` implementation before generating and executing the current statement.
 
 When an upgrade scenario is identified, the current version and the annotated version information is passed to either:
 
 - `DbUpgrader.upgradeDatabase(db, fromVersion, toVersion)`
 - `DbUpgrader.upgradeTable(db, schema, table, fromVersion, toVersion)`
 
-both of which allow for non-linear upgrades.  If the upgrade method call is successful and returns *true*, iciql will update the *_iq_versions* table with the annotated version number.
+both of which allow for non-linear upgrades.  If the upgrade method call is successful and returns *true*, iciql will update the *iq_versions* table with the annotated version number.
 
 The actual upgrade procedure is beyond the scope of iciql and is your responsibility to implement.  This is simply a mechanism to automatically identify when an upgrade is necessary.
 
 **NOTE:**<br/>
-The database entry of the *_iq_versions* table is specified as SCHEMANAME='' and TABLENAME=''.
+The database entry of the *iq_versions* table is specified as SCHEMANAME='' and TABLENAME=''.

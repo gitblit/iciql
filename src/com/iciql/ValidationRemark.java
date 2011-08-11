@@ -35,11 +35,11 @@ public class ValidationRemark {
 		CONSIDER, WARN, ERROR;
 	}
 
-	private Level level;
-	private String table;
-	private String fieldType;
-	private String fieldName;
-	private String message;
+	public final Level level;
+	public final String table;
+	public final String fieldType;
+	public final String fieldName;
+	public final String message;
 
 	private ValidationRemark(Level level, String table, String type, String message) {
 		this.level = level;
@@ -102,10 +102,6 @@ public class ValidationRemark {
 
 	public boolean isError() {
 		return level.equals(Level.ERROR);
-	}
-
-	public Level getLevel() {
-		return level;
 	}
 
 	public String toString() {

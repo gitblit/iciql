@@ -20,7 +20,9 @@ package com.iciql;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
+import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
+import com.iciql.util.StatementBuilder;
 import com.iciql.util.StringUtils;
 
 /**
@@ -49,13 +51,18 @@ public class SQLDialectDefault implements SQLDialect {
 		}
 	}
 
-	@Override
-	public boolean supportsMemoryTables() {
-		return false;
+	/**
+	 * Allows subclasses to change the type of a column for a CREATE statement.
+	 * 
+	 * @param sqlType
+	 * @return the SQL type or a preferred alternative
+	 */
+	protected String convertSqlType(String sqlType) {
+		return sqlType;
 	}
 
 	@Override
-	public boolean supportsMerge() {
+	public boolean supportsMemoryTables() {
 		return false;
 	}
 
@@ -78,12 +85,100 @@ public class SQLDialectDefault implements SQLDialect {
 	}
 
 	@Override
-	public String prepareCreateIndex(String schemaName, String tableName, IndexDefinition index) {
+	public <T> void prepareCreateTable(SQLStatement stat, TableDefinition<T> def) {
+		StatementBuilder buff;
+		if (def.memoryTable && supportsMemoryTables()) {
+			buff = new StatementBuilder("CREATE MEMORY TABLE IF NOT EXISTS ");
+		} else {
+			buff = new StatementBuilder("CREATE TABLE IF NOT EXISTS ");
+		}
+
+		buff.append(prepareTableName(def.schemaName, def.tableName)).append('(');
+
+		boolean hasIdentityColumn = false;
+		for (FieldDefinition field : def.fields) {
+			buff.appendExceptFirst(", ");
+			buff.append(prepareColumnName(field.columnName)).append(' ');
+			String dataType = field.dataType;
+			if (dataType.equals("VARCHAR")) {		
+				// check to see if we should use VARCHAR or CLOB
+				if (field.length <= 0) {
+					dataType = "CLOB";
+				}
+				buff.append(convertSqlType(dataType));
+				if (field.length > 0) {
+					buff.append('(').append(field.length).append(')');
+				}
+			} else if (dataType.equals("DECIMAL")) {
+				// DECIMAL(precision,scale)
+				buff.append(convertSqlType(dataType));				
+				if (field.length > 0) {
+					buff.append('(').append(field.length);
+					if (field.scale > 0) {
+						buff.append(',').append(field.scale);
+					}
+					buff.append(')');
+				}
+			} else {
+				// other
+				buff.append(convertSqlType(dataType));
+			}
+
+			hasIdentityColumn |= prepareColumnDefinition(buff, field.isAutoIncrement, field.isPrimaryKey);
+
+			if (!field.nullable) {
+				buff.append(" NOT NULL");
+			}
+
+			// default values
+			if (!field.isAutoIncrement && !field.isPrimaryKey) {
+				String dv = field.defaultValue;
+				if (!StringUtils.isNullOrEmpty(dv)) {
+					if (ModelUtils.isProperlyFormattedDefaultValue(dv)
+							&& ModelUtils.isValidDefaultValue(field.field.getType(), dv)) {
+						buff.append(" DEFAULT " + dv);
+					}
+				}
+			}
+		}
+
+		// if table does not have identity column then specify primary key
+		if (!hasIdentityColumn) {
+			if (def.primaryKeyColumnNames != null && def.primaryKeyColumnNames.size() > 0) {
+				buff.append(", PRIMARY KEY(");
+				buff.resetCount();
+				for (String n : def.primaryKeyColumnNames) {
+					buff.appendExceptFirst(", ");
+					buff.append(prepareColumnName(n));
+				}
+				buff.append(')');
+			}
+		}
+		buff.append(')');
+		stat.setSQL(buff.toString());
+	}
+
+	protected boolean prepareColumnDefinition(StatementBuilder buff, boolean isAutoIncrement,
+			boolean isPrimaryKey) {
+		boolean isIdentity = false;
+		if (isAutoIncrement && isPrimaryKey) {
+			buff.append(" IDENTITY");
+			isIdentity = true;
+		} else if (isAutoIncrement) {
+			buff.append(" AUTO_INCREMENT");
+		}
+		return isIdentity;
+	}
+
+	@Override
+	public void prepareCreateIndex(SQLStatement stat, String schemaName, String tableName,
+			IndexDefinition index) {
 		throw new IciqlException("Dialect does not support index creation!");
 	}
 
 	@Override
-	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName, TableDefinition<T> def, Object obj) {
+	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName,
+			TableDefinition<T> def, Object obj) {
 		throw new IciqlException("Dialect does not support merge statements!");
 	}
 

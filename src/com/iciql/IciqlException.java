@@ -16,30 +16,109 @@
 
 package com.iciql;
 
+import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.regex.Pattern;
 
 /**
  * Iciql wraps all exceptions with this class.
  */
 public class IciqlException extends RuntimeException {
 
+	public static final int CODE_UNMAPPED_FIELD = 1;
+	public static final int CODE_DUPLICATE_KEY = 2;
+	public static final int CODE_TABLE_NOT_FOUND = 3;
+	public static final int CODE_INDEX_ALREADY_EXISTS = 4;
+
+	private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";	
+
 	private static final long serialVersionUID = 1L;
+
+	private String sql;
+
+	private int iciqlCode;
+
+	public IciqlException(Throwable t) {
+		super(t.getMessage(), t);
+		configureCode(t);
+	}
 
 	public IciqlException(String message, Object... parameters) {
 		super(parameters.length > 0 ? MessageFormat.format(message, parameters) : message);
-
 	}
 
 	public IciqlException(Throwable t, String message, Object... parameters) {
 		super(parameters.length > 0 ? MessageFormat.format(message, parameters) : message, t);
-
+		configureCode(t);
+	}
+	
+	public static void checkUnmappedField(String sql) {
+		if (Pattern.compile(IciqlException.TOKEN_UNMAPPED_FIELD).matcher(sql).find()) {
+			IciqlException e = new IciqlException("unmapped field in statement!");
+			e.sql = sql;
+			e.iciqlCode = CODE_UNMAPPED_FIELD;
+			throw e;
+		}
+	}
+	
+	public static IciqlException fromSQL(String sql, Throwable t) {
+		if (Pattern.compile(TOKEN_UNMAPPED_FIELD).matcher(sql).find()) {
+			IciqlException e = new IciqlException(t, "unmapped field in statement!");
+			e.sql = sql;
+			e.iciqlCode = CODE_UNMAPPED_FIELD;
+			return e;
+		} else {
+			IciqlException e = new IciqlException(t, t.getMessage());
+			e.sql = sql;
+			return e;
+		}
+	}
+	
+	public void setSQL(String sql) {
+		this.sql = sql;
 	}
 
-	public IciqlException(Throwable t) {
-		super(t);
+	public String getSQL() {
+		return sql;
 	}
 
-	public IciqlException(String message, Throwable t) {
-		super(message, t);
+	public int getIciqlCode() {
+		return iciqlCode;
 	}
+	
+	private void configureCode(Throwable t) {
+		if (t == null) {
+			return;
+		}
+		if (t instanceof SQLException) {
+			// http://developer.mimer.com/documentation/html_92/Mimer_SQL_Mobile_DocSet/App_Return_Codes2.html
+			SQLException s = (SQLException) t;
+			String state = s.getSQLState();
+			if ("23505".equals(state)) {
+				iciqlCode = CODE_DUPLICATE_KEY;
+			} else if ("42501".equals(state)) {
+				iciqlCode = CODE_TABLE_NOT_FOUND;
+			} else if ("42S02".equals(state)) {
+				iciqlCode = CODE_TABLE_NOT_FOUND;
+			} else if ("42504".equals(state)) {
+				iciqlCode = CODE_INDEX_ALREADY_EXISTS;
+			} else if ("42S11".equals(state)) {
+				iciqlCode = CODE_INDEX_ALREADY_EXISTS;
+			}
+		}
+	}
+	
+	@Override
+    public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getName());        
+        String message = getLocalizedMessage();
+        if (message != null) {
+        	sb.append(": ").append(message);
+        }
+        if (sql != null) {
+        	sb.append('\n').append(sql);
+        }
+        return sb.toString();
+    }
 }

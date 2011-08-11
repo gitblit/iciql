@@ -49,7 +49,7 @@ class ModelUtils {
 	static {
 		Map<Class<?>, String> m = SUPPORTED_TYPES;
 		m.put(String.class, "VARCHAR");
-		m.put(Boolean.class, "BIT");
+		m.put(Boolean.class, "BOOLEAN");
 		m.put(Byte.class, "TINYINT");
 		m.put(Short.class, "SMALLINT");
 		m.put(Integer.class, "INT");
@@ -100,8 +100,8 @@ class ModelUtils {
 		m.put("NCLOB", "VARCHAR");
 
 		// logic
-		m.put("BOOL", "BIT");
-		m.put("BOOLEAN", "BIT");
+		m.put("BIT", "BOOLEAN");
+		m.put("BOOL", "BOOLEAN");
 
 		// numeric
 		m.put("BYTE", "TINYINT");
@@ -159,19 +159,11 @@ class ModelUtils {
 				return "INT";
 			case NAME:
 			default:
-				if (fieldDef.maxLength <= 0) {
-					return "TEXT";
-				}
 				return "VARCHAR";
 			}
 		}
 		if (SUPPORTED_TYPES.containsKey(fieldClass)) {
-			String type = SUPPORTED_TYPES.get(fieldClass);
-			if (type.equals("VARCHAR") && fieldDef.maxLength <= 0) {
-				// unspecified length strings are TEXT, not VARCHAR
-				return "TEXT";
-			}
-			return type;
+			return SUPPORTED_TYPES.get(fieldClass);
 		}
 		if (!strictTypeMapping) {
 			return "VARCHAR";

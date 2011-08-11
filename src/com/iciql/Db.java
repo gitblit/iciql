@@ -73,6 +73,7 @@ public class Db {
 		// 2. DatabaseMetaData.getDatabaseProductName()
 		DIALECTS.put("H2", SQLDialectH2.class);
 		DIALECTS.put("MySQL", SQLDialectMySQL.class);
+		DIALECTS.put("HSQL Database Engine", SQLDialectHSQL.class);
 	}
 
 	private Db(Connection conn) {
@@ -83,7 +84,7 @@ public class Db {
 			data = conn.getMetaData();
 			databaseName = data.getDatabaseProductName();
 		} catch (SQLException s) {
-			throw new IciqlException("Failed to retrieve database metadata!", s);
+			throw new IciqlException(s, "failed to retrieve database metadata!");
 		}
 		dialect = getDialect(databaseName, conn.getClass().getName());
 		dialect.configureDialect(databaseName, data);
@@ -140,7 +141,7 @@ public class Db {
 			Connection conn = JdbcUtils.getConnection(null, url, user, password);
 			return new Db(conn);
 		} catch (SQLException e) {
-			throw convert(e);
+			throw new IciqlException(e);
 		}
 	}
 
@@ -156,7 +157,7 @@ public class Db {
 		try {
 			return new Db(ds.getConnection());
 		} catch (SQLException e) {
-			throw convert(e);
+			throw new IciqlException(e);
 		}
 	}
 
@@ -172,12 +173,8 @@ public class Db {
 			Connection conn = JdbcUtils.getConnection(null, url, prop);
 			return new Db(conn);
 		} catch (SQLException e) {
-			throw convert(e);
+			throw new IciqlException(e);
 		}
-	}
-
-	private static Error convert(Exception e) {
-		return new Error(e);
 	}
 
 	public <T> void insert(T t) {
@@ -191,18 +188,15 @@ public class Db {
 	}
 
 	/**
-	 * Merge usually INSERTS if the record does not exist or UPDATES the record
-	 * if it does exist. Not all databases support MERGE and the syntax varies
-	 * with the database.
+	 * Merge INSERTS if the record does not exist or UPDATES the record if it
+	 * does exist. Not all databases support MERGE and the syntax varies with
+	 * the database.
 	 * 
 	 * If the dialect does not support merge an IciqlException will be thrown.
 	 * 
 	 * @param t
 	 */
 	public <T> void merge(T t) {
-		if (!getDialect().supportsMerge()) {
-			throw new IciqlException("Merge is not supported by this SQL dialect");
-		}
 		Class<?> clazz = t.getClass();
 		define(clazz).createTableIfRequired(this).merge(this, t);
 	}
@@ -383,13 +377,14 @@ public class Db {
 	}
 
 	PreparedStatement prepare(String sql, boolean returnGeneratedKeys) {
+		IciqlException.checkUnmappedField(sql);
 		try {
 			if (returnGeneratedKeys) {
 				return conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			}
 			return conn.prepareStatement(sql);
 		} catch (SQLException e) {
-			throw new IciqlException(e);
+			throw IciqlException.fromSQL(sql, e);
 		}
 	}
 

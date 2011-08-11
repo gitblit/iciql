@@ -52,7 +52,7 @@ public class SQLStatement {
 	public SQLStatement appendTable(String schema, String table) {
 		return appendSQL(db.getDialect().prepareTableName(schema, table));
 	}
-	
+
 	public SQLStatement appendColumn(String column) {
 		return appendSQL(db.getDialect().prepareColumnName(column));
 	}
@@ -63,7 +63,7 @@ public class SQLStatement {
 		}
 		return sql;
 	}
-	
+
 	public SQLStatement addParameter(Object o) {
 		params.add(o);
 		return this;
@@ -73,7 +73,7 @@ public class SQLStatement {
 		try {
 			return prepare(false).executeQuery();
 		} catch (SQLException e) {
-			throw new IciqlException(e);
+			throw IciqlException.fromSQL(getSQL(), e);
 		}
 	}
 
@@ -83,7 +83,7 @@ public class SQLStatement {
 			ps = prepare(false);
 			return ps.executeUpdate();
 		} catch (SQLException e) {
-			throw new IciqlException(e);
+			throw IciqlException.fromSQL(getSQL(), e);
 		} finally {
 			JdbcUtils.closeSilently(ps);
 		}
@@ -102,17 +102,19 @@ public class SQLStatement {
 			JdbcUtils.closeSilently(rs);
 			return identity;
 		} catch (SQLException e) {
-			throw new IciqlException(e);
+			throw IciqlException.fromSQL(getSQL(), e);
 		} finally {
 			JdbcUtils.closeSilently(ps);
 		}
 	}
 
-	private static void setValue(PreparedStatement prep, int parameterIndex, Object x) {
+	private void setValue(PreparedStatement prep, int parameterIndex, Object x) {
 		try {
 			prep.setObject(parameterIndex, x);
 		} catch (SQLException e) {
-			throw new IciqlException(e);
+			IciqlException ix = new IciqlException(e, "error setting parameter {0} as {1}", parameterIndex, x.getClass().getSimpleName());
+			ix.setSQL(getSQL());
+			throw ix;
 		}
 	}
 
