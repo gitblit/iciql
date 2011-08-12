@@ -38,7 +38,7 @@ import com.iciql.util.Utils;
 /**
  * A data class that contains a column for each data type.
  */
-@IQTable(strictTypeMapping = true)
+@IQTable
 @IQIndexes({ @IQIndex({ "myLong", "myInteger" }), @IQIndex(type = IndexType.HASH, value = "myString") })
 @IQVersion(1)
 public class SupportedTypes {
@@ -185,7 +185,7 @@ public class SupportedTypes {
 	/**
 	 * This class demonstrates the table upgrade.
 	 */
-	@IQTable(name = "SupportedTypes", inheritColumns = true, strictTypeMapping = true)
+	@IQTable(name = "SupportedTypes", inheritColumns = true)
 	@IQVersion(2)
 	public static class SupportedTypes2 extends SupportedTypes {
 

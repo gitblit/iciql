@@ -344,13 +344,6 @@ public interface Iciql {
 		boolean create() default true;
 
 		/**
-		 * Whether only supported types are mapped. If true, unsupported mapped
-		 * types will throw an IciqlException. If false, unsupported mapped
-		 * types will default to VARCHAR. Default: true.
-		 */
-		boolean strictTypeMapping() default true;
-
-		/**
 		 * If true, only fields that are explicitly annotated as IQColumn are
 		 * mapped. Default: true.
 		 */

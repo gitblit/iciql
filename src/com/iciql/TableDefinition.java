@@ -261,12 +261,10 @@ public class TableDefinition<T> {
 	void mapFields() {
 		boolean byAnnotationsOnly = false;
 		boolean inheritColumns = false;
-		boolean strictTypeMapping = false;
 		if (clazz.isAnnotationPresent(IQTable.class)) {
 			IQTable tableAnnotation = clazz.getAnnotation(IQTable.class);
 			byAnnotationsOnly = tableAnnotation.annotationsOnly();
 			inheritColumns = tableAnnotation.inheritColumns();
-			strictTypeMapping = tableAnnotation.strictTypeMapping();
 		}
 
 		List<Field> classFields = Utils.newArrayList();
@@ -356,7 +354,7 @@ public class TableDefinition<T> {
 				fieldDef.nullable = nullable;
 				fieldDef.defaultValue = defaultValue;
 				fieldDef.enumType = enumType;
-				fieldDef.dataType = ModelUtils.getDataType(fieldDef, strictTypeMapping);
+				fieldDef.dataType = ModelUtils.getDataType(fieldDef);
 				fields.add(fieldDef);
 			}
 		}

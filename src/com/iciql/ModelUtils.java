@@ -146,11 +146,9 @@ class ModelUtils {
 	 * 
 	 * @param fieldDef
 	 *            the field to map
-	 * @param strictTypeMapping
-	 *            throws a IciqlException if type is unsupported
 	 * @return
 	 */
-	static String getDataType(FieldDefinition fieldDef, boolean strictTypeMapping) {
+	static String getDataType(FieldDefinition fieldDef) {
 		Class<?> fieldClass = fieldDef.field.getType();
 		if (fieldClass.isEnum()) {
 			switch (fieldDef.enumType) {
@@ -164,9 +162,6 @@ class ModelUtils {
 		}
 		if (SUPPORTED_TYPES.containsKey(fieldClass)) {
 			return SUPPORTED_TYPES.get(fieldClass);
-		}
-		if (!strictTypeMapping) {
-			return "VARCHAR";
 		}
 		throw new IciqlException("Unsupported type " + fieldClass.getName());
 	}
