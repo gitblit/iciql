@@ -7,6 +7,7 @@
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
 - api change release (API v4)
+- @IQTable.createIfRequired -> @IQTable.create
 - don't INSERT primitive autoIncrement primaryKey fields, let database assign value
 - full support for primitives in all clauses
 - DECIMAL(length, scale) support

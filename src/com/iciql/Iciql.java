@@ -341,7 +341,7 @@ public interface Iciql {
 		 * Whether or not iciql tries to create the table and indexes. Default:
 		 * true.
 		 */
-		boolean createIfRequired() default true;
+		boolean create() default true;
 
 		/**
 		 * Whether only supported types are mapped. If true, unsupported mapped

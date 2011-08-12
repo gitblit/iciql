@@ -591,7 +591,7 @@ public class TableDefinition<T> {
 			}
 
 			// allow control over createTableIfRequired()
-			createTableIfRequired = tableAnnotation.createIfRequired();
+			createTableIfRequired = tableAnnotation.create();
 
 			// model version
 			if (clazz.isAnnotationPresent(IQVersion.class)) {

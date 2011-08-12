@@ -27,7 +27,7 @@ import com.iciql.Iciql.IQTable;
  * A table containing product data.
  */
 
-@IQTable(createIfRequired = false)
+@IQTable(create = false)
 public class ProductNoCreateTable {
 
 	@SuppressWarnings("unused")
