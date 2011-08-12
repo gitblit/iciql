@@ -56,10 +56,6 @@ public class ModelsTest {
 
 	private Db db;
 
-	private void log(String text) {
-		System.out.println(text);
-	}
-
 	@Before
 	public void setUp() {
 		db = IciqlSuite.openDb();

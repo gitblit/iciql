@@ -105,6 +105,8 @@ The recommended approach to setup a model class is to annotate the class and fie
 You may specify default values for an @IQColumn by either:
 
 1. specifying the default value string within your annotation<br/>
+**NOTE:**<br/>
+The annotated default value always takes priority over a field default value.
 %BEGINCODE%
 // notice the single ticks!
 @IQColumn(defaultValue="'2000-01-01 00:00:00'")

@@ -63,7 +63,7 @@ public class Define {
 		checkInDefine();
 		currentTableDefinition.setLength(column, length);
 	}
-	
+
 	public static void scale(Object column, int scale) {
 		checkInDefine();
 		currentTableDefinition.setScale(column, scale);
@@ -74,6 +74,7 @@ public class Define {
 		currentTableDefinition.setTableName(tableName);
 	}
 
+	@SuppressWarnings("deprecation")
 	static synchronized <T> void define(TableDefinition<T> tableDefinition, Iciql table) {
 		currentTableDefinition = tableDefinition;
 		currentTable = table;
@@ -86,7 +87,8 @@ public class Define {
 	private static void checkInDefine() {
 		if (currentTable == null) {
 			throw new IciqlException("This method may only be called "
-					+ "from within the define() method, and the define() method " + "is called by the framework.");
+					+ "from within the define() method, and the define() method "
+					+ "is called by the framework.");
 		}
 	}
 

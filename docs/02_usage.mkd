@@ -113,7 +113,7 @@ The Product model class instance named **p** is an *alias* object.  An *alias* i
 
 1. *Alias* instances are **NOT** thread-safe and must not be used concurrently.
 2. *Alias* instances have no other purpose than to provide a compile-time/runtime map of your table.
-3. If you inspected an *alias* instance after using one you would find that it's fields have been assigned numeric values.<br/>These values are assigned from a static counter in `com.iciql.Utils.newObject()` during execution of the *db.from()* method.<p>For *Object* fields, these values are meaningless since objects are mapped by reference.  These values do matter for *primitive* fields where they are mapped by value.
+3. If you inspected an *alias* instance after using one you would find that it's fields have been assigned numeric values.<br/>These values are assigned from a static counter in `com.iciql.Utils.newObject()` during execution of the *db.from()* method.<p>For *Object* fields, these values are meaningless since objects are mapped by reference.<br/>For *Primitive* fields these values do matter because primitives are mapped by value.  The proper alias is selected as long as the primitive variant methods are used.  e.g. db.from(p).where(int).is(Integer).select()
 
 If your statement is a query, like in the above example, iciql will generate new instances of your *alias* model class and return them as a list where each entry of the list represents a row from the JDBC `ResultSet`.
  

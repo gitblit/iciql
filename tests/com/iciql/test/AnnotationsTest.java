@@ -38,8 +38,6 @@ import com.iciql.test.models.ProductAnnotationOnly;
 import com.iciql.test.models.ProductInheritedAnnotation;
 import com.iciql.test.models.ProductMixedAnnotation;
 import com.iciql.test.models.ProductNoCreateTable;
-import com.iciql.util.JdbcUtils;
-import com.iciql.util.Utils;
 
 /**
  * Test annotation processing.

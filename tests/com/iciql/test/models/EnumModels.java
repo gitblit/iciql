@@ -25,6 +25,10 @@ import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQEnum;
 import com.iciql.Iciql.IQTable;
 
+/**
+ * Container for reusable enum model classes which exercise the 3 supported
+ * types.
+ */
 public abstract class EnumModels {
 
 	/**

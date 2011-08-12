@@ -17,9 +17,9 @@
 
 package com.iciql.test;
 
-import static org.junit.Assert.assertEquals;
 import static com.iciql.Define.primaryKey;
 import static com.iciql.Define.tableName;
+import static org.junit.Assert.assertEquals;
 
 import java.text.MessageFormat;
 import java.util.Arrays;

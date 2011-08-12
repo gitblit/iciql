@@ -8,21 +8,26 @@
 
 - api change release (API v4)
 - @IQTable.createIfRequired -> @IQTable.create
-- don't INSERT primitive autoIncrement primaryKey fields, let database assign value
+- don't INSERT primitive autoIncrement fields, let database assign value
 - full support for primitives in all clauses
 - DECIMAL(length, scale) support
 - unspecified length String fields are now CLOB instead of TEXT.  dialects can intercept this and convert to another type. e.g. MySQL dialect can change CLOB to TEXT.
-- Boolean now maps to BOOLEAN instead of BIT
+- java.lang.Boolean now maps to BOOLEAN instead of BIT
 - expressions on unmapped fields will throw an IciqlException
-- improved exception reporting
+- expressions on unsupported types will throw an IciqlException
+- improved exception reporting by including generated statement, if available 
 - moved dialects back to main package
 - improved automatic dialect determination on pooled connections
 - moved create table and create index statement generation into dialects
-- added HSQL dialect.  HSQL fails 4 out of 49 unit tests: 2 failures are unimplemented merge, and 1 has been filed as a [bug in HSQL](https://sourceforge.net/tracker/?func=detail&aid=3390047&group_id=23316&atid=378131).
-- added MySQL dialect.  untested.
+- added HSQL dialect.  HSQL fails 4 out of 50 unit tests.
+    - 2 failures are unimplemented merge
+    - 1 has been filed and accepted as a [bug in HSQL](https://sourceforge.net/tracker/?func=detail&aid=3390047&group_id=23316&atid=378131)
+    - 1 is a concurrency issue, but the test may not be flawed
+- added untested MySQL dialect
 - renamed <b>_ iq_versions</b> table to *iq_versions* since leading _ character is troublesome for some databases.
 - @IQColumn(allowNull=true) -> @IQColumn(nullable=true)
-- All columns are assumed NULLABLE unless explicitly set *@IQColumn(nullable = false)*
+- All **Object** columns are assumed NULLABLE unless explicitly set *@IQColumn(nullable = false)*
+- All **Primitive** columns are assumed NOT NULLABLE unless explicitly set *@IQColumn(nullable = true)*
 - allow using objects to assign default values<br/>
 %BEGINCODE%
 // CREATE TABLE ... myDate DATETIME DEFAULT '2000-02-01 00:00:00'
