@@ -129,12 +129,11 @@ public class TableDefinition<T> {
 	int tableVersion;
 	List<String> primaryKeyColumnNames;
 	boolean memoryTable;
-	
-	private boolean createTableIfRequired = true;	
+
+	private boolean createTableIfRequired = true;
 	private Class<T> clazz;
 	private IdentityHashMap<Object, FieldDefinition> fieldMap = Utils.newIdentityHashMap();
 	private ArrayList<IndexDefinition> indexes = Utils.newArrayList();
-	
 
 	TableDefinition(Class<T> clazz) {
 		this.clazz = clazz;
@@ -251,7 +250,7 @@ public class TableDefinition<T> {
 			def.length = length;
 		}
 	}
-	
+
 	public void setScale(Object column, int scale) {
 		FieldDefinition def = fieldMap.get(column);
 		if (def != null) {
@@ -286,7 +285,7 @@ public class TableDefinition<T> {
 			int length = 0;
 			int scale = 0;
 			boolean trim = false;
-			boolean nullable = true;
+			boolean nullable = !f.getType().isPrimitive();
 			EnumType enumType = null;
 			String defaultValue = "";
 			// configure Java -> SQL enum mapping
@@ -402,7 +401,7 @@ public class TableDefinition<T> {
 				return enumid.enumId();
 			}
 		}
-		
+
 		if (field.trim && field.length > 0) {
 			if (value instanceof String) {
 				// clip strings
@@ -423,12 +422,18 @@ public class TableDefinition<T> {
 		StatementBuilder buff = new StatementBuilder("INSERT INTO ");
 		buff.append(db.getDialect().prepareTableName(schemaName, tableName)).append('(');
 		for (FieldDefinition field : fields) {
+			if (skipInsertField(field, obj)) {
+				continue;
+			}
 			buff.appendExceptFirst(", ");
 			buff.append(db.getDialect().prepareColumnName(field.columnName));
 		}
 		buff.append(") VALUES(");
 		buff.resetCount();
 		for (FieldDefinition field : fields) {
+			if (skipInsertField(field, obj)) {
+				continue;
+			}
 			buff.appendExceptFirst(", ");
 			buff.append('?');
 			Object value = getValue(obj, field);
@@ -441,6 +446,17 @@ public class TableDefinition<T> {
 			return stat.executeInsert();
 		}
 		return stat.executeUpdate();
+	}
+
+	private boolean skipInsertField(FieldDefinition field, Object obj) {
+		// skip uninitialized primitive autoincrement values
+		if (field.isAutoIncrement && field.isPrimitive) {
+			Object value = getValue(obj, field);
+			if (value.toString().equals("0")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	void merge(Db db, Object obj) {
@@ -530,14 +546,14 @@ public class TableDefinition<T> {
 			return this;
 		}
 		SQLStatement stat = new SQLStatement(db);
-		db.getDialect().prepareCreateTable(stat, this);		
+		db.getDialect().prepareCreateTable(stat, this);
 		StatementLogger.create(stat.getSQL());
 		stat.executeUpdate();
 
 		// create indexes
 		for (IndexDefinition index : indexes) {
 			stat = new SQLStatement(db);
-			db.getDialect().prepareCreateIndex(stat, schemaName, tableName, index);			
+			db.getDialect().prepareCreateIndex(stat, schemaName, tableName, index);
 			StatementLogger.create(stat.getSQL());
 			try {
 				stat.executeUpdate();

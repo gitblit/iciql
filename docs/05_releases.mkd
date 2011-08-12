@@ -7,6 +7,7 @@
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
 - api change release (API v4)
+- don't INSERT primitive autoIncrement primaryKey fields, let database assign value
 - full support for primitives in all clauses
 - DECIMAL(length, scale) support
 - unspecified length String fields are now CLOB instead of TEXT.  dialects can intercept this and convert to another type. e.g. MySQL dialect can change CLOB to TEXT.
