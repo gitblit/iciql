@@ -140,6 +140,7 @@ public class Utils {
 		} else if (clazz == double.class || clazz == Double.class) {
 			return (T) new Double(COUNTER.getAndIncrement());
 		} else if (clazz == boolean.class || clazz == Boolean.class) {
+			COUNTER.getAndIncrement();
 			return (T) new Boolean(false);
 		} else if (clazz == BigDecimal.class) {
 			return (T) new BigDecimal(COUNTER.getAndIncrement());
@@ -154,12 +155,15 @@ public class Utils {
 		} else if (clazz == java.util.Date.class) {
 			return (T) new java.util.Date(COUNTER.getAndIncrement());
 		} else if (clazz == byte[].class) {
+			COUNTER.getAndIncrement();
 			return (T) new byte[0];
 		} else if (clazz.isEnum()) {
+			COUNTER.getAndIncrement();
 			// enums can not be instantiated reflectively
 			// return first constant as reference
 			return clazz.getEnumConstants()[0];
 		} else if (clazz == java.util.UUID.class) {
+			COUNTER.getAndIncrement();
 			return (T) UUID.randomUUID();
 		}
 		try {

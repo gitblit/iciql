@@ -79,6 +79,7 @@ public class TableDefinition<T> {
 		boolean nullable;
 		String defaultValue;
 		EnumType enumType;
+		boolean isPrimitive;
 
 		Object getValue(Object obj) {
 			try {
@@ -345,6 +346,7 @@ public class TableDefinition<T> {
 			boolean reflectiveMatch = isPublic && !byAnnotationsOnly;
 			if (reflectiveMatch || hasAnnotation) {
 				FieldDefinition fieldDef = new FieldDefinition();
+				fieldDef.isPrimitive = f.getType().isPrimitive();
 				fieldDef.field = f;
 				fieldDef.columnName = columnName;
 				fieldDef.isAutoIncrement = isAutoIncrement;
@@ -658,14 +660,4 @@ public class TableDefinition<T> {
 			query.appendSQL(stat, x, obj);
 		}
 	}
-
-	<Y, X> void copyAttributeValues(Query<Y> query, X to, X map) {
-		for (FieldDefinition def : fields) {
-			Object obj = def.getValue(map);
-			SelectColumn<Y> col = query.getSelectColumn(obj);
-			Object value = col.getCurrentValue();
-			def.setValue(to, value);
-		}
-	}
-
 }

@@ -16,7 +16,11 @@
 
 package com.iciql.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -32,14 +36,17 @@ public class PrimitivesTest {
 	public void testPrimitives() {
 		Db db = IciqlSuite.openDb();
 
-		// insert random model
-		PrimitivesModel model = new PrimitivesModel();
-		db.insert(model);
+		// insert random models in reverse order
+		List<PrimitivesModel> models = PrimitivesModel.getList();
+		PrimitivesModel model = models.get(0);
+		Collections.reverse(models);
+		// insert them in reverse order
+		db.insertAll(models);
 
 		PrimitivesModel p = new PrimitivesModel();
 
 		// retrieve model and compare
-		PrimitivesModel retrievedModel = db.from(p).selectFirst();
+		PrimitivesModel retrievedModel = db.from(p).orderBy(p.myLong).selectFirst();
 		assertTrue(model.equivalentTo(retrievedModel));
 
 		retrievedModel = db.from(p).where("mylong = ? and myinteger = ?", model.myLong, model.myInteger)
@@ -47,17 +54,26 @@ public class PrimitivesTest {
 		assertTrue(model.equivalentTo(retrievedModel));
 
 		// retrieve with conditions and compare
-		// StatementLogger.activateConsoleLogger();
-		// retrievedModel =
-		// db.from(p).where(p.myLong).is(model.myLong).and(p.myInteger).is(model.myInteger)
-		// .selectFirst();
-		// assertTrue(model.equivalentTo(retrievedModel));
-		//
-		// // update myInteger and compare
-		// db.from(p).set(p.myInteger).to(10).where(p.myLong).is(model.myLong).update();
-		// retrievedModel = db.from(p).selectFirst();
+		retrievedModel = db.from(p).where(p.myLong).is(model.myLong).and(p.myInteger).is(model.myInteger)
+				.selectFirst();
+		assertTrue(model.equivalentTo(retrievedModel));
 
-		// assertEquals(10, retrievedModel.myInteger);
+		// set myInteger & myDouble
+		db.from(p).set(p.myInteger).to(10).set(p.myDouble).to(3.0d).where(p.myLong).is(model.myLong).update();
+		retrievedModel = db.from(p).orderBy(p.myLong).selectFirst();
+
+		assertEquals(10, retrievedModel.myInteger);
+		assertEquals(3d, retrievedModel.myDouble, 0.001d);
+
+		// increment my double by pi
+		db.from(p).increment(p.myDouble).by(3.14d).update();
+		retrievedModel = db.from(p).orderBy(p.myLong).selectFirst();
+		assertEquals(6.14d, retrievedModel.myDouble, 0.001d);
+
+		// test order by
+		List<PrimitivesModel> list = db.from(p).orderBy(p.myLong).select();
+		assertEquals(models.size(), list.size());
+		assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]", list.toString());
 
 		db.close();
 	}

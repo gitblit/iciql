@@ -23,6 +23,7 @@ import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -49,7 +50,7 @@ public class Query<T> {
 	private ArrayList<SelectTable<T>> joins = Utils.newArrayList();
 	private final IdentityHashMap<Object, SelectColumn<T>> aliasMap = Utils.newIdentityHashMap();
 	private ArrayList<OrderExpression<T>> orderByList = Utils.newArrayList();
-	private Object[] groupByExpressions;
+	private ArrayList<Object> groupByExpressions = Utils.newArrayList();
 	private long limit;
 	private long offset;
 
@@ -148,8 +149,78 @@ public class Query<T> {
 		return new UpdateColumnSet<T, A>(this, field);
 	}
 
+	public UpdateColumnSet<T, Boolean> set(boolean field) {
+		return setPrimitive(field);
+	}
+
+	public UpdateColumnSet<T, Byte> set(byte field) {
+		return setPrimitive(field);
+	}
+
+	public UpdateColumnSet<T, Short> set(short field) {
+		return setPrimitive(field);
+	}
+
+	public UpdateColumnSet<T, Integer> set(int field) {
+		return setPrimitive(field);
+	}
+
+	public UpdateColumnSet<T, Long> set(long field) {
+		return setPrimitive(field);
+	}
+
+	public UpdateColumnSet<T, Float> set(float field) {
+		return setPrimitive(field);
+	}
+
+	public UpdateColumnSet<T, Double> set(double field) {
+		return setPrimitive(field);
+	}
+
+	private <A> UpdateColumnSet<T, A> setPrimitive(A field) {
+		A alias = getPrimitiveAliasByValue(field);
+		if (alias == null) {
+			// this will result in an unmapped field exception
+			return set(field);
+		}
+		return set(alias);
+	}
+
 	public <A> UpdateColumnIncrement<T, A> increment(A field) {
 		return new UpdateColumnIncrement<T, A>(this, field);
+	}
+
+	public UpdateColumnIncrement<T, Byte> increment(byte field) {
+		return incrementPrimitive(field);
+	}
+	
+	public UpdateColumnIncrement<T, Short> increment(short field) {
+		return incrementPrimitive(field);
+	}
+
+	public UpdateColumnIncrement<T, Integer> increment(int field) {
+		return incrementPrimitive(field);
+	}
+
+	public UpdateColumnIncrement<T, Long> increment(long field) {
+		return incrementPrimitive(field);
+	}
+
+	public UpdateColumnIncrement<T, Float> increment(float field) {
+		return incrementPrimitive(field);
+	}
+
+	public UpdateColumnIncrement<T, Double> increment(double field) {
+		return incrementPrimitive(field);
+	}
+
+	private <A> UpdateColumnIncrement<T, A> incrementPrimitive(A field) {
+		A alias = getPrimitiveAliasByValue(field);
+		if (alias == null) {
+			// this will result in an unmapped field exception
+			return increment(field);
+		}
+		return increment(alias);
 	}
 
 	public int update() {
@@ -249,6 +320,105 @@ public class Query<T> {
 		return stat;
 	}
 
+	/**
+	 * Begin a primitive boolean field condition clause.
+	 * 
+	 * @param x
+	 *            the primitive boolean field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Boolean> where(boolean x) {
+		return wherePrimitive(x);
+	}
+
+	/**
+	 * Begin a primitive short field condition clause.
+	 * 
+	 * @param x
+	 *            the primitive short field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Byte> where(byte x) {
+		return wherePrimitive(x);
+	}
+
+	/**
+	 * Begin a primitive short field condition clause.
+	 * 
+	 * @param x
+	 *            the primitive short field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Short> where(short x) {
+		return wherePrimitive(x);
+	}
+
+	/**
+	 * Begin a primitive int field condition clause.
+	 * 
+	 * @param x
+	 *            the primitive int field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Integer> where(int x) {
+		return wherePrimitive(x);
+	}
+
+	/**
+	 * Begin a primitive long field condition clause.
+	 * 
+	 * @param x
+	 *            the primitive long field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Long> where(long x) {
+		return wherePrimitive(x);
+	}
+
+	/**
+	 * Begin a primitive float field condition clause.
+	 * 
+	 * @param x
+	 *            the primitive float field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Float> where(float x) {
+		return wherePrimitive(x);
+	}
+
+	/**
+	 * Begin a primitive double field condition clause.
+	 * 
+	 * @param x
+	 *            the primitive double field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Double> where(double x) {
+		return wherePrimitive(x);
+	}
+
+	/**
+	 * Begins a primitive field condition clause.
+	 * 
+	 * @param value
+	 * @return a query condition to continue building the condition
+	 */
+	private <A> QueryCondition<T, A> wherePrimitive(A value) {
+		A alias = getPrimitiveAliasByValue(value);
+		if (alias == null) {
+			// this will result in an unmapped field exception
+			return where(value);
+		}
+		return where(alias);
+	}
+
+	/**
+	 * Begin an Object field condition clause.
+	 * 
+	 * @param x
+	 *            the mapped object to query
+	 * @return a query condition to continue building the condition
+	 */
 	public <A> QueryCondition<T, A> where(A x) {
 		return new QueryCondition<T, A>(this, x);
 	}
@@ -306,6 +476,48 @@ public class Query<T> {
 		return this;
 	}
 
+	public Query<T> orderBy(boolean field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> orderBy(byte field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> orderBy(short field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> orderBy(int field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> orderBy(long field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> orderBy(float field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> orderBy(double field) {
+		return orderByPrimitive(field);
+	}
+
+	Query<T> orderByPrimitive(Object field) {
+		Object alias = getPrimitiveAliasByValue(field);
+		if (alias == null) {
+			return orderBy(field);
+		}
+		return orderBy(alias);
+	}
+	
+	public Query<T> orderBy(Object expr) {
+		OrderExpression<T> e = new OrderExpression<T>(this, expr, false, false, false);
+		addOrderBy(e);
+		return this;
+	}
+	
 	/**
 	 * Order by a number of columns.
 	 * 
@@ -328,8 +540,49 @@ public class Query<T> {
 		return this;
 	}
 
+	public Query<T> groupBy(boolean field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> groupBy(byte field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> groupBy(short field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> groupBy(int field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> groupBy(long field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> groupBy(float field) {
+		return orderByPrimitive(field);
+	}
+
+	public Query<T> groupBy(double field) {
+		return orderByPrimitive(field);
+	}
+
+	Query<T> groupByPrimitive(Object field) {
+		Object alias = getPrimitiveAliasByValue(field);
+		if (alias == null) {
+			return groupBy(field);
+		}
+		return groupBy(alias);
+	}
+	
+	public Query<T> groupBy(Object expr) {
+		groupByExpressions.add(expr);
+		return this;
+	}
+	
 	public Query<T> groupBy(Object... groupBy) {
-		this.groupByExpressions = groupBy;
+		this.groupByExpressions.addAll(Arrays.asList(groupBy));
 		return this;
 	}
 
@@ -362,7 +615,7 @@ public class Query<T> {
 			addParameter(stat, alias, value);
 			return;
 		}
-		SelectColumn<T> col = aliasMap.get(value);
+		SelectColumn<T> col = getColumnByReference(value);
 		if (col != null) {
 			col.appendSQL(stat);
 			return;
@@ -402,7 +655,7 @@ public class Query<T> {
 
 	private void addParameter(SQLStatement stat, Object alias, Object value) {
 		if (alias != null && value.getClass().isEnum()) {
-			SelectColumn<T> col = aliasMap.get(alias);
+			SelectColumn<T> col = getColumnByReference(alias);
 			EnumType type = col.getFieldDefinition().enumType;
 			Enum<?> anEnum = (Enum<?>) value;
 			Object y = Utils.convertEnum(anEnum, type);
@@ -437,7 +690,7 @@ public class Query<T> {
 			join.appendSQLAsJoin(stat, this);
 		}
 		appendWhere(stat);
-		if (groupByExpressions != null) {
+		if (!groupByExpressions.isEmpty()) {
 			stat.appendSQL(" GROUP BY ");
 			int i = 0;
 			for (Object obj : groupByExpressions) {
@@ -493,8 +746,34 @@ public class Query<T> {
 		return !joins.isEmpty();
 	}
 
-	SelectColumn<T> getSelectColumn(Object obj) {
-		return aliasMap.get(obj);
+	/**
+	 * This method returns a mapped Object field by its reference.
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	private SelectColumn<T> getColumnByReference(Object obj) {
+		SelectColumn<T> col = aliasMap.get(obj);
+		return col;
+	}
+
+	/**
+	 * This method returns the alias of a mapped primitive field by its value.
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	<A> A getPrimitiveAliasByValue(A obj) {
+		for (Object alias : aliasMap.keySet()) {
+			if (alias.equals(obj)) {
+				SelectColumn<T> match = aliasMap.get(alias);
+				if (match.getFieldDefinition().isPrimitive) {
+					return (A) alias;
+				}
+			}
+		}
+		return null;
 	}
 
 	void addOrderBy(OrderExpression<T> expr) {

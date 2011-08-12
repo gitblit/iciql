@@ -34,11 +34,189 @@ public class QueryWhere<T> {
 		this.query = query;
 	}
 
+	/**
+	 * Specify an AND condition with a mapped primitive boolean.
+	 * 
+	 * @param x
+	 *            the primitive boolean field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Boolean> and(boolean x) {
+		return addPrimitive(ConditionAndOr.AND, x);
+	}
+
+	/**
+	 * Specify an AND condition with a mapped primitive byte.
+	 * 
+	 * @param x
+	 *            the primitive byte field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Byte> and(byte x) {
+		return addPrimitive(ConditionAndOr.AND, x);
+	}
+
+	/**
+	 * Specify an AND condition with a mapped primitive short.
+	 * 
+	 * @param x
+	 *            the primitive short field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Short> and(short x) {
+		return addPrimitive(ConditionAndOr.AND, x);
+	}
+
+	/**
+	 * Specify an AND condition with a mapped primitive int.
+	 * 
+	 * @param x
+	 *            the primitive int field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Integer> and(int x) {
+		return addPrimitive(ConditionAndOr.AND, x);
+	}
+
+	/**
+	 * Specify an AND condition with a mapped primitive long.
+	 * 
+	 * @param x
+	 *            the primitive long field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Long> and(long x) {
+		return addPrimitive(ConditionAndOr.AND, x);
+	}
+
+	/**
+	 * Specify an AND condition with a mapped primitive float.
+	 * 
+	 * @param x
+	 *            the primitive float field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Float> and(float x) {
+		return addPrimitive(ConditionAndOr.AND, x);
+	}
+
+	/**
+	 * Specify an AND condition with a mapped primitive double.
+	 * 
+	 * @param x
+	 *            the primitive double field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Double> and(double x) {
+		return addPrimitive(ConditionAndOr.AND, x);
+	}
+
+	private <A> QueryCondition<T, A> addPrimitive(ConditionAndOr condition, A x) {
+		query.addConditionToken(condition);
+		A alias = query.getPrimitiveAliasByValue(x);
+		if (alias == null) {
+			// this will result in an unmapped field exception
+			return new QueryCondition<T, A>(query, x);
+		}
+		return new QueryCondition<T, A>(query, alias);
+	}
+
+	/**
+	 * Specify an AND condition with a mapped Object field.
+	 * 
+	 * @param x
+	 *            the Object field to query
+	 * @return a query condition to continue building the condition
+	 */
 	public <A> QueryCondition<T, A> and(A x) {
 		query.addConditionToken(ConditionAndOr.AND);
 		return new QueryCondition<T, A>(query, x);
 	}
 
+	/**
+	 * Specify an OR condition with a mapped primitive boolean.
+	 * 
+	 * @param x
+	 *            the primitive boolean field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Boolean> or(boolean x) {
+		return addPrimitive(ConditionAndOr.OR, x);
+	}
+
+	/**
+	 * Specify an OR condition with a mapped primitive byte.
+	 * 
+	 * @param x
+	 *            the primitive byte field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Byte> or(byte x) {
+		return addPrimitive(ConditionAndOr.OR, x);
+	}
+
+	/**
+	 * Specify an OR condition with a mapped primitive short.
+	 * 
+	 * @param x
+	 *            the primitive short field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Short> or(short x) {
+		return addPrimitive(ConditionAndOr.OR, x);
+	}
+
+	/**
+	 * Specify an OR condition with a mapped primitive int.
+	 * 
+	 * @param x
+	 *            the primitive int field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Integer> or(int x) {
+		return addPrimitive(ConditionAndOr.OR, x);
+	}
+
+	/**
+	 * Specify an OR condition with a mapped primitive long.
+	 * 
+	 * @param x
+	 *            the primitive long field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Long> or(long x) {
+		return addPrimitive(ConditionAndOr.OR, x);
+	}
+
+	/**
+	 * Specify an OR condition with a mapped primitive float.
+	 * 
+	 * @param x
+	 *            the primitive float field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Float> or(float x) {
+		return addPrimitive(ConditionAndOr.OR, x);
+	}
+
+	/**
+	 * Specify an OR condition with a mapped primitive double.
+	 * 
+	 * @param x
+	 *            the primitive double field to query
+	 * @return a query condition to continue building the condition
+	 */
+	public QueryCondition<T, Double> or(double x) {
+		return addPrimitive(ConditionAndOr.OR, x);
+	}
+
+	/**
+	 * Specify an OR condition with a mapped Object field.
+	 * 
+	 * @param x
+	 *            the Object field to query
+	 * @return a query condition to continue building the condition
+	 */
 	public <A> QueryCondition<T, A> or(A x) {
 		query.addConditionToken(ConditionAndOr.OR);
 		return new QueryCondition<T, A>(query, x);
@@ -88,7 +266,86 @@ public class QueryWhere<T> {
 	}
 
 	/**
-	 * Order by a number of columns.
+	 * Order by primitive boolean field
+	 * 
+	 * @param field
+	 *            a primitive boolean field
+	 * @return the query
+	 */
+	public QueryWhere<T> orderBy(boolean field) {
+		return orderByPrimitive(field);
+	}
+
+	/**
+	 * Order by primitive byte field
+	 * 
+	 * @param field
+	 *            a primitive byte field
+	 * @return the query
+	 */
+	public QueryWhere<T> orderBy(byte field) {
+		return orderByPrimitive(field);
+	}
+
+	/**
+	 * Order by primitive short field
+	 * 
+	 * @param field
+	 *            a primitive short field
+	 * @return the query
+	 */
+	public QueryWhere<T> orderBy(short field) {
+		return orderByPrimitive(field);
+	}
+
+	public QueryWhere<T> orderBy(int field) {
+		return orderByPrimitive(field);
+	}
+
+	/**
+	 * Order by primitive long field
+	 * 
+	 * @param field
+	 *            a primitive long field
+	 * @return the query
+	 */
+	public QueryWhere<T> orderBy(long field) {
+		return orderByPrimitive(field);
+	}
+
+	/**
+	 * Order by primitive float field
+	 * 
+	 * @param field
+	 *            a primitive float field
+	 * @return the query
+	 */
+	public QueryWhere<T> orderBy(float field) {
+		return orderByPrimitive(field);
+	}
+
+	/**
+	 * Order by primitive double field
+	 * 
+	 * @param field
+	 *            a primitive double field
+	 * @return the query
+	 */
+	public QueryWhere<T> orderBy(double field) {
+		return orderByPrimitive(field);
+	}
+
+	private QueryWhere<T> orderByPrimitive(Object field) {
+		query.orderByPrimitive(field);
+		return this;
+	}
+
+	public QueryWhere<T> orderBy(Object field) {
+		query.orderBy(field);
+		return this;
+	}
+	/**
+	 * Order by a number of Object columns.
 	 * 
 	 * @param expressions
 	 *            the order by expressions
@@ -96,10 +353,7 @@ public class QueryWhere<T> {
 	 */
 
 	public QueryWhere<T> orderBy(Object... expressions) {
-		for (Object expr : expressions) {
-			OrderExpression<T> e = new OrderExpression<T>(query, expr, false, false, false);
-			query.addOrderBy(e);
-		}
+		query.orderBy(expressions);
 		return this;
 	}
 

@@ -15,6 +15,8 @@
  */
 package com.iciql.test.models;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.iciql.Iciql.IQColumn;
@@ -68,5 +70,20 @@ public class PrimitivesModel {
 		same &= myDouble == p.myDouble;
 		same &= myFloat == p.myFloat;
 		return same;
+	}
+
+	public static List<PrimitivesModel> getList() {
+		List<PrimitivesModel> list = new ArrayList<PrimitivesModel>();
+		for (int i = 1; i <= 10; i++) {
+			PrimitivesModel p = new PrimitivesModel();
+			p.myLong = i;
+			list.add(p);
+		}
+		return list;
+	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(myLong);
 	}
 }

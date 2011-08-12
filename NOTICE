@@ -36,6 +36,14 @@ H2 Database
    Eclipse Public License, Version 1.0.
    
    http://code.google.com/p/h2database
+   
+---------------------------------------------------------------------------
+HSQL Database
+---------------------------------------------------------------------------
+   hsqldb, released under the
+   BSD.
+   
+   http://hsqldb.org   
 
 ---------------------------------------------------------------------------
 MarkdownPapers
