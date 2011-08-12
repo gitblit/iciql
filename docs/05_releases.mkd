@@ -6,6 +6,12 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- fixed failure of db.delete(PrimitiveModel) and db.update(PrimitiveModel)
+
+### Older Releases
+
+**0.6.4** &nbsp; *released 2011-08-12*
+
 - api change release (API v4)
 - @IQTable.createIfRequired -> @IQTable.create
 - don't INSERT primitive autoIncrement fields, let database assign value
@@ -38,8 +44,6 @@ Date myDate = new Date(100, 1, 1);
 %BEGINCODE%
 @IQTable( primaryKey = {"name", "nickname"})
 %ENDCODE%
-
-### Older Releases
 
 **0.6.3** &nbsp; *released 2011-08-08*
 

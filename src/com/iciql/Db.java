@@ -201,14 +201,14 @@ public class Db {
 		define(clazz).createTableIfRequired(this).merge(this, t);
 	}
 
-	public <T> void update(T t) {
+	public <T> int update(T t) {
 		Class<?> clazz = t.getClass();
-		define(clazz).createTableIfRequired(this).update(this, t);
+		return define(clazz).createTableIfRequired(this).update(this, t);
 	}
 
-	public <T> void delete(T t) {
+	public <T> int delete(T t) {
 		Class<?> clazz = t.getClass();
-		define(clazz).createTableIfRequired(this).delete(this, t);
+		return define(clazz).createTableIfRequired(this).delete(this, t);
 	}
 
 	public <T extends Object> Query<T> from(T alias) {

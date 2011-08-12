@@ -74,6 +74,11 @@ public class PrimitivesTest {
 		List<PrimitivesModel> list = db.from(p).orderBy(p.myLong).select();
 		assertEquals(models.size(), list.size());
 		assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]", list.toString());
+		
+		// test model update
+		retrievedModel.myInteger = 1337;
+		assertEquals(1, db.update(retrievedModel));
+		assertEquals(1, db.delete(retrievedModel));		
 
 		db.close();
 	}

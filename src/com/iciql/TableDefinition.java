@@ -468,7 +468,7 @@ public class TableDefinition<T> {
 		stat.executeUpdate();
 	}
 
-	void update(Db db, Object obj) {
+	int update(Db db, Object obj) {
 		if (primaryKeyColumnNames == null || primaryKeyColumnNames.size() == 0) {
 			throw new IllegalStateException("No primary key columns defined " + "for table " + obj.getClass()
 					+ " - no update possible");
@@ -492,24 +492,27 @@ public class TableDefinition<T> {
 		boolean firstCondition = true;
 		for (FieldDefinition field : fields) {
 			if (field.isPrimaryKey) {
-				Object aliasValue = field.getValue(alias);
+				Object fieldAlias = field.getValue(alias);
 				Object value = field.getValue(obj);
+				if (field.isPrimitive) {
+					fieldAlias = query.getPrimitiveAliasByValue(fieldAlias);
+				}
 				if (!firstCondition) {
 					query.addConditionToken(ConditionAndOr.AND);
 				}
 				firstCondition = false;
-				query.addConditionToken(new Condition<Object>(aliasValue, value, CompareType.EQUAL));
+				query.addConditionToken(new Condition<Object>(fieldAlias, value, CompareType.EQUAL));
 			}
 		}
 		stat.setSQL(buff.toString());
 		query.appendWhere(stat);
 		StatementLogger.update(stat.getSQL());
-		stat.executeUpdate();
+		return stat.executeUpdate();
 	}
 
-	void delete(Db db, Object obj) {
+	int delete(Db db, Object obj) {
 		if (primaryKeyColumnNames == null || primaryKeyColumnNames.size() == 0) {
-			throw new IllegalStateException("No primary key columns defined " + "for table " + obj.getClass()
+			throw new IllegalStateException("No primary key columns defined for table " + obj.getClass()
 					+ " - no update possible");
 		}
 		SQLStatement stat = new SQLStatement(db);
@@ -521,19 +524,22 @@ public class TableDefinition<T> {
 		boolean firstCondition = true;
 		for (FieldDefinition field : fields) {
 			if (field.isPrimaryKey) {
-				Object aliasValue = field.getValue(alias);
+				Object fieldAlias = field.getValue(alias);
 				Object value = field.getValue(obj);
+				if (field.isPrimitive) {
+					fieldAlias = query.getPrimitiveAliasByValue(fieldAlias);
+				}
 				if (!firstCondition) {
 					query.addConditionToken(ConditionAndOr.AND);
 				}
 				firstCondition = false;
-				query.addConditionToken(new Condition<Object>(aliasValue, value, CompareType.EQUAL));
+				query.addConditionToken(new Condition<Object>(fieldAlias, value, CompareType.EQUAL));
 			}
 		}
 		stat.setSQL(buff.toString());
 		query.appendWhere(stat);
 		StatementLogger.delete(stat.getSQL());
-		stat.executeUpdate();
+		return stat.executeUpdate();
 	}
 
 	TableDefinition<T> createTableIfRequired(Db db) {
