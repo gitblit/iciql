@@ -61,8 +61,7 @@ import com.iciql.util.StringUtils;
 		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UUIDTest.class })
 public class IciqlSuite {
 
-	private static final TestDb[] TEST_DBS = {
-			new TestDb("H2", "jdbc:h2:mem:db{0,number,000}"),
+	private static final TestDb[] TEST_DBS = { new TestDb("H2", "jdbc:h2:mem:db{0,number,000}"),
 			new TestDb("HSQL", "jdbc:hsqldb:mem:db{0,number,000}"),
 			new TestDb("Derby", "jdbc:derby:memory:db{0,number,000};create=true") };
 
@@ -187,7 +186,7 @@ public class IciqlSuite {
 		if (StringUtils.isNullOrEmpty(params.sqlStatementsFile)) {
 			statementWriter = null;
 		} else {
-			statementWriter = new FileWriter(params.sqlStatementsFile);			
+			statementWriter = new FileWriter(params.sqlStatementsFile);
 		}
 		StatementListener statementListener = new StatementListener() {
 			@Override
@@ -202,10 +201,9 @@ public class IciqlSuite {
 					e.printStackTrace();
 				}
 			}
-		};		
+		};
 		StatementLogger.registerListener(statementListener);
-		
-		
+
 		SuiteClasses suiteClasses = IciqlSuite.class.getAnnotation(SuiteClasses.class);
 		long quickestDatabase = Long.MAX_VALUE;
 		String dividerMajor = buildDivider('*', 70);
@@ -223,35 +221,46 @@ public class IciqlSuite {
 		showProperty("java.vm.name");
 		showProperty("os.name");
 		showProperty("os.version");
-		showProperty("os.arch");		
+		showProperty("os.arch");
 		showProperty("available processors", "" + Runtime.getRuntime().availableProcessors());
-		showProperty("available memory", MessageFormat.format("{0,number,#.0} GB", ((double) Runtime.getRuntime().maxMemory())/(1024*1024)));
+		showProperty(
+				"available memory",
+				MessageFormat.format("{0,number,#.0} GB", ((double) Runtime.getRuntime().maxMemory())
+						/ (1024 * 1024)));
 		out.println();
 
 		// Test a database
+		long lastCount = 0;
 		for (TestDb testDb : TEST_DBS) {
 			out.println(dividerMinor);
 			out.println("Testing " + testDb.name + " " + testDb.getVersion());
 			out.println(dividerMinor);
-			
+
 			// inject a database section delimiter in the statement log
 			if (statementWriter != null) {
 				statementWriter.append("\n\n");
 				statementWriter.append("# ").append(dividerMinor).append('\n');
-				statementWriter.append("# ").append("Testing " + testDb.name + " " + testDb.getVersion()).append('\n');
+				statementWriter.append("# ").append("Testing " + testDb.name + " " + testDb.getVersion())
+						.append('\n');
 				statementWriter.append("# ").append(dividerMinor).append('\n');
 				statementWriter.append("\n\n");
 			}
-			
+
 			System.setProperty("iciql.url", testDb.url);
 			Result result = JUnitCore.runClasses(suiteClasses.value());
 			testDb.runtime = result.getRunTime();
 			if (testDb.runtime < quickestDatabase) {
 				quickestDatabase = testDb.runtime;
 			}
-			out.println(MessageFormat.format("{0} tests: {1} failures, {2} ignores in {3,number,0.000} secs",
+			testDb.statements = StatementLogger.getTotalCount() - lastCount;
+			// reset total count for next database
+			lastCount = StatementLogger.getTotalCount();
+
+			out.println(MessageFormat.format(
+					"{0} tests ({1} failures, {2} ignores)  {3} statements in {4,number,0.000} secs",
 					result.getRunCount(), result.getFailureCount(), result.getIgnoreCount(),
-					result.getRunTime() / 1000f));
+					testDb.statements, result.getRunTime() / 1000f));
+
 			if (result.getFailureCount() == 0) {
 				out.println();
 			} else {
@@ -282,9 +291,11 @@ public class IciqlSuite {
 			}
 		});
 		for (TestDb testDb : dbs) {
-			out.println(MessageFormat.format("{0} {1} {2,number,0.000} secs  ({3,number,#.0}x)",
+			out.println(MessageFormat.format(
+					"{0} {1}  {2,number,0.0} stats/sec  {3,number,0.000} secs  ({4,number,#.0}x)",
 					StringUtils.pad(testDb.name, 6, " ", true),
-					StringUtils.pad(testDb.getVersion(), 22, " ", true), testDb.runtime / 1000f,
+					StringUtils.pad(testDb.getVersion(), 22, " ", true),
+					((double) testDb.statements)/ (testDb.runtime/1000d), testDb.runtime / 1000f,
 					((double) testDb.runtime) / quickestDatabase));
 		}
 
@@ -337,6 +348,7 @@ public class IciqlSuite {
 		final String url;
 		String version;
 		long runtime;
+		long statements;
 
 		TestDb(String name, String url) {
 			this.name = name;
@@ -366,7 +378,7 @@ public class IciqlSuite {
 
 		@Parameter(names = { "--dbFile" }, description = "Database performance results text file", required = false)
 		public String dbPerformanceFile;
-		
+
 		@Parameter(names = { "--sqlFile" }, description = "SQL statements log file", required = false)
 		public String sqlStatementsFile;
 	}

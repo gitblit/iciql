@@ -182,7 +182,7 @@
 			<fileset dir="${project.build.dir}">
 				<include name="**/*" />
 				<exclude name="com/iciql/build/" />
-				<exclude name="com/iciql/tests/" />
+				<exclude name="com/iciql/test/" />
 				<exclude name="**/*.html" />
 			</fileset>
 		</jar>

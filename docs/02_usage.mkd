@@ -67,7 +67,7 @@ JdbcUtils.closeSilently(rs, true);
 
 ### Natural Syntax
 
-**work-in-progress**
+<span class="warning">work-in-progress</span>
 
 The original JaQu source offers partial support for Java expressions in *where* clauses.
 
