@@ -5,7 +5,7 @@ The information provided here may be based on flawed test procedures.  You have 
 
 ### iciql statement generation
 
-Performance of iciql statement generation is not currently benchmarked but that is planned.
+Performance of iciql statement generation is not currently benchmarked.
 
 ### iciql+database performance comparison
 

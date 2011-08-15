@@ -42,7 +42,7 @@ public class UUIDTest {
 
 	@Before
 	public void setup() {
-		db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		db = IciqlSuite.openNewDb();
 	}
 
 	@After
@@ -52,6 +52,10 @@ public class UUIDTest {
 
 	@Test
 	public void testUUIDs() throws Exception {
+		if (!IciqlSuite.isH2(db)) {
+			// do not test non-H2 databases
+			return;
+		}
 		List<UUIDRecord> originals = UUIDRecord.getList();
 		db.insertAll(originals);
 		UUIDRecord u = new UUIDRecord();

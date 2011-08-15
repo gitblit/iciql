@@ -110,8 +110,11 @@
 		<echo>Executing iciql ${iq.version} test suite</echo>
 		<java classpath="${project.build.dir}" classname="com.iciql.test.IciqlSuite">
 			<classpath refid="master-classpath" />
-			<arg value="--outputFile" />
+			<arg value="--dbFile" />
 			<arg value="${basedir}/performance_db.txt" />
+				
+			<arg value="--sqlFile" />
+			<arg value="${basedir}/performance_sql.txt" />
 		</java>
 		
 		<!-- Build Standard Javadoc -->

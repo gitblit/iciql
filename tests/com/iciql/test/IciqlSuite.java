@@ -15,6 +15,8 @@
  */
 package com.iciql.test;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -38,6 +40,9 @@ import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 import com.iciql.Constants;
 import com.iciql.Db;
+import com.iciql.util.StatementLogger;
+import com.iciql.util.StatementLogger.StatementListener;
+import com.iciql.util.StatementLogger.StatementType;
 import com.iciql.util.StringUtils;
 
 /**
@@ -56,7 +61,8 @@ import com.iciql.util.StringUtils;
 		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UUIDTest.class })
 public class IciqlSuite {
 
-	private static final TestDb[] TEST_DBS = { new TestDb("H2", "jdbc:h2:mem:db{0,number,000}"),
+	private static final TestDb[] TEST_DBS = {
+			new TestDb("H2", "jdbc:h2:mem:db{0,number,000}"),
 			new TestDb("HSQL", "jdbc:hsqldb:mem:db{0,number,000}"),
 			new TestDb("Derby", "jdbc:derby:memory:db{0,number,000};create=true") };
 
@@ -171,11 +177,35 @@ public class IciqlSuite {
 		}
 
 		// Replace System.out with a file
-		if (!StringUtils.isNullOrEmpty(params.outputFile)) {
-			out = new PrintStream(params.outputFile);
+		if (!StringUtils.isNullOrEmpty(params.dbPerformanceFile)) {
+			out = new PrintStream(params.dbPerformanceFile);
 			System.setErr(out);
 		}
 
+		// Statement logging
+		final FileWriter statementWriter;
+		if (StringUtils.isNullOrEmpty(params.sqlStatementsFile)) {
+			statementWriter = null;
+		} else {
+			statementWriter = new FileWriter(params.sqlStatementsFile);			
+		}
+		StatementListener statementListener = new StatementListener() {
+			@Override
+			public void logStatement(StatementType type, String statement) {
+				if (statementWriter == null) {
+					return;
+				}
+				try {
+					statementWriter.append(statement);
+					statementWriter.append('\n');
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};		
+		StatementLogger.registerListener(statementListener);
+		
+		
 		SuiteClasses suiteClasses = IciqlSuite.class.getAnnotation(SuiteClasses.class);
 		long quickestDatabase = Long.MAX_VALUE;
 		String dividerMajor = buildDivider('*', 70);
@@ -193,7 +223,9 @@ public class IciqlSuite {
 		showProperty("java.vm.name");
 		showProperty("os.name");
 		showProperty("os.version");
-		showProperty("os.arch");
+		showProperty("os.arch");		
+		showProperty("available processors", "" + Runtime.getRuntime().availableProcessors());
+		showProperty("available memory", MessageFormat.format("{0,number,#.0} GB", ((double) Runtime.getRuntime().maxMemory())/(1024*1024)));
 		out.println();
 
 		// Test a database
@@ -201,6 +233,16 @@ public class IciqlSuite {
 			out.println(dividerMinor);
 			out.println("Testing " + testDb.name + " " + testDb.getVersion());
 			out.println(dividerMinor);
+			
+			// inject a database section delimiter in the statement log
+			if (statementWriter != null) {
+				statementWriter.append("\n\n");
+				statementWriter.append("# ").append(dividerMinor).append('\n');
+				statementWriter.append("# ").append("Testing " + testDb.name + " " + testDb.getVersion()).append('\n');
+				statementWriter.append("# ").append(dividerMinor).append('\n');
+				statementWriter.append("\n\n");
+			}
+			
 			System.setProperty("iciql.url", testDb.url);
 			Result result = JUnitCore.runClasses(suiteClasses.value());
 			testDb.runtime = result.getRunTime();
@@ -247,13 +289,23 @@ public class IciqlSuite {
 		}
 
 		// close PrintStream and restore System.err
+		StatementLogger.unregisterListener(statementListener);
 		out.close();
 		System.setErr(ERR);
+		if (statementWriter != null) {
+			statementWriter.close();
+		}
+		System.exit(0);
 	}
 
 	private static void showProperty(String name) {
+		showProperty(name, System.getProperty(name));
+	}
+
+	private static void showProperty(String name, String value) {
+		out.print(' ');
 		out.print(StringUtils.pad(name, 25, " ", true));
-		out.println(System.getProperty(name));
+		out.println(value);
 	}
 
 	private static void usage(JCommander jc, ParameterException t) {
@@ -312,7 +364,10 @@ public class IciqlSuite {
 	@Parameters(separators = " ")
 	private static class Params {
 
-		@Parameter(names = { "--outputFile" }, description = "Results text file", required = false)
-		public String outputFile;
+		@Parameter(names = { "--dbFile" }, description = "Database performance results text file", required = false)
+		public String dbPerformanceFile;
+		
+		@Parameter(names = { "--sqlFile" }, description = "SQL statements log file", required = false)
+		public String sqlStatementsFile;
 	}
 }

@@ -18,6 +18,8 @@ package com.iciql.util;
 
 import java.text.DecimalFormat;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -43,6 +45,7 @@ public class StatementLogger {
 		void logStatement(StatementType type, String statement);
 	}
 
+	private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
 	private static final Set<StatementListener> LISTENERS = Utils.newHashSet();
 	private static final StatementListener CONSOLE = new StatementListener() {
 
@@ -121,12 +124,13 @@ public class StatementLogger {
 		logStatement(StatementType.SELECT, statement);
 	}
 
-	private static void logStatement(StatementType type, String statement) {
-		for (StatementListener listener : LISTENERS) {
-			try {
-				listener.logStatement(type, statement);
-			} catch (Throwable t) {
-			}
+	private static void logStatement(final StatementType type, final String statement) {
+		for (final StatementListener listener : LISTENERS) {
+			EXEC.execute(new Runnable() {
+				public void run() {
+					listener.logStatement(type, statement);
+				}
+			});
 		}
 	}
 
