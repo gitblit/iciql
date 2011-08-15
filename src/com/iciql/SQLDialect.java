@@ -62,7 +62,7 @@ public interface SQLDialect {
 	 * @param def
 	 */
 	<T> void prepareCreateTable(SQLStatement stat, TableDefinition<T> def);
-	
+
 	/**
 	 * Get the CREATE INDEX statement.
 	 * 
@@ -90,24 +90,16 @@ public interface SQLDialect {
 			Object obj);
 
 	/**
-	 * Append "LIMIT limit" to the SQL statement.
+	 * Append "LIMIT limit OFFSET offset" to the SQL statement.
 	 * 
 	 * @param stat
 	 *            the statement
 	 * @param limit
 	 *            the limit
-	 */
-	void appendLimit(SQLStatement stat, long limit);
-
-	/**
-	 * Append "OFFSET offset" to the SQL statement.
-	 * 
-	 * @param stat
-	 *            the statement
 	 * @param offset
 	 *            the offset
 	 */
-	void appendOffset(SQLStatement stat, long offset);
+	void appendLimitOffset(SQLStatement stat, long limit, long offset);
 
 	/**
 	 * Whether memory tables are supported.
@@ -115,7 +107,14 @@ public interface SQLDialect {
 	 * @return true if they are
 	 */
 	boolean supportsMemoryTables();
-	
+
+	/**
+	 * Whether IF NOT EXISTS notation is supported.
+	 * 
+	 * @return true if they are
+	 */
+	boolean supportsIfNotExists();
+
 	/**
 	 * Whether LIMIT/OFFSET notation is supported.
 	 * 
@@ -123,4 +122,12 @@ public interface SQLDialect {
 	 */
 	boolean supportsLimitOffset();
 
+	/**
+	 * Returns the preferred DATETIME class for the database.
+	 * <p>
+	 * Either java.util.Date or java.sql.Timestamp
+	 * 
+	 * @return preferred DATETIME class
+	 */
+	Class<? extends java.util.Date> getDateTimeClass();
 }

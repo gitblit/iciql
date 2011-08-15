@@ -57,6 +57,7 @@ public class Build {
 		downloadFromApache(MavenObject.H2, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.H2, BuildType.COMPILETIME);
 		downloadFromApache(MavenObject.HSQLDB, BuildType.RUNTIME);
+		downloadFromApache(MavenObject.DERBY, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.JCOMMANDER, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.JCOMMANDER, BuildType.COMPILETIME);
 		downloadFromApache(MavenObject.MARKDOWNPAPERS, BuildType.RUNTIME);
@@ -169,13 +170,15 @@ public class Build {
 				"219a3540f3b27d7cc3b1d91d6ea046cd8723290e", "0bb50eec177acf0e94d58e0cf07262fe5164331d",
 				"c7adc475ca40c288c93054e0f4fe58f3a98c0cb5");
 
-		public static final MavenObject H2 = new MavenObject("com/h2database", "h2", "1.3.158",
-				"4bac13427caeb32ef6e93b70101e61f370c7b5e2", "6bb165156a0831879fa7797df6e18bdcd4421f2d",
-				"446d3f58c44992534cb54f67134532d95961904a");
+		public static final MavenObject H2 = new MavenObject("com/h2database", "h2", "1.3.159",
+				"dd89f939661eb5593909584e1c243db0c25de130", "4d953bf765e8a13c7e06ca51165438338966c698",
+				"4c79ed03f994820a1a873150c8a9f13c667784d3");
 
 		public static final MavenObject HSQLDB = new MavenObject("org/hsqldb", "hsqldb", "2.2.4",
-				"6a6e040b07f5ee409fc825f1c5e5b574b1fa1428", "",
-				"");
+				"6a6e040b07f5ee409fc825f1c5e5b574b1fa1428", "", "");
+
+		public static final MavenObject DERBY = new MavenObject("org/apache/derby", "derby", "10.8.1.2",
+				"2f8717d96eafe3eef3de445ba653f142d54ddab1", "", "");
 
 		public static final MavenObject JUNIT = new MavenObject("junit", "junit", "4.8.2",
 				"c94f54227b08100974c36170dcb53329435fe5ad", "", "");

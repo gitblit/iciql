@@ -60,7 +60,7 @@ public class Slf4jStatementListener implements StatementListener {
 
 	/**
 	 * Sets the logging level for a particular statement type.
-	 *  
+	 * 
 	 * @param type
 	 * @param level
 	 */
@@ -84,10 +84,10 @@ public class Slf4jStatementListener implements StatementListener {
 		case DEBUG:
 			logger.debug(statement);
 			break;
-		case TRACE:		
+		case TRACE:
 			logger.trace(statement);
 			break;
-		case OFF:			
+		case OFF:
 			break;
 		}
 	}

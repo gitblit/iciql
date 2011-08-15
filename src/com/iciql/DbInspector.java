@@ -42,6 +42,7 @@ public class DbInspector {
 
 	public DbInspector(Db db) {
 		this.db = db;
+		setPreferredDateTimeClass(db.getDialect().getDateTimeClass());
 	}
 
 	/**
@@ -73,8 +74,8 @@ public class DbInspector {
 	 *            (trims strings to maxLength of column)
 	 * @return a list of complete model classes as strings, each element a class
 	 */
-	public List<String> generateModel(String schema, String table, String packageName, boolean annotateSchema,
-			boolean trimStrings) {
+	public List<String> generateModel(String schema, String table, String packageName,
+			boolean annotateSchema, boolean trimStrings) {
 		try {
 			List<String> models = Utils.newArrayList();
 			List<TableInspector> tables = getTables(schema, table);
@@ -130,7 +131,8 @@ public class DbInspector {
 		Class<T> clazz = (Class<T>) model.getClass();
 		TableDefinition<T> def = db.define(clazz);
 		boolean forceUpperCase = getMetaData().storesUpperCaseIdentifiers();
-		String schema = (forceUpperCase && def.schemaName != null) ? def.schemaName.toUpperCase() : def.schemaName;
+		String schema = (forceUpperCase && def.schemaName != null) ? def.schemaName.toUpperCase()
+				: def.schemaName;
 		String table = forceUpperCase ? def.tableName.toUpperCase() : def.tableName;
 		List<TableInspector> tables = getTables(schema, table);
 		return tables.get(0);
@@ -167,7 +169,8 @@ public class DbInspector {
 				while (rs.next()) {
 					String t = rs.getString("TABLE_NAME");
 					if (!t.equalsIgnoreCase(iciqlTables)) {
-						tables.add(new TableInspector(s, t, getMetaData().storesUpperCaseIdentifiers(), dateTimeClass));
+						tables.add(new TableInspector(s, t, getMetaData().storesUpperCaseIdentifiers(),
+								dateTimeClass));
 					}
 				}
 			}

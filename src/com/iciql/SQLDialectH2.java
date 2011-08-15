@@ -57,11 +57,12 @@ public class SQLDialectH2 extends SQLDialectDefault {
 			buff.append(col);
 		}
 		buff.append(")");
-		stat.setSQL(buff.toString());		
+		stat.setSQL(buff.toString());
 	}
-	
+
 	@Override
-	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName, TableDefinition<T> def, Object obj) {
+	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName,
+			TableDefinition<T> def, Object obj) {
 		StatementBuilder buff = new StatementBuilder("MERGE INTO ");
 		buff.append(prepareTableName(schemaName, tableName)).append(" (");
 		buff.resetCount();

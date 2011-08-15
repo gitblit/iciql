@@ -31,14 +31,14 @@ public class DefaultValuesModel {
 
 	@IQColumn(primaryKey = true, autoIncrement = true)
 	public Long myLong;
-	
+
 	@SuppressWarnings("deprecation")
 	@IQColumn
 	public Date myDate = new Date(100, 7, 1);
-	
+
 	@IQColumn
 	public Integer myInteger = 12345;
-	
+
 	@IQColumn
 	public Tree myEnumIdTree = Tree.WALNUT;
 

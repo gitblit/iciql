@@ -59,7 +59,8 @@ public class Product implements Iciql {
 		index(productName, category);
 	}
 
-	private static Product create(int productId, String productName, String category, double unitPrice, int unitsInStock) {
+	private static Product create(int productId, String productName, String category, double unitPrice,
+			int unitsInStock) {
 		return new Product(productId, productName, category, unitPrice, unitsInStock);
 	}
 
@@ -71,7 +72,8 @@ public class Product implements Iciql {
 				create(6, "Grandma's Boysenberry Spread", "Condiments", 25.0, 120),
 				create(7, "Uncle Bob's Organic Dried Pears", "Produce", 30.0, 15),
 				create(8, "Northwoods Cranberry Sauce", "Condiments", 40.0, 6),
-				create(9, "Mishi Kobe Niku", "Meat/Poultry", 97.0, 29), create(10, "Ikura", "Seafood", 31.0, 31), };
+				create(9, "Mishi Kobe Niku", "Meat/Poultry", 97.0, 29),
+				create(10, "Ikura", "Seafood", 31.0, 31), };
 
 		return Arrays.asList(list);
 	}

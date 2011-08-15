@@ -65,7 +65,8 @@ public class ClassReader {
 		debug("class name " + className);
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();
 		try {
-			InputStream in = clazz.getClassLoader().getResource(className.replace('.', '/') + ".class").openStream();
+			InputStream in = clazz.getClassLoader().getResource(className.replace('.', '/') + ".class")
+					.openStream();
 			while (true) {
 				int x = in.read();
 				if (x < 0) {
@@ -108,7 +109,8 @@ public class ClassReader {
 			}
 			case 6: {
 				long x = readLong();
-				constantPool[i] = ConstantNumber.get("" + Double.longBitsToDouble(x), x, Constant.Type.DOUBLE);
+				constantPool[i] = ConstantNumber
+						.get("" + Double.longBitsToDouble(x), x, Constant.Type.DOUBLE);
 				i++;
 				break;
 			}
@@ -1380,8 +1382,8 @@ public class ClassReader {
 		int field = constantPool[fieldRef].intValue();
 		int classIndex = field >>> 16;
 		int nameAndType = constantPool[field & 0xffff].intValue();
-		String className = constantPool[constantPool[classIndex].intValue()] + "." + constantPool[nameAndType >>> 16]
-				+ " " + constantPool[nameAndType & 0xffff];
+		String className = constantPool[constantPool[classIndex].intValue()] + "."
+				+ constantPool[nameAndType >>> 16] + " " + constantPool[nameAndType & 0xffff];
 		return className;
 	}
 
@@ -1389,8 +1391,8 @@ public class ClassReader {
 		int method = constantPool[methodRef].intValue();
 		int classIndex = method >>> 16;
 		int nameAndType = constantPool[method & 0xffff].intValue();
-		String className = constantPool[constantPool[classIndex].intValue()] + "." + constantPool[nameAndType >>> 16]
-				+ " " + constantPool[nameAndType & 0xffff];
+		String className = constantPool[constantPool[classIndex].intValue()] + "."
+				+ constantPool[nameAndType >>> 16] + " " + constantPool[nameAndType & 0xffff];
 		return className;
 	}
 
@@ -1444,7 +1446,8 @@ public class ClassReader {
 
 	private int readInt() {
 		byte[] buff = data;
-		return (buff[pos++] << 24) + ((buff[pos++] & 0xff) << 16) + ((buff[pos++] & 0xff) << 8) + (buff[pos++] & 0xff);
+		return (buff[pos++] << 24) + ((buff[pos++] & 0xff) << 16) + ((buff[pos++] & 0xff) << 8)
+				+ (buff[pos++] & 0xff);
 	}
 
 	private long readLong() {

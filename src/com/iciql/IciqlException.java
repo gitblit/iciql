@@ -28,9 +28,10 @@ public class IciqlException extends RuntimeException {
 	public static final int CODE_UNMAPPED_FIELD = 1;
 	public static final int CODE_DUPLICATE_KEY = 2;
 	public static final int CODE_TABLE_NOT_FOUND = 3;
-	public static final int CODE_INDEX_ALREADY_EXISTS = 4;
+	public static final int CODE_TABLE_ALREADY_EXISTS = 4;
+	public static final int CODE_INDEX_ALREADY_EXISTS = 5;
 
-	private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|\\<\\>|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";	
+	private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|\\<\\>|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";
 
 	private static final long serialVersionUID = 1L;
 
@@ -51,7 +52,7 @@ public class IciqlException extends RuntimeException {
 		super(parameters.length > 0 ? MessageFormat.format(message, parameters) : message, t);
 		configureCode(t);
 	}
-	
+
 	public static void checkUnmappedField(String sql) {
 		if (Pattern.compile(IciqlException.TOKEN_UNMAPPED_FIELD).matcher(sql).find()) {
 			IciqlException e = new IciqlException("unmapped field in statement!");
@@ -60,7 +61,7 @@ public class IciqlException extends RuntimeException {
 			throw e;
 		}
 	}
-	
+
 	public static IciqlException fromSQL(String sql, Throwable t) {
 		if (Pattern.compile(TOKEN_UNMAPPED_FIELD).matcher(sql).find()) {
 			IciqlException e = new IciqlException(t, "unmapped field in statement!");
@@ -73,7 +74,7 @@ public class IciqlException extends RuntimeException {
 			return e;
 		}
 	}
-	
+
 	public void setSQL(String sql) {
 		this.sql = sql;
 	}
@@ -85,7 +86,7 @@ public class IciqlException extends RuntimeException {
 	public int getIciqlCode() {
 		return iciqlCode;
 	}
-	
+
 	private void configureCode(Throwable t) {
 		if (t == null) {
 			return;
@@ -96,29 +97,39 @@ public class IciqlException extends RuntimeException {
 			String state = s.getSQLState();
 			if ("23505".equals(state)) {
 				iciqlCode = CODE_DUPLICATE_KEY;
-			} else if ("42501".equals(state)) {
+			} else if ("42X05".equals(state)) {
+				// Derby
 				iciqlCode = CODE_TABLE_NOT_FOUND;
 			} else if ("42S02".equals(state)) {
+				// H2
 				iciqlCode = CODE_TABLE_NOT_FOUND;
-			} else if ("42504".equals(state)) {
-				iciqlCode = CODE_INDEX_ALREADY_EXISTS;
+			} else if ("42501".equals(state)) {
+				// HSQL
+				iciqlCode = CODE_TABLE_NOT_FOUND;
+			} else if ("X0Y32".equals(state)) {
+				// Derby
+				iciqlCode = CODE_TABLE_ALREADY_EXISTS;
 			} else if ("42S11".equals(state)) {
+				// H2
+				iciqlCode = CODE_INDEX_ALREADY_EXISTS;
+			} else if ("42504".equals(state)) {
+				// HSQL
 				iciqlCode = CODE_INDEX_ALREADY_EXISTS;
 			}
 		}
 	}
-	
+
 	@Override
-    public String toString() {
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getClass().getName());        
-        String message = getLocalizedMessage();
-        if (message != null) {
-        	sb.append(": ").append(message);
-        }
-        if (sql != null) {
-        	sb.append('\n').append(sql);
-        }
-        return sb.toString();
-    }
+		sb.append(getClass().getName());
+		String message = getLocalizedMessage();
+		if (message != null) {
+			sb.append(": ").append(message);
+		}
+		if (sql != null) {
+			sb.append('\n').append(sql);
+		}
+		return sb.toString();
+	}
 }

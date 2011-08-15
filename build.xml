@@ -99,12 +99,21 @@
 		</path>
 		<javac destdir="${project.build.dir}" failonerror="false">
 			<src path="${basedir}/src" />
+			<src path="${basedir}/tests" />
 			<classpath refid="master-classpath" />
 		</javac>
 		<copy todir="${project.build.dir}">
 			<fileset dir="${basedir}/src" excludes="**/*.java,**/thumbs.db" />
 		</copy>
 
+		<!-- Execute the test suite -->
+		<echo>Executing iciql ${iq.version} test suite</echo>
+		<java classpath="${project.build.dir}" classname="com.iciql.test.IciqlSuite">
+			<classpath refid="master-classpath" />
+			<arg value="--outputFile" />
+			<arg value="${basedir}/performance_db.txt" />
+		</java>
+		
 		<!-- Build Standard Javadoc -->
 		<delete dir="${basedir}/javadoc" />
 		<javadoc destdir="${basedir}/javadoc" nonavbar="true" stylesheetfile="${basedir}/docs/resources/javadoc.css">
@@ -170,6 +179,7 @@
 			<fileset dir="${project.build.dir}">
 				<include name="**/*" />
 				<exclude name="com/iciql/build/" />
+				<exclude name="com/iciql/tests/" />
 				<exclude name="**/*.html" />
 			</fileset>
 		</jar>
@@ -186,6 +196,7 @@
 			<fileset dir="${basedir}/src">
 				<include name="**/*" />
 				<exclude name="com/iciql/build/" />
+				<exclude name="com/iciql/tests/" />
 				<exclude name="**/*.html" />
 			</fileset>
 		</jar>
@@ -229,7 +240,7 @@
 				<include name="**/*" />
 			</fileset>
 		</copy>
-
+		
 		<!-- Build site pages -->
 		<java classpath="${project.build.dir}" classname="com.iciql.build.BuildSite">
 			<classpath refid="master-classpath" />
@@ -280,6 +291,9 @@
 			
 			<arg value="--regex" />
 			<arg value="&quot;\b(issue)(\s*[#]?|-){0,1}(\d+)\b!!!&lt;a href='http://code.google.com/p/iciql/issues/detail?id=$3'&gt;issue $3&lt;/a&gt;&quot;" />
+
+			<arg value="--load" />
+			<arg value="%DBPERFORMANCE%=${basedir}/performance_db.txt" />
 
 		</java>	
 	</target>

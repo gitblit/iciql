@@ -60,7 +60,7 @@ public class SamplesTest {
 
 	@Before
 	public void setUp() {
-		db = IciqlSuite.openDb();
+		db = IciqlSuite.openNewDb();
 		db.insertAll(Product.getList());
 		db.insertAll(Customer.getList());
 		db.insertAll(Order.getList());
@@ -278,7 +278,7 @@ public class SamplesTest {
 	@Test
 	public void testSum() {
 		Product p = new Product();
-		Long sum = db.from(p).selectFirst(sum(p.unitsInStock));
+		Number sum = db.from(p).selectFirst(sum(p.unitsInStock));
 		assertEquals(323, sum.intValue());
 		Double sumPrice = db.from(p).selectFirst(sum(p.unitPrice));
 		assertEquals(313.35, sumPrice.doubleValue(), 0.001);

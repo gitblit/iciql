@@ -17,7 +17,12 @@
 
 package com.iciql.util;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -304,5 +309,74 @@ public class StringUtils {
 			}
 		}
 		return count;
+	}
+
+	/**
+	 * Prepare text for html presentation. Replace sensitive characters with
+	 * html entities.
+	 * 
+	 * @param inStr
+	 * @param changeSpace
+	 * @return plain text escaped for html
+	 */
+	public static String escapeForHtml(String inStr, boolean changeSpace) {
+		StringBuffer retStr = new StringBuffer();
+		int i = 0;
+		while (i < inStr.length()) {
+			if (inStr.charAt(i) == '&') {
+				retStr.append("&amp;");
+			} else if (inStr.charAt(i) == '<') {
+				retStr.append("&lt;");
+			} else if (inStr.charAt(i) == '>') {
+				retStr.append("&gt;");
+			} else if (inStr.charAt(i) == '\"') {
+				retStr.append("&quot;");
+			} else if (changeSpace && inStr.charAt(i) == ' ') {
+				retStr.append("&nbsp;");
+			} else if (changeSpace && inStr.charAt(i) == '\t') {
+				retStr.append(" &nbsp; &nbsp;");
+			} else {
+				retStr.append(inStr.charAt(i));
+			}
+			i++;
+		}
+		return retStr.toString();
+	}
+
+	/**
+	 * Replaces carriage returns and line feeds with html line breaks.
+	 * 
+	 * @param string
+	 * @return plain text with html line breaks
+	 */
+	public static String breakLinesForHtml(String string) {
+		return string.replace("\r\n", "<br/>").replace("\r", "<br/>").replace("\n", "<br/>");
+	}
+
+	/**
+	 * Returns the string content of the specified file.
+	 * 
+	 * @param file
+	 * @param lineEnding
+	 * @return the string content of the file
+	 */
+	public static String readContent(File file, String lineEnding) {
+		StringBuilder sb = new StringBuilder();
+		try {
+			InputStreamReader is = new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8"));
+			BufferedReader reader = new BufferedReader(is);
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+				if (lineEnding != null) {
+					sb.append(lineEnding);
+				}
+			}
+			reader.close();
+		} catch (Throwable t) {
+			System.err.println("Failed to read content of " + file.getAbsolutePath());
+			t.printStackTrace();
+		}
+		return sb.toString();
 	}
 }

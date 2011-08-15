@@ -62,8 +62,18 @@ public class SQLDialectDefault implements SQLDialect {
 	}
 
 	@Override
+	public Class<? extends java.util.Date> getDateTimeClass() {
+		return java.util.Date.class;
+	}
+
+	@Override
 	public boolean supportsMemoryTables() {
 		return false;
+	}
+
+	@Override
+	public boolean supportsIfNotExists() {
+		return true;
 	}
 
 	@Override
@@ -88,9 +98,13 @@ public class SQLDialectDefault implements SQLDialect {
 	public <T> void prepareCreateTable(SQLStatement stat, TableDefinition<T> def) {
 		StatementBuilder buff;
 		if (def.memoryTable && supportsMemoryTables()) {
-			buff = new StatementBuilder("CREATE MEMORY TABLE IF NOT EXISTS ");
+			buff = new StatementBuilder("CREATE MEMORY TABLE ");
 		} else {
-			buff = new StatementBuilder("CREATE TABLE IF NOT EXISTS ");
+			buff = new StatementBuilder("CREATE TABLE ");
+		}
+
+		if (supportsIfNotExists()) {
+			buff.append("IF NOT EXISTS ");
 		}
 
 		buff.append(prepareTableName(def.schemaName, def.tableName)).append('(');
@@ -183,12 +197,12 @@ public class SQLDialectDefault implements SQLDialect {
 	}
 
 	@Override
-	public void appendLimit(SQLStatement stat, long limit) {
-		stat.appendSQL(" LIMIT " + limit);
-	}
-
-	@Override
-	public void appendOffset(SQLStatement stat, long offset) {
-		stat.appendSQL(" OFFSET " + offset);
+	public void appendLimitOffset(SQLStatement stat, long limit, long offset) {
+		if (limit > 0) {
+			stat.appendSQL(" LIMIT " + limit);
+		}
+		if (offset > 0) {
+			stat.appendSQL(" OFFSET " + offset);
+		}
 	}
 }

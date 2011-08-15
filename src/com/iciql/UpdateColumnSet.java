@@ -17,7 +17,6 @@
 
 package com.iciql;
 
-
 /**
  * This class represents "SET column = value" in an UPDATE statement.
  * 

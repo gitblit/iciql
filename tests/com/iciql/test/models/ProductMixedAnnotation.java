@@ -20,7 +20,8 @@ package com.iciql.test.models;
 import java.util.Arrays;
 import java.util.List;
 
-import com.iciql.Iciql.IQColumn;
+import com.iciql.Define;
+import com.iciql.Iciql;
 import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQTable;
 
@@ -29,8 +30,8 @@ import com.iciql.Iciql.IQTable;
  */
 
 @IQTable(annotationsOnly = false)
-@IQIndex({"name", "cat" })
-public class ProductMixedAnnotation {
+@IQIndex({ "name", "cat" })
+public class ProductMixedAnnotation implements Iciql {
 
 	public Double unitPrice;
 	public Integer unitsInStock;
@@ -59,9 +60,10 @@ public class ProductMixedAnnotation {
 		this.mappedField = mappedField;
 	}
 
-	private static ProductMixedAnnotation create(int productId, String productName, String category, double unitPrice,
-			int unitsInStock, String mappedField) {
-		return new ProductMixedAnnotation(productId, productName, category, unitPrice, unitsInStock, mappedField);
+	private static ProductMixedAnnotation create(int productId, String productName, String category,
+			double unitPrice, int unitsInStock, String mappedField) {
+		return new ProductMixedAnnotation(productId, productName, category, unitPrice, unitsInStock,
+				mappedField);
 	}
 
 	public static List<ProductMixedAnnotation> getList() {
@@ -91,4 +93,8 @@ public class ProductMixedAnnotation {
 		return productName;
 	}
 
+	@Override
+	public void defineIQ() {
+		Define.length(mappedField, 25);
+	}
 }

@@ -6,3 +6,6 @@
 /*.zip
 /*.jar
 /build.properties
+/derby.log
+/performance.txt
+/performance_db.txt

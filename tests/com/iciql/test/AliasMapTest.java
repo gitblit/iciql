@@ -42,7 +42,7 @@ public class AliasMapTest {
 	 */
 	@Test
 	public void testObjectAliasMapping() throws Exception {
-		Db db = IciqlSuite.openDb();
+		Db db = IciqlSuite.openNewDb();
 		db.insertAll(Product.getList());
 
 		// baseline count is the next id value
@@ -91,7 +91,7 @@ public class AliasMapTest {
 	 */
 	@Test
 	public void testPrimitiveAliasMapping() throws Exception {
-		Db db = IciqlSuite.openDb();
+		Db db = IciqlSuite.openNewDb();
 		PrimitivesModel model = new PrimitivesModel();
 		model.myLong = 100L;
 		db.insert(model);

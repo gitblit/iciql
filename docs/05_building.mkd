@@ -10,6 +10,7 @@ Additionally, [eclipse-cs](http://eclipse-cs.sourceforge.net), [FindBugs](http:/
 ### Build Dependencies (downloaded during build)
 - [H2 Database](http://h2database.com) (Eclipse Public License 1.0)
 - [HSQL Database Engine](http://hsqldb.org) (BSD)
+- [Apache Derby Database](http://db.apache.org/derby) (Apache 2.0)
 - [JUnit](http://junit.org) (Common Public License)
 - [commons-net](http://commons.apache.org/net) (Apache 2.0)
 - [ant-googlecode](http://code.google.com/p/ant-googlecode) (New BSD)

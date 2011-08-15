@@ -31,7 +31,7 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 		}
 		return sqlType;
 	}
-	
+
 	@Override
 	public boolean supportsMemoryTables() {
 		return false;
@@ -41,15 +41,16 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 	public String prepareColumnName(String name) {
 		return "`" + name + "`";
 	}
-	
+
 	@Override
-	protected boolean prepareColumnDefinition(StatementBuilder buff, boolean isAutoIncrement, boolean isPrimaryKey) {
+	protected boolean prepareColumnDefinition(StatementBuilder buff, boolean isAutoIncrement,
+			boolean isPrimaryKey) {
 		if (isAutoIncrement) {
 			buff.append(" AUTO_INCREMENT");
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void prepareCreateIndex(SQLStatement stat, String schema, String table, IndexDefinition index) {
 		StatementBuilder buff = new StatementBuilder();
@@ -74,7 +75,7 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 			buff.append(prepareColumnName(col));
 		}
 		buff.append(") ");
-		
+
 		// USING
 		switch (index.type) {
 		case HASH:

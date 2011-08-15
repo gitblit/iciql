@@ -34,7 +34,7 @@ public class PrimitivesTest {
 
 	@Test
 	public void testPrimitives() {
-		Db db = IciqlSuite.openDb();
+		Db db = IciqlSuite.openNewDb();
 
 		// insert random models in reverse order
 		List<PrimitivesModel> models = PrimitivesModel.getList();
@@ -74,11 +74,11 @@ public class PrimitivesTest {
 		List<PrimitivesModel> list = db.from(p).orderBy(p.myLong).select();
 		assertEquals(models.size(), list.size());
 		assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]", list.toString());
-		
+
 		// test model update
 		retrievedModel.myInteger = 1337;
 		assertEquals(1, db.update(retrievedModel));
-		assertEquals(1, db.delete(retrievedModel));		
+		assertEquals(1, db.delete(retrievedModel));
 
 		db.close();
 	}

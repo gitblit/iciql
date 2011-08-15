@@ -120,7 +120,8 @@ public class TableInspector {
 				IndexInspector info = new IndexInspector(rs);
 				if (info.type.equals(IndexType.UNIQUE)) {
 					String name = info.name.toLowerCase();
-					if (name.startsWith("primary") || name.startsWith("sys_idx_sys_pk")) {
+					if (name.startsWith("primary") || name.startsWith("sys_idx_sys_pk")
+							|| name.startsWith("sql")) {
 						// skip primary key indexes
 						continue;
 					}

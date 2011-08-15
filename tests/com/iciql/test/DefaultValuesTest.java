@@ -34,7 +34,7 @@ public class DefaultValuesTest {
 
 	@Test
 	public void testDefaultObjectValues() {
-		Db db = IciqlSuite.openDb();
+		Db db = IciqlSuite.openNewDb();
 
 		// insert random model
 		DefaultValuesModel model = new DefaultValuesModel();

@@ -42,7 +42,8 @@ public class ProductInheritedAnnotation extends ProductMixedAnnotation {
 
 	private static ProductInheritedAnnotation create(int productId, String productName, String category,
 			double unitPrice, int unitsInStock, String mappedField) {
-		return new ProductInheritedAnnotation(productId, productName, category, unitPrice, unitsInStock, mappedField);
+		return new ProductInheritedAnnotation(productId, productName, category, unitPrice, unitsInStock,
+				mappedField);
 	}
 
 	public static List<ProductInheritedAnnotation> getData() {

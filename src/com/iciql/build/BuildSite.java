@@ -87,8 +87,8 @@ public class BuildSite {
 			aliasMap.put(values[0], values[1]);
 		}
 
-		System.out.println(MessageFormat.format("Generating site from {0} Markdown Docs in {1} ", markdownFiles.length,
-				sourceFolder.getAbsolutePath()));
+		System.out.println(MessageFormat.format("Generating site from {0} Markdown Docs in {1} ",
+				markdownFiles.length, sourceFolder.getAbsolutePath()));
 		String linkPattern = "<a href=''{0}''>{1}</a>";
 		StringBuilder sb = new StringBuilder();
 		for (File file : markdownFiles) {
@@ -168,7 +168,8 @@ public class BuildSite {
 
 						// get remainder of text
 						if (endCode < markdownContent.length()) {
-							strippedContent.append(markdownContent.substring(endCode, markdownContent.length()));
+							strippedContent.append(markdownContent.substring(endCode,
+									markdownContent.length()));
 						}
 						markdownContent = strippedContent.toString();
 						nmd++;
@@ -193,9 +194,16 @@ public class BuildSite {
 						String[] kv = token.split("!!!", 2);
 						content = content.replaceAll(kv[0], kv[1]);
 					}
+					for (String alias : params.loads) {
+						String[] kv = alias.split("=", 2);
+						String loadedContent = StringUtils.readContent(new File(kv[1]), "\n");
+						loadedContent = StringUtils.escapeForHtml(loadedContent, false);
+						loadedContent = StringUtils.breakLinesForHtml(loadedContent);
+						content = content.replace(kv[0], loadedContent);
+					}
 
-					OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File(destinationFolder,
-							fileName)), Charset.forName("UTF-8"));
+					OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(new File(
+							destinationFolder, fileName)), Charset.forName("UTF-8"));
 					writer.write(header);
 					if (!StringUtils.isNullOrEmpty(htmlAdSnippet)) {
 						writer.write(htmlAdSnippet);
@@ -317,9 +325,12 @@ public class BuildSite {
 		@Parameter(names = { "--substitute" }, description = "%TOKEN%=value", required = false)
 		public List<String> substitutions = new ArrayList<String>();
 
+		@Parameter(names = { "--load" }, description = "%TOKEN%=filename", required = false)
+		public List<String> loads = new ArrayList<String>();
+
 		@Parameter(names = { "--nomarkdown" }, description = "%STARTTOKEN%:%ENDTOKEN%", required = false)
 		public List<String> nomarkdown = new ArrayList<String>();
-		
+
 		@Parameter(names = { "--regex" }, description = "searchPattern!!!replacePattern", required = false)
 		public List<String> regex = new ArrayList<String>();
 

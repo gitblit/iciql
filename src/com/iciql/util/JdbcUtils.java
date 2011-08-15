@@ -206,7 +206,7 @@ public class JdbcUtils {
 					return ds.getConnection(user, password);
 				} catch (SQLException e) {
 					throw e;
-				} catch (Exception e) {					
+				} catch (Exception e) {
 					throw new SQLException("Failed to get connection for " + url, e);
 				}
 			} else {

@@ -116,7 +116,9 @@ public class Utils {
 							}
 						}
 					}
-					throw new IciqlException(e, "Missing default constructor?  Exception trying to instantiate {0}: {1}", clazz.getName(), e.getMessage());
+					throw new IciqlException(e,
+							"Missing default constructor?  Exception trying to instantiate {0}: {1}",
+							clazz.getName(), e.getMessage());
 				}
 			}
 		};
@@ -194,7 +196,9 @@ public class Utils {
 					}
 				}
 			}
-			throw new IciqlException(e, "Missing default constructor?! Exception trying to instantiate {0}: {1}", clazz.getName(), e.getMessage());
+			throw new IciqlException(e,
+					"Missing default constructor?! Exception trying to instantiate {0}: {1}",
+					clazz.getName(), e.getMessage());
 		}
 	}
 
@@ -242,7 +246,7 @@ public class Utils {
 				float f = 0f;
 				try {
 					f = Float.parseFloat(s);
-				} catch (Exception e) {					
+				} catch (Exception e) {
 				}
 				return f > 0 || s.equals("true") || s.equals("yes");
 			}

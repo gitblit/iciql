@@ -31,7 +31,7 @@ public class Customer {
 
 	@IQColumn(length = 25)
 	public String customerId;
-	
+
 	@IQColumn(length = 2)
 	public String region;
 

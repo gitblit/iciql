@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -58,7 +59,7 @@ public class ModelsTest {
 
 	@Before
 	public void setUp() {
-		db = IciqlSuite.openDb();
+		db = IciqlSuite.openNewDb();
 		db.insertAll(Product.getList());
 		db.insertAll(ProductAnnotationOnly.getList());
 		db.insertAll(ProductMixedAnnotation.getList());
@@ -71,14 +72,17 @@ public class ModelsTest {
 
 	@Test
 	public void testValidateModels() {
-		boolean isH2 = IciqlSuite.getDatabaseName(db).equals("H2");
+		boolean isH2 = IciqlSuite.isH2(db);
+		boolean isDerby = IciqlSuite.isDerby(db);
+		String schemaName = IciqlSuite.getDefaultSchema(db);
+
 		DbInspector inspector = new DbInspector(db);
-		validateModel(inspector, new Product(), 3);
-		validateModel(inspector, new ProductAnnotationOnly(), isH2 ? 2 : 3);
-		validateModel(inspector, new ProductMixedAnnotation(), isH2 ? 3 : 4);
+		validateModel(inspector, schemaName, new Product(), 3);
+		validateModel(inspector, schemaName, new ProductAnnotationOnly(), (isH2 || isDerby) ? 2 : 3);
+		validateModel(inspector, schemaName, new ProductMixedAnnotation(), 4);
 	}
 
-	private void validateModel(DbInspector inspector, Object o, int expected) {
+	private void validateModel(DbInspector inspector, String schemaName, Object o, int expected) {
 		List<ValidationRemark> remarks = inspector.validateModel(o, false);
 		assertTrue("validation remarks are null for " + o.getClass().getName(), remarks != null);
 		StringBuilder sb = new StringBuilder();
@@ -91,7 +95,7 @@ public class ModelsTest {
 				errorCollector.addError(new SQLException(remark.toString()));
 			}
 		}
-		assertTrue(remarks.get(0).message.equals("@IQSchema(name=PUBLIC)"));
+		assertTrue(remarks.get(0).message.equals(MessageFormat.format("@IQSchema(name={0})", schemaName)));
 		assertEquals(sb.toString(), expected, remarks.size());
 	}
 
@@ -117,12 +121,16 @@ public class ModelsTest {
 				true);
 		assertEquals(1, models.size());
 		// a poor test, but a start
-		String dbName = IciqlSuite.getDatabaseName(db);
+		String dbName = IciqlSuite.getDatabaseEngineName(db);
 		if (dbName.equals("H2")) {
 			assertEquals(1478, models.get(0).length());
 		} else if (dbName.startsWith("HSQL")) {
 			// HSQL uses Double instead of Float
 			assertEquals(1479, models.get(0).length());
+		} else if (dbName.equals("Apache Derby")) {
+			// Derby uses java.sql.Timestamp not java.util.Date
+			// Derby uses username as schema name
+			assertEquals(1489, models.get(0).length());
 		}
 	}
 
@@ -143,7 +151,7 @@ public class ModelsTest {
 
 	@Test
 	public void testTableUpgrade() {
-		Db db = IciqlSuite.openDb();
+		Db db = IciqlSuite.openNewDb();
 
 		// insert first, this will create version record automatically
 		List<SupportedTypes> original = SupportedTypes.createList();

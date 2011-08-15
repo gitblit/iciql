@@ -22,8 +22,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.iciql.Db;
@@ -37,43 +37,43 @@ import com.iciql.util.Utils;
  */
 public class ConcurrencyTest {
 
-	private Db db;
-	private int numberOfTests = 200;
+	private int numberOfTests = 800;
 
 	@Before
 	public void setUp() {
-		db = IciqlSuite.openDb();
+		Db db = IciqlSuite.openNewDb();
 		db.insertAll(Product.getList());
-	}
-
-	@After
-	public void tearDown() {
-		db.close();
 	}
 
 	@Test
 	public void testAliasSharing() throws Exception {
-		// Single-threaded example of why aliases can NOT be shared.
-		Product p = new Product();
-		Query<Product> query1 = db.from(p);
-		Query<Product> query2 = db.from(p);
-
-		// if you could share alias instances both counts should be equal
-		long count1 = 0;
+		Db db = IciqlSuite.openCurrentDb();
 		try {
-			count1 = query1.where(p.category).is("Beverages").selectCount();
-		} catch (IciqlException e) {
-			assertEquals(IciqlException.CODE_UNMAPPED_FIELD, e.getIciqlCode());
-		}
-		long count2 = query2.where(p.category).is("Beverages").selectCount();
+			// Single-threaded example of why aliases can NOT be shared.
+			Product p = new Product();
+			Query<Product> query1 = db.from(p);
+			Query<Product> query2 = db.from(p);
 
-		// but they aren't
-		assertEquals(0, count1);
-		assertEquals(2, count2);
-		assertTrue(count1 != count2);
+			// if you could share alias instances both counts should be equal
+			long count1 = 0;
+			try {
+				count1 = query1.where(p.category).is("Beverages").selectCount();
+			} catch (IciqlException e) {
+				assertEquals(IciqlException.CODE_UNMAPPED_FIELD, e.getIciqlCode());
+			}
+			long count2 = query2.where(p.category).is("Beverages").selectCount();
+
+			// but they aren't
+			assertEquals(0, count1);
+			assertEquals(2, count2);
+			assertTrue(count1 != count2);
+		} finally {
+			db.close();
+		}
 	}
 
 	@Test
+	@Ignore
 	public void testConcurrencyFinal() throws Exception {
 		// Multi-threaded example of why aliases can NOT be shared.
 		//
@@ -114,6 +114,7 @@ public class ConcurrencyTest {
 	}
 
 	@Test
+	@Ignore
 	public void testConcurrencyThreadLocal() throws Exception {
 		List<Thread> threads = Utils.newArrayList();
 		final AtomicInteger failures = new AtomicInteger(0);
@@ -149,45 +150,50 @@ public class ConcurrencyTest {
 	}
 
 	private void test(int testCase, Product p) throws AssertionError {
-		List<Product> list;
-		switch (testCase) {
-		case 0:
-			list = db.from(p).where(p.productName).is("Chai").select();
-			assertEquals(1, list.size());
-			assertEquals("Chai", list.get(0).productName);
-			break;
-		case 1:
-			list = db.from(p).where(p.category).is("Condiments").select();
-			assertEquals(5, list.size());
-			break;
-		case 3:
-			list = db.from(p).where(p.productName).is("Aniseed Syrup").select();
-			assertEquals(1, list.size());
-			assertEquals("Aniseed Syrup", list.get(0).productName);
-			break;
-		case 4:
-			list = db.from(p).where(p.productName).like("Chef%").select();
-			assertEquals(2, list.size());
-			assertTrue(list.get(0).productName.startsWith("Chef"));
-			assertTrue(list.get(1).productName.startsWith("Chef"));
-			break;
-		case 6:
-			list = db.from(p).where(p.unitsInStock).exceeds(0).select();
-			assertEquals(9, list.size());
-			break;
-		case 7:
-			list = db.from(p).where(p.unitsInStock).is(0).select();
-			assertEquals(1, list.size());
-			assertEquals("Chef Anton's Gumbo Mix", list.get(0).productName);
-			break;
-		case 9:
-			list = db.from(p).where(p.productId).is(7).select();
-			assertEquals(1, list.size());
-			assertTrue(7 == list.get(0).productId);
-			break;
-		default:
-			list = db.from(p).select();
-			assertEquals(10, list.size());
+		Db db = IciqlSuite.openCurrentDb();
+		try {
+			List<Product> list;
+			switch (testCase) {
+			case 0:
+				list = db.from(p).where(p.productName).is("Chai").select();
+				assertEquals(1, list.size());
+				assertEquals("Chai", list.get(0).productName);
+				break;
+			case 1:
+				list = db.from(p).where(p.category).is("Condiments").select();
+				assertEquals(5, list.size());
+				break;
+			case 3:
+				list = db.from(p).where(p.productName).is("Aniseed Syrup").select();
+				assertEquals(1, list.size());
+				assertEquals("Aniseed Syrup", list.get(0).productName);
+				break;
+			case 4:
+				list = db.from(p).where(p.productName).like("Chef%").select();
+				assertEquals(2, list.size());
+				assertTrue(list.get(0).productName.startsWith("Chef"));
+				assertTrue(list.get(1).productName.startsWith("Chef"));
+				break;
+			case 6:
+				list = db.from(p).where(p.unitsInStock).exceeds(0).select();
+				assertEquals(9, list.size());
+				break;
+			case 7:
+				list = db.from(p).where(p.unitsInStock).is(0).select();
+				assertEquals(1, list.size());
+				assertEquals("Chef Anton's Gumbo Mix", list.get(0).productName);
+				break;
+			case 9:
+				list = db.from(p).where(p.productId).is(7).select();
+				assertEquals(1, list.size());
+				assertTrue(7 == list.get(0).productId);
+				break;
+			default:
+				list = db.from(p).select();
+				assertEquals(10, list.size());
+			}
+		} finally {
+			db.close();
 		}
 	}
 }

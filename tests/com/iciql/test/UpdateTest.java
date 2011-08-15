@@ -41,7 +41,7 @@ public class UpdateTest {
 
 	@Before
 	public void setUp() throws Exception {
-		db = IciqlSuite.openDb();
+		db = IciqlSuite.openNewDb();
 		db.insertAll(Product.getList());
 		db.insertAll(Customer.getList());
 		db.insertAll(Order.getList());

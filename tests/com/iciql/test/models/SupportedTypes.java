@@ -124,13 +124,15 @@ public class SupportedTypes {
 
 	public static List<SupportedTypes> createList() {
 		List<SupportedTypes> list = Utils.newArrayList();
+		long now = System.currentTimeMillis();
+		long oneday = 24 * 60 * 60 * 1000L;
 		for (int i = 0; i < 10; i++) {
-			list.add(randomValue());
+			list.add(randomValue(now - (i * oneday)));
 		}
 		return list;
 	}
 
-	static SupportedTypes randomValue() {
+	static SupportedTypes randomValue(long time) {
 		Random rand = new Random();
 		SupportedTypes s = new SupportedTypes();
 		s.myBool = new Boolean(rand.nextBoolean());
@@ -144,10 +146,10 @@ public class SupportedTypes {
 		// scale must match annotation
 		s.myBigDecimal = s.myBigDecimal.setScale(5, RoundingMode.UP);
 		s.myString = Long.toHexString(rand.nextLong());
-		s.myUtilDate = new java.util.Date(rand.nextLong());
-		s.mySqlDate = new java.sql.Date(rand.nextLong());
-		s.mySqlTime = new java.sql.Time(rand.nextLong());
-		s.mySqlTimestamp = new java.sql.Timestamp(rand.nextLong());
+		s.myUtilDate = new java.util.Date(time);
+		s.mySqlDate = new java.sql.Date(time);
+		s.mySqlTime = new java.sql.Time(time);
+		s.mySqlTimestamp = new java.sql.Timestamp(time);
 		s.myBlob = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		s.myDefaultFlower = Flower.DAFFODIL;
 		s.myFavoriteFlower = Flower.MUM;
@@ -181,7 +183,7 @@ public class SupportedTypes {
 		same &= myOtherFavoriteTree.equals(s.myOtherFavoriteTree);
 		return same;
 	}
-	
+
 	/**
 	 * This class demonstrates the table upgrade.
 	 */

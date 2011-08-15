@@ -17,6 +17,7 @@
 
 package com.iciql.test.models;
 
+import static com.iciql.Define.length;
 import static com.iciql.Define.primaryKey;
 
 import java.math.BigDecimal;
@@ -55,6 +56,7 @@ public class ComplexObject implements Iciql {
 
 	public void defineIQ() {
 		primaryKey(id);
+		length(name, 25);
 	}
 
 	public static List<ComplexObject> getList() {

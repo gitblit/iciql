@@ -65,6 +65,12 @@ public class SQLStatement {
 	}
 
 	public SQLStatement addParameter(Object o) {
+		// Automatically convert java.util.Date to java.sql.Timestamp
+		// if the dialect requires java.sql.Timestamp objects (e.g. Derby)
+		if (o != null && o.getClass().equals(java.util.Date.class)
+				&& db.getDialect().getDateTimeClass().equals(java.sql.Timestamp.class)) {
+			o = new java.sql.Timestamp(((java.util.Date) o).getTime());
+		}
 		params.add(o);
 		return this;
 	}
@@ -112,7 +118,8 @@ public class SQLStatement {
 		try {
 			prep.setObject(parameterIndex, x);
 		} catch (SQLException e) {
-			IciqlException ix = new IciqlException(e, "error setting parameter {0} as {1}", parameterIndex, x.getClass().getSimpleName());
+			IciqlException ix = new IciqlException(e, "error setting parameter {0} as {1}", parameterIndex, x
+					.getClass().getSimpleName());
 			ix.setSQL(getSQL());
 			throw ix;
 		}

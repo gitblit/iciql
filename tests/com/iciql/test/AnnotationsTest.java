@@ -53,7 +53,7 @@ public class AnnotationsTest {
 
 	@Before
 	public void setUp() {
-		db = IciqlSuite.openDb();
+		db = IciqlSuite.openNewDb();
 		db.insertAll(Product.getList());
 		db.insertAll(ProductAnnotationOnly.getList());
 		db.insertAll(ProductMixedAnnotation.getList());
@@ -69,7 +69,15 @@ public class AnnotationsTest {
 		// test indexes are created, and columns are in the right order
 		DatabaseMetaData meta = db.getConnection().getMetaData();
 		boolean isH2 = meta.getDatabaseProductName().equals("H2");
-		ResultSet rs = meta.getIndexInfo(null, "PUBLIC", "ANNOTATEDPRODUCT", false, true);
+		boolean isDerby = meta.getDatabaseProductName().equals("Apache Derby");
+		ResultSet rs;
+		if (isDerby) {
+			// Derby defaults to USERNAME schema
+			rs = meta.getIndexInfo(null, "SA", "ANNOTATEDPRODUCT", false, true);
+		} else {
+			// H2, HSQL default to PUBLIC schema
+			rs = meta.getIndexInfo(null, "PUBLIC", "ANNOTATEDPRODUCT", false, true);
+		}
 		// first index is primary key index
 		// H2 gives this a testable name.
 		assertTrue(rs.next());
@@ -104,7 +112,7 @@ public class AnnotationsTest {
 		} catch (IciqlException e) {
 			assertEquals(IciqlException.CODE_UNMAPPED_FIELD, e.getIciqlCode());
 		}
-		
+
 		// 10 objects, 10 autoIncremented unique values
 		assertEquals(10, db.from(p).selectDistinct(p.productName).size());
 

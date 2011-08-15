@@ -253,7 +253,10 @@ class ModelUtils {
 		String value = null;
 		if (Number.class.isAssignableFrom(objectClass)) {
 			// NUMBER
-			value = ((Number) o).toString();
+			return ((Number) o).toString();
+		} else if (Boolean.class.isAssignableFrom(objectClass)) {
+			// BOOLEAN
+			return o.toString();
 		} else if (java.sql.Date.class.isAssignableFrom(objectClass)) {
 			// DATE
 			value = new SimpleDateFormat("yyyy-MM-dd").format((Date) o);
@@ -265,9 +268,6 @@ class ModelUtils {
 			value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) o);
 		} else if (String.class.isAssignableFrom(objectClass)) {
 			// STRING
-			value = o.toString();
-		} else if (Boolean.class.isAssignableFrom(objectClass)) {
-			// BOOLEAN
 			value = o.toString();
 		}
 		if (value == null) {
@@ -312,10 +312,6 @@ class ModelUtils {
 			// NULL (effectively)
 			return true;
 		}
-
-		// TODO H2 single-quotes literal values, which is useful.
-		// MySQL does not single-quote literal values so its hard to
-		// differentiate a FUNCTION/VARIABLE from a literal value.
 
 		// function / variable
 		Pattern functionDefault = Pattern.compile("[^'].*[^']");

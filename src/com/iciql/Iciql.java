@@ -72,7 +72,8 @@ import java.lang.annotation.Target;
  * </tr>
  * <tr>
  * <td>java.math.BigDecimal</td>
- * <td>DECIMAL (length == 0)<br/>DECIMAL(length, scale)  (length > 0)</td>
+ * <td>DECIMAL (length == 0)<br/>
+ * DECIMAL(length, scale) (length > 0)</td>
  * </tr>
  * <tr>
  * <td>java.sql.Date</td>
@@ -400,8 +401,8 @@ public interface Iciql {
 		 * Scale is used during the CREATE TABLE phase to define the scale of a
 		 * DECIMAL(precision, scale) expression.
 		 * <p>
-		 * Any scale set in define() may override this annotation setting if
-		 * the model class is not annotated with IQTable. Default: 0.
+		 * Any scale set in define() may override this annotation setting if the
+		 * model class is not annotated with IQTable. Default: 0.
 		 */
 		int scale() default 0;
 

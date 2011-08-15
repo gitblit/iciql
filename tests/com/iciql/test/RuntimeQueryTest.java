@@ -34,7 +34,7 @@ public class RuntimeQueryTest {
 
 	@Test
 	public void testRuntimeQuery() {
-		Db db = IciqlSuite.openDb();
+		Db db = IciqlSuite.openNewDb();
 		db.insertAll(Product.getList());
 
 		Product p = new Product();
@@ -50,14 +50,15 @@ public class RuntimeQueryTest {
 
 	@Test
 	public void testExecuteQuery() throws SQLException {
-		Db db = IciqlSuite.openDb();
+		Db db = IciqlSuite.openNewDb();
 		db.insertAll(Product.getList());
 
 		// test plain statement
-		List<Product> products = db.executeQuery(Product.class, "select * from product where unitsInStock=120");
+		List<Product> products = db.executeQuery(Product.class,
+				"select * from product where unitsInStock=120");
 		assertEquals(1, products.size());
 		assertEquals("Condiments", products.get(0).category);
-		
+
 		// test prepared statement
 		products = db.executeQuery(Product.class, "select * from product where unitsInStock=?", 120);
 		assertEquals(1, products.size());
@@ -65,10 +66,10 @@ public class RuntimeQueryTest {
 
 		db.close();
 	}
-	
+
 	@Test
 	public void testBuildObjects() throws SQLException {
-		Db db = IciqlSuite.openDb();
+		Db db = IciqlSuite.openNewDb();
 		db.insertAll(Product.getList());
 
 		// test plain statement
@@ -78,7 +79,7 @@ public class RuntimeQueryTest {
 
 		assertEquals(1, products.size());
 		assertEquals("Condiments", products.get(0).category);
-		
+
 		// test prepared statement
 		rs = db.executeQuery("select * from product where unitsInStock=?", 120);
 		products = db.buildObjects(Product.class, rs);

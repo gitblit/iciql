@@ -74,6 +74,7 @@ public class Db {
 		DIALECTS.put("H2", SQLDialectH2.class);
 		DIALECTS.put("MySQL", SQLDialectMySQL.class);
 		DIALECTS.put("HSQL Database Engine", SQLDialectHSQL.class);
+		DIALECTS.put("Apache Derby", SQLDialectDerby.class);
 	}
 
 	private Db(Connection conn) {
@@ -192,13 +193,30 @@ public class Db {
 	 * does exist. Not all databases support MERGE and the syntax varies with
 	 * the database.
 	 * 
+	 * If the database does not support a MERGE syntax the dialect can try to
+	 * simulate a merge by implementing:
+	 * <p>
+	 * INSERT INTO foo... (SELECT ?,... FROM foo WHERE pk=? HAVING count(*)=0)
+	 * <p>
+	 * iciql will check the affected row count returned by the internal merge
+	 * method and if the affected row count = 0, it will issue an update.
+	 * <p>
+	 * See the Derby dialect for an implementation of this technique.
+	 * <p>
 	 * If the dialect does not support merge an IciqlException will be thrown.
 	 * 
 	 * @param t
 	 */
 	public <T> void merge(T t) {
 		Class<?> clazz = t.getClass();
-		define(clazz).createTableIfRequired(this).merge(this, t);
+		TableDefinition<?> def = define(clazz).createTableIfRequired(this);
+		int rc = def.merge(this, t);
+		if (rc == 0) {
+			rc = def.update(this, t);
+		}
+		if (rc == 0) {
+			throw new IciqlException("merge failed");
+		}
 	}
 
 	public <T> int update(T t) {
@@ -220,7 +238,7 @@ public class Db {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> buildObjects(Class<? extends T> modelClass, ResultSet rs) {
 		List<T> result = new ArrayList<T>();
-		TableDefinition<T> def = (TableDefinition<T>) define(modelClass).createTableIfRequired(this);
+		TableDefinition<T> def = (TableDefinition<T>) define(modelClass);
 		try {
 			while (rs.next()) {
 				T item = Utils.newObject(modelClass);

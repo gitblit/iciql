@@ -344,6 +344,7 @@ public class QueryWhere<T> {
 		query.orderBy(field);
 		return this;
 	}
+
 	/**
 	 * Order by a number of Object columns.
 	 * 

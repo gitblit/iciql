@@ -128,13 +128,15 @@ public class GenerateModels {
 	 *            automatically trim strings that exceed maxLength
 	 */
 	public static void execute(String url, String user, String password, String schema, String table,
-			String packageName, String folder, boolean annotateSchema, boolean trimStrings) throws SQLException {
+			String packageName, String folder, boolean annotateSchema, boolean trimStrings)
+			throws SQLException {
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection(url, user, password);
 			Db db = Db.open(url, user, password.toCharArray());
 			DbInspector inspector = new DbInspector(db);
-			List<String> models = inspector.generateModel(schema, table, packageName, annotateSchema, trimStrings);
+			List<String> models = inspector.generateModel(schema, table, packageName, annotateSchema,
+					trimStrings);
 			File parentFile;
 			if (StringUtils.isNullOrEmpty(folder)) {
 				parentFile = new File(System.getProperty("user.dir"));

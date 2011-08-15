@@ -193,7 +193,7 @@ public class Query<T> {
 	public UpdateColumnIncrement<T, Byte> increment(byte field) {
 		return incrementPrimitive(field);
 	}
-	
+
 	public UpdateColumnIncrement<T, Short> increment(short field) {
 		return incrementPrimitive(field);
 	}
@@ -511,13 +511,13 @@ public class Query<T> {
 		}
 		return orderBy(alias);
 	}
-	
+
 	public Query<T> orderBy(Object expr) {
 		OrderExpression<T> e = new OrderExpression<T>(this, expr, false, false, false);
 		addOrderBy(e);
 		return this;
 	}
-	
+
 	/**
 	 * Order by a number of columns.
 	 * 
@@ -575,12 +575,12 @@ public class Query<T> {
 		}
 		return groupBy(alias);
 	}
-	
+
 	public Query<T> groupBy(Object expr) {
 		groupByExpressions.add(expr);
 		return this;
 	}
-	
+
 	public Query<T> groupBy(Object... groupBy) {
 		this.groupByExpressions.addAll(Arrays.asList(groupBy));
 		return this;
@@ -712,12 +712,7 @@ public class Query<T> {
 				stat.appendSQL(" ");
 			}
 		}
-		if (limit > 0) {
-			db.getDialect().appendLimit(stat, limit);
-		}
-		if (offset > 0) {
-			db.getDialect().appendOffset(stat, offset);
-		}
+		db.getDialect().appendLimitOffset(stat, limit, offset);
 		StatementLogger.select(stat.getSQL());
 	}
 

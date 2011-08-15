@@ -447,30 +447,35 @@ public class TableDefinition<T> {
 	}
 
 	private boolean skipInsertField(FieldDefinition field, Object obj) {
-		// skip uninitialized primitive autoincrement values
-		if (field.isAutoIncrement && field.isPrimitive) {
+		if (field.isAutoIncrement) {
 			Object value = getValue(obj, field);
-			if (value.toString().equals("0")) {
+			if (field.isPrimitive) {
+				// skip uninitialized primitive autoincrement values
+				if (value.toString().equals("0")) {
+					return true;
+				}
+			} else if (value == null) {
+				// skip null object autoincrement values
 				return true;
 			}
 		}
 		return false;
 	}
 
-	void merge(Db db, Object obj) {
+	int merge(Db db, Object obj) {
 		if (primaryKeyColumnNames == null || primaryKeyColumnNames.size() == 0) {
-			throw new IllegalStateException("No primary key columns defined " + "for table " + obj.getClass()
+			throw new IllegalStateException("No primary key columns defined for table " + obj.getClass()
 					+ " - no update possible");
 		}
 		SQLStatement stat = new SQLStatement(db);
 		db.getDialect().prepareMerge(stat, schemaName, tableName, this, obj);
 		StatementLogger.merge(stat.getSQL());
-		stat.executeUpdate();
+		return stat.executeUpdate();
 	}
 
 	int update(Db db, Object obj) {
 		if (primaryKeyColumnNames == null || primaryKeyColumnNames.size() == 0) {
-			throw new IllegalStateException("No primary key columns defined " + "for table " + obj.getClass()
+			throw new IllegalStateException("No primary key columns defined for table " + obj.getClass()
 					+ " - no update possible");
 		}
 		SQLStatement stat = new SQLStatement(db);
@@ -552,7 +557,13 @@ public class TableDefinition<T> {
 		SQLStatement stat = new SQLStatement(db);
 		db.getDialect().prepareCreateTable(stat, this);
 		StatementLogger.create(stat.getSQL());
-		stat.executeUpdate();
+		try {
+			stat.executeUpdate();
+		} catch (IciqlException e) {
+			if (e.getIciqlCode() != IciqlException.CODE_TABLE_ALREADY_EXISTS) {
+				throw e;
+			}
+		}
 
 		// create indexes
 		for (IndexDefinition index : indexes) {

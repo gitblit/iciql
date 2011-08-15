@@ -99,9 +99,10 @@ public class StatementBuilder {
 		builder.append(x);
 		return this;
 	}
-	
+
 	/**
 	 * Returns the current value of the loop counter.
+	 * 
 	 * @return the loop counter
 	 */
 	public int getCount() {
