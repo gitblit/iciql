@@ -31,47 +31,47 @@ public class Define {
 
 	public static void primaryKey(Object... columns) {
 		checkInDefine();
-		currentTableDefinition.setPrimaryKey(columns);
+		currentTableDefinition.definePrimaryKey(columns);
 	}
 
 	public static void index(Object... columns) {
 		checkInDefine();
-		currentTableDefinition.addIndex(IndexType.STANDARD, columns);
+		currentTableDefinition.defineIndex(IndexType.STANDARD, columns);
 	}
 
 	public static void uniqueIndex(Object... columns) {
 		checkInDefine();
-		currentTableDefinition.addIndex(IndexType.UNIQUE, columns);
+		currentTableDefinition.defineIndex(IndexType.UNIQUE, columns);
 	}
 
 	public static void hashIndex(Object column) {
 		checkInDefine();
-		currentTableDefinition.addIndex(IndexType.HASH, new Object[] { column });
+		currentTableDefinition.defineIndex(IndexType.HASH, new Object[] { column });
 	}
 
 	public static void uniqueHashIndex(Object column) {
 		checkInDefine();
-		currentTableDefinition.addIndex(IndexType.UNIQUE_HASH, new Object[] { column });
+		currentTableDefinition.defineIndex(IndexType.UNIQUE_HASH, new Object[] { column });
 	}
 
 	public static void columnName(Object column, String columnName) {
 		checkInDefine();
-		currentTableDefinition.setColumnName(column, columnName);
+		currentTableDefinition.defineColumnName(column, columnName);
 	}
 
 	public static void length(Object column, int length) {
 		checkInDefine();
-		currentTableDefinition.setLength(column, length);
+		currentTableDefinition.defineLength(column, length);
 	}
 
 	public static void scale(Object column, int scale) {
 		checkInDefine();
-		currentTableDefinition.setScale(column, scale);
+		currentTableDefinition.defineScale(column, scale);
 	}
 
 	public static void tableName(String tableName) {
 		checkInDefine();
-		currentTableDefinition.setTableName(tableName);
+		currentTableDefinition.defineTableName(tableName);
 	}
 
 	@SuppressWarnings("deprecation")

@@ -181,7 +181,7 @@ public class Db {
 
 	public <T> void insert(T t) {
 		Class<?> clazz = t.getClass();
-		long rc = define(clazz).createTableIfRequired(this).insert(this, t, false);
+		long rc = define(clazz).createIfRequired(this).insert(this, t, false);
 		if (rc == 0) {
 			throw new IciqlException("Failed to insert {0}.  Affected rowcount == 0.", t);
 		}
@@ -189,7 +189,7 @@ public class Db {
 
 	public <T> long insertAndGetKey(T t) {
 		Class<?> clazz = t.getClass();
-		return define(clazz).createTableIfRequired(this).insert(this, t, true);
+		return define(clazz).createIfRequired(this).insert(this, t, true);
 	}
 
 	/**
@@ -213,7 +213,7 @@ public class Db {
 	 */
 	public <T> void merge(T t) {
 		Class<?> clazz = t.getClass();
-		TableDefinition<?> def = define(clazz).createTableIfRequired(this);
+		TableDefinition<?> def = define(clazz).createIfRequired(this);
 		int rc = def.merge(this, t);
 		if (rc == 0) {
 			rc = def.update(this, t);
@@ -225,17 +225,17 @@ public class Db {
 
 	public <T> int update(T t) {
 		Class<?> clazz = t.getClass();
-		return define(clazz).createTableIfRequired(this).update(this, t);
+		return define(clazz).createIfRequired(this).update(this, t);
 	}
 
 	public <T> int delete(T t) {
 		Class<?> clazz = t.getClass();
-		return define(clazz).createTableIfRequired(this).delete(this, t);
+		return define(clazz).createIfRequired(this).delete(this, t);
 	}
 
 	public <T extends Object> Query<T> from(T alias) {
 		Class<?> clazz = alias.getClass();
-		define(clazz).createTableIfRequired(this);
+		define(clazz).createIfRequired(this);
 		return Query.from(this, alias);
 	}
 

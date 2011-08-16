@@ -89,13 +89,13 @@ public class TableDefinition<T> {
 			}
 		}
 
-		Object initWithNewObject(Object obj) {
+		private Object initWithNewObject(Object obj) {
 			Object o = Utils.newObject(field.getType());
 			setValue(obj, o);
 			return o;
 		}
 
-		void setValue(Object obj, Object o) {
+		private void setValue(Object obj, Object o) {
 			try {
 				if (!field.isAccessible()) {
 					field.setAccessible(true);
@@ -114,7 +114,7 @@ public class TableDefinition<T> {
 			}
 		}
 
-		Object read(ResultSet rs, int columnIndex) {
+		private Object read(ResultSet rs, int columnIndex) {
 			try {
 				return rs.getObject(columnIndex);
 			} catch (SQLException e) {
@@ -130,7 +130,7 @@ public class TableDefinition<T> {
 	List<String> primaryKeyColumnNames;
 	boolean memoryTable;
 
-	private boolean createTableIfRequired = true;
+	private boolean createIfRequired = true;
 	private Class<T> clazz;
 	private IdentityHashMap<Object, FieldDefinition> fieldMap = Utils.newIdentityHashMap();
 	private ArrayList<IndexDefinition> indexes = Utils.newArrayList();
@@ -149,20 +149,11 @@ public class TableDefinition<T> {
 		return fields;
 	}
 
-	FieldDefinition getField(String name) {
-		for (FieldDefinition field : fields) {
-			if (field.columnName.equalsIgnoreCase(name)) {
-				return field;
-			}
-		}
-		return null;
-	}
-
-	void setSchemaName(String schemaName) {
+	void defineSchemaName(String schemaName) {
 		this.schemaName = schemaName;
 	}
 
-	void setTableName(String tableName) {
+	void defineTableName(String tableName) {
 		this.tableName = tableName;
 	}
 
@@ -172,7 +163,7 @@ public class TableDefinition<T> {
 	 * @param modelFields
 	 *            the ordered list of model fields
 	 */
-	void setPrimaryKey(Object[] modelFields) {
+	void definePrimaryKey(Object[] modelFields) {
 		List<String> columnNames = mapColumnNames(modelFields);
 		setPrimaryKey(columnNames);
 	}
@@ -183,7 +174,7 @@ public class TableDefinition<T> {
 	 * @param columnNames
 	 *            the ordered list of column names
 	 */
-	void setPrimaryKey(List<String> columnNames) {
+	private void setPrimaryKey(List<String> columnNames) {
 		primaryKeyColumnNames = Utils.newArrayList(columnNames);
 		// set isPrimaryKey flag for all field definitions
 		for (FieldDefinition fieldDefinition : fieldMap.values()) {
@@ -191,7 +182,7 @@ public class TableDefinition<T> {
 		}
 	}
 
-	<A> String getColumnName(A fieldObject) {
+	private <A> String getColumnName(A fieldObject) {
 		FieldDefinition def = fieldMap.get(fieldObject);
 		return def == null ? null : def.columnName;
 	}
@@ -212,7 +203,7 @@ public class TableDefinition<T> {
 	 * @param modelFields
 	 *            the ordered list of model fields
 	 */
-	void addIndex(IndexType type, Object[] modelFields) {
+	void defineIndex(IndexType type, Object[] modelFields) {
 		List<String> columnNames = mapColumnNames(modelFields);
 		addIndex(null, type, columnNames);
 	}
@@ -225,7 +216,7 @@ public class TableDefinition<T> {
 	 * @param columnNames
 	 *            the ordered list of column names
 	 */
-	void addIndex(String name, IndexType type, List<String> columnNames) {
+	private void addIndex(String name, IndexType type, List<String> columnNames) {
 		IndexDefinition index = new IndexDefinition();
 		if (StringUtils.isNullOrEmpty(name)) {
 			index.indexName = tableName + "_" + indexes.size();
@@ -237,21 +228,21 @@ public class TableDefinition<T> {
 		indexes.add(index);
 	}
 
-	public void setColumnName(Object column, String columnName) {
+	void defineColumnName(Object column, String columnName) {
 		FieldDefinition def = fieldMap.get(column);
 		if (def != null) {
 			def.columnName = columnName;
 		}
 	}
 
-	public void setLength(Object column, int length) {
+	void defineLength(Object column, int length) {
 		FieldDefinition def = fieldMap.get(column);
 		if (def != null) {
 			def.length = length;
 		}
 	}
 
-	public void setScale(Object column, int scale) {
+	void defineScale(Object column, int scale) {
 		FieldDefinition def = fieldMap.get(column);
 		if (def != null) {
 			def.scale = scale;
@@ -411,7 +402,8 @@ public class TableDefinition<T> {
 			}
 			return value;
 		}
-		// standard behavior
+		
+		// return the value unchanged
 		return value;
 	}
 
@@ -547,8 +539,8 @@ public class TableDefinition<T> {
 		return stat.executeUpdate();
 	}
 
-	TableDefinition<T> createTableIfRequired(Db db) {
-		if (!createTableIfRequired) {
+	TableDefinition<T> createIfRequired(Db db) {
+		if (!createIfRequired) {
 			// skip table and index creation
 			// but still check for upgrades
 			db.upgradeTable(this);
@@ -607,7 +599,7 @@ public class TableDefinition<T> {
 			}
 
 			// allow control over createTableIfRequired()
-			createTableIfRequired = tableAnnotation.create();
+			createIfRequired = tableAnnotation.create();
 
 			// model version
 			if (clazz.isAnnotationPresent(IQVersion.class)) {
@@ -640,7 +632,7 @@ public class TableDefinition<T> {
 		}
 	}
 
-	void addIndex(IQIndex index) {
+	private void addIndex(IQIndex index) {
 		List<String> columns = Arrays.asList(index.value());
 		addIndex(index.name(), index.type(), columns);
 	}
@@ -649,7 +641,7 @@ public class TableDefinition<T> {
 		return indexes;
 	}
 
-	void initObject(Object obj, Map<Object, FieldDefinition> map) {
+	private void initObject(Object obj, Map<Object, FieldDefinition> map) {
 		for (FieldDefinition def : fields) {
 			Object newValue = def.initWithNewObject(obj);
 			map.put(newValue, def);
