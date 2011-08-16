@@ -27,9 +27,10 @@ public class IciqlException extends RuntimeException {
 
 	public static final int CODE_UNMAPPED_FIELD = 1;
 	public static final int CODE_DUPLICATE_KEY = 2;
-	public static final int CODE_TABLE_NOT_FOUND = 3;
-	public static final int CODE_TABLE_ALREADY_EXISTS = 4;
-	public static final int CODE_INDEX_ALREADY_EXISTS = 5;
+	public static final int CODE_SCHEMA_NOT_FOUND = 3;
+	public static final int CODE_TABLE_NOT_FOUND = 4;
+	public static final int CODE_TABLE_ALREADY_EXISTS = 5;
+	public static final int CODE_INDEX_ALREADY_EXISTS = 6;
 
 	private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|\\<\\>|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";
 
@@ -95,8 +96,17 @@ public class IciqlException extends RuntimeException {
 			// http://developer.mimer.com/documentation/html_92/Mimer_SQL_Mobile_DocSet/App_Return_Codes2.html
 			SQLException s = (SQLException) t;
 			String state = s.getSQLState();
-			if ("23505".equals(state)) {
+			if ("23000".equals(state)) {
+				// MySQL
 				iciqlCode = CODE_DUPLICATE_KEY;
+			} else if ("23505".equals(state)) {
+				iciqlCode = CODE_DUPLICATE_KEY;
+			} else if ("42000".equals(state)) {
+				// MySQL
+				iciqlCode = CODE_DUPLICATE_KEY;
+			} else if ("42Y07".equals(state)) {
+				// Derby
+				iciqlCode = CODE_SCHEMA_NOT_FOUND;
 			} else if ("42X05".equals(state)) {
 				// Derby
 				iciqlCode = CODE_TABLE_NOT_FOUND;

@@ -91,6 +91,7 @@ public class SamplesTest {
 		TestReverse check = db.from(new TestReverse()).selectFirst();
 		assertEquals(t.name, check.name);
 		assertEquals(t.id, check.id);
+		db.executeUpdate("DROP TABLE testreverse");
 	}
 
 	@Test
@@ -238,7 +239,8 @@ public class SamplesTest {
 	public void testIsNull() {
 		Product p = new Product();
 		String sql = db.from(p).whereTrue(isNull(p.productName)).getSQL();
-		assertEquals("SELECT * FROM Product WHERE (productName IS NULL)", sql);
+		assertEquals("SELECT * FROM Product WHERE (" + db.getDialect().prepareColumnName("productName")
+				+ " IS NULL)", sql);
 	}
 
 	@Test
@@ -258,11 +260,13 @@ public class SamplesTest {
 	public void testOrAndNot() {
 		Product p = new Product();
 		String sql = db.from(p).whereTrue(not(isNull(p.productName))).getSQL();
-		assertEquals("SELECT * FROM Product WHERE (NOT productName IS NULL)", sql);
+		String productName = db.getDialect().prepareColumnName("productName");
+		assertEquals("SELECT * FROM Product WHERE (NOT " + productName + " IS NULL)", sql);
 		sql = db.from(p).whereTrue(not(isNull(p.productName))).getSQL();
-		assertEquals("SELECT * FROM Product WHERE (NOT productName IS NULL)", sql);
+		assertEquals("SELECT * FROM Product WHERE (NOT " + productName + " IS NULL)", sql);
 		sql = db.from(p).whereTrue(db.test(p.productId).is(1)).getSQL();
-		assertEquals("SELECT * FROM Product WHERE ((productId = ?))", sql);
+		String productId = db.getDialect().prepareColumnName("productId");
+		assertEquals("SELECT * FROM Product WHERE ((" + productId + " = ?))", sql);
 	}
 
 	@Test
@@ -316,8 +320,24 @@ public class SamplesTest {
 				.lessThan(java.sql.Timestamp.valueOf("2005-05-05 05:05:05")).and(co.name).is("hello")
 				.and(co.time).lessThan(java.sql.Time.valueOf("23:23:23")).and(co.value)
 				.is(new BigDecimal("1")).getSQL();
-		assertEquals("SELECT * FROM ComplexObject WHERE id = ? AND amount = ? "
-				+ "AND birthday < ? AND created < ? AND name = ? AND time < ? AND value = ?", sql);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ComplexObject WHERE ");
+		sb.append(db.getDialect().prepareColumnName("id"));
+		sb.append(" = ? AND ");
+		sb.append(db.getDialect().prepareColumnName("amount"));
+		sb.append(" = ? AND ");
+		sb.append(db.getDialect().prepareColumnName("birthday"));
+		sb.append(" < ? AND ");
+		sb.append(db.getDialect().prepareColumnName("created"));
+		sb.append(" < ? AND ");
+		sb.append(db.getDialect().prepareColumnName("name"));
+		sb.append(" = ? AND ");
+		sb.append(db.getDialect().prepareColumnName("time"));
+		sb.append(" < ? AND ");
+		sb.append(db.getDialect().prepareColumnName("value"));
+		sb.append(" = ?");
+		assertEquals(sb.toString(), sql);
 
 		long count = db.from(co).where(co.id).is(1).and(co.amount).is(1L).and(co.birthday)
 				.lessThan(new java.util.Date()).and(co.created)
@@ -340,7 +360,14 @@ public class SamplesTest {
 				return co.id == x && co.name.equals(name) && co.name.equals("hello");
 			}
 		}).getSQL();
-		assertEquals("SELECT * FROM ComplexObject WHERE id=? AND ?=name AND 'hello'=name", sql);
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ComplexObject WHERE ");
+		sb.append(db.getDialect().prepareColumnName("id"));
+		sb.append("=? AND ?=");
+		sb.append(db.getDialect().prepareColumnName("name"));
+		sb.append(" AND 'hello'=");
+		sb.append(db.getDialect().prepareColumnName("name"));
+		assertEquals(sb.toString(), sql);
 
 		long count = db.from(co).where(new Filter() {
 			public boolean where() {

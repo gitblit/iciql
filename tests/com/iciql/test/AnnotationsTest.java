@@ -69,30 +69,24 @@ public class AnnotationsTest {
 		// test indexes are created, and columns are in the right order
 		DatabaseMetaData meta = db.getConnection().getMetaData();
 		boolean isH2 = meta.getDatabaseProductName().equals("H2");
-		boolean isDerby = meta.getDatabaseProductName().equals("Apache Derby");
-		ResultSet rs;
-		if (isDerby) {
-			// Derby defaults to USERNAME schema
-			rs = meta.getIndexInfo(null, "SA", "ANNOTATEDPRODUCT", false, true);
-		} else {
-			// H2, HSQL default to PUBLIC schema
-			rs = meta.getIndexInfo(null, "PUBLIC", "ANNOTATEDPRODUCT", false, true);
-		}
+		String schema = IciqlSuite.getDefaultSchema(db);
+		ResultSet rs = meta.getIndexInfo(null, schema, "ANNOTATEDPRODUCT", false, true);
+
 		// first index is primary key index
 		// H2 gives this a testable name.
 		assertTrue(rs.next());
 		if (isH2) {
-			assertStartsWith(rs.getString("INDEX_NAME"), "PRIMARY_KEY");
+			assertStartsWith(rs.getString("INDEX_NAME").toUpperCase(), "PRIMARY_KEY");
 		}
 		assertTrue(rs.next());
-		assertStartsWith(rs.getString("INDEX_NAME"), "ANNOTATEDPRODUCT_0");
-		assertStartsWith(rs.getString("COLUMN_NAME"), "NAME");
+		assertStartsWith(rs.getString("INDEX_NAME").toUpperCase(), "ANNOTATEDPRODUCT_0");
+		assertStartsWith(rs.getString("COLUMN_NAME").toUpperCase(), "NAME");
 		assertTrue(rs.next());
-		assertStartsWith(rs.getString("INDEX_NAME"), "ANNOTATEDPRODUCT_0");
-		assertStartsWith(rs.getString("COLUMN_NAME"), "CAT");
+		assertStartsWith(rs.getString("INDEX_NAME").toUpperCase(), "ANNOTATEDPRODUCT_0");
+		assertStartsWith(rs.getString("COLUMN_NAME").toUpperCase(), "CAT");
 		assertTrue(rs.next());
-		assertStartsWith(rs.getString("INDEX_NAME"), "NAMEIDX");
-		assertStartsWith(rs.getString("COLUMN_NAME"), "NAME");
+		assertStartsWith(rs.getString("INDEX_NAME").toUpperCase(), "NAMEIDX");
+		assertStartsWith(rs.getString("COLUMN_NAME").toUpperCase(), "NAME");
 		assertFalse(rs.next());
 	}
 

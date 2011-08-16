@@ -40,6 +40,20 @@ import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 import com.iciql.Constants;
 import com.iciql.Db;
+import com.iciql.test.models.BooleanModel;
+import com.iciql.test.models.ComplexObject;
+import com.iciql.test.models.Customer;
+import com.iciql.test.models.DefaultValuesModel;
+import com.iciql.test.models.EnumModels.EnumIdModel;
+import com.iciql.test.models.EnumModels.EnumOrdinalModel;
+import com.iciql.test.models.EnumModels.EnumStringModel;
+import com.iciql.test.models.Order;
+import com.iciql.test.models.PrimitivesModel;
+import com.iciql.test.models.Product;
+import com.iciql.test.models.ProductAnnotationOnly;
+import com.iciql.test.models.ProductInheritedAnnotation;
+import com.iciql.test.models.ProductMixedAnnotation;
+import com.iciql.test.models.SupportedTypes;
 import com.iciql.util.StatementLogger;
 import com.iciql.util.StatementLogger.StatementListener;
 import com.iciql.util.StatementLogger.StatementType;
@@ -58,12 +72,13 @@ import com.iciql.util.StringUtils;
 @RunWith(Suite.class)
 @SuiteClasses({ AliasMapTest.class, AnnotationsTest.class, BooleanModelTest.class, ClobTest.class,
 		ConcurrencyTest.class, EnumsTest.class, ModelsTest.class, PrimitivesTest.class,
-		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UUIDTest.class })
+		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UpgradesTest.class, UUIDTest.class })
 public class IciqlSuite {
 
-	private static final TestDb[] TEST_DBS = { new TestDb("H2", "jdbc:h2:mem:db{0,number,000}"),
-			new TestDb("HSQL", "jdbc:hsqldb:mem:db{0,number,000}"),
-			new TestDb("Derby", "jdbc:derby:memory:db{0,number,000};create=true") };
+	private static final TestDb[] TEST_DBS = { new TestDb("H2 (embedded)", "jdbc:h2:mem:db{0,number,000}"),
+			new TestDb("HSQL (embedded)", "jdbc:hsqldb:mem:db{0,number,000}"),
+			new TestDb("Derby (embedded)", "jdbc:derby:memory:db{0,number,000};create=true"),
+			new TestDb("MySQL (tcp/myisam)", "jdbc:mysql://localhost:3306/iciql") };
 
 	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[0];
 
@@ -82,6 +97,13 @@ public class IciqlSuite {
 				value.startsWith(startsWith));
 	}
 
+	public static boolean equivalentTo(double expected, double actual) {
+		if (Double.compare(expected, actual) == 0) {
+			return true;
+		}
+		return Math.abs(expected - actual) <= 0.000001d;
+	}
+
 	/**
 	 * Increment the database counter, open and create a new database.
 	 * 
@@ -93,7 +115,25 @@ public class IciqlSuite {
 			testUrl = DEFAULT_TEST_DB.url;
 		}
 		testUrl = MessageFormat.format(testUrl, openCount.incrementAndGet());
-		return Db.open(testUrl, username, password);
+		Db db = Db.open(testUrl, username, password);
+
+		// drop tables
+		db.dropTable(BooleanModel.class);
+		db.dropTable(ComplexObject.class);
+		db.dropTable(Customer.class);
+		db.dropTable(DefaultValuesModel.class);
+		db.dropTable(EnumIdModel.class);
+		db.dropTable(EnumOrdinalModel.class);
+		db.dropTable(EnumStringModel.class);
+		db.dropTable(Order.class);
+		db.dropTable(PrimitivesModel.class);
+		db.dropTable(Product.class);
+		db.dropTable(ProductAnnotationOnly.class);
+		db.dropTable(ProductInheritedAnnotation.class);
+		db.dropTable(ProductMixedAnnotation.class);
+		db.dropTable(SupportedTypes.class);
+
+		return db;
 	}
 
 	/**
@@ -108,6 +148,15 @@ public class IciqlSuite {
 		}
 		testUrl = MessageFormat.format(testUrl, openCount.get());
 		return Db.open(testUrl, username, password);
+	}
+
+	/**
+	 * Drops all tables from the current database.
+	 * 
+	 * @return the current database
+	 */
+	public static void dropAllTables(Db db) {
+
 	}
 
 	/**
@@ -146,6 +195,16 @@ public class IciqlSuite {
 	}
 
 	/**
+	 * Returns true if the underlying database engine is MySQL.
+	 * 
+	 * @param db
+	 * @return true if underlying database engine is MySQL
+	 */
+	public static boolean isMySQL(Db db) {
+		return IciqlSuite.getDatabaseEngineName(db).equals("MySQL");
+	}
+
+	/**
 	 * Gets the default schema of the underlying database engine.
 	 * 
 	 * @param db
@@ -155,7 +214,11 @@ public class IciqlSuite {
 		if (isDerby(db)) {
 			// Derby sets default schema name to username
 			return username.toUpperCase();
+		} else if (isMySQL(db)) {
+			// MySQL does not have schemas
+			return null;
 		}
+
 		return "PUBLIC";
 	}
 
@@ -206,8 +269,8 @@ public class IciqlSuite {
 
 		SuiteClasses suiteClasses = IciqlSuite.class.getAnnotation(SuiteClasses.class);
 		long quickestDatabase = Long.MAX_VALUE;
-		String dividerMajor = buildDivider('*', 70);
-		String dividerMinor = buildDivider('-', 70);
+		String dividerMajor = buildDivider('*', 79);
+		String dividerMinor = buildDivider('-', 79);
 
 		// Header
 		out.println(dividerMajor);
@@ -225,7 +288,7 @@ public class IciqlSuite {
 		showProperty("available processors", "" + Runtime.getRuntime().availableProcessors());
 		showProperty(
 				"available memory",
-				MessageFormat.format("{0,number,#.0} GB", ((double) Runtime.getRuntime().maxMemory())
+				MessageFormat.format("{0,number,0.0} GB", ((double) Runtime.getRuntime().maxMemory())
 						/ (1024 * 1024)));
 		out.println();
 
@@ -246,32 +309,42 @@ public class IciqlSuite {
 				statementWriter.append("\n\n");
 			}
 
-			System.setProperty("iciql.url", testDb.url);
-			Result result = JUnitCore.runClasses(suiteClasses.value());
-			testDb.runtime = result.getRunTime();
-			if (testDb.runtime < quickestDatabase) {
-				quickestDatabase = testDb.runtime;
-			}
-			testDb.statements = StatementLogger.getTotalCount() - lastCount;
-			// reset total count for next database
-			lastCount = StatementLogger.getTotalCount();
-
-			out.println(MessageFormat.format(
-					"{0} tests ({1} failures, {2} ignores)  {3} statements in {4,number,0.000} secs",
-					result.getRunCount(), result.getFailureCount(), result.getIgnoreCount(),
-					testDb.statements, result.getRunTime() / 1000f));
-
-			if (result.getFailureCount() == 0) {
-				out.println();
+			if (testDb.getVersion().equals("OFFLINE")) {
+				// Database not available
+				out.println("Skipping.  Could not find " + testDb.url);
 			} else {
-				for (Failure failure : result.getFailures()) {
-					out.println(MessageFormat.format("\n  + {0}\n    {1}\n", failure.getTestHeader(),
-							failure.getMessage()));
+				// Test database
+				System.setProperty("iciql.url", testDb.url);
+				Result result = JUnitCore.runClasses(suiteClasses.value());
+				testDb.runtime = result.getRunTime();
+				if (testDb.runtime < quickestDatabase) {
+					quickestDatabase = testDb.runtime;
+				}
+				testDb.statements = StatementLogger.getTotalCount() - lastCount;
+				// reset total count for next database
+				lastCount = StatementLogger.getTotalCount();
+
+				out.println(MessageFormat.format(
+						"{0} tests ({1} failures, {2} ignores)  {3} statements in {4,number,0.000} secs",
+						result.getRunCount(), result.getFailureCount(), result.getIgnoreCount(),
+						testDb.statements, result.getRunTime() / 1000f));
+
+				if (result.getFailureCount() == 0) {
+					out.println();
+					out.println("  100% successful test suite run.");
+					out.println();
+				} else {
+					for (Failure failure : result.getFailures()) {
+						out.println(MessageFormat.format("\n  + {0}\n    {1}", failure.getTestHeader(),
+								failure.getMessage()));
+					}
+					out.println();
 				}
 			}
 		}
 
 		// Display runtime results sorted by performance leader
+		out.println();
 		out.println(dividerMajor);
 		out.println(MessageFormat.format("{0} {1} ({2}) test suite performance results", Constants.NAME,
 				Constants.VERSION, Constants.VERSION_DATE));
@@ -281,6 +354,12 @@ public class IciqlSuite {
 
 			@Override
 			public int compare(TestDb o1, TestDb o2) {
+				if (o1.runtime == 0) {
+					return 1;
+				}
+				if (o2.runtime == 0) {
+					return -1;
+				}
 				if (o1.runtime == o2.runtime) {
 					return 0;
 				}
@@ -292,11 +371,11 @@ public class IciqlSuite {
 		});
 		for (TestDb testDb : dbs) {
 			out.println(MessageFormat.format(
-					"{0} {1}  {2,number,0.0} stats/sec  {3,number,0.000} secs  ({4,number,#.0}x)",
-					StringUtils.pad(testDb.name, 6, " ", true),
-					StringUtils.pad(testDb.getVersion(), 22, " ", true),
-					((double) testDb.statements)/ (testDb.runtime/1000d), testDb.runtime / 1000f,
-					((double) testDb.runtime) / quickestDatabase));
+					"{0} {1}  {2,number,0} stats/sec  {3,number,0.000} secs  ({4,number,0.0}x)",
+					StringUtils.pad(testDb.name, 20, " ", true),
+					StringUtils.pad(testDb.getVersion(), 22, " ", true), ((double) testDb.statements)
+							/ (testDb.runtime / 1000d), testDb.runtime / 1000f, ((double) testDb.runtime)
+							/ quickestDatabase));
 		}
 
 		// close PrintStream and restore System.err
@@ -362,8 +441,8 @@ public class IciqlSuite {
 					version = db.getConnection().getMetaData().getDatabaseProductVersion();
 					db.close();
 					return version;
-				} catch (SQLException s) {
-					version = "";
+				} catch (Throwable t) {
+					version = "OFFLINE";
 				}
 			}
 			return version;

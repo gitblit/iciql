@@ -57,7 +57,8 @@ public class SQLDialectDefault implements SQLDialect {
 	 * @param sqlType
 	 * @return the SQL type or a preferred alternative
 	 */
-	protected String convertSqlType(String sqlType) {
+	@Override
+	public String convertSqlType(String sqlType) {
 		return sqlType;
 	}
 
@@ -92,6 +93,14 @@ public class SQLDialectDefault implements SQLDialect {
 	@Override
 	public String prepareColumnName(String name) {
 		return name;
+	}
+
+	@Override
+	public <T> void prepareDropTable(SQLStatement stat, TableDefinition<T> def) {
+		StatementBuilder buff = new StatementBuilder("DROP TABLE IF EXISTS "
+				+ prepareTableName(def.schemaName, def.tableName));
+		stat.setSQL(buff.toString());
+		return;
 	}
 
 	@Override

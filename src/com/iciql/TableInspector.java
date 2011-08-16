@@ -433,13 +433,13 @@ public class TableInspector {
 		if (!isNullOrEmpty(schema)) {
 			if (isNullOrEmpty(def.schemaName)) {
 				remarks.add(consider(table, "SCHEMA",
-						format("@{0}(name={1})", IQSchema.class.getSimpleName(), schema)));
+						format("@{0}(\"{1}\")", IQSchema.class.getSimpleName(), schema)));
 			} else if (!schema.equalsIgnoreCase(def.schemaName)) {
 				remarks.add(error(
 						table,
 						"SCHEMA",
-						format("@{0}(name={1}) != {2}", IQSchema.class.getSimpleName(), def.schemaName,
-								schema)).throwError(throwError));
+						format("@{0}(\"{1}\") != {2}", IQSchema.class.getSimpleName(), def.schemaName, schema))
+						.throwError(throwError));
 			}
 		}
 

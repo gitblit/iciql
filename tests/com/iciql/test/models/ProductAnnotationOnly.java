@@ -34,12 +34,9 @@ import com.iciql.Iciql.IndexType;
 @IQIndexes({ @IQIndex({ "name", "cat" }), @IQIndex(name = "nameidx", type = IndexType.HASH, value = "name") })
 public class ProductAnnotationOnly {
 
-	@IQColumn(autoIncrement = true)
-	public Integer autoIncrement;
-
 	public String unmappedField;
 
-	@IQColumn(name = "id")
+	@IQColumn(name = "id", autoIncrement = true)
 	public Integer productId;
 
 	@IQColumn(name = "cat", length = 15, trim = true)

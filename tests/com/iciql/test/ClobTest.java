@@ -42,12 +42,14 @@ public class ClobTest {
 		db.executeUpdate(MessageFormat.format(create, "VARCHAR(255)"));
 		db.insertAll(StringRecord.getList());
 		testSimpleUpdate(db, "VARCHAR fail");
+		db.executeUpdate("DROP TABLE CLOB_TEST");
 		db.close();
 
 		db = IciqlSuite.openNewDb();
-		db.executeUpdate(MessageFormat.format(create, "CLOB"));
+		db.executeUpdate(MessageFormat.format(create, db.getDialect().convertSqlType("CLOB")));
 		db.insertAll(StringRecord.getList());
 		testSimpleUpdate(db, "CLOB fail because of single quote artifacts");
+		db.executeUpdate("DROP TABLE CLOB_TEST");
 		db.close();
 	}
 

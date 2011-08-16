@@ -21,6 +21,7 @@ import java.util.Random;
 
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
+import com.iciql.test.IciqlSuite;
 
 /**
  * Primitive types model.
@@ -67,8 +68,8 @@ public class PrimitivesModel {
 		same &= myShort == p.myShort;
 		same &= myByte == p.myByte;
 		same &= myBoolean == p.myBoolean;
-		same &= myDouble == p.myDouble;
-		same &= myFloat == p.myFloat;
+		same &= IciqlSuite.equivalentTo(myDouble, p.myDouble);
+		same &= IciqlSuite.equivalentTo(myFloat, p.myFloat);
 		return same;
 	}
 

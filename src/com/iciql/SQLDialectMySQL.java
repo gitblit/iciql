@@ -16,6 +16,7 @@
 
 package com.iciql;
 
+import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.StatementBuilder;
 
@@ -25,7 +26,7 @@ import com.iciql.util.StatementBuilder;
 public class SQLDialectMySQL extends SQLDialectDefault {
 
 	@Override
-	protected String convertSqlType(String sqlType) {
+	public String convertSqlType(String sqlType) {
 		if (sqlType.equals("CLOB")) {
 			return "TEXT";
 		}
@@ -75,16 +76,36 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 			buff.append(prepareColumnName(col));
 		}
 		buff.append(") ");
-
-		// USING
-		switch (index.type) {
-		case HASH:
-			buff.append("USING HASH");
-			break;
-		case UNIQUE_HASH:
-			buff.append("USING HASH");
-			break;
-		}
 		stat.setSQL(buff.toString().trim());
+	}
+
+	@Override
+	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName,
+			TableDefinition<T> def, Object obj) {
+		StatementBuilder buff = new StatementBuilder("INSERT INTO ");
+		buff.append(prepareTableName(schemaName, tableName)).append(" (");
+		buff.resetCount();
+		for (FieldDefinition field : def.fields) {
+			buff.appendExceptFirst(", ");
+			buff.append(field.columnName);
+		}
+		buff.resetCount();
+		buff.append(") VALUES (");
+		for (FieldDefinition field : def.fields) {
+			buff.appendExceptFirst(", ");
+			buff.append('?');
+			Object value = def.getValue(obj, field);
+			stat.addParameter(value);
+		}
+		buff.append(") ON DUPLICATE KEY UPDATE ");
+		buff.resetCount();
+		for (FieldDefinition field : def.fields) {
+			buff.appendExceptFirst(", ");
+			buff.append(field.columnName);
+			buff.append("=VALUES(");
+			buff.append(field.columnName);
+			buff.append(')');
+		}
+		stat.setSQL(buff.toString());
 	}
 }

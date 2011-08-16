@@ -22,6 +22,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.iciql.IciqlException;
+
 /**
  * Utility class to optionally log generated statements to StatementListeners.<br>
  * Statement logging is disabled by default.
@@ -35,7 +37,7 @@ public class StatementLogger {
 	 * Enumeration of the different statement types that are logged.
 	 */
 	public enum StatementType {
-		STAT, TOTAL, CREATE, INSERT, UPDATE, MERGE, DELETE, SELECT;
+		STAT, TOTAL, CREATE, INSERT, UPDATE, MERGE, DELETE, SELECT, DROP;
 	}
 
 	/**
@@ -61,19 +63,20 @@ public class StatementLogger {
 	private static final AtomicLong UPDATE_COUNT = new AtomicLong();
 	private static final AtomicLong MERGE_COUNT = new AtomicLong();
 	private static final AtomicLong DELETE_COUNT = new AtomicLong();
+	private static final AtomicLong DROP_COUNT = new AtomicLong();
 
 	/**
 	 * Activates the Console Logger.
 	 */
 	public static void activateConsoleLogger() {
-		LISTENERS.add(CONSOLE);
+		registerListener(CONSOLE);
 	}
 
 	/**
 	 * Deactivates the Console Logger.
 	 */
 	public static void deactivateConsoleLogger() {
-		LISTENERS.remove(CONSOLE);
+		unregisterListener(CONSOLE);
 	}
 
 	/**
@@ -91,7 +94,9 @@ public class StatementLogger {
 	 * @param listener
 	 */
 	public static void unregisterListener(StatementListener listener) {
-		LISTENERS.remove(listener);
+		if (!LISTENERS.remove(listener)) {
+			throw new IciqlException("Failed to remove statement listener {0}", listener);
+		}
 	}
 
 	public static void create(String statement) {
@@ -122,6 +127,11 @@ public class StatementLogger {
 	public static void select(String statement) {
 		SELECT_COUNT.incrementAndGet();
 		logStatement(StatementType.SELECT, statement);
+	}
+
+	public static void drop(String statement) {
+		DROP_COUNT.incrementAndGet();
+		logStatement(StatementType.DROP, statement);
 	}
 
 	private static void logStatement(final StatementType type, final String statement) {
@@ -158,9 +168,13 @@ public class StatementLogger {
 		return SELECT_COUNT.longValue();
 	}
 
+	public static long getDropCount() {
+		return DROP_COUNT.longValue();
+	}
+
 	public static long getTotalCount() {
 		return getCreateCount() + getInsertCount() + getUpdateCount() + getDeleteCount() + getMergeCount()
-				+ getSelectCount();
+				+ getSelectCount() + getDropCount();
 	}
 
 	public static void logStats() {
@@ -172,6 +186,7 @@ public class StatementLogger {
 		logStat(StatementType.MERGE, getMergeCount());
 		logStat(StatementType.DELETE, getDeleteCount());
 		logStat(StatementType.SELECT, getSelectCount());
+		logStat(StatementType.DROP, getDropCount());
 		logStatement(StatementType.STAT, "========================");
 		logStat(StatementType.TOTAL, getTotalCount());
 	}

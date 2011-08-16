@@ -39,11 +39,9 @@ select * from products
 - [H2](http://h2database.com) 1.3.159
 - [HSQLDB](http://hsqldb.org) 2.2.4 
 - [Derby](http://db.apache.org/derby) 10.7.1.1 & 10.8.1.2
+- [MySQL](http://mysql.com) 5.0.51b
 
-### Partially Supported Databases (not Unit-Tested)
-- [MySQL](http://mysql.com)
-
-Support for others is planned and may only require creating a simple "dialect" class.
+Support for others is possible and may only require creating a simple "dialect" class.
 
 ### Java Runtime Requirement
 

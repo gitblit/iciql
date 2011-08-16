@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.After;
 import org.junit.Before;
@@ -33,15 +32,12 @@ import org.junit.rules.ErrorCollector;
 
 import com.iciql.Db;
 import com.iciql.DbInspector;
-import com.iciql.DbUpgrader;
-import com.iciql.DbVersion;
-import com.iciql.Iciql.IQVersion;
 import com.iciql.ValidationRemark;
 import com.iciql.test.models.Product;
 import com.iciql.test.models.ProductAnnotationOnly;
 import com.iciql.test.models.ProductMixedAnnotation;
 import com.iciql.test.models.SupportedTypes;
-import com.iciql.test.models.SupportedTypes.SupportedTypes2;
+import com.iciql.util.StringUtils;
 
 /**
  * Test that the mapping between classes and tables is done correctly.
@@ -72,13 +68,9 @@ public class ModelsTest {
 
 	@Test
 	public void testValidateModels() {
-		boolean isH2 = IciqlSuite.isH2(db);
-		boolean isDerby = IciqlSuite.isDerby(db);
 		String schemaName = IciqlSuite.getDefaultSchema(db);
-
 		DbInspector inspector = new DbInspector(db);
-		validateModel(inspector, schemaName, new Product(), 3);
-		validateModel(inspector, schemaName, new ProductAnnotationOnly(), (isH2 || isDerby) ? 2 : 3);
+		validateModel(inspector, schemaName, new ProductAnnotationOnly(), 2);
 		validateModel(inspector, schemaName, new ProductMixedAnnotation(), 4);
 	}
 
@@ -95,8 +87,14 @@ public class ModelsTest {
 				errorCollector.addError(new SQLException(remark.toString()));
 			}
 		}
-		assertTrue(remarks.get(0).message.equals(MessageFormat.format("@IQSchema(name={0})", schemaName)));
-		assertEquals(sb.toString(), expected, remarks.size());
+
+		if (StringUtils.isNullOrEmpty(schemaName)) {
+			// no schema expected
+			assertEquals(sb.toString(), expected - 1, remarks.size());
+		} else {
+			assertEquals(sb.toString(), expected, remarks.size());
+			assertEquals(MessageFormat.format("@IQSchema(\"{0}\")", schemaName), remarks.get(0).message);
+		}
 	}
 
 	@Test
@@ -133,65 +131,4 @@ public class ModelsTest {
 			assertEquals(1489, models.get(0).length());
 		}
 	}
-
-	@Test
-	public void testDatabaseUpgrade() {
-		// insert a database version record
-		db.insert(new DbVersion(1));
-
-		TestDbUpgrader dbUpgrader = new TestDbUpgrader();
-		db.setDbUpgrader(dbUpgrader);
-
-		List<SupportedTypes> original = SupportedTypes.createList();
-		db.insertAll(original);
-
-		assertEquals(1, dbUpgrader.oldVersion.get());
-		assertEquals(2, dbUpgrader.newVersion.get());
-	}
-
-	@Test
-	public void testTableUpgrade() {
-		Db db = IciqlSuite.openNewDb();
-
-		// insert first, this will create version record automatically
-		List<SupportedTypes> original = SupportedTypes.createList();
-		db.insertAll(original);
-
-		// reset the dbUpgrader (clears the update check cache)
-		TestDbUpgrader dbUpgrader = new TestDbUpgrader();
-		db.setDbUpgrader(dbUpgrader);
-
-		SupportedTypes2 s2 = new SupportedTypes2();
-
-		List<SupportedTypes2> types = db.from(s2).select();
-		assertEquals(10, types.size());
-		assertEquals(1, dbUpgrader.oldVersion.get());
-		assertEquals(2, dbUpgrader.newVersion.get());
-		db.close();
-	}
-
-	/**
-	 * A sample database upgrader class.
-	 */
-	@IQVersion(2)
-	class TestDbUpgrader implements DbUpgrader {
-		final AtomicInteger oldVersion = new AtomicInteger(0);
-		final AtomicInteger newVersion = new AtomicInteger(0);
-
-		public boolean upgradeTable(Db db, String schema, String table, int fromVersion, int toVersion) {
-			// just claims success on upgrade request
-			oldVersion.set(fromVersion);
-			newVersion.set(toVersion);
-			return true;
-		}
-
-		public boolean upgradeDatabase(Db db, int fromVersion, int toVersion) {
-			// just claims success on upgrade request
-			oldVersion.set(fromVersion);
-			newVersion.set(toVersion);
-			return true;
-		}
-
-	}
-
 }

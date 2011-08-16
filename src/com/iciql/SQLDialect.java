@@ -36,6 +36,14 @@ public interface SQLDialect {
 	void configureDialect(String databaseName, DatabaseMetaData data);
 
 	/**
+	 * Allows a dialect to substitute an SQL type.
+	 * 
+	 * @param sqlType
+	 * @return the dialect-safe type
+	 */
+	String convertSqlType(String sqlType);
+
+	/**
 	 * Returns a properly formatted table name for the dialect.
 	 * 
 	 * @param schemaName
@@ -62,6 +70,14 @@ public interface SQLDialect {
 	 * @param def
 	 */
 	<T> void prepareCreateTable(SQLStatement stat, TableDefinition<T> def);
+
+	/**
+	 * Get the DROP TABLE statement.
+	 * 
+	 * @param stat
+	 * @param def
+	 */
+	<T> void prepareDropTable(SQLStatement stat, TableDefinition<T> def);
 
 	/**
 	 * Get the CREATE INDEX statement.

@@ -38,6 +38,7 @@ import com.iciql.DbUpgrader.DefaultDbUpgrader;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.util.JdbcUtils;
+import com.iciql.util.StatementLogger;
 import com.iciql.util.StringUtils;
 import com.iciql.util.Utils;
 import com.iciql.util.WeakIdentityHashMap;
@@ -180,7 +181,10 @@ public class Db {
 
 	public <T> void insert(T t) {
 		Class<?> clazz = t.getClass();
-		define(clazz).createTableIfRequired(this).insert(this, t, false);
+		long rc = define(clazz).createTableIfRequired(this).insert(this, t, false);
+		if (rc == 0) {
+			throw new IciqlException("Failed to insert {0}.  Affected rowcount == 0.", t);
+		}
 	}
 
 	public <T> long insertAndGetKey(T t) {
@@ -236,6 +240,26 @@ public class Db {
 	}
 
 	@SuppressWarnings("unchecked")
+	public <T> int dropTable(Class<? extends T> modelClass) {
+		TableDefinition<T> def = (TableDefinition<T>) define(modelClass);
+		SQLStatement stat = new SQLStatement(this);
+		getDialect().prepareDropTable(stat, def);
+		StatementLogger.drop(stat.getSQL());
+		int rc = 0;
+		try {
+			rc = stat.executeUpdate();
+		} catch (IciqlException e) {
+			if (e.getIciqlCode() != IciqlException.CODE_SCHEMA_NOT_FOUND
+					&& e.getIciqlCode() != IciqlException.CODE_TABLE_NOT_FOUND) {
+				throw e;
+			}
+		}
+		// remove this model class from the table definition cache
+		classMap.remove(modelClass);
+		return rc;
+	}
+
+	@SuppressWarnings("unchecked")
 	public <T> List<T> buildObjects(Class<? extends T> modelClass, ResultSet rs) {
 		List<T> result = new ArrayList<T>();
 		TableDefinition<T> def = (TableDefinition<T>) define(modelClass);
@@ -259,14 +283,18 @@ public class Db {
 			IQVersion model = dbUpgrader.getClass().getAnnotation(IQVersion.class);
 			if (model.value() > 0) {
 				DbVersion v = new DbVersion();
-				DbVersion dbVersion =
 				// (SCHEMA="" && TABLE="") == DATABASE
-				from(v).where(v.schemaName).is("").and(v.tableName).is("").selectFirst();
+				DbVersion dbVersion = from(v).where(v.schemaName).is("").and(v.tableName).is("")
+						.selectFirst();
 				if (dbVersion == null) {
 					// database has no version registration, but model specifies
 					// version: insert DbVersion entry and return.
 					DbVersion newDb = new DbVersion(model.value());
-					insert(newDb);
+					// database is an older version than the model
+					boolean success = dbUpgrader.upgradeDatabase(this, 0, newDb.version);
+					if (success) {
+						insert(newDb);
+					}
 				} else {
 					// database has a version registration:
 					// check to see if upgrade is required.
@@ -293,8 +321,8 @@ public class Db {
 				// table is using iciql version tracking.
 				DbVersion v = new DbVersion();
 				String schema = StringUtils.isNullOrEmpty(model.schemaName) ? "" : model.schemaName;
-				DbVersion dbVersion = from(v).where(v.schemaName).like(schema).and(v.tableName)
-						.like(model.tableName).selectFirst();
+				DbVersion dbVersion = from(v).where(v.schemaName).is(schema).and(v.tableName)
+						.is(model.tableName).selectFirst();
 				if (dbVersion == null) {
 					// table has no version registration, but model specifies
 					// version: insert DbVersion entry
@@ -348,7 +376,7 @@ public class Db {
 		upgradeChecked.clear();
 	}
 
-	SQLDialect getDialect() {
+	public SQLDialect getDialect() {
 		return dialect;
 	}
 

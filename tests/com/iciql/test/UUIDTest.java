@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,10 +53,9 @@ public class UUIDTest {
 
 	@Test
 	public void testUUIDs() throws Exception {
-		if (!IciqlSuite.isH2(db)) {
-			// do not test non-H2 databases
-			return;
-		}
+		// do not test non-H2 databases
+		Assume.assumeTrue(IciqlSuite.isH2(db));
+
 		List<UUIDRecord> originals = UUIDRecord.getList();
 		db.insertAll(originals);
 		UUIDRecord u = new UUIDRecord();

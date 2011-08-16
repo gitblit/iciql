@@ -32,6 +32,7 @@ import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.Iciql.IndexType;
+import com.iciql.test.IciqlSuite;
 import com.iciql.test.models.EnumModels.Tree;
 import com.iciql.util.Utils;
 
@@ -166,8 +167,8 @@ public class SupportedTypes {
 		same &= myShort.equals(s.myShort);
 		same &= myInteger.equals(s.myInteger);
 		same &= myLong.equals(s.myLong);
-		same &= myFloat.equals(s.myFloat);
-		same &= myDouble.equals(s.myDouble);
+		same &= IciqlSuite.equivalentTo(myFloat, s.myFloat);
+		same &= IciqlSuite.equivalentTo(myDouble, s.myDouble);
 		same &= myBigDecimal.compareTo(s.myBigDecimal) == 0;
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		same &= df.format(myUtilDate).equals(df.format(s.myUtilDate));
