@@ -23,15 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.iciql.Iciql;
-import com.iciql.util.StatementLogger.StatementListener;
-import com.iciql.util.StatementLogger.StatementType;
+import com.iciql.util.IciqlLogger.IciqlListener;
+import com.iciql.util.IciqlLogger.StatementType;
 
 /**
- * Slf4jStatementListener interfaces the iciql statement logger to the SLF4J
- * logging architecture.
- * 
+ * Slf4jIciqlListener interfaces the IciqlLogger to the SLF4J logging framework.
  */
-public class Slf4jStatementListener implements StatementListener {
+public class Slf4jIciqlListener implements IciqlListener {
 
 	private Logger logger = LoggerFactory.getLogger(Iciql.class);
 
@@ -46,11 +44,11 @@ public class Slf4jStatementListener implements StatementListener {
 
 	private final Map<StatementType, Level> levels;
 
-	public Slf4jStatementListener() {
+	public Slf4jIciqlListener() {
 		this(Level.TRACE);
 	}
 
-	public Slf4jStatementListener(Level defaultLevel) {
+	public Slf4jIciqlListener(Level defaultLevel) {
 		this.defaultLevel = defaultLevel;
 		levels = new HashMap<StatementType, Level>();
 		for (StatementType type : StatementType.values()) {
@@ -69,7 +67,7 @@ public class Slf4jStatementListener implements StatementListener {
 	}
 
 	@Override
-	public void logStatement(StatementType type, String statement) {
+	public void logIciql(StatementType type, String statement) {
 		Level level = levels.get(type);
 		switch (level) {
 		case ERROR:

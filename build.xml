@@ -108,6 +108,7 @@
 
 		<!-- Execute the test suite -->
 		<echo>Executing iciql ${iq.version} test suite</echo>
+		<echo>This will take a few minutes...</echo>
 		<java classpath="${project.build.dir}" classname="com.iciql.test.IciqlSuite">
 			<classpath refid="master-classpath" />
 			<arg value="--dbFile" />
@@ -139,6 +140,8 @@
 		 		<param name="-since"/> <param name="api/v1.xml"/> <param name="v1" />
 		 		<param name="-since"/> <param name="api/v2.xml"/> <param name="v2" />
 		 		<param name="-since"/> <param name="api/v3.xml"/> <param name="v3" />
+		 		<param name="-since"/> <param name="api/v4.xml"/> <param name="v4" />
+		 		<param name="-since"/> <param name="api/v5.xml"/> <param name="v5" />
 		        <param name="-apiversion" value="v${iq.apiCurrent}"/>
 		 		
 		 		<param name="-apixml" value="api/v${iq.apiCurrent}.xml"/>

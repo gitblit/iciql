@@ -6,13 +6,20 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- api change release (API v6)
 - Finished MySQL dialect implementation.  MySQL 5.0.51b passes 100% of tests.
+- Added PostgreSQL dialect.  PostgreSQL 9.0 passes all but the boolean-as-int tests.
 - Added Db.dropTable(T) method
+- Overhauled test suite and included more database configurations.
+- Renamed StatementLogger to IciqlLogger
+- Added IciqlLogger.warn method
+- Added IciqlLogger.drop method
 
 ### Older Releases
 
 **0.6.6** &nbsp; *released 2011-08-15*
 
+- api change release (API v5)
 - Disabled two concurrency unit tests since I believe they are flawed and do not yield reproducible results
 - Added Derby database dialect.  Derby 10.7.1.1 and 10.8.1.2 pass 100% of tests.
 - Implemented HSQL MERGE syntax.  HSQL 2.2.4 fails 1 test which is a known [bug in HSQL](https://sourceforge.net/tracker/?func=detail&aid=3390047&group_id=23316&atid=378131)

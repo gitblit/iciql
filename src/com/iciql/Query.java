@@ -31,7 +31,7 @@ import java.util.List;
 import com.iciql.Iciql.EnumType;
 import com.iciql.bytecode.ClassReader;
 import com.iciql.util.JdbcUtils;
-import com.iciql.util.StatementLogger;
+import com.iciql.util.IciqlLogger;
 import com.iciql.util.Utils;
 
 /**
@@ -141,7 +141,7 @@ public class Query<T> {
 		stat.appendSQL("DELETE FROM ");
 		from.appendSQL(stat);
 		appendWhere(stat);
-		StatementLogger.delete(stat.getSQL());
+		IciqlLogger.delete(stat.getSQL());
 		return stat.executeUpdate();
 	}
 
@@ -239,7 +239,7 @@ public class Query<T> {
 			declaration.appendSQL(stat);
 		}
 		appendWhere(stat);
-		StatementLogger.update(stat.getSQL());
+		IciqlLogger.update(stat.getSQL());
 		return stat.executeUpdate();
 	}
 
@@ -713,7 +713,7 @@ public class Query<T> {
 			}
 		}
 		db.getDialect().appendLimitOffset(stat, limit, offset);
-		StatementLogger.select(stat.getSQL());
+		IciqlLogger.select(stat.getSQL());
 	}
 
 	/**

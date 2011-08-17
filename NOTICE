@@ -46,9 +46,9 @@ HSQL Database
    http://hsqldb.org   
 
 ---------------------------------------------------------------------------
-Derby Database
+Apache Derby Database
 ---------------------------------------------------------------------------
-   Derby, released under the
+   Apache Derby, released under the
    Apache Software License, Version 2.0.
    
    http://db.apache.org/derby   
@@ -76,3 +76,20 @@ SLF4J
    MIT/X11 License.
 
    http://www.slf4j.org
+   
+---------------------------------------------------------------------------
+Apache Commons Pool
+---------------------------------------------------------------------------
+   Apache Commons Pool, released under the
+   Apache Software License, Version 2.0.
+   
+   http://commons.apache.org/pool   
+
+---------------------------------------------------------------------------
+Apache Commons DBCP
+---------------------------------------------------------------------------
+   Apache Commons DBCP, released under the
+   Apache Software License, Version 2.0.
+   
+   http://commons.apache.org/dbcp   
+   

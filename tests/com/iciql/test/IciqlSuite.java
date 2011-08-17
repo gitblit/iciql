@@ -15,17 +15,23 @@
  */
 package com.iciql.test;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
 
+import org.apache.commons.dbcp.ConnectionFactory;
+import org.apache.commons.dbcp.DriverManagerConnectionFactory;
+import org.apache.commons.dbcp.PoolableConnectionFactory;
+import org.apache.commons.dbcp.PoolingDataSource;
+import org.apache.commons.pool.impl.GenericObjectPool;
 import org.junit.Assert;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -54,10 +60,11 @@ import com.iciql.test.models.ProductAnnotationOnly;
 import com.iciql.test.models.ProductInheritedAnnotation;
 import com.iciql.test.models.ProductMixedAnnotation;
 import com.iciql.test.models.SupportedTypes;
-import com.iciql.util.StatementLogger;
-import com.iciql.util.StatementLogger.StatementListener;
-import com.iciql.util.StatementLogger.StatementType;
+import com.iciql.util.IciqlLogger;
+import com.iciql.util.IciqlLogger.IciqlListener;
+import com.iciql.util.IciqlLogger.StatementType;
 import com.iciql.util.StringUtils;
+import com.iciql.util.Utils;
 
 /**
  * JUnit 4 iciql test suite.
@@ -66,7 +73,11 @@ import com.iciql.util.StringUtils;
  * this by switching the DEFAULT_TEST_DB value.
  * <p>
  * Alternatively, you can run this class an application which will run all tests
- * for all tested databases.
+ * for all tested database configurations.
+ * <p>
+ * NOTE: If you want to test against MySQL or PostgreSQL you must create an
+ * "iciql" database and allow user "sa" password "sa" complete control of that
+ * database.
  * 
  */
 @RunWith(Suite.class)
@@ -75,17 +86,19 @@ import com.iciql.util.StringUtils;
 		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UpgradesTest.class, UUIDTest.class })
 public class IciqlSuite {
 
-	private static final TestDb[] TEST_DBS = { new TestDb("H2 (embedded)", "jdbc:h2:mem:db{0,number,000}"),
-			new TestDb("HSQL (embedded)", "jdbc:hsqldb:mem:db{0,number,000}"),
-			new TestDb("Derby (embedded)", "jdbc:derby:memory:db{0,number,000};create=true"),
-			new TestDb("MySQL (tcp/myisam)", "jdbc:mysql://localhost:3306/iciql"),
-			new TestDb("PostgreSQL (tcp)", "jdbc:postgresql://localhost:5432/iciql")};
+	private static final TestDb[] TEST_DBS = {
+			new TestDb("H2", true, true, "jdbc:h2:mem:iciql"),
+			new TestDb("H2", true, false, "jdbc:h2:file:testdbs/h2/iciql"),
+			new TestDb("HSQL", true, true, "jdbc:hsqldb:mem:iciql"),
+			new TestDb("HSQL", true, false, "jdbc:hsqldb:file:testdbs/hsql/iciql"),
+			new TestDb("Derby", true, true, "jdbc:derby:memory:iciql;create=true"),
+			new TestDb("Derby", true, false, "jdbc:derby:directory:testdbs/derby/iciql;create=true"),
+			new TestDb("MySQL", false, false, "jdbc:mysql://localhost:3306/iciql"),
+			new TestDb("PostgreSQL", false, false, "jdbc:postgresql://localhost:5432/iciql") };
 
-	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[4];
+	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[0];
 
 	private static final PrintStream ERR = System.err;
-
-	private static AtomicInteger openCount = new AtomicInteger(0);
 
 	private static String username = "sa";
 
@@ -93,11 +106,15 @@ public class IciqlSuite {
 
 	private static PrintStream out = System.out;
 
+	private static Map<String, PoolableConnectionFactory> connectionFactories = Utils.newSynchronizedHashMap();
+
+	private static Map<String, PoolingDataSource> dataSources = Utils.newSynchronizedHashMap();
+
 	public static void assertStartsWith(String value, String startsWith) {
 		Assert.assertTrue(MessageFormat.format("Expected \"{0}\", got: \"{1}\"", startsWith, value),
 				value.startsWith(startsWith));
 	}
-	
+
 	public static void assertEqualsIgnoreCase(String expected, String actual) {
 		Assert.assertTrue(MessageFormat.format("Expected \"{0}\", got: \"{1}\"", expected, actual),
 				expected.equalsIgnoreCase(actual));
@@ -111,17 +128,30 @@ public class IciqlSuite {
 	}
 
 	/**
-	 * Increment the database counter, open and create a new database.
+	 * Open a new Db object. All connections are cached and re-used to eliminate
+	 * embedded database startup costs.
 	 * 
-	 * @return a fresh database
+	 * @return a fresh Db object
 	 */
 	public static Db openNewDb() {
 		String testUrl = System.getProperty("iciql.url");
 		if (testUrl == null) {
 			testUrl = DEFAULT_TEST_DB.url;
 		}
-		testUrl = MessageFormat.format(testUrl, openCount.incrementAndGet());
-		Db db = Db.open(testUrl, username, password);
+		Db db = null;
+		PoolingDataSource dataSource = dataSources.get(testUrl);
+		if (dataSource == null) {
+			ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(testUrl, username,
+					password);
+			GenericObjectPool pool = new GenericObjectPool();
+			pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_GROW);
+			PoolableConnectionFactory factory = new PoolableConnectionFactory(connectionFactory, pool, null,
+					null, false, true);
+			dataSource = new PoolingDataSource(pool);
+			dataSources.put(testUrl, dataSource);
+			connectionFactories.put(testUrl, factory);
+		}
+		db = Db.open(dataSource);
 
 		// drop tables
 		db.dropTable(BooleanModel.class);
@@ -152,17 +182,7 @@ public class IciqlSuite {
 		if (testUrl == null) {
 			testUrl = DEFAULT_TEST_DB.url;
 		}
-		testUrl = MessageFormat.format(testUrl, openCount.get());
 		return Db.open(testUrl, username, password);
-	}
-
-	/**
-	 * Drops all tables from the current database.
-	 * 
-	 * @return the current database
-	 */
-	public static void dropAllTables(Db db) {
-
 	}
 
 	/**
@@ -250,6 +270,8 @@ public class IciqlSuite {
 			System.setErr(out);
 		}
 
+		deleteRecursively(new File("testdbs"));
+
 		// Statement logging
 		final FileWriter statementWriter;
 		if (StringUtils.isNullOrEmpty(params.sqlStatementsFile)) {
@@ -257,9 +279,9 @@ public class IciqlSuite {
 		} else {
 			statementWriter = new FileWriter(params.sqlStatementsFile);
 		}
-		StatementListener statementListener = new StatementListener() {
+		IciqlListener statementListener = new IciqlListener() {
 			@Override
-			public void logStatement(StatementType type, String statement) {
+			public void logIciql(StatementType type, String statement) {
 				if (statementWriter == null) {
 					return;
 				}
@@ -271,7 +293,7 @@ public class IciqlSuite {
 				}
 			}
 		};
-		StatementLogger.registerListener(statementListener);
+		IciqlLogger.registerListener(statementListener);
 
 		SuiteClasses suiteClasses = IciqlSuite.class.getAnnotation(SuiteClasses.class);
 		long quickestDatabase = Long.MAX_VALUE;
@@ -280,7 +302,7 @@ public class IciqlSuite {
 
 		// Header
 		out.println(dividerMajor);
-		out.println(MessageFormat.format("{0} {1} ({2}) testing {3} databases", Constants.NAME,
+		out.println(MessageFormat.format("{0} {1} ({2}) testing {3} database configurations", Constants.NAME,
 				Constants.VERSION, Constants.VERSION_DATE, TEST_DBS.length));
 		out.println(dividerMajor);
 		out.println();
@@ -302,15 +324,15 @@ public class IciqlSuite {
 		long lastCount = 0;
 		for (TestDb testDb : TEST_DBS) {
 			out.println(dividerMinor);
-			out.println("Testing " + testDb.name + " " + testDb.getVersion());
+			out.println("Testing " + testDb.describeDatabase());
+			out.println("        " + testDb.url);
 			out.println(dividerMinor);
 
 			// inject a database section delimiter in the statement log
 			if (statementWriter != null) {
 				statementWriter.append("\n\n");
 				statementWriter.append("# ").append(dividerMinor).append('\n');
-				statementWriter.append("# ").append("Testing " + testDb.name + " " + testDb.getVersion())
-						.append('\n');
+				statementWriter.append("# ").append("Testing " + testDb.describeDatabase()).append('\n');
 				statementWriter.append("# ").append(dividerMinor).append('\n');
 				statementWriter.append("\n\n");
 			}
@@ -318,6 +340,7 @@ public class IciqlSuite {
 			if (testDb.getVersion().equals("OFFLINE")) {
 				// Database not available
 				out.println("Skipping.  Could not find " + testDb.url);
+				out.println();
 			} else {
 				// Test database
 				System.setProperty("iciql.url", testDb.url);
@@ -326,9 +349,9 @@ public class IciqlSuite {
 				if (testDb.runtime < quickestDatabase) {
 					quickestDatabase = testDb.runtime;
 				}
-				testDb.statements = StatementLogger.getTotalCount() - lastCount;
+				testDb.statements = IciqlLogger.getTotalCount() - lastCount;
 				// reset total count for next database
-				lastCount = StatementLogger.getTotalCount();
+				lastCount = IciqlLogger.getTotalCount();
 
 				out.println(MessageFormat.format(
 						"{0} tests ({1} failures, {2} ignores)  {3} statements in {4,number,0.000} secs",
@@ -356,36 +379,32 @@ public class IciqlSuite {
 				Constants.VERSION, Constants.VERSION_DATE));
 		out.println(dividerMajor);
 		List<TestDb> dbs = Arrays.asList(TEST_DBS);
-		Collections.sort(dbs, new Comparator<TestDb>() {
+		Collections.sort(dbs);
 
-			@Override
-			public int compare(TestDb o1, TestDb o2) {
-				if (o1.runtime == 0) {
-					return 1;
-				}
-				if (o2.runtime == 0) {
-					return -1;
-				}
-				if (o1.runtime == o2.runtime) {
-					return 0;
-				}
-				if (o1.runtime > o2.runtime) {
-					return 1;
-				}
-				return -1;
-			}
-		});
+		out.println(MessageFormat.format("{0} {1} {2} {3} {4}", StringUtils.pad("Name", 11, " ", true),
+				StringUtils.pad("Type", 5, " ", true), StringUtils.pad("Version", 23, " ", true),
+				StringUtils.pad("Stats/Sec", 10, " ", true), "Runtime"));
+		out.println(dividerMinor);
 		for (TestDb testDb : dbs) {
-			out.println(MessageFormat.format(
-					"{0} {1}  {2,number,0} stats/sec  {3,number,0.000} secs  ({4,number,0.0}x)",
-					StringUtils.pad(testDb.name, 20, " ", true),
-					StringUtils.pad(testDb.getVersion(), 22, " ", true), ((double) testDb.statements)
-							/ (testDb.runtime / 1000d), testDb.runtime / 1000f, ((double) testDb.runtime)
+			DecimalFormat df = new DecimalFormat("0.0");
+			out.println(MessageFormat.format("{0} {1} {2}   {3} {4} {5}s  ({6,number,0.0}x)",
+					StringUtils.pad(testDb.name, 11, " ", true), testDb.isEmbedded ? "E" : "T",
+					testDb.isMemory ? "M" : "F", StringUtils.pad(testDb.getVersion(), 21, " ", true),
+					StringUtils.pad("" + testDb.getStatementRate(), 10, " ", false),
+					StringUtils.pad(df.format(testDb.getRuntime()), 8, " ", false), ((double) testDb.runtime)
 							/ quickestDatabase));
 		}
+		out.println(dividerMinor);
+		out.println("  E = embedded connection");
+		out.println("  T = tcp/ip connection");
+		out.println("  M = memory database");
+		out.println("  F = file/persistent database");
 
-		// close PrintStream and restore System.err
-		StatementLogger.unregisterListener(statementListener);
+		// cleanup
+		for (PoolableConnectionFactory factory : connectionFactories.values()) {
+			factory.getPool().close();
+		}
+		IciqlLogger.unregisterListener(statementListener);
 		out.close();
 		System.setErr(ERR);
 		if (statementWriter != null) {
@@ -425,19 +444,50 @@ public class IciqlSuite {
 		return sb.toString();
 	}
 
+	private static void deleteRecursively(File f) {
+		if (f.isDirectory()) {
+			for (File file : f.listFiles()) {
+				if (file.isDirectory()) {
+					deleteRecursively(file);
+				}
+				file.delete();
+			}
+		}
+		f.delete();
+	}
+
 	/**
 	 * Represents a test database url.
 	 */
-	private static class TestDb {
+	private static class TestDb implements Comparable<TestDb> {
 		final String name;
+		boolean isEmbedded;
+		boolean isMemory;
 		final String url;
 		String version;
 		long runtime;
 		long statements;
 
-		TestDb(String name, String url) {
+		TestDb(String name, boolean isEmbedded, boolean isMemory, String url) {
 			this.name = name;
+			this.isEmbedded = isEmbedded;
+			this.isMemory = isMemory;
 			this.url = url;
+		}
+
+		double getRuntime() {
+			return runtime / 1000d;
+		}
+
+		int getStatementRate() {
+			return Double.valueOf(((double) statements) / (runtime / 1000d)).intValue();
+		}
+
+		String describeDatabase() {
+			StringBuilder sb = new StringBuilder(name);
+			sb.append(" ");
+			sb.append(getVersion());
+			return sb.toString();
 		}
 
 		String getVersion() {
@@ -452,6 +502,25 @@ public class IciqlSuite {
 				}
 			}
 			return version;
+		}
+
+		@Override
+		public int compareTo(TestDb o) {
+			if (runtime == 0) {
+				return 1;
+			}
+			if (o.runtime == 0) {
+				return -1;
+			}
+			int r1 = getStatementRate();
+			int r2 = o.getStatementRate();
+			if (r1 == r2) {
+				return 0;
+			}
+			if (r1 < r2) {
+				return 1;
+			}
+			return -1;
 		}
 	}
 

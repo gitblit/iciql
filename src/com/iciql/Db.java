@@ -38,7 +38,7 @@ import com.iciql.DbUpgrader.DefaultDbUpgrader;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.util.JdbcUtils;
-import com.iciql.util.StatementLogger;
+import com.iciql.util.IciqlLogger;
 import com.iciql.util.StringUtils;
 import com.iciql.util.Utils;
 import com.iciql.util.WeakIdentityHashMap;
@@ -245,7 +245,7 @@ public class Db {
 		TableDefinition<T> def = (TableDefinition<T>) define(modelClass);
 		SQLStatement stat = new SQLStatement(this);
 		getDialect().prepareDropTable(stat, def);
-		StatementLogger.drop(stat.getSQL());
+		IciqlLogger.drop(stat.getSQL());
 		int rc = 0;
 		try {
 			rc = stat.executeUpdate();

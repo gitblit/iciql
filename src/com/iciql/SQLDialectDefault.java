@@ -23,6 +23,7 @@ import java.text.MessageFormat;
 
 import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
+import com.iciql.util.IciqlLogger;
 import com.iciql.util.StatementBuilder;
 import com.iciql.util.StringUtils;
 
@@ -217,6 +218,8 @@ public class SQLDialectDefault implements SQLDialect {
 		case UNIQUE_HASH:
 			buff.append("UNIQUE ");
 			break;
+		default:
+			IciqlLogger.warn("{0} does not support hash indexes", getClass().getSimpleName());
 		}
 		buff.append("INDEX ");
 		buff.append(index.indexName);

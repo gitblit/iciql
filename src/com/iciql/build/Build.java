@@ -69,6 +69,10 @@ public class Build {
 		downloadFromApache(MavenObject.DOCLAVA, BuildType.COMPILETIME);
 		downloadFromApache(MavenObject.SLF4JAPI, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.SLF4JAPI, BuildType.COMPILETIME);
+		downloadFromApache(MavenObject.COMMONSPOOL, BuildType.RUNTIME);
+		downloadFromApache(MavenObject.COMMONSPOOL, BuildType.COMPILETIME);
+		downloadFromApache(MavenObject.COMMONSDBCP, BuildType.RUNTIME);
+		downloadFromApache(MavenObject.COMMONSDBCP, BuildType.COMPILETIME);
 
 		// needed for site publishing
 		downloadFromApache(MavenObject.COMMONSNET, BuildType.RUNTIME);
@@ -172,9 +176,9 @@ public class Build {
 				"219a3540f3b27d7cc3b1d91d6ea046cd8723290e", "0bb50eec177acf0e94d58e0cf07262fe5164331d",
 				"c7adc475ca40c288c93054e0f4fe58f3a98c0cb5");
 
-		public static final MavenObject H2 = new MavenObject("com/h2database", "h2", "1.3.158",
-				"4bac13427caeb32ef6e93b70101e61f370c7b5e2", "6bb165156a0831879fa7797df6e18bdcd4421f2d",
-				"446d3f58c44992534cb54f67134532d95961904a");
+		public static final MavenObject H2 = new MavenObject("com/h2database", "h2", "1.3.159",
+				"dd89f939661eb5593909584e1c243db0c25de130", "4d953bf765e8a13c7e06ca51165438338966c698",
+				"4c79ed03f994820a1a873150c8a9f13c667784d3");
 
 		public static final MavenObject HSQLDB = new MavenObject("org/hsqldb", "hsqldb", "2.2.4",
 				"6a6e040b07f5ee409fc825f1c5e5b574b1fa1428", "", "");
@@ -205,6 +209,14 @@ public class Build {
 		public static final MavenObject SLF4JAPI = new MavenObject("org/slf4j", "slf4j-api", "1.6.1",
 				"6f3b8a24bf970f17289b234284c94f43eb42f0e4", "46a386136c901748e6a3af67ebde6c22bc6b4524",
 				"e223571d77769cdafde59040da235842f3326453");
+
+		public static final MavenObject COMMONSPOOL = new MavenObject("commons-pool", "commons-pool", "1.5.6",
+				"16390e2d74df4ab08c06a85d42a74a951dc93ad7", "bbfb73ed3c341d9738c64da8157910b967f878d6",
+				"d72204023b30cd9fecb64829586472f3c6806005");
+
+		public static final MavenObject COMMONSDBCP = new MavenObject("commons-dbcp", "commons-dbcp", "1.4",
+				"30be73c965cc990b153a100aaaaafcf239f82d39", "9b076ff231434d5403be6599a1347019b12c0def",
+				"098bf7c8d5b026f6e3969259a36e813ac37432b3");
 
 		public final String group;
 		public final String artifact;

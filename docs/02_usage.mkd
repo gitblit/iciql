@@ -97,33 +97,33 @@ Iciql does not throw any [checked exceptions](http://en.wikipedia.org/wiki/Excep
 
 ### Statement Logging
 
-Iciql provides a mechanism to log generated statements to the console, to SLF4J, or to your own logging framework.  Exceptions are not logged using this mechanism; exceptions are wrapped and rethrown as `IciqlException`, which is a RuntimeException.
+Iciql provides a mechanism to log generated statements and warnings to the console, to SLF4J, or to your own logging framework.  Exceptions are not logged using this mechanism; exceptions are wrapped and rethrown as `IciqlException`, which is a RuntimeException.
 
 #### Console Logging
 %BEGINCODE%
-StatmentLogger.activeConsoleLogger();
-StatmentLogger.deactiveConsoleLogger();
+IciqlLogger.activeConsoleLogger();
+IciqlLogger.deactiveConsoleLogger();
 %ENDCODE%
 
 #### SLF4J Logging
 %BEGINCODE%
-Slf4jStatementListener slf4j = new Slf4jStatementListener();
+Slf4jIciqlListener slf4j = new Slf4jIciqlListener();
 slf4j.setLevel(StatementType.CREATE, Level.WARN);
 slf4j.setLevel(StatementType.DELETE, Level.WARN);
 slf4j.setLevel(StatementType.MERGE, Level.OFF);
-StatmentLogger.registerListener(slf4j);
-StatmentLogger.unregisterListener(slf4j);
+IciqlLogger.registerListener(slf4j);
+IciqlLogger.unregisterListener(slf4j);
 %ENDCODE%
 
 #### Custom Logging
 %BEGINCODE%
-StatementListener custom = new StatementListener() {
-    public void logStatement(StatementType type, String statement) {
+IciqlListener custom = new IciqlListener() {
+    public void logIciql(StatementType type, String statement) {
         // do log
     }
 };
-StatmentLogger.registerListener(custom);
-StatmentLogger.unregisterListener(custom);
+IciqlLogger.registerListener(custom);
+IciqlLogger.unregisterListener(custom);
 %ENDCODE%
 
 ## Understanding Aliases and Model Classes

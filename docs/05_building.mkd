@@ -11,12 +11,16 @@ Additionally, [eclipse-cs](http://eclipse-cs.sourceforge.net), [FindBugs](http:/
 - [H2 Database](http://h2database.com) (Eclipse Public License 1.0)
 - [HSQL Database Engine](http://hsqldb.org) (BSD)
 - [Apache Derby Database](http://db.apache.org/derby) (Apache 2.0)
+- [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j) (GPL)
+- [PostgreSQL JDBC Connector](http://jdbc.postgresql.org) (BSD)
 - [JUnit](http://junit.org) (Common Public License)
 - [commons-net](http://commons.apache.org/net) (Apache 2.0)
 - [ant-googlecode](http://code.google.com/p/ant-googlecode) (New BSD)
 - [MarkdownPapers](http://markdown.tautua.org) (Apache 2.0)
 - [doclava](http://code.google.com/p/doclava) (Apache 2.0)
 - [SLF4J](http://www.slf4j.org) (MIT/X11)
+- [Apache Commons Pool](http://commons.apache.org/pool) (Apache 2.0)
+- [Apache Commons DBCP](http://commons.apache.org/dbcp) (Apache 2.0)
 
 ### Instructions
 1. Clone the git repository from [GoogleCode][iciqlsrc].

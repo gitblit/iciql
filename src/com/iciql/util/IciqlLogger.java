@@ -17,6 +17,7 @@
 package com.iciql.util;
 
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,34 +26,34 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.iciql.IciqlException;
 
 /**
- * Utility class to optionally log generated statements to StatementListeners.<br>
+ * Utility class to optionally log generated statements to IciqlListeners.<br>
  * Statement logging is disabled by default.
  * <p>
  * This class also tracks the counts for generated statements by major type.
  * 
  */
-public class StatementLogger {
+public class IciqlLogger {
 
 	/**
 	 * Enumeration of the different statement types that are logged.
 	 */
 	public enum StatementType {
-		STAT, TOTAL, CREATE, INSERT, UPDATE, MERGE, DELETE, SELECT, DROP;
+		STAT, TOTAL, CREATE, INSERT, UPDATE, MERGE, DELETE, SELECT, DROP, WARN;
 	}
 
 	/**
-	 * Interface that defines a statement listener.
+	 * Interface that defines an iciql listener.
 	 */
-	public interface StatementListener {
-		void logStatement(StatementType type, String statement);
+	public interface IciqlListener {
+		void logIciql(StatementType type, String statement);
 	}
 
 	private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
-	private static final Set<StatementListener> LISTENERS = Utils.newHashSet();
-	private static final StatementListener CONSOLE = new StatementListener() {
+	private static final Set<IciqlListener> LISTENERS = Utils.newHashSet();
+	private static final IciqlListener CONSOLE = new IciqlListener() {
 
 		@Override
-		public void logStatement(StatementType type, String message) {
+		public void logIciql(StatementType type, String message) {
 			System.out.println(message);
 		}
 	};
@@ -64,6 +65,7 @@ public class StatementLogger {
 	private static final AtomicLong MERGE_COUNT = new AtomicLong();
 	private static final AtomicLong DELETE_COUNT = new AtomicLong();
 	private static final AtomicLong DROP_COUNT = new AtomicLong();
+	private static final AtomicLong WARN_COUNT = new AtomicLong();
 
 	/**
 	 * Activates the Console Logger.
@@ -84,7 +86,7 @@ public class StatementLogger {
 	 * 
 	 * @param listener
 	 */
-	public static void registerListener(StatementListener listener) {
+	public static void registerListener(IciqlListener listener) {
 		LISTENERS.add(listener);
 	}
 
@@ -93,9 +95,9 @@ public class StatementLogger {
 	 * 
 	 * @param listener
 	 */
-	public static void unregisterListener(StatementListener listener) {
+	public static void unregisterListener(IciqlListener listener) {
 		if (!LISTENERS.remove(listener)) {
-			throw new IciqlException("Failed to remove statement listener {0}", listener);
+			throw new IciqlException("Failed to remove iciql listener {0}", listener);
 		}
 	}
 
@@ -134,11 +136,16 @@ public class StatementLogger {
 		logStatement(StatementType.DROP, statement);
 	}
 
+	public static void warn(String message, Object... args) {
+		WARN_COUNT.incrementAndGet();
+		logStatement(StatementType.WARN, args.length > 0 ? MessageFormat.format(message, args) : message);
+	}
+
 	private static void logStatement(final StatementType type, final String statement) {
-		for (final StatementListener listener : LISTENERS) {
+		for (final IciqlListener listener : LISTENERS) {
 			EXEC.execute(new Runnable() {
 				public void run() {
-					listener.logStatement(type, statement);
+					listener.logIciql(type, statement);
 				}
 			});
 		}
@@ -172,6 +179,10 @@ public class StatementLogger {
 		return DROP_COUNT.longValue();
 	}
 
+	public static long getWarnCount() {
+		return WARN_COUNT.longValue();
+	}
+
 	public static long getTotalCount() {
 		return getCreateCount() + getInsertCount() + getUpdateCount() + getDeleteCount() + getMergeCount()
 				+ getSelectCount() + getDropCount();
@@ -179,6 +190,8 @@ public class StatementLogger {
 
 	public static void logStats() {
 		logStatement(StatementType.STAT, "iciql Runtime Statistics");
+		logStatement(StatementType.STAT, "========================");
+		logStat(StatementType.WARN, getWarnCount());
 		logStatement(StatementType.STAT, "========================");
 		logStat(StatementType.CREATE, getCreateCount());
 		logStat(StatementType.INSERT, getInsertCount());

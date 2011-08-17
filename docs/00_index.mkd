@@ -40,6 +40,7 @@ select * from products
 - [HSQLDB](http://hsqldb.org) 2.2.4 
 - [Derby](http://db.apache.org/derby) 10.7.1.1 & 10.8.1.2
 - [MySQL](http://mysql.com) 5.0.51b
+- [PostgreSQL](http://postgresql.org) 9.0
 
 Support for others is possible and may only require creating a simple "dialect" class.
 

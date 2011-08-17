@@ -38,7 +38,7 @@ import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.Iciql.IndexType;
 import com.iciql.util.StatementBuilder;
-import com.iciql.util.StatementLogger;
+import com.iciql.util.IciqlLogger;
 import com.iciql.util.StringUtils;
 import com.iciql.util.Utils;
 
@@ -431,7 +431,7 @@ public class TableDefinition<T> {
 		}
 		buff.append(')');
 		stat.setSQL(buff.toString());
-		StatementLogger.insert(stat.getSQL());
+		IciqlLogger.insert(stat.getSQL());
 		if (returnKey) {
 			return stat.executeInsert();
 		}
@@ -461,7 +461,7 @@ public class TableDefinition<T> {
 		}
 		SQLStatement stat = new SQLStatement(db);
 		db.getDialect().prepareMerge(stat, schemaName, tableName, this, obj);
-		StatementLogger.merge(stat.getSQL());
+		IciqlLogger.merge(stat.getSQL());
 		return stat.executeUpdate();
 	}
 
@@ -503,7 +503,7 @@ public class TableDefinition<T> {
 		}
 		stat.setSQL(buff.toString());
 		query.appendWhere(stat);
-		StatementLogger.update(stat.getSQL());
+		IciqlLogger.update(stat.getSQL());
 		return stat.executeUpdate();
 	}
 
@@ -535,7 +535,7 @@ public class TableDefinition<T> {
 		}
 		stat.setSQL(buff.toString());
 		query.appendWhere(stat);
-		StatementLogger.delete(stat.getSQL());
+		IciqlLogger.delete(stat.getSQL());
 		return stat.executeUpdate();
 	}
 
@@ -548,7 +548,7 @@ public class TableDefinition<T> {
 		}
 		SQLStatement stat = new SQLStatement(db);
 		db.getDialect().prepareCreateTable(stat, this);
-		StatementLogger.create(stat.getSQL());
+		IciqlLogger.create(stat.getSQL());
 		try {
 			stat.executeUpdate();
 		} catch (IciqlException e) {
@@ -561,7 +561,7 @@ public class TableDefinition<T> {
 		for (IndexDefinition index : indexes) {
 			stat = new SQLStatement(db);
 			db.getDialect().prepareCreateIndex(stat, schemaName, tableName, index);
-			StatementLogger.create(stat.getSQL());
+			IciqlLogger.create(stat.getSQL());
 			try {
 				stat.executeUpdate();
 			} catch (IciqlException e) {

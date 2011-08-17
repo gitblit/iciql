@@ -109,6 +109,9 @@ public class IciqlException extends RuntimeException {
 			} else if ("42X05".equals(state)) {
 				// Derby table not found
 				iciqlCode = CODE_OBJECT_NOT_FOUND;
+			} else if ("42Y55".equals(state)) {
+				// Derby table not found
+				iciqlCode = CODE_OBJECT_NOT_FOUND;
 			} else if ("42S02".equals(state)) {
 				// H2 table not found
 				iciqlCode = CODE_OBJECT_NOT_FOUND;

@@ -85,6 +85,9 @@ public class AnnotationsTest {
 	}
 
 	private String prepName(String name, boolean upper, boolean lower) {
+		if (name == null) {
+			return null;
+		}
 		if (upper) {
 			return name.toUpperCase();
 		} else if (lower) {
