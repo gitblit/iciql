@@ -38,28 +38,15 @@ public class SQLDialectDerby extends SQLDialectDefault {
 	}
 
 	@Override
-	public boolean supportsMemoryTables() {
-		return false;
-	}
-
-	@Override
-	public boolean supportsIfNotExists() {
-		return false;
-	}
-
-	@Override
-	public boolean supportsLimitOffset() {
-		// FETCH/OFFSET added in 10.5
-		return databaseVersion >= 10.5f;
-	}
-
-	@Override
 	public void appendLimitOffset(SQLStatement stat, long limit, long offset) {
-		if (offset > 0) {
-			stat.appendSQL(" OFFSET " + offset + (offset == 1 ? " ROW" : " ROWS"));
-		}
-		if (limit > 0) {
-			stat.appendSQL(" FETCH NEXT " + limit + (limit == 1 ? " ROW" : " ROWS") + " ONLY");
+		// FETCH/OFFSET added in 10.5
+		if (databaseVersion >= 10.5f) {
+			if (offset > 0) {
+				stat.appendSQL(" OFFSET " + offset + (offset == 1 ? " ROW" : " ROWS"));
+			}
+			if (limit > 0) {
+				stat.appendSQL(" FETCH NEXT " + limit + (limit == 1 ? " ROW" : " ROWS") + " ONLY");
+			}
 		}
 	}
 

@@ -118,27 +118,6 @@ public interface SQLDialect {
 	void appendLimitOffset(SQLStatement stat, long limit, long offset);
 
 	/**
-	 * Whether memory tables are supported.
-	 * 
-	 * @return true if they are
-	 */
-	boolean supportsMemoryTables();
-
-	/**
-	 * Whether IF NOT EXISTS notation is supported.
-	 * 
-	 * @return true if they are
-	 */
-	boolean supportsIfNotExists();
-
-	/**
-	 * Whether LIMIT/OFFSET notation is supported.
-	 * 
-	 * @return true if they are
-	 */
-	boolean supportsLimitOffset();
-
-	/**
 	 * Returns the preferred DATETIME class for the database.
 	 * <p>
 	 * Either java.util.Date or java.sql.Timestamp

@@ -69,6 +69,7 @@ public class UUIDTest {
 
 		UUIDRecord second = db.from(u).where(u.uuid).is(originals.get(1).uuid).selectFirst();
 		assertTrue(originals.get(1).equivalentTo(second));
+		db.dropTable(UUIDRecord.class);
 	}
 
 	/**

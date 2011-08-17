@@ -32,6 +32,7 @@ import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.hsqldb.persist.HsqlProperties;
 import org.junit.Assert;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -89,24 +90,24 @@ public class IciqlSuite {
 	private static final TestDb[] TEST_DBS = {
 			new TestDb("H2", true, true, "jdbc:h2:mem:iciql"),
 			new TestDb("H2", true, false, "jdbc:h2:file:testdbs/h2/iciql"),
+			new TestDb("H2", false, false, "jdbc:h2:tcp://localhost/"
+					+ new File(System.getProperty("user.dir")).getAbsolutePath() + "/testdbs/h2tcp/iciql"),
 			new TestDb("HSQL", true, true, "jdbc:hsqldb:mem:iciql"),
 			new TestDb("HSQL", true, false, "jdbc:hsqldb:file:testdbs/hsql/iciql"),
+			new TestDb("HSQL", false, false, "jdbc:hsqldb:hsql://localhost/iciql"),
 			new TestDb("Derby", true, true, "jdbc:derby:memory:iciql;create=true"),
 			new TestDb("Derby", true, false, "jdbc:derby:directory:testdbs/derby/iciql;create=true"),
-			new TestDb("MySQL", false, false, "jdbc:mysql://localhost:3306/iciql"),
-			new TestDb("PostgreSQL", false, false, "jdbc:postgresql://localhost:5432/iciql") };
+			new TestDb("MySQL", false, false, "jdbc:mysql://localhost:7000/iciql", "sa", "sa"),
+			new TestDb("PostgreSQL", false, false, "jdbc:postgresql://localhost:5432/iciql", "sa", "sa") };
 
 	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[0];
 
 	private static final PrintStream ERR = System.err;
 
-	private static String username = "sa";
-
-	private static String password = "sa";
-
 	private static PrintStream out = System.out;
 
-	private static Map<String, PoolableConnectionFactory> connectionFactories = Utils.newSynchronizedHashMap();
+	private static Map<String, PoolableConnectionFactory> connectionFactories = Utils
+			.newSynchronizedHashMap();
 
 	private static Map<String, PoolingDataSource> dataSources = Utils.newSynchronizedHashMap();
 
@@ -134,15 +135,15 @@ public class IciqlSuite {
 	 * @return a fresh Db object
 	 */
 	public static Db openNewDb() {
-		String testUrl = System.getProperty("iciql.url");
-		if (testUrl == null) {
-			testUrl = DEFAULT_TEST_DB.url;
-		}
+		String testUrl = System.getProperty("iciql.url", DEFAULT_TEST_DB.url);
+		String testUser = System.getProperty("iciql.user", DEFAULT_TEST_DB.username);
+		String testPassword = System.getProperty("iciql.password", DEFAULT_TEST_DB.password);
+
 		Db db = null;
 		PoolingDataSource dataSource = dataSources.get(testUrl);
 		if (dataSource == null) {
-			ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(testUrl, username,
-					password);
+			ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(testUrl, testUser,
+					testPassword);
 			GenericObjectPool pool = new GenericObjectPool();
 			pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_GROW);
 			PoolableConnectionFactory factory = new PoolableConnectionFactory(connectionFactory, pool, null,
@@ -178,11 +179,10 @@ public class IciqlSuite {
 	 * @return the current database
 	 */
 	public static Db openCurrentDb() {
-		String testUrl = System.getProperty("iciql.url");
-		if (testUrl == null) {
-			testUrl = DEFAULT_TEST_DB.url;
-		}
-		return Db.open(testUrl, username, password);
+		String testUrl = System.getProperty("iciql.url", DEFAULT_TEST_DB.url);
+		String testUser = System.getProperty("iciql.user", DEFAULT_TEST_DB.username);
+		String testPassword = System.getProperty("iciql.password", DEFAULT_TEST_DB.password);
+		return Db.open(testUrl, testUser, testPassword);
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class IciqlSuite {
 	public static String getDefaultSchema(Db db) {
 		if (isDerby(db)) {
 			// Derby sets default schema name to username
-			return username.toUpperCase();
+			return "SA";
 		} else if (isMySQL(db)) {
 			// MySQL does not have schemas
 			return null;
@@ -271,6 +271,10 @@ public class IciqlSuite {
 		}
 
 		deleteRecursively(new File("testdbs"));
+
+		// Start the HSQL and H2 servers in-process
+		org.hsqldb.Server hsql = startHSQL();
+		org.h2.tools.Server h2 = startH2();
 
 		// Statement logging
 		final FileWriter statementWriter;
@@ -342,9 +346,15 @@ public class IciqlSuite {
 				out.println("Skipping.  Could not find " + testDb.url);
 				out.println();
 			} else {
-				// Test database
+				// Setup system properties
 				System.setProperty("iciql.url", testDb.url);
+				System.setProperty("iciql.user", testDb.username);
+				System.setProperty("iciql.password", testDb.password);
+
+				// Test database
 				Result result = JUnitCore.runClasses(suiteClasses.value());
+
+				// Report results
 				testDb.runtime = result.getRunTime();
 				if (testDb.runtime < quickestDatabase) {
 					quickestDatabase = testDb.runtime;
@@ -410,6 +420,8 @@ public class IciqlSuite {
 		if (statementWriter != null) {
 			statementWriter.close();
 		}
+		hsql.stop();
+		h2.stop();
 		System.exit(0);
 	}
 
@@ -457,6 +469,40 @@ public class IciqlSuite {
 	}
 
 	/**
+	 * Start an HSQL tcp server.
+	 * 
+	 * @return an HSQL server instance
+	 * @throws Exception
+	 */
+	private static org.hsqldb.Server startHSQL() throws Exception {
+		HsqlProperties p = new HsqlProperties();
+		String db = new File(System.getProperty("user.dir")).getAbsolutePath() + "/testdbs/hsqltcp/iciql";
+		p.setProperty("server.database.0", "file:" + db);
+		p.setProperty("server.dbname.0", "iciql");
+		// set up the rest of properties
+
+		// alternative to the above is
+		org.hsqldb.Server server = new org.hsqldb.Server();		
+		server.setProperties(p);
+		server.setLogWriter(null);
+		server.setErrWriter(null);
+		server.start();
+		return server;
+	}
+
+	/**
+	 * Start the H2 tcp server.
+	 * 
+	 * @return an H2 server instance
+	 * @throws Exception
+	 */
+	private static org.h2.tools.Server startH2() throws Exception {
+		org.h2.tools.Server server = org.h2.tools.Server.createTcpServer();
+		server.start();
+		return server;
+	}
+
+	/**
 	 * Represents a test database url.
 	 */
 	private static class TestDb implements Comparable<TestDb> {
@@ -464,15 +510,23 @@ public class IciqlSuite {
 		boolean isEmbedded;
 		boolean isMemory;
 		final String url;
+		final String username;
+		final String password;
 		String version;
 		long runtime;
 		long statements;
 
 		TestDb(String name, boolean isEmbedded, boolean isMemory, String url) {
+			this(name, isEmbedded, isMemory, url, "sa", "");
+		}
+
+		TestDb(String name, boolean isEmbedded, boolean isMemory, String url, String username, String password) {
 			this.name = name;
 			this.isEmbedded = isEmbedded;
 			this.isMemory = isMemory;
 			this.url = url;
+			this.username = username;
+			this.password = password;
 		}
 
 		double getRuntime() {

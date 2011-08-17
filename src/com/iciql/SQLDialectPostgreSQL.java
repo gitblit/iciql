@@ -30,11 +30,6 @@ public class SQLDialectPostgreSQL extends SQLDialectDefault {
 	}
 
 	@Override
-	public boolean supportsIfNotExists() {
-		return false;
-	}
-
-	@Override
 	public String convertSqlType(String sqlType) {
 		if ("DOUBLE".equals(sqlType)) {
 			return "DOUBLE PRECISION";

@@ -26,14 +26,22 @@ import com.iciql.util.StatementBuilder;
  */
 public class SQLDialectHSQL extends SQLDialectDefault {
 
+	/**
+	 * CACHED tables are created by default. MEMORY tables are created upon
+	 * request.
+	 */
 	@Override
-	public boolean supportsMemoryTables() {
-		return true;
+	protected <T> String prepareCreateTable(TableDefinition<T> def) {
+		if (def.memoryTable) {
+			return "CREATE MEMORY TABLE IF NOT EXISTS";
+		} else {
+			return "CREATE CACHED TABLE IF NOT EXISTS";
+		}
 	}
 
 	@Override
-	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType, boolean isAutoIncrement,
-			boolean isPrimaryKey) {
+	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType,
+			boolean isAutoIncrement, boolean isPrimaryKey) {
 		boolean isIdentity = false;
 		String convertedType = convertSqlType(dataType);
 		buff.append(convertedType);

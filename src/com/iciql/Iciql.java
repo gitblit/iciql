@@ -353,7 +353,7 @@ public interface Iciql {
 		/**
 		 * If true, this table is created as a memory table where data is
 		 * persistent, but index data is kept in main memory. Valid only for H2
-		 * databases. Default: false.
+		 * and HSQL databases. Default: false.
 		 */
 		boolean memoryTable() default false;
 	}

@@ -33,6 +33,10 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 	}
 
 	@Override
+	protected <T> String prepareCreateTable(TableDefinition<T> def) {
+		return "CREATE TABLE IF NOT EXISTS";
+	}
+	@Override
 	public String prepareColumnName(String name) {
 		return "`" + name + "`";
 	}

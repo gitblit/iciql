@@ -69,21 +69,6 @@ public class SQLDialectDefault implements SQLDialect {
 	}
 
 	@Override
-	public boolean supportsMemoryTables() {
-		return false;
-	}
-
-	@Override
-	public boolean supportsIfNotExists() {
-		return true;
-	}
-
-	@Override
-	public boolean supportsLimitOffset() {
-		return true;
-	}
-
-	@Override
 	public String prepareTableName(String schemaName, String tableName) {
 		if (StringUtils.isNullOrEmpty(schemaName)) {
 			return tableName;
@@ -104,19 +89,15 @@ public class SQLDialectDefault implements SQLDialect {
 		return;
 	}
 
+	protected <T> String prepareCreateTable(TableDefinition<T> def) {
+		return "CREATE TABLE";
+	}
+
 	@Override
 	public <T> void prepareCreateTable(SQLStatement stat, TableDefinition<T> def) {
-		StatementBuilder buff;
-		if (def.memoryTable && supportsMemoryTables()) {
-			buff = new StatementBuilder("CREATE MEMORY TABLE ");
-		} else {
-			buff = new StatementBuilder("CREATE TABLE ");
-		}
-
-		if (supportsIfNotExists()) {
-			buff.append("IF NOT EXISTS ");
-		}
-
+		StatementBuilder buff = new StatementBuilder();
+		buff.append(prepareCreateTable(def));
+		buff.append(" ");
 		buff.append(prepareTableName(def.schemaName, def.tableName)).append('(');
 
 		boolean hasIdentityColumn = false;
