@@ -56,18 +56,15 @@ public class TableInspector {
 
 	private String schema;
 	private String table;
-	private boolean forceUpperCase;
 	private Class<? extends java.util.Date> dateTimeClass;
 	private List<String> primaryKeys = Utils.newArrayList();
 	private Map<String, IndexInspector> indexes;
 	private Map<String, ColumnInspector> columns;
 	private final String eol = "\n";
 
-	TableInspector(String schema, String table, boolean forceUpperCase,
-			Class<? extends java.util.Date> dateTimeClass) {
+	TableInspector(String schema, String table, Class<? extends java.util.Date> dateTimeClass) {
 		this.schema = schema;
 		this.table = table;
-		this.forceUpperCase = forceUpperCase;
 		this.dateTimeClass = dateTimeClass;
 	}
 
@@ -121,7 +118,7 @@ public class TableInspector {
 				if (info.type.equals(IndexType.UNIQUE)) {
 					String name = info.name.toLowerCase();
 					if (name.startsWith("primary") || name.startsWith("sys_idx_sys_pk")
-							|| name.startsWith("sql")) {
+							|| name.startsWith("sql") || name.endsWith("_pkey")) {
 						// skip primary key indexes
 						continue;
 					}
@@ -166,7 +163,7 @@ public class TableInspector {
 				if (!col.isAutoIncrement) {
 					col.defaultValue = rs.getString("COLUMN_DEF");
 				}
-				columns.put(col.name, col);
+				columns.put(col.name.toLowerCase(), col);
 			}
 		} finally {
 			closeSilently(rs);
@@ -478,13 +475,12 @@ public class TableInspector {
 	 */
 	private void validate(List<ValidationRemark> remarks, FieldDefinition fieldDef, boolean throwError) {
 		// unknown field
-		String field = forceUpperCase ? fieldDef.columnName.toUpperCase() : fieldDef.columnName;
-		if (!columns.containsKey(field)) {
+		if (!columns.containsKey(fieldDef.columnName.toLowerCase())) {
 			// unknown column mapping
 			remarks.add(error(table, fieldDef, "Does not exist in database!").throwError(throwError));
 			return;
 		}
-		ColumnInspector col = columns.get(field);
+		ColumnInspector col = columns.get(fieldDef.columnName.toLowerCase());
 		Class<?> fieldClass = fieldDef.field.getType();
 		Class<?> jdbcClass = ModelUtils.getClassForSqlType(col.type, dateTimeClass);
 

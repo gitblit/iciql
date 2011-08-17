@@ -27,10 +27,8 @@ public class IciqlException extends RuntimeException {
 
 	public static final int CODE_UNMAPPED_FIELD = 1;
 	public static final int CODE_DUPLICATE_KEY = 2;
-	public static final int CODE_SCHEMA_NOT_FOUND = 3;
-	public static final int CODE_TABLE_NOT_FOUND = 4;
-	public static final int CODE_TABLE_ALREADY_EXISTS = 5;
-	public static final int CODE_INDEX_ALREADY_EXISTS = 6;
+	public static final int CODE_OBJECT_NOT_FOUND = 3;
+	public static final int CODE_OBJECT_ALREADY_EXISTS = 4;
 
 	private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|\\<\\>|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";
 
@@ -97,34 +95,41 @@ public class IciqlException extends RuntimeException {
 			SQLException s = (SQLException) t;
 			String state = s.getSQLState();
 			if ("23000".equals(state)) {
-				// MySQL
+				// MySQL duplicate primary key on insert
 				iciqlCode = CODE_DUPLICATE_KEY;
 			} else if ("23505".equals(state)) {
+				// Derby duplicate primary key on insert
 				iciqlCode = CODE_DUPLICATE_KEY;
 			} else if ("42000".equals(state)) {
-				// MySQL
+				// MySQL duplicate unique index value on insert
 				iciqlCode = CODE_DUPLICATE_KEY;
 			} else if ("42Y07".equals(state)) {
-				// Derby
-				iciqlCode = CODE_SCHEMA_NOT_FOUND;
+				// Derby schema not found
+				iciqlCode = CODE_OBJECT_NOT_FOUND;
 			} else if ("42X05".equals(state)) {
-				// Derby
-				iciqlCode = CODE_TABLE_NOT_FOUND;
+				// Derby table not found
+				iciqlCode = CODE_OBJECT_NOT_FOUND;
 			} else if ("42S02".equals(state)) {
-				// H2
-				iciqlCode = CODE_TABLE_NOT_FOUND;
+				// H2 table not found
+				iciqlCode = CODE_OBJECT_NOT_FOUND;
 			} else if ("42501".equals(state)) {
-				// HSQL
-				iciqlCode = CODE_TABLE_NOT_FOUND;
+				// HSQL table not found
+				iciqlCode = CODE_OBJECT_NOT_FOUND;
+			} else if ("42P01".equals(state)) {
+				// PostgreSQL table not found
+				iciqlCode = CODE_OBJECT_NOT_FOUND;
 			} else if ("X0Y32".equals(state)) {
-				// Derby
-				iciqlCode = CODE_TABLE_ALREADY_EXISTS;
+				// Derby table already exists
+				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
+			} else if ("42P07".equals(state)) {
+				// PostgreSQL table or index already exists
+				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
 			} else if ("42S11".equals(state)) {
-				// H2
-				iciqlCode = CODE_INDEX_ALREADY_EXISTS;
+				// H2 index already exists
+				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
 			} else if ("42504".equals(state)) {
-				// HSQL
-				iciqlCode = CODE_INDEX_ALREADY_EXISTS;
+				// HSQL index already exists
+				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
 			}
 		}
 	}

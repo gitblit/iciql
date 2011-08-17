@@ -59,6 +59,7 @@ public class Build {
 		downloadFromApache(MavenObject.HSQLDB, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.DERBY, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.MYSQL, BuildType.RUNTIME);
+		downloadFromApache(MavenObject.POSTGRESQL, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.JCOMMANDER, BuildType.RUNTIME);
 		downloadFromApache(MavenObject.JCOMMANDER, BuildType.COMPILETIME);
 		downloadFromApache(MavenObject.MARKDOWNPAPERS, BuildType.RUNTIME);
@@ -183,6 +184,9 @@ public class Build {
 
 		public static final MavenObject MYSQL = new MavenObject("mysql", "mysql-connector-java", "5.1.15",
 				"0fbc80454d27cc65f3addfa516707e9f8e60c3eb", "", "");
+
+		public static final MavenObject POSTGRESQL = new MavenObject("postgresql", "postgresql", "9.0-801.jdbc4",
+				"153f2f92a786f12fc111d0111f709012df87c808", "", "");
 
 		public static final MavenObject JUNIT = new MavenObject("junit", "junit", "4.8.2",
 				"c94f54227b08100974c36170dcb53329435fe5ad", "", "");

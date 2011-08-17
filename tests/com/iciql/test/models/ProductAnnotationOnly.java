@@ -37,7 +37,7 @@ public class ProductAnnotationOnly {
 	public String unmappedField;
 
 	@IQColumn(name = "id", autoIncrement = true)
-	public Integer productId;
+	public Long productId;
 
 	@IQColumn(name = "cat", length = 15, trim = true)
 	public String category;
@@ -56,7 +56,7 @@ public class ProductAnnotationOnly {
 		// public constructor
 	}
 
-	private ProductAnnotationOnly(int productId, String productName, String category, double unitPrice,
+	private ProductAnnotationOnly(long productId, String productName, String category, double unitPrice,
 			int unitsInStock, String unmappedField) {
 		this.productId = productId;
 		this.productName = productName;

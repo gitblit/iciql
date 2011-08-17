@@ -31,6 +31,27 @@ public class SQLDialectH2 extends SQLDialectDefault {
 	}
 
 	@Override
+	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType, boolean isAutoIncrement,
+			boolean isPrimaryKey) {
+		String convertedType = convertSqlType(dataType);
+		boolean isIdentity = false;
+		if (isIntegerType(dataType)) {
+			if (isAutoIncrement && isPrimaryKey) {
+				buff.append("IDENTITY");
+				isIdentity =  true;
+			} else if (isAutoIncrement) {
+				buff.append(convertedType);
+				buff.append(" AUTO_INCREMENT");
+			} else {
+				buff.append(convertedType);	
+			}
+		} else {
+			buff.append(convertedType);
+		}
+		return isIdentity;
+	}
+
+	@Override
 	public void prepareCreateIndex(SQLStatement stat, String schema, String table, IndexDefinition index) {
 		StatementBuilder buff = new StatementBuilder();
 		buff.append("CREATE ");

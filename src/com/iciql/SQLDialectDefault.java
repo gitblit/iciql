@@ -19,6 +19,7 @@ package com.iciql;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 
 import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
@@ -26,8 +27,7 @@ import com.iciql.util.StatementBuilder;
 import com.iciql.util.StringUtils;
 
 /**
- * Default implementation of an SQL dialect. Does not support merge nor index
- * creation.
+ * Default implementation of an SQL dialect.
  */
 public class SQLDialectDefault implements SQLDialect {
 	float databaseVersion;
@@ -144,10 +144,9 @@ public class SQLDialectDefault implements SQLDialect {
 				}
 			} else {
 				// other
-				buff.append(convertSqlType(dataType));
+				hasIdentityColumn |= prepareColumnDefinition(buff, convertSqlType(dataType),
+						field.isAutoIncrement, field.isPrimaryKey);
 			}
-
-			hasIdentityColumn |= prepareColumnDefinition(buff, field.isAutoIncrement, field.isPrimaryKey);
 
 			if (!field.nullable) {
 				buff.append(" NOT NULL");
@@ -181,8 +180,21 @@ public class SQLDialectDefault implements SQLDialect {
 		stat.setSQL(buff.toString());
 	}
 
-	protected boolean prepareColumnDefinition(StatementBuilder buff, boolean isAutoIncrement,
-			boolean isPrimaryKey) {
+	protected boolean isIntegerType(String dataType) {
+		if ("INT".equals(dataType)) {
+			return true;
+		} else if ("BIGINT".equals(dataType)) {
+			return true;
+		} else if ("TINYINT".equals(dataType)) {
+			return true;
+		} else if ("SMALLINT".equals(dataType)) {
+			return true;
+		}
+		return false;
+	}
+
+	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType,
+			boolean isAutoIncrement, boolean isPrimaryKey) {
 		boolean isIdentity = false;
 		if (isAutoIncrement && isPrimaryKey) {
 			buff.append(" IDENTITY");
@@ -196,13 +208,72 @@ public class SQLDialectDefault implements SQLDialect {
 	@Override
 	public void prepareCreateIndex(SQLStatement stat, String schemaName, String tableName,
 			IndexDefinition index) {
-		throw new IciqlException("{0} does not support index creation!", getClass().getSimpleName());
+		StatementBuilder buff = new StatementBuilder();
+		buff.append("CREATE ");
+		switch (index.type) {
+		case UNIQUE:
+			buff.append("UNIQUE ");
+			break;
+		case UNIQUE_HASH:
+			buff.append("UNIQUE ");
+			break;
+		}
+		buff.append("INDEX ");
+		buff.append(index.indexName);
+		buff.append(" ON ");
+		buff.append(tableName);
+		buff.append("(");
+		for (String col : index.columnNames) {
+			buff.appendExceptFirst(", ");
+			buff.append(prepareColumnName(col));
+		}
+		buff.append(") ");
+
+		stat.setSQL(buff.toString().trim());
 	}
 
+	/**
+	 * PostgreSQL and Derby do not support the SQL2003 MERGE syntax, but we can
+	 * use a trick to insert a row if it does not exist and call update() in
+	 * Db.merge() if the affected row count is 0.
+	 * <p>
+	 * Databases that do support a MERGE syntax should override this method.
+	 * <p>
+	 * http://stackoverflow.com/questions/407688
+	 */
 	@Override
 	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName,
 			TableDefinition<T> def, Object obj) {
-		throw new IciqlException("{0} does not support merge statements!", getClass().getSimpleName());
+		StatementBuilder buff = new StatementBuilder("INSERT INTO ");
+		buff.append(prepareTableName(schemaName, tableName));
+		buff.append(" (");
+		buff.resetCount();
+		for (FieldDefinition field : def.fields) {
+			buff.appendExceptFirst(", ");
+			buff.append(prepareColumnName(field.columnName));
+		}
+		buff.append(") (SELECT ");
+		buff.resetCount();
+		for (FieldDefinition field : def.fields) {
+			buff.appendExceptFirst(", ");
+			buff.append('?');
+			Object value = def.getValue(obj, field);
+			stat.addParameter(value);
+		}
+		buff.append(" FROM ");
+		buff.append(prepareTableName(schemaName, tableName));
+		buff.append(" WHERE ");
+		buff.resetCount();
+		for (FieldDefinition field : def.fields) {
+			if (field.isPrimaryKey) {
+				buff.appendExceptFirst(" AND ");
+				buff.append(MessageFormat.format("{0} = ?", prepareColumnName(field.columnName)));
+				Object value = def.getValue(obj, field);
+				stat.addParameter(value);
+			}
+		}
+		buff.append(" HAVING count(*)=0)");
+		stat.setSQL(buff.toString());
 	}
 
 	@Override

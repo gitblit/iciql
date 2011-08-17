@@ -552,7 +552,7 @@ public class TableDefinition<T> {
 		try {
 			stat.executeUpdate();
 		} catch (IciqlException e) {
-			if (e.getIciqlCode() != IciqlException.CODE_TABLE_ALREADY_EXISTS) {
+			if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS) {
 				throw e;
 			}
 		}
@@ -565,7 +565,7 @@ public class TableDefinition<T> {
 			try {
 				stat.executeUpdate();
 			} catch (IciqlException e) {
-				if (e.getIciqlCode() != IciqlException.CODE_INDEX_ALREADY_EXISTS
+				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS
 						&& e.getIciqlCode() != IciqlException.CODE_DUPLICATE_KEY) {
 					throw e;
 				}

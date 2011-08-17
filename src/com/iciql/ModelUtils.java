@@ -113,6 +113,8 @@ class ModelUtils {
 		m.put("SIGNED", "INT");
 		m.put("INT8", "BIGINT");
 		m.put("IDENTITY", "BIGINT");
+		m.put("SERIAL", "INT");
+		m.put("BIGSERIAL", "BIGINT");
 
 		// decimal
 		m.put("NUMBER", "DECIMAL");
@@ -121,6 +123,7 @@ class ModelUtils {
 		m.put("FLOAT", "DOUBLE");
 		m.put("FLOAT4", "DOUBLE");
 		m.put("FLOAT8", "DOUBLE");
+		m.put("DOUBLE PRECISION", "DOUBLE");
 
 		// date
 		m.put("DATETIME", "TIMESTAMP");

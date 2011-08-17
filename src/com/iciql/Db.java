@@ -72,10 +72,11 @@ public class Db {
 		// can register by...
 		// 1. Connection class name
 		// 2. DatabaseMetaData.getDatabaseProductName()
-		DIALECTS.put("H2", SQLDialectH2.class);
-		DIALECTS.put("MySQL", SQLDialectMySQL.class);
-		DIALECTS.put("HSQL Database Engine", SQLDialectHSQL.class);
 		DIALECTS.put("Apache Derby", SQLDialectDerby.class);
+		DIALECTS.put("H2", SQLDialectH2.class);
+		DIALECTS.put("HSQL Database Engine", SQLDialectHSQL.class);
+		DIALECTS.put("MySQL", SQLDialectMySQL.class);
+		DIALECTS.put("PostgreSQL", SQLDialectPostgreSQL.class);
 	}
 
 	private Db(Connection conn) {
@@ -249,8 +250,7 @@ public class Db {
 		try {
 			rc = stat.executeUpdate();
 		} catch (IciqlException e) {
-			if (e.getIciqlCode() != IciqlException.CODE_SCHEMA_NOT_FOUND
-					&& e.getIciqlCode() != IciqlException.CODE_TABLE_NOT_FOUND) {
+			if (e.getIciqlCode() != IciqlException.CODE_OBJECT_NOT_FOUND) {
 				throw e;
 			}
 		}

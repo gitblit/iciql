@@ -19,7 +19,6 @@ package com.iciql;
 import java.text.MessageFormat;
 
 import com.iciql.TableDefinition.FieldDefinition;
-import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.StatementBuilder;
 
 /**
@@ -33,39 +32,16 @@ public class SQLDialectHSQL extends SQLDialectDefault {
 	}
 
 	@Override
-	protected boolean prepareColumnDefinition(StatementBuilder buff, boolean isAutoIncrement,
+	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType, boolean isAutoIncrement,
 			boolean isPrimaryKey) {
 		boolean isIdentity = false;
-		if (isAutoIncrement && isPrimaryKey) {
+		String convertedType = convertSqlType(dataType);
+		buff.append(convertedType);
+		if (isIntegerType(dataType) && isAutoIncrement && isPrimaryKey) {
 			buff.append(" IDENTITY");
 			isIdentity = true;
 		}
 		return isIdentity;
-	}
-
-	@Override
-	public void prepareCreateIndex(SQLStatement stat, String schema, String table, IndexDefinition index) {
-		StatementBuilder buff = new StatementBuilder();
-		buff.append("CREATE ");
-		switch (index.type) {
-		case UNIQUE:
-			buff.append("UNIQUE ");
-			break;
-		case UNIQUE_HASH:
-			buff.append("UNIQUE ");
-			break;
-		}
-		buff.append("INDEX ");
-		buff.append(index.indexName);
-		buff.append(" ON ");
-		buff.append(table);
-		buff.append("(");
-		for (String col : index.columnNames) {
-			buff.appendExceptFirst(", ");
-			buff.append(col);
-		}
-		buff.append(")");
-		stat.setSQL(buff.toString());
 	}
 
 	@Override

@@ -169,8 +169,7 @@ public class DbInspector {
 				while (rs.next()) {
 					String t = rs.getString("TABLE_NAME");
 					if (!t.equalsIgnoreCase(iciqlTables)) {
-						tables.add(new TableInspector(s, t, getMetaData().storesUpperCaseIdentifiers(),
-								dateTimeClass));
+						tables.add(new TableInspector(s, t, dateTimeClass));
 					}
 				}
 			}

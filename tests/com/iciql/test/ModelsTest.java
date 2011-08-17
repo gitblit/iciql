@@ -19,6 +19,7 @@ package com.iciql.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static com.iciql.test.IciqlSuite.assertEqualsIgnoreCase;
 
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -93,7 +94,8 @@ public class ModelsTest {
 			assertEquals(sb.toString(), expected - 1, remarks.size());
 		} else {
 			assertEquals(sb.toString(), expected, remarks.size());
-			assertEquals(MessageFormat.format("@IQSchema(\"{0}\")", schemaName), remarks.get(0).message);
+			assertEqualsIgnoreCase(MessageFormat.format("@IQSchema(\"{0}\")", schemaName),
+					remarks.get(0).message);
 		}
 	}
 
@@ -121,7 +123,7 @@ public class ModelsTest {
 		// a poor test, but a start
 		String dbName = IciqlSuite.getDatabaseEngineName(db);
 		if (dbName.equals("H2")) {
-			assertEquals(1478, models.get(0).length());
+			assertEquals(1475, models.get(0).length());
 		} else if (dbName.startsWith("HSQL")) {
 			// HSQL uses Double instead of Float
 			assertEquals(1479, models.get(0).length());
@@ -129,6 +131,15 @@ public class ModelsTest {
 			// Derby uses java.sql.Timestamp not java.util.Date
 			// Derby uses username as schema name
 			assertEquals(1489, models.get(0).length());
+		} else if (dbName.equals("PostgreSQL")) {
+			assertEquals(1514, models.get(0).length());
+		} else if (dbName.equals("MySQL")) {
+			// MySQL uses timestamp default values like
+			// 0000-00-00 00:00:00 and CURRENT_TIMESTAMP
+			assertEquals(1561, models.get(0).length());
+		} else {
+			// unknown database
+			assertEquals(0, models.get(0).length());
 		}
 	}
 }

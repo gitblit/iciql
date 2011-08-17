@@ -248,7 +248,7 @@ public class Utils {
 					f = Float.parseFloat(s);
 				} catch (Exception e) {
 				}
-				return f > 0 || s.equals("true") || s.equals("yes");
+				return f > 0 || s.equals("true") || s.equals("yes") || s.equals("y") || s.equals("on");
 			}
 		}
 

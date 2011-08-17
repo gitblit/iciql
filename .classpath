@@ -32,5 +32,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/iciql/ext/h2-1.3.159-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="ext/postgresql-9.0-801.jdbc4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

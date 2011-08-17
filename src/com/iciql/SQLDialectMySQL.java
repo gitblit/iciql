@@ -17,7 +17,6 @@
 package com.iciql;
 
 import com.iciql.TableDefinition.FieldDefinition;
-import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.StatementBuilder;
 
 /**
@@ -34,49 +33,19 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 	}
 
 	@Override
-	public boolean supportsMemoryTables() {
-		return false;
-	}
-
-	@Override
 	public String prepareColumnName(String name) {
 		return "`" + name + "`";
 	}
 
 	@Override
-	protected boolean prepareColumnDefinition(StatementBuilder buff, boolean isAutoIncrement,
+	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType, boolean isAutoIncrement,
 			boolean isPrimaryKey) {
-		if (isAutoIncrement) {
+		String convertedType = convertSqlType(dataType);
+		buff.append(convertedType);
+		if (isIntegerType(dataType) && isAutoIncrement) {
 			buff.append(" AUTO_INCREMENT");
 		}
 		return false;
-	}
-
-	@Override
-	public void prepareCreateIndex(SQLStatement stat, String schema, String table, IndexDefinition index) {
-		StatementBuilder buff = new StatementBuilder();
-		buff.append("CREATE ");
-		switch (index.type) {
-		case STANDARD:
-			break;
-		case UNIQUE:
-			buff.append("UNIQUE ");
-			break;
-		case UNIQUE_HASH:
-			buff.append("UNIQUE ");
-			break;
-		}
-		buff.append("INDEX ");
-		buff.append(index.indexName);
-		buff.append(" ON ");
-		buff.append(table);
-		buff.append("(");
-		for (String col : index.columnNames) {
-			buff.appendExceptFirst(", ");
-			buff.append(prepareColumnName(col));
-		}
-		buff.append(") ");
-		stat.setSQL(buff.toString().trim());
 	}
 
 	@Override

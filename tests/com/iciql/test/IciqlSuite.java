@@ -78,9 +78,10 @@ public class IciqlSuite {
 	private static final TestDb[] TEST_DBS = { new TestDb("H2 (embedded)", "jdbc:h2:mem:db{0,number,000}"),
 			new TestDb("HSQL (embedded)", "jdbc:hsqldb:mem:db{0,number,000}"),
 			new TestDb("Derby (embedded)", "jdbc:derby:memory:db{0,number,000};create=true"),
-			new TestDb("MySQL (tcp/myisam)", "jdbc:mysql://localhost:3306/iciql") };
+			new TestDb("MySQL (tcp/myisam)", "jdbc:mysql://localhost:3306/iciql"),
+			new TestDb("PostgreSQL (tcp)", "jdbc:postgresql://localhost:5432/iciql")};
 
-	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[0];
+	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[4];
 
 	private static final PrintStream ERR = System.err;
 
@@ -95,6 +96,11 @@ public class IciqlSuite {
 	public static void assertStartsWith(String value, String startsWith) {
 		Assert.assertTrue(MessageFormat.format("Expected \"{0}\", got: \"{1}\"", startsWith, value),
 				value.startsWith(startsWith));
+	}
+	
+	public static void assertEqualsIgnoreCase(String expected, String actual) {
+		Assert.assertTrue(MessageFormat.format("Expected \"{0}\", got: \"{1}\"", expected, actual),
+				expected.equalsIgnoreCase(actual));
 	}
 
 	public static boolean equivalentTo(double expected, double actual) {

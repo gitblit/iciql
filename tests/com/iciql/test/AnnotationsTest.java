@@ -17,9 +17,7 @@
 
 package com.iciql.test;
 
-import static com.iciql.test.IciqlSuite.assertStartsWith;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.DatabaseMetaData;
@@ -38,6 +36,7 @@ import com.iciql.test.models.ProductAnnotationOnly;
 import com.iciql.test.models.ProductInheritedAnnotation;
 import com.iciql.test.models.ProductMixedAnnotation;
 import com.iciql.test.models.ProductNoCreateTable;
+import com.iciql.util.Utils;
 
 /**
  * Test annotation processing.
@@ -68,26 +67,30 @@ public class AnnotationsTest {
 	public void testIndexCreation() throws SQLException {
 		// test indexes are created, and columns are in the right order
 		DatabaseMetaData meta = db.getConnection().getMetaData();
-		boolean isH2 = meta.getDatabaseProductName().equals("H2");
 		String schema = IciqlSuite.getDefaultSchema(db);
-		ResultSet rs = meta.getIndexInfo(null, schema, "ANNOTATEDPRODUCT", false, true);
+		boolean toUpper = meta.storesUpperCaseIdentifiers();
+		boolean toLower = meta.storesLowerCaseIdentifiers();
+		ResultSet rs = meta.getIndexInfo(null, prepName(schema, toUpper, toLower),
+				prepName("ANNOTATEDPRODUCT", toUpper, toLower), false, true);
 
-		// first index is primary key index
-		// H2 gives this a testable name.
-		assertTrue(rs.next());
-		if (isH2) {
-			assertStartsWith(rs.getString("INDEX_NAME").toUpperCase(), "PRIMARY_KEY");
+		List<String> list = Utils.newArrayList();
+		while (rs.next()) {
+			String col = rs.getString("COLUMN_NAME");
+			String index = rs.getString("INDEX_NAME");
+			list.add((col + ":" +  index).toLowerCase());
 		}
-		assertTrue(rs.next());
-		assertStartsWith(rs.getString("INDEX_NAME").toUpperCase(), "ANNOTATEDPRODUCT_0");
-		assertStartsWith(rs.getString("COLUMN_NAME").toUpperCase(), "NAME");
-		assertTrue(rs.next());
-		assertStartsWith(rs.getString("INDEX_NAME").toUpperCase(), "ANNOTATEDPRODUCT_0");
-		assertStartsWith(rs.getString("COLUMN_NAME").toUpperCase(), "CAT");
-		assertTrue(rs.next());
-		assertStartsWith(rs.getString("INDEX_NAME").toUpperCase(), "NAMEIDX");
-		assertStartsWith(rs.getString("COLUMN_NAME").toUpperCase(), "NAME");
-		assertFalse(rs.next());
+		assertTrue(list.contains("name:annotatedproduct_0"));
+		assertTrue(list.contains("cat:annotatedproduct_0"));
+		assertTrue(list.contains("name:nameidx"));
+	}
+
+	private String prepName(String name, boolean upper, boolean lower) {
+		if (upper) {
+			return name.toUpperCase();
+		} else if (lower) {
+			return name.toLowerCase();
+		}
+		return name;
 	}
 
 	@Test
@@ -180,7 +183,7 @@ public class AnnotationsTest {
 		try {
 			db.insertAll(ProductNoCreateTable.getList());
 		} catch (IciqlException e) {
-			assertEquals(IciqlException.CODE_TABLE_NOT_FOUND, e.getIciqlCode());
+			assertEquals(IciqlException.CODE_OBJECT_NOT_FOUND, e.getIciqlCode());
 		}
 	}
 
