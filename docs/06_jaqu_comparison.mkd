@@ -1,0 +1,25 @@
+
+## Comparison to JaQu 
+
+This is an overview of the fundamental differences between the original JaQu project and the current featureset of iciql.  
+
+<table>
+<tr><th></th><th>Iciql</th><th>JaQu</th></tr>
+<tr><th colspan="3">core</th></tr>
+<tr><td>deployment</td><td>small, discrete library</td><td>depends on H2 database jar file</td></tr>
+<tr><td>databases</td><td>supports H2, HSQL, Derby, MySQL, and PostreSQL</td><td>supports H2 only</td></tr>
+<tr><td>logging</td><td>supports console, SLF4J, or custom logging</td><td>supports console logging</td></tr>
+<tr><td>exceptions</td><td>always includes generated statement in exception, when available</td><td>--</td></tr>
+<tr><th colspan="3">syntax and api</th></tr>
+<tr><td>dynamic queries</td><td>methods and where clauses for dynamic queries that build iciql objects</td><td>--</td></tr>
+<tr><td>DROP</td><td>syntax to drop a table</td><td></td></tr>
+<tr><td>BETWEEN</td><td>syntax for specifying a BETWEEN x AND y clause</td><td>--</td></tr>
+<tr><th colspan="3">types</th></tr>
+<tr><td>primitives</td><td>fully supported</td><td>--</td></tr>
+<tr><td>enums</td><td>fully supported</td><td>--</td></tr>
+<tr><td>DECIMAL(length,scale)</td><td>can specify length/precision and scale</td><td>--</td></tr>
+<tr><td>BOOLEAN</td><td>flexible mapping of boolean as bool, varchar, or int</td><td>--</td></tr>
+<tr><td>BLOB</td><td>partially supported *(can not be used in a WHERE clause)*</td><td>--</td></tr>
+<tr><td>UUID</td><td>fully supported *(H2 only)* </td><td>--</td></tr>
+<tr><td>DEFAULT values</td><td>set from annotations or *default object values*</td><td>set from annotations</td></tr>
+</table>
