@@ -46,24 +46,22 @@ public class SQLDialectPostgreSQL extends SQLDialectDefault {
 
 	@Override
 	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType,
-			boolean isAutoIncrement, boolean isPrimaryKey) {
-		boolean isIdentity = false;
+			boolean isAutoIncrement, boolean isPrimaryKey) {		
 		String convertedType = convertSqlType(dataType);
 		if (isIntegerType(dataType)) {
-			if (isAutoIncrement && isPrimaryKey) {
+			if (isAutoIncrement) {
 				if ("BIGINT".equals(dataType)) {
 					buff.append("BIGSERIAL");
 				} else {
 					buff.append("SERIAL");
 				}
-				isIdentity = true;
 			} else {
 				buff.append(convertedType);
 			}
 		} else {
 			buff.append(convertedType);
 		}
-		return isIdentity;
+		return false;
 	}
 	
 	@Override
