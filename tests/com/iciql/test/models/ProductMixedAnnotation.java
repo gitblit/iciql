@@ -37,6 +37,9 @@ public class ProductMixedAnnotation implements Iciql {
 	public Integer unitsInStock;
 	public String mappedField;
 
+	@IQIgnore
+	public String productDescription;
+
 	@IQColumn(name = "cat", length = 255)
 	public String category;
 
@@ -45,7 +48,7 @@ public class ProductMixedAnnotation implements Iciql {
 
 	@IQColumn(name = "name", length = 255)
 	private String productName;
-
+	
 	public ProductMixedAnnotation() {
 		// public constructor
 	}
@@ -58,6 +61,7 @@ public class ProductMixedAnnotation implements Iciql {
 		this.unitPrice = unitPrice;
 		this.unitsInStock = unitsInStock;
 		this.mappedField = mappedField;
+		this.productDescription = category + ": " + productName;
 	}
 
 	private static ProductMixedAnnotation create(int productId, String productName, String category,

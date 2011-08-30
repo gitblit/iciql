@@ -29,34 +29,49 @@ public class Define {
 	private static TableDefinition<?> currentTableDefinition;
 	private static Iciql currentTable;
 
+	public static void skipCreate() {
+		checkInDefine();
+		currentTableDefinition.defineSkipCreate();
+	}
+
+	public static void index(IndexType type, Object... columns) {
+		checkInDefine();
+		currentTableDefinition.defineIndex(null, type, columns);
+	}
+
+	public static void index(String name, IndexType type, Object... columns) {
+		checkInDefine();
+		currentTableDefinition.defineIndex(name, type, columns);
+	}
+
 	public static void primaryKey(Object... columns) {
 		checkInDefine();
 		currentTableDefinition.definePrimaryKey(columns);
 	}
-
-	public static void index(Object... columns) {
+	
+	public static void schemaName(String schemaName) {
 		checkInDefine();
-		currentTableDefinition.defineIndex(IndexType.STANDARD, columns);
+		currentTableDefinition.defineSchemaName(schemaName);
 	}
 
-	public static void uniqueIndex(Object... columns) {
+	public static void tableName(String tableName) {
 		checkInDefine();
-		currentTableDefinition.defineIndex(IndexType.UNIQUE, columns);
+		currentTableDefinition.defineTableName(tableName);
 	}
 
-	public static void hashIndex(Object column) {
+	public static void memoryTable() {
 		checkInDefine();
-		currentTableDefinition.defineIndex(IndexType.HASH, new Object[] { column });
-	}
-
-	public static void uniqueHashIndex(Object column) {
-		checkInDefine();
-		currentTableDefinition.defineIndex(IndexType.UNIQUE_HASH, new Object[] { column });
+		currentTableDefinition.defineMemoryTable();
 	}
 
 	public static void columnName(Object column, String columnName) {
 		checkInDefine();
 		currentTableDefinition.defineColumnName(column, columnName);
+	}
+
+	public static void autoIncrement(Object column) {
+		checkInDefine();
+		currentTableDefinition.defineAutoIncrement(column);
 	}
 
 	public static void length(Object column, int length) {
@@ -68,13 +83,22 @@ public class Define {
 		checkInDefine();
 		currentTableDefinition.defineScale(column, scale);
 	}
-
-	public static void tableName(String tableName) {
+	
+	public static void trim(Object column) {
 		checkInDefine();
-		currentTableDefinition.defineTableName(tableName);
+		currentTableDefinition.defineTrim(column);
 	}
-
-	@SuppressWarnings("deprecation")
+	
+	public static void nullable(Object column, boolean isNullable) {
+		checkInDefine();
+		currentTableDefinition.defineNullable(column, isNullable);
+	}
+	
+	public static void defaultValue(Object column, String defaultValue) {
+		checkInDefine();
+		currentTableDefinition.defineDefaultValue(column, defaultValue);
+	}
+	
 	static synchronized <T> void define(TableDefinition<T> tableDefinition, Iciql table) {
 		currentTableDefinition = tableDefinition;
 		currentTable = table;

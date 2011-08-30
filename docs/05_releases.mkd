@@ -6,6 +6,18 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- api change release (API v7)
+- Undeprecated interface configuration
+- Interface configuration now maps ALL fields, not just public fields
+- Added @IQIgnore annotation to explicitly skip fields for interface configuration 
+- Created additional Define static methods to bring interface configuration to near-parity with annotation configuration
+- Documented POJO configuration option (limited subset of interface configuration)
+- Fix to PostgreSQL dialect when creating autoincrement columns
+
+### Older Releases
+
+**0.7.0** &nbsp; *released 2011-08-17*
+
 - api change release (API v6)
 - Finished MySQL dialect implementation.  MySQL 5.0.51b passes 100% of tests.
 - Added PostgreSQL dialect.  PostgreSQL 9.0 passes all but the boolean-as-int tests.
@@ -14,8 +26,6 @@
 - Renamed StatementLogger to IciqlLogger
 - Added IciqlLogger.warn method
 - Added IciqlLogger.drop method
-
-### Older Releases
 
 **0.6.6** &nbsp; *released 2011-08-15*
 

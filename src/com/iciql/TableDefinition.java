@@ -18,7 +18,6 @@
 package com.iciql;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,14 +30,15 @@ import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQEnum;
+import com.iciql.Iciql.IQIgnore;
 import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQSchema;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.Iciql.IndexType;
-import com.iciql.util.StatementBuilder;
 import com.iciql.util.IciqlLogger;
+import com.iciql.util.StatementBuilder;
 import com.iciql.util.StringUtils;
 import com.iciql.util.Utils;
 
@@ -157,6 +157,14 @@ public class TableDefinition<T> {
 		this.tableName = tableName;
 	}
 
+	void defineMemoryTable() {
+		this.memoryTable = true;
+	}
+
+	void defineSkipCreate() {
+		this.createIfRequired = false;
+	}
+
 	/**
 	 * Define a primary key by the specified model fields.
 	 * 
@@ -198,14 +206,16 @@ public class TableDefinition<T> {
 	/**
 	 * Defines an index with the specified model fields.
 	 * 
+	 * @param name
+	 *            the index name (optional)
 	 * @param type
 	 *            the index type (STANDARD, HASH, UNIQUE, UNIQUE_HASH)
 	 * @param modelFields
 	 *            the ordered list of model fields
 	 */
-	void defineIndex(IndexType type, Object[] modelFields) {
+	void defineIndex(String name, IndexType type, Object[] modelFields) {
 		List<String> columnNames = mapColumnNames(modelFields);
-		addIndex(null, type, columnNames);
+		addIndex(name, type, columnNames);
 	}
 
 	/**
@@ -235,6 +245,13 @@ public class TableDefinition<T> {
 		}
 	}
 
+	void defineAutoIncrement(Object column) {
+		FieldDefinition def = fieldMap.get(column);
+		if (def != null) {
+			def.isAutoIncrement = true;
+		}
+	}
+
 	void defineLength(Object column, int length) {
 		FieldDefinition def = fieldMap.get(column);
 		if (def != null) {
@@ -246,6 +263,27 @@ public class TableDefinition<T> {
 		FieldDefinition def = fieldMap.get(column);
 		if (def != null) {
 			def.scale = scale;
+		}
+	}
+
+	void defineTrim(Object column) {
+		FieldDefinition def = fieldMap.get(column);
+		if (def != null) {
+			def.trim = true;
+		}
+	}
+
+	void defineNullable(Object column, boolean isNullable) {
+		FieldDefinition def = fieldMap.get(column);
+		if (def != null) {
+			def.nullable = isNullable;
+		}
+	}
+
+	void defineDefaultValue(Object column, String defaultValue) {
+		FieldDefinition def = fieldMap.get(column);
+		if (def != null) {
+			def.defaultValue = defaultValue;
 		}
 	}
 
@@ -267,6 +305,11 @@ public class TableDefinition<T> {
 
 		T defaultObject = Db.instance(clazz);
 		for (Field f : classFields) {
+			// check if we should skip this field
+			if (f.isAnnotationPresent(IQIgnore.class)) {
+				continue;
+			}
+
 			// default to field name
 			String columnName = f.getName();
 			boolean isAutoIncrement = false;
@@ -292,6 +335,25 @@ public class TableDefinition<T> {
 				}
 			}
 
+			// try using default object
+			try {
+				f.setAccessible(true);
+				Object value = f.get(defaultObject);
+				if (value != null) {
+					if (value.getClass().isEnum()) {
+						// enum default, convert to target type
+						Enum<?> anEnum = (Enum<?>) value;
+						Object o = Utils.convertEnum(anEnum, enumType);
+						defaultValue = ModelUtils.formatDefaultValue(o);
+					} else {
+						// object default
+						defaultValue = ModelUtils.formatDefaultValue(value);
+					}
+				}
+			} catch (IllegalAccessException e) {
+				throw new IciqlException(e, "failed to get default object for {0}", columnName);
+			}
+
 			boolean hasAnnotation = f.isAnnotationPresent(IQColumn.class);
 			if (hasAnnotation) {
 				IQColumn col = f.getAnnotation(IQColumn.class);
@@ -305,33 +367,13 @@ public class TableDefinition<T> {
 				trim = col.trim();
 				nullable = col.nullable();
 
-				// try using default object
-				try {
-					f.setAccessible(true);
-					Object value = f.get(defaultObject);
-					if (value != null) {
-						if (value.getClass().isEnum()) {
-							// enum default, convert to target type
-							Enum<?> anEnum = (Enum<?>) value;
-							Object o = Utils.convertEnum(anEnum, enumType);
-							defaultValue = ModelUtils.formatDefaultValue(o);
-						} else {
-							// object default
-							defaultValue = ModelUtils.formatDefaultValue(value);
-						}
-					}
-				} catch (IllegalAccessException e) {
-					throw new IciqlException(e, "failed to get default object for {0}", columnName);
-				}
-
 				// annotation overrides
 				if (!StringUtils.isNullOrEmpty(col.defaultValue())) {
 					defaultValue = col.defaultValue();
 				}
 			}
 
-			boolean isPublic = Modifier.isPublic(f.getModifiers());
-			boolean reflectiveMatch = isPublic && !byAnnotationsOnly;
+			boolean reflectiveMatch = !byAnnotationsOnly;
 			if (reflectiveMatch || hasAnnotation) {
 				FieldDefinition fieldDef = new FieldDefinition();
 				fieldDef.isPrimitive = f.getType().isPrimitive();
@@ -402,7 +444,7 @@ public class TableDefinition<T> {
 			}
 			return value;
 		}
-		
+
 		// return the value unchanged
 		return value;
 	}

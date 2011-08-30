@@ -135,6 +135,9 @@ public class AnnotationsTest {
 		// public String mappedField is reflectively mapped by iciql
 		assertEquals(10, db.from(p).where(p.mappedField).is("mapped").selectCount());
 
+		// test IQIgnore annotation
+		assertEquals(null, db.from(p).selectFirst().productDescription);
+
 		// test IQColumn.primaryKey=true
 		try {
 			db.insertAll(ProductMixedAnnotation.getList());

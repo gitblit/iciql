@@ -7,8 +7,8 @@ This is an overview of the fundamental differences between the original JaQu pro
 <tr><th></th><th>Iciql</th><th>JaQu</th></tr>
 <tr><th colspan="3">core</th></tr>
 <tr><td>deployment</td><td>small, discrete library</td><td>depends on H2 database jar file</td></tr>
-<tr><td>databases</td><td>supports H2, HSQL, Derby, MySQL, and PostreSQL</td><td>supports H2 only</td></tr>
-<tr><td>logging</td><td>supports console, SLF4J, or custom logging</td><td>supports console logging</td></tr>
+<tr><td>databases</td><td>H2, HSQL, Derby, MySQL, and PostreSQL</td><td>H2 only</td></tr>
+<tr><td>logging</td><td>console, SLF4J, or custom logging</td><td>console logging</td></tr>
 <tr><td>exceptions</td><td>always includes generated statement in exception, when available</td><td>--</td></tr>
 <tr><th colspan="3">syntax and api</th></tr>
 <tr><td>dynamic queries</td><td>methods and where clauses for dynamic queries that build iciql objects</td><td>--</td></tr>
@@ -21,5 +21,8 @@ This is an overview of the fundamental differences between the original JaQu pro
 <tr><td>BOOLEAN</td><td>flexible mapping of boolean as bool, varchar, or int</td><td>--</td></tr>
 <tr><td>BLOB</td><td>partially supported *(can not be used in a WHERE clause)*</td><td>--</td></tr>
 <tr><td>UUID</td><td>fully supported *(H2 only)* </td><td>--</td></tr>
-<tr><td>DEFAULT values</td><td>set from annotations or *default object values*</td><td>set from annotations</td></tr>
+<tr><th colspan="3">configuration</th></tr>
+<tr><td>DEFAULT values</td><td>set from annotation, *default object values*, or Define.defaultValue()</td><td>set from annotations</td></tr>
+<tr><td>Interface Configuration<br/>Mapped Fields</td><td>*all fields* are mapped regardless of scope<br/>fields are ignored by annotating with @IQIgnore</td><td>*all public fields* are mapped<br/>fields are ignored by reducing their scope</td></tr>
+<tr><td>Index names</td><td>can be set</td><td>--</td></tr>
 </table>

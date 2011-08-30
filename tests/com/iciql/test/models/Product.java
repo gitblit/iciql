@@ -56,7 +56,7 @@ public class Product implements Iciql {
 		primaryKey(productId);
 		length(productName, 255);
 		length(category, 255);
-		index(productName, category);
+		index("MyIndex", IndexType.STANDARD, productName, category);
 	}
 
 	private static Product create(int productId, String productName, String category, double unitPrice,

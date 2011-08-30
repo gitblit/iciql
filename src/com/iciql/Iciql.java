@@ -215,7 +215,7 @@ public interface Iciql {
 	public @interface IQVersion {
 
 		/**
-		 * If set to a non-zero value, iciql maintains a "_iq_versions" table
+		 * If set to a non-zero value, iciql maintains a "iq_versions" table
 		 * within your database. The version number is used to call to a
 		 * registered DbUpgrader implementation to perform relevant ALTER
 		 * statements. Default: 0. You must specify a DbUpgrader on your Db
@@ -441,7 +441,7 @@ public interface Iciql {
 		 */
 		String defaultValue() default "";
 
-	}
+	}	
 
 	/**
 	 * Interface for using the EnumType.ENUMID enumeration mapping strategy.
@@ -500,9 +500,16 @@ public interface Iciql {
 	}
 
 	/**
+	 * Annotation to define an ignored field.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public @interface IQIgnore{	
+	}
+	
+	/**
 	 * This method is called to let the table define the primary key, indexes,
 	 * and the table name.
 	 */
-	@Deprecated
 	void defineIQ();
 }
