@@ -328,7 +328,7 @@
 			 projectname="iciql" 
 			 filename="${distribution.zip}" 
 			 targetfilename="iciql-${iq.version}.zip"
-			 summary="Version ${iq.version} -- library, sources, javadoc, and docs"
+			 summary="Version ${iq.version} -- library, sources, and javadoc"
 			 labels="Featured, Type-Package, OpSys-All" />
 	
 		<gcupload 
