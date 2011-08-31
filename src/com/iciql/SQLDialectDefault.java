@@ -177,14 +177,11 @@ public class SQLDialectDefault implements SQLDialect {
 
 	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType,
 			boolean isAutoIncrement, boolean isPrimaryKey) {
-		boolean isIdentity = false;
-		if (isAutoIncrement && isPrimaryKey) {
-			buff.append(" IDENTITY");
-			isIdentity = true;
-		} else if (isAutoIncrement) {
+		buff.append(dataType);
+		if (isAutoIncrement) {
 			buff.append(" AUTO_INCREMENT");
 		}
-		return isIdentity;
+		return false;
 	}
 
 	@Override

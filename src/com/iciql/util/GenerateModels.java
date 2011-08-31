@@ -133,7 +133,12 @@ public class GenerateModels {
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection(url, user, password);
-			Db db = Db.open(url, user, password.toCharArray());
+			Db db;
+			if (password == null) {
+				db = Db.open(url, user, (String) null);
+			} else {
+				db = Db.open(url, user, password.toCharArray());
+			}
 			DbInspector inspector = new DbInspector(db);
 			List<String> models = inspector.generateModel(schema, table, packageName, annotateSchema,
 					trimStrings);

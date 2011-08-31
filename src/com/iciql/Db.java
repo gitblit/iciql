@@ -139,6 +139,15 @@ public class Db {
 		}
 	}
 
+	public static Db open(String url) {
+		try {
+			Connection conn = JdbcUtils.getConnection(null, url, null, null);
+			return new Db(conn);
+		} catch (SQLException e) {
+			throw new IciqlException(e);
+		}
+	}
+	
 	public static Db open(String url, String user, String password) {
 		try {
 			Connection conn = JdbcUtils.getConnection(null, url, user, password);

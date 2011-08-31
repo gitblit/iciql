@@ -153,7 +153,7 @@ public class TableInspector {
 						col.isAutoIncrement = n.intValue() > 0;
 					}
 				} catch (SQLException s) {
-					throw s;
+//					throw s;
 				}
 				if (primaryKeys.size() == 1) {
 					if (col.name.equalsIgnoreCase(primaryKeys.get(0))) {

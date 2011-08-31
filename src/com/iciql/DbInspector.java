@@ -168,6 +168,12 @@ public class DbInspector {
 				rs = getMetaData().getTables(null, s, null, new String[] { "TABLE" });
 				while (rs.next()) {
 					String t = rs.getString("TABLE_NAME");
+					if (t.charAt(0) == '"') {
+						t = t.substring(1);
+					}
+					if (t.charAt(t.length() - 1) == '"') {
+						t = t.substring(0, t.length() - 1);
+					}
 					if (!t.equalsIgnoreCase(iciqlTables)) {
 						tables.add(new TableInspector(s, t, dateTimeClass));
 					}

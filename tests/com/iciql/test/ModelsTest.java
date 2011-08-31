@@ -132,7 +132,7 @@ public class ModelsTest {
 			// Derby uses username as schema name
 			assertEquals(1489, models.get(0).length());
 		} else if (dbName.equals("PostgreSQL")) {
-			assertEquals(1514, models.get(0).length());
+			assertEquals(1531, models.get(0).length());
 		} else if (dbName.equals("MySQL")) {
 			// MySQL uses timestamp default values like
 			// 0000-00-00 00:00:00 and CURRENT_TIMESTAMP

@@ -13,6 +13,8 @@
 - Created additional Define static methods to bring interface configuration to near-parity with annotation configuration
 - Documented POJO configuration option (limited subset of interface configuration)
 - Fix to PostgreSQL dialect when creating autoincrement columns
+- Fix to default dialect when creating autoincrement columns
+- Added Db.open(url) method
 
 ### Older Releases
 

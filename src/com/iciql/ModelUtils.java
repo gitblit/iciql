@@ -223,8 +223,15 @@ class ModelUtils {
 				// leading or trailing _
 				continue;
 			}
-			className.append(Character.toUpperCase(chunk.charAt(0)));
-			className.append(chunk.substring(1).toLowerCase());
+			String [] subchunks = StringUtils.arraySplit(chunk, ' ', false);
+			for (String subchunk : subchunks) {
+				if (subchunk.length() == 0) {
+					// leading or trailing space
+					continue;
+				}
+				className.append(Character.toUpperCase(subchunk.charAt(0)));
+				className.append(subchunk.substring(1).toLowerCase());
+			}
 		}
 		return className.toString();
 	}
