@@ -24,6 +24,7 @@ import static com.iciql.util.JdbcUtils.closeSilently;
 import static com.iciql.util.StringUtils.isNullOrEmpty;
 import static java.text.MessageFormat.format;
 
+import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -190,6 +191,7 @@ public class TableInspector {
 
 		// import statements
 		Set<String> imports = Utils.newHashSet();
+		imports.add(Serializable.class.getCanonicalName());
 		imports.add(IQSchema.class.getCanonicalName());
 		imports.add(IQTable.class.getCanonicalName());
 		imports.add(IQIndexes.class.getCanonicalName());
@@ -256,7 +258,9 @@ public class TableInspector {
 
 		// class declaration
 		String clazzName = ModelUtils.convertTableToClassName(table);
-		model.append(format("public class {0} '{'", clazzName)).append(eol);
+		model.append(format("public class {0} implements Serializable '{'", clazzName)).append(eol);
+		model.append(eol);
+		model.append("\tprivate static final long serialVersionUID = 1L;").append(eol);
 		model.append(eol);
 
 		// field declarations

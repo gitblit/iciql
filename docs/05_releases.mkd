@@ -6,6 +6,12 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- generated models are now serializable with a default serial version id of 1
+
+### Older Releases
+
+**0.7.1** &nbsp; *released 2011-08-31*
+
 - api change release (API v7)
 - Undeprecated interface configuration
 - Interface configuration now maps ALL fields, not just public fields
@@ -15,8 +21,6 @@
 - Fix to PostgreSQL dialect when creating autoincrement columns
 - Fix to default dialect when creating autoincrement columns
 - Added Db.open(url) method
-
-### Older Releases
 
 **0.7.0** &nbsp; *released 2011-08-17*
 
