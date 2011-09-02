@@ -83,7 +83,7 @@
 
 		<delete dir="${project.build.dir}" />
 		<mkdir dir="${project.build.dir}" />
-		<javac srcdir="${basedir}/src" destdir="${project.build.dir}">
+		<javac debug="true" srcdir="${basedir}/src" destdir="${project.build.dir}">
 			<include name="com/iciql/build/Build.java" />
 			<include name="com/iciql/Constants.java" />
 			<include name="com/iciql/utils/Utils.java" />
@@ -97,7 +97,7 @@
 				<include name="*.jar" />
 			</fileset>
 		</path>
-		<javac destdir="${project.build.dir}" failonerror="false">
+		<javac debug="true" destdir="${project.build.dir}" failonerror="false">
 			<src path="${basedir}/src" />
 			<src path="${basedir}/tests" />
 			<classpath refid="master-classpath" />
