@@ -176,12 +176,12 @@ public class Build {
 				"219a3540f3b27d7cc3b1d91d6ea046cd8723290e", "0bb50eec177acf0e94d58e0cf07262fe5164331d",
 				"c7adc475ca40c288c93054e0f4fe58f3a98c0cb5");
 
-		public static final MavenObject H2 = new MavenObject("com/h2database", "h2", "1.3.159",
-				"dd89f939661eb5593909584e1c243db0c25de130", "4d953bf765e8a13c7e06ca51165438338966c698",
-				"4c79ed03f994820a1a873150c8a9f13c667784d3");
+		public static final MavenObject H2 = new MavenObject("com/h2database", "h2", "1.3.162",
+				"fb381c2cb2805c7135cde33045955fb6e6fa94fd", "ea37eef7637816ef89b25608704d232f763d3875",
+				"7e4a113fa18ce5016e95e8ff319561f39d2b0f5a");
 
-		public static final MavenObject HSQLDB = new MavenObject("org/hsqldb", "hsqldb", "2.2.4",
-				"6a6e040b07f5ee409fc825f1c5e5b574b1fa1428", "", "");
+		public static final MavenObject HSQLDB = new MavenObject("org/hsqldb", "hsqldb", "2.2.6",
+				"cf35e8222e4af7aa9d7423b6c1f7a68b6d543867", "", "");
 
 		public static final MavenObject DERBY = new MavenObject("org/apache/derby", "derby", "10.8.1.2",
 				"2f8717d96eafe3eef3de445ba653f142d54ddab1", "", "");
