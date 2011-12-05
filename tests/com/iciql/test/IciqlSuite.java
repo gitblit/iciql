@@ -84,7 +84,8 @@ import com.iciql.util.Utils;
 @RunWith(Suite.class)
 @SuiteClasses({ AliasMapTest.class, AnnotationsTest.class, BooleanModelTest.class, ClobTest.class,
 		ConcurrencyTest.class, EnumsTest.class, ModelsTest.class, PrimitivesTest.class,
-		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UpgradesTest.class, UUIDTest.class })
+		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UpgradesTest.class, JoinTest.class,
+		UUIDTest.class })
 public class IciqlSuite {
 
 	private static final TestDb[] TEST_DBS = {

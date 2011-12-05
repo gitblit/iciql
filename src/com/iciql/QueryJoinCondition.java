@@ -17,6 +17,7 @@
 
 package com.iciql;
 
+
 /**
  * This class represents a query with join and an incomplete condition.
  * 
@@ -34,6 +35,45 @@ public class QueryJoinCondition<A> {
 		this.query = query;
 		this.join = join;
 		this.x = x;
+	}
+
+	public Query<?> is(boolean y) {
+		return addPrimitive(y);
+	}	
+
+	public Query<?> is(byte y) {
+		return addPrimitive(y);
+	}	
+
+	public Query<?> is(short y) {
+		return addPrimitive(y);
+	}	
+
+	public Query<?> is(int y) {
+		return addPrimitive(y);
+	}
+	
+	public Query<?> is(long y) {
+		return addPrimitive(y);
+	}	
+
+	public Query<?> is(float y) {
+		return addPrimitive(y);
+	}	
+
+	public Query<?> is(double y) {
+		return addPrimitive(y);
+	}	
+
+	@SuppressWarnings("unchecked")
+	private Query<?> addPrimitive(Object o) {		
+		A alias = query.getPrimitiveAliasByValue((A) o);
+		if (alias == null) {
+			join.addConditionToken(new Condition<A>(x, (A) o, CompareType.EQUAL));
+		} else {
+			join.addConditionToken(new Condition<A>(x, alias, CompareType.EQUAL));
+		}
+		return query;		
 	}
 
 	public Query<?> is(A y) {

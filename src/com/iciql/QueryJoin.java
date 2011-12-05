@@ -31,6 +31,43 @@ public class QueryJoin {
 		this.join = join;
 	}
 
+	public QueryJoinCondition<Boolean> on(boolean x) {
+		return addPrimitive(x);
+	}
+
+	public QueryJoinCondition<Byte> on(byte x) {
+		return addPrimitive(x);
+	}
+
+	public QueryJoinCondition<Short> on(short x) {
+		return addPrimitive(x);
+	}
+
+	public QueryJoinCondition<Integer> on(int x) {
+		return addPrimitive(x);
+	}
+
+	public QueryJoinCondition<Long> on(long x) {
+		return addPrimitive(x);
+	}
+
+	public QueryJoinCondition<Float> on(float x) {
+		return addPrimitive(x);
+	}
+
+	public QueryJoinCondition<Double> on(double x) {
+		return addPrimitive(x);
+	}
+
+	private <A> QueryJoinCondition<A> addPrimitive(A x) {		
+		A alias = query.getPrimitiveAliasByValue(x);
+		if (alias == null) {
+			// this will result in an unmapped field exception
+			return new QueryJoinCondition<A>(query, join, x);
+		}
+		return new QueryJoinCondition<A>(query, join, alias);
+	}
+
 	public <A> QueryJoinCondition<A> on(A x) {
 		return new QueryJoinCondition<A>(query, join, x);
 	}
