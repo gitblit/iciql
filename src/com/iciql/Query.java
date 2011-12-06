@@ -725,7 +725,7 @@ public class Query<T> {
 	 */
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <U> QueryJoin innerJoin(U alias) {
+	public <A> QueryJoin<T> innerJoin(A alias) {
 		TableDefinition<T> def = (TableDefinition<T>) db.define(alias.getClass());
 		SelectTable<T> join = new SelectTable(db, this, alias, false);
 		def.initSelectObject(join, alias, aliasMap);

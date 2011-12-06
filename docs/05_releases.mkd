@@ -8,6 +8,7 @@
 
 - Fixed joins on primitives
 - Fixed group by on primitives
+- Improved fluent/type-safety of joins
 
 ### Older Releases
 

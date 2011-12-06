@@ -25,48 +25,48 @@ package com.iciql;
  *            the incomplete condition data type
  */
 
-public class QueryJoinCondition<A> {
+public class QueryJoinCondition<T, A> {
 
-	private Query<?> query;
-	private SelectTable<?> join;
+	private Query<T> query;
+	private SelectTable<T> join;
 	private A x;
 
-	QueryJoinCondition(Query<?> query, SelectTable<?> join, A x) {
+	QueryJoinCondition(Query<T> query, SelectTable<T> join, A x) {
 		this.query = query;
 		this.join = join;
 		this.x = x;
 	}
 
-	public Query<?> is(boolean y) {
+	public Query<T> is(boolean y) {
 		return addPrimitive(y);
 	}	
 
-	public Query<?> is(byte y) {
+	public Query<T> is(byte y) {
 		return addPrimitive(y);
 	}	
 
-	public Query<?> is(short y) {
+	public Query<T> is(short y) {
 		return addPrimitive(y);
 	}	
 
-	public Query<?> is(int y) {
+	public Query<T> is(int y) {
 		return addPrimitive(y);
 	}
 	
-	public Query<?> is(long y) {
+	public Query<T> is(long y) {
 		return addPrimitive(y);
 	}	
 
-	public Query<?> is(float y) {
+	public Query<T> is(float y) {
 		return addPrimitive(y);
 	}	
 
-	public Query<?> is(double y) {
+	public Query<T> is(double y) {
 		return addPrimitive(y);
 	}	
 
 	@SuppressWarnings("unchecked")
-	private Query<?> addPrimitive(Object o) {		
+	private Query<T> addPrimitive(Object o) {		
 		A alias = query.getPrimitiveAliasByValue((A) o);
 		if (alias == null) {
 			join.addConditionToken(new Condition<A>(x, (A) o, CompareType.EQUAL));
@@ -76,7 +76,7 @@ public class QueryJoinCondition<A> {
 		return query;		
 	}
 
-	public Query<?> is(A y) {
+	public Query<T> is(A y) {
 		join.addConditionToken(new Condition<A>(x, y, CompareType.EQUAL));
 		return query;
 	}
