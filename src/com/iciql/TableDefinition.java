@@ -722,8 +722,14 @@ public class TableDefinition<T> {
 				stat.appendSQL(", ");
 			}
 			FieldDefinition def = fields.get(i);
-			Object obj = def.getValue(x);
-			query.appendSQL(stat, x, obj);
+			if (def.isPrimitive) {
+				Object obj = def.getValue(x);
+				Object alias = query.getPrimitiveAliasByValue(obj);
+				query.appendSQL(stat, x, alias);
+			} else {
+				Object obj = def.getValue(x);
+				query.appendSQL(stat, x, obj);
+			}
 		}
 	}
 }

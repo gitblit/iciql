@@ -170,6 +170,8 @@ public class IciqlSuite {
 		db.dropTable(ProductInheritedAnnotation.class);
 		db.dropTable(ProductMixedAnnotation.class);
 		db.dropTable(SupportedTypes.class);
+		db.dropTable(JoinTest.UserId.class);
+		db.dropTable(JoinTest.UserNote.class);
 
 		return db;
 	}

@@ -39,6 +39,9 @@ public class JoinTest {
 	@Before
 	public void setup() {
 		db = IciqlSuite.openNewDb();
+		
+		db.insertAll(UserId.getList());
+		db.insertAll(UserNote.getList());
 	}
 
 	@After
@@ -48,9 +51,6 @@ public class JoinTest {
 
 	@Test
 	public void testPrimitiveJoin() throws Exception {
-		db.insertAll(UserId.getList());
-		db.insertAll(UserNote.getList());
-
 		final UserId u = new UserId();
 		final UserNote n = new UserNote();
 
@@ -62,28 +62,23 @@ public class JoinTest {
 						text = n.text;
 					}
 				});
-
-		db.dropTable(UserId.class);
-		db.dropTable(UserNote.class);
-
 		assertEquals(3, notes.size());
 	}
 	
 	@Test
 	public void testJoin() throws Exception {
-		db.insertAll(UserId.getList());
-		db.insertAll(UserNote.getList());
-
 		final UserId u = new UserId();
 		final UserNote n = new UserNote();
 
 		// this query returns 1 UserId if the user has a note
-		List<UserId> users = db.from(u).innerJoin(n).on(u.id).is(n.userId).groupBy(u.id).where(u.id).is(2).select();
-		
-		db.dropTable(UserId.class);
-		db.dropTable(UserNote.class);
+		// it's purpose is to confirm fluency/type-safety on a very simple
+		// join case where the main table is filtered/reduced by hits in a
+		// related table
+
+		List<UserId> users = db.from(u).innerJoin(n).on(u.id).is(n.userId).where(u.id).is(2).selectDistinct();
 
 		assertEquals(1, users.size());
+		assertEquals(2, users.get(0).id);
 	}
 
 	@IQTable

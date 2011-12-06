@@ -6,8 +6,10 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
-- Fixed joins on primitives
-- Fixed group by on primitives
+- api change release (API v8)
+- Fixed JOIN ON primitives
+- Fixed GROUP BY primitives
+- Fixed primitive references when selecting into a custom type with primitives
 - Improved fluent/type-safety of joins
 
 ### Older Releases
