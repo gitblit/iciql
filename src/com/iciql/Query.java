@@ -541,31 +541,31 @@ public class Query<T> {
 	}
 
 	public Query<T> groupBy(boolean field) {
-		return orderByPrimitive(field);
+		return groupByPrimitive(field);
 	}
 
 	public Query<T> groupBy(byte field) {
-		return orderByPrimitive(field);
+		return groupByPrimitive(field);
 	}
 
 	public Query<T> groupBy(short field) {
-		return orderByPrimitive(field);
+		return groupByPrimitive(field);
 	}
 
 	public Query<T> groupBy(int field) {
-		return orderByPrimitive(field);
+		return groupByPrimitive(field);
 	}
 
 	public Query<T> groupBy(long field) {
-		return orderByPrimitive(field);
+		return groupByPrimitive(field);
 	}
 
 	public Query<T> groupBy(float field) {
-		return orderByPrimitive(field);
+		return groupByPrimitive(field);
 	}
 
 	public Query<T> groupBy(double field) {
-		return orderByPrimitive(field);
+		return groupByPrimitive(field);
 	}
 
 	Query<T> groupByPrimitive(Object field) {

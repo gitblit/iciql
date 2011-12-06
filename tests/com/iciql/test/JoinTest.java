@@ -28,6 +28,7 @@ import org.junit.Test;
 import com.iciql.Db;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
+import com.iciql.util.IciqlLogger;
 
 /**
  * Tests of Joins.
@@ -67,6 +68,23 @@ public class JoinTest {
 		db.dropTable(UserNote.class);
 
 		assertEquals(3, notes.size());
+	}
+	
+	@Test
+	public void testJoin() throws Exception {
+		db.insertAll(UserId.getList());
+		db.insertAll(UserNote.getList());
+
+		final UserId u = new UserId();
+		final UserNote n = new UserNote();
+
+		// this query returns 1 UserId if the user has a note
+		List<UserId> users = (List<UserId>) db.from(u).innerJoin(n).on(u.id).is(n.userId).groupBy(u.id).where(u.id).is(2).select();
+		
+		db.dropTable(UserId.class);
+		db.dropTable(UserNote.class);
+
+		assertEquals(1, users.size());
 	}
 
 	@IQTable
