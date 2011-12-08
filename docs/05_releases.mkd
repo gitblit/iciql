@@ -6,13 +6,19 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- Added list alternatives to the varargs methods because it was too easy to forget list.toArray() for the varargs methods  
+List<T> Db.executeQuery(Class<? extends T> modelClass, String sql, List<?> args)
+ResultSet executeQuery(String sql, List<?> args)
+
+### Older Releases
+
+**0.7.3** &nbsp; *released 2011-12-06*
+
 - api change release (API v8)
 - Fixed JOIN ON primitives
 - Fixed GROUP BY primitives
 - Fixed primitive references when selecting into a custom type with primitives
 - Improved fluent/type-safety of joins
-
-### Older Releases
 
 **0.7.2** &nbsp; *released 2011-11-30*
 

@@ -448,6 +448,26 @@ public class Db {
 		return (TableDefinition<T>) classMap.get(clazz);
 	}
 
+
+	/**
+	 * Run a SQL query directly against the database.
+	 * 
+	 * Be sure to close the ResultSet with
+	 * 
+	 * <pre>
+	 * JdbcUtils.closeSilently(rs, true);
+	 * </pre>
+	 * 
+	 * @param sql
+	 *            the SQL statement
+	 * @param args
+	 *            optional object arguments for x=? tokens in query
+	 * @return the result set
+	 */
+	public ResultSet executeQuery(String sql, List<?> args) {
+		return executeQuery(sql, args.toArray());
+	}
+	
 	/**
 	 * Run a SQL query directly against the database.
 	 * 
@@ -480,6 +500,20 @@ public class Db {
 		}
 	}
 
+	/**
+	 * Run a SQL query directly against the database and map the results to the
+	 * model class.
+	 * 
+	 * @param modelClass
+	 *            the model class to bind the query ResultSet rows into.
+	 * @param sql
+	 *            the SQL statement
+	 * @return the result set
+	 */
+	public <T> List<T> executeQuery(Class<? extends T> modelClass, String sql, List<?> args) {
+		return executeQuery(modelClass, sql, args.toArray());
+	}
+	
 	/**
 	 * Run a SQL query directly against the database and map the results to the
 	 * model class.
