@@ -138,6 +138,20 @@ public class Db {
 			throw new IciqlException(e);
 		}
 	}
+	
+	/**
+	 * Convenience function to avoid import statements in application code.
+	 */
+	public static void activateConsoleLogger() {
+		IciqlLogger.activateConsoleLogger();
+	}
+
+	/**
+	 * Convenience function to avoid import statements in application code.
+	 */
+	public static void deactivateConsoleLogger() {
+		IciqlLogger.deactivateConsoleLogger();
+	}
 
 	public static Db open(String url) {
 		try {
@@ -273,9 +287,10 @@ public class Db {
 		List<T> result = new ArrayList<T>();
 		TableDefinition<T> def = (TableDefinition<T>) define(modelClass);
 		try {
+			int [] columns = def.mapColumns(rs);
 			while (rs.next()) {
 				T item = Utils.newObject(modelClass);
-				def.readRow(item, rs);
+				def.readRow(item, rs, columns);
 				result.add(item);
 			}
 		} catch (SQLException e) {

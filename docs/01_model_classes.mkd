@@ -23,7 +23,7 @@ can be used for all iciql expressions
 <td>VARCHAR *(length > 0)* or CLOB *(length == 0)*</td></tr>
  	
 <tr><td>java.lang.Boolean</td><td>boolean</td>
-<td>BOOLEAN</td></tr>
+<td>BOOLEAN<br/><i>can only **declare and explicitly reference** one <u>primitive boolean</u> per model<br/>multiple primitives are allowed if not using where/set/on/and/or/groupBy/orderBy(boolean)</i></td></tr>
 	
 <tr><td>java.lang.Byte</td><td>byte</td>
 <td>TINYINT</td></tr>

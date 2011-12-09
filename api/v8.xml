@@ -43,7 +43,7 @@
  type="java.lang.String"
  transient="false"
  volatile="false"
- value="&quot;0.7.3&quot;"
+ value="&quot;0.7.4-SNAPSHOT&quot;"
  static="true"
  final="true"
  deprecated="not deprecated"
@@ -54,7 +54,7 @@
  type="java.lang.String"
  transient="false"
  volatile="false"
- value="&quot;2011-12-06&quot;"
+ value="&quot;PENDING&quot;"
  static="true"
  final="true"
  deprecated="not deprecated"
@@ -70,6 +70,17 @@
  deprecated="not deprecated"
  visibility="public"
 >
+<method name="activateConsoleLogger"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
 <method name="buildObjects"
  return="java.util.List&lt;T&gt;"
  abstract="false"
@@ -91,6 +102,17 @@
  native="false"
  synchronized="false"
  static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="deactivateConsoleLogger"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
  final="false"
  deprecated="not deprecated"
  visibility="public"
@@ -153,6 +175,23 @@
 </parameter>
 </method>
 <method name="executeQuery"
+ return="java.util.List&lt;T&gt;"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="modelClass" type="java.lang.Class&lt;? extends T&gt;">
+</parameter>
+<parameter name="sql" type="java.lang.String">
+</parameter>
+<parameter name="args" type="java.util.List&lt;?&gt;">
+</parameter>
+</method>
+<method name="executeQuery"
  return="java.sql.ResultSet"
  abstract="false"
  native="false"
@@ -165,6 +204,21 @@
 <parameter name="sql" type="java.lang.String">
 </parameter>
 <parameter name="args" type="java.lang.Object...">
+</parameter>
+</method>
+<method name="executeQuery"
+ return="java.sql.ResultSet"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="sql" type="java.lang.String">
+</parameter>
+<parameter name="args" type="java.util.List&lt;?&gt;">
 </parameter>
 </method>
 <method name="executeUpdate"
@@ -1147,6 +1201,17 @@
 </implements>
 </class>
 <class name="Iciql.IQEnum"
+ extends="java.lang.Object"
+ abstract="true"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<implements name="java.lang.annotation.Annotation">
+</implements>
+</class>
+<class name="Iciql.IQFunction"
  extends="java.lang.Object"
  abstract="true"
  static="true"
@@ -2155,6 +2220,21 @@
 <parameter name="fragment" type="java.lang.String">
 </parameter>
 <parameter name="args" type="java.lang.Object...">
+</parameter>
+</method>
+<method name="where"
+ return="com.iciql.QueryWhere&lt;T&gt;"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="fragment" type="java.lang.String">
+</parameter>
+<parameter name="args" type="java.util.List&lt;?&gt;">
 </parameter>
 </method>
 <method name="where"

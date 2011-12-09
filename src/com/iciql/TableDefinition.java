@@ -30,6 +30,7 @@ import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQEnum;
+import com.iciql.Iciql.IQFunction;
 import com.iciql.Iciql.IQIgnore;
 import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQIndexes;
@@ -73,6 +74,7 @@ public class TableDefinition<T> {
 		String dataType;
 		int length;
 		int scale;
+		boolean isFunction;
 		boolean isPrimaryKey;
 		boolean isAutoIncrement;
 		boolean trim;
@@ -115,6 +117,10 @@ public class TableDefinition<T> {
 		}
 
 		private Object read(ResultSet rs, int columnIndex) {
+			if (columnIndex == 0) {
+				// unmapped column or function field
+				return null;
+			}
 			try {
 				return rs.getObject(columnIndex);
 			} catch (SQLException e) {
@@ -129,6 +135,7 @@ public class TableDefinition<T> {
 	int tableVersion;
 	List<String> primaryKeyColumnNames;
 	boolean memoryTable;
+	boolean multiplePrimitiveBools;
 
 	private boolean createIfRequired = true;
 	private Class<T> clazz;
@@ -354,6 +361,7 @@ public class TableDefinition<T> {
 				throw new IciqlException(e, "failed to get default object for {0}", columnName);
 			}
 
+			boolean isFunction = f.isAnnotationPresent(IQFunction.class);
 			boolean hasAnnotation = f.isAnnotationPresent(IQColumn.class);
 			if (hasAnnotation) {
 				IQColumn col = f.getAnnotation(IQColumn.class);
@@ -385,6 +393,7 @@ public class TableDefinition<T> {
 				fieldDef.scale = scale;
 				fieldDef.trim = trim;
 				fieldDef.nullable = nullable;
+				fieldDef.isFunction = isFunction;
 				fieldDef.defaultValue = defaultValue;
 				fieldDef.enumType = enumType;
 				fieldDef.dataType = ModelUtils.getDataType(fieldDef);
@@ -392,13 +401,29 @@ public class TableDefinition<T> {
 			}
 		}
 		List<String> primaryKey = Utils.newArrayList();
+		int primitiveBoolean = 0;
 		for (FieldDefinition fieldDef : fields) {
 			if (fieldDef.isPrimaryKey) {
 				primaryKey.add(fieldDef.columnName);
 			}
+			if (fieldDef.isPrimitive && fieldDef.field.getType().equals(boolean.class)) {
+				primitiveBoolean++;
+			}
+		}
+		if (primitiveBoolean > 1) {
+			multiplePrimitiveBools = true;
+			IciqlLogger
+					.warn("Model {0} has multiple primitive booleans! Possible where,set,join clause problem!");
 		}
 		if (primaryKey.size() > 0) {
 			setPrimaryKey(primaryKey);
+		}
+	}
+
+	void checkMultipleBooleans() {
+		if (multiplePrimitiveBools) {
+			throw new IciqlException(
+					"Can not explicitly reference multiple primitive booleans in a model class!");
 		}
 	}
 
@@ -698,10 +723,47 @@ public class TableDefinition<T> {
 		}
 	}
 
-	void readRow(Object item, ResultSet rs) {
+	/**
+	 * Most queries executed by iciql have named select lists (select alpha,
+	 * beta where...) but sometimes a wildcard select is executed (select *).
+	 * When a wildcard query is executed on a table that has more columns than
+	 * are mapped in your model object this creates a column mapping issue. JaQu
+	 * assumed that you can always use the integer index of the reflectively
+	 * mapped field definition to determine position in the result set.
+	 * 
+	 * This is not always true.
+	 * 
+	 * So iciql maps column names to column index in the result set to properly
+	 * map the results of wildcard queries.
+	 * 
+	 * @param rs
+	 * @return
+	 */
+	int[] mapColumns(ResultSet rs) {
+		int[] columns = new int[fields.size()];
 		for (int i = 0; i < fields.size(); i++) {
-			FieldDefinition def = fields.get(i);
-			Object o = def.read(rs, i + 1);
+			try {
+				FieldDefinition def = fields.get(i);
+				int columnIndex;
+				if (def.isFunction) {
+					// XXX review functions _always_ map after fields?
+					columnIndex = i + 1;
+				} else {
+					columnIndex = rs.findColumn(def.columnName);	
+				}				
+				columns[i] = columnIndex;
+			} catch (SQLException s) {
+				throw new IciqlException(s);
+			}
+		}
+		return columns;
+	}
+
+	void readRow(Object item, ResultSet rs, int[] columns) {
+		for (int i = 0; i < fields.size(); i++) {
+			FieldDefinition def = fields.get(i);			
+			int index = columns[i];
+			Object o = def.read(rs, index);
 			def.setValue(item, o);
 		}
 	}

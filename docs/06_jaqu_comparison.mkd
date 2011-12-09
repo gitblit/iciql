@@ -10,6 +10,7 @@ This is an overview of the fundamental differences between the original JaQu pro
 <tr><td>databases</td><td>H2, HSQL, Derby, MySQL, and PostreSQL</td><td>H2 only</td></tr>
 <tr><td>logging</td><td>console, SLF4J, or custom logging</td><td>console logging</td></tr>
 <tr><td>exceptions</td><td>always includes generated statement in exception, when available</td><td>--</td></tr>
+<tr><td>column mappings</td><td>result sets built by column name</td><td>result sets built by field index<br/>this can fail for dynamic queries or joins</td></tr>
 <tr><th colspan="3">syntax and api</th></tr>
 <tr><td>dynamic queries</td><td>methods and where clauses for dynamic queries that build iciql objects</td><td>--</td></tr>
 <tr><td>DROP</td><td>syntax to drop a table</td><td></td></tr>

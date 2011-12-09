@@ -123,9 +123,10 @@ public class Query<T> {
 		appendFromWhere(stat);
 		ResultSet rs = stat.executeQuery();
 		try {
+			int[] columns = def.mapColumns(rs);
 			while (rs.next()) {
 				T item = from.newObject();
-				from.getAliasDefinition().readRow(item, rs);
+				def.readRow(item, rs, columns);
 				result.add(item);
 			}
 		} catch (SQLException e) {
@@ -150,6 +151,7 @@ public class Query<T> {
 	}
 
 	public UpdateColumnSet<T, Boolean> set(boolean field) {
+		from.getAliasDefinition().checkMultipleBooleans();
 		return setPrimitive(field);
 	}
 
@@ -269,9 +271,10 @@ public class Query<T> {
 		appendFromWhere(stat);
 		ResultSet rs = stat.executeQuery();
 		try {
+			int[] columns = def.mapColumns(rs);
 			while (rs.next()) {
 				X row = Utils.newObject(clazz);
-				def.readRow(row, rs);
+				def.readRow(row, rs, columns);
 				result.add(row);
 			}
 		} catch (SQLException e) {
@@ -328,6 +331,7 @@ public class Query<T> {
 	 * @return a query condition to continue building the condition
 	 */
 	public QueryCondition<T, Boolean> where(boolean x) {
+		from.getAliasDefinition().checkMultipleBooleans();
 		return wherePrimitive(x);
 	}
 
@@ -449,6 +453,10 @@ public class Query<T> {
 		return new QueryWhere<T>(this);
 	}
 
+	public QueryWhere<T> where(String fragment, List<?> args) {
+		return this.where(fragment, args.toArray());
+	}
+
 	public QueryWhere<T> where(String fragment, Object... args) {
 		conditions.add(new RuntimeToken(fragment, args));
 		return new QueryWhere<T>(this);
@@ -477,6 +485,7 @@ public class Query<T> {
 	}
 
 	public Query<T> orderBy(boolean field) {
+		from.getAliasDefinition().checkMultipleBooleans();
 		return orderByPrimitive(field);
 	}
 
@@ -541,6 +550,7 @@ public class Query<T> {
 	}
 
 	public Query<T> groupBy(boolean field) {
+		from.getAliasDefinition().checkMultipleBooleans();
 		return groupByPrimitive(field);
 	}
 
@@ -735,6 +745,10 @@ public class Query<T> {
 
 	Db getDb() {
 		return db;
+	}
+
+	SelectTable<T> getFrom() {
+		return from;
 	}
 
 	boolean isJoin() {

@@ -42,6 +42,7 @@ public class QueryWhere<T> {
 	 * @return a query condition to continue building the condition
 	 */
 	public QueryCondition<T, Boolean> and(boolean x) {
+		query.getFrom().getAliasDefinition().checkMultipleBooleans();
 		return addPrimitive(ConditionAndOr.AND, x);
 	}
 
@@ -111,7 +112,7 @@ public class QueryWhere<T> {
 		return addPrimitive(ConditionAndOr.AND, x);
 	}
 
-	private <A> QueryCondition<T, A> addPrimitive(ConditionAndOr condition, A x) {
+	private <A> QueryCondition<T, A> addPrimitive(ConditionAndOr condition, A x) {		
 		query.addConditionToken(condition);
 		A alias = query.getPrimitiveAliasByValue(x);
 		if (alias == null) {
@@ -141,6 +142,7 @@ public class QueryWhere<T> {
 	 * @return a query condition to continue building the condition
 	 */
 	public QueryCondition<T, Boolean> or(boolean x) {
+		query.getFrom().getAliasDefinition().checkMultipleBooleans();
 		return addPrimitive(ConditionAndOr.OR, x);
 	}
 
@@ -273,6 +275,7 @@ public class QueryWhere<T> {
 	 * @return the query
 	 */
 	public QueryWhere<T> orderBy(boolean field) {
+		query.getFrom().getAliasDefinition().checkMultipleBooleans();
 		return orderByPrimitive(field);
 	}
 

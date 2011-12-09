@@ -25,6 +25,8 @@ import java.util.List;
 import org.junit.Test;
 
 import com.iciql.Db;
+import com.iciql.IciqlException;
+import com.iciql.test.models.MultipleBoolsModel;
 import com.iciql.test.models.PrimitivesModel;
 
 /**
@@ -80,6 +82,21 @@ public class PrimitivesTest {
 		assertEquals(1, db.update(retrievedModel));
 		assertEquals(1, db.delete(retrievedModel));
 
+		db.close();
+	}
+	
+	@Test
+	public void testMultipleBooleans() {
+		Db db = IciqlSuite.openNewDb();
+		db.insertAll(MultipleBoolsModel.getList());
+		
+		MultipleBoolsModel m = new MultipleBoolsModel();
+		try {
+			db.from(m).where(m.a).is(true).select();
+			assertTrue(false);
+		} catch (IciqlException e) {
+			assertTrue(true);
+		}
 		db.close();
 	}
 }

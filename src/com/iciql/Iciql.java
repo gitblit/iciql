@@ -500,6 +500,17 @@ public interface Iciql {
 	}
 
 	/**
+	 * Annotation to define a field that should contain the result a function.
+	 * This annotation ensures that functions mapped in anonymous inner classes
+	 * can still be referenced in the ResultSet after the switch to dynamic
+	 * column-name mapping from fixed position column mapping.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public @interface IQFunction{	
+	}
+	
+	/**
 	 * Annotation to define an ignored field.
 	 */
 	@Retention(RetentionPolicy.RUNTIME)

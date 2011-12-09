@@ -32,6 +32,7 @@ public class QueryJoin<T> {
 	}
 
 	public QueryJoinCondition<T, Boolean> on(boolean x) {
+		query.getFrom().getAliasDefinition().checkMultipleBooleans();
 		return addPrimitive(x);
 	}
 
@@ -59,7 +60,7 @@ public class QueryJoin<T> {
 		return addPrimitive(x);
 	}
 
-	private <A> QueryJoinCondition<T, A> addPrimitive(A x) {		
+	private <A> QueryJoinCondition<T, A> addPrimitive(A x) {
 		A alias = query.getPrimitiveAliasByValue(x);
 		if (alias == null) {
 			// this will result in an unmapped field exception

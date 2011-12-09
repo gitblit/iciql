@@ -6,9 +6,29 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
-- Added list alternatives to the varargs methods because it was too easy to forget list.toArray() for the varargs methods  
-List<T> Db.executeQuery(Class<? extends T> modelClass, String sql, List<?> args)
-ResultSet executeQuery(String sql, List<?> args)
+- Disallow **declaring and explicitly referencing** multiple primitive booleans in a single model.<br/>A runtime exception will be thrown if an attempt to use where/set/on/and/or/groupBy/orderBy(boolean) and your model has multiple mapped primitive boolean fields.
+- Added list alternatives to the varargs methods because it was too easy to forget list.toArray()<br/>
+*Db.executeQuery(Class&lt;? extends T&gt; modelClass, String sql, List&lt;?&gt; args)*<br/>
+*Db.executeQuery(String sql, List&lt;?&gt; args)*<br/>
+*Query.where(String fragment, List&lt;?&gt; args)*<br/>
+- Fixed inherited JaQu bug related to model classes and wildcard queries (select *).<p/>
+Iciql maps resultset columns by the index of the model class field from a list.  This assumes that *all* columns in the resultset have a corresponding model field definition.  This works fine for most queries because iciql explicitly selects columns from the table (*select alpha, beta...*) when you execute *select()*.  The problem is when iciql issues a join or a custom wildcard query and your model does not represent all columns in the resultset: columns and fields fail to correctly line-up.<p/>  
+The fix for this (building a column index from the resultset by column name lookup) breaks selecting into *some* anonymous inner classes.  At issue is that the inner class field names must now match the column names or the fields must be explicitly annotated with the column names.<p/>**Example** (notice *IQColumn* annotation)<br/>
+%BEGINCODE%
+public static class ProductPrice {
+	public String productName;
+	public String category;
+	@IQColumn(name = "unitPrice")
+	public Double price;
+}
+
+db....select(new ProductPrice() {{
+    productName = p.productName;
+	category = p.category;
+	// or unitPrice = p.unitPrice;
+	price = p.unitPrice;
+}}
+%ENDCODE%
 
 ### Older Releases
 

@@ -8,6 +8,13 @@ List&lt;Product&gt; allProducts = db.from(p).select();
 Customer c = new Customer();
 List&lt;Customer&gt; waCustomers = db.from(c). where(c.region).is("WA").select();
 
+public static class ProductPrice {
+	public String productName;
+	public String category;
+	@IQColumn(name = "unitPrice")
+	public Double price;
+}
+
 // select with generation of new anonymous inner class
 List&lt;ProductPrice&gt; productPrices =
     db.from(p).
