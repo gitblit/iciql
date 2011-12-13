@@ -39,7 +39,7 @@ public class JoinTest {
 	@Before
 	public void setup() {
 		db = IciqlSuite.openNewDb();
-		
+
 		db.insertAll(UserId.getList());
 		db.insertAll(UserNote.getList());
 	}
@@ -64,7 +64,7 @@ public class JoinTest {
 				});
 		assertEquals(3, notes.size());
 	}
-	
+
 	@Test
 	public void testJoin() throws Exception {
 		final UserId u = new UserId();

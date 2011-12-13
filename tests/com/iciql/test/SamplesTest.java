@@ -40,7 +40,6 @@ import org.junit.Test;
 import com.iciql.Db;
 import com.iciql.Filter;
 import com.iciql.Iciql.IQColumn;
-import com.iciql.Iciql.IQFunction;
 import com.iciql.test.models.ComplexObject;
 import com.iciql.test.models.Customer;
 import com.iciql.test.models.Order;
@@ -409,7 +408,6 @@ public class SamplesTest {
 	 */
 	public static class ProductGroup {
 		public String category;
-		@IQFunction
 		public Long productCount;
 
 		public String toString() {

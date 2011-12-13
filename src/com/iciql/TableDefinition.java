@@ -30,7 +30,6 @@ import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQEnum;
-import com.iciql.Iciql.IQFunction;
 import com.iciql.Iciql.IQIgnore;
 import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQIndexes;
@@ -74,7 +73,6 @@ public class TableDefinition<T> {
 		String dataType;
 		int length;
 		int scale;
-		boolean isFunction;
 		boolean isPrimaryKey;
 		boolean isAutoIncrement;
 		boolean trim;
@@ -117,10 +115,6 @@ public class TableDefinition<T> {
 		}
 
 		private Object read(ResultSet rs, int columnIndex) {
-			if (columnIndex == 0) {
-				// unmapped column or function field
-				return null;
-			}
 			try {
 				return rs.getObject(columnIndex);
 			} catch (SQLException e) {
@@ -361,7 +355,6 @@ public class TableDefinition<T> {
 				throw new IciqlException(e, "failed to get default object for {0}", columnName);
 			}
 
-			boolean isFunction = f.isAnnotationPresent(IQFunction.class);
 			boolean hasAnnotation = f.isAnnotationPresent(IQColumn.class);
 			if (hasAnnotation) {
 				IQColumn col = f.getAnnotation(IQColumn.class);
@@ -393,7 +386,6 @@ public class TableDefinition<T> {
 				fieldDef.scale = scale;
 				fieldDef.trim = trim;
 				fieldDef.nullable = nullable;
-				fieldDef.isFunction = isFunction;
 				fieldDef.defaultValue = defaultValue;
 				fieldDef.enumType = enumType;
 				fieldDef.dataType = ModelUtils.getDataType(fieldDef);
@@ -727,30 +719,35 @@ public class TableDefinition<T> {
 	 * Most queries executed by iciql have named select lists (select alpha,
 	 * beta where...) but sometimes a wildcard select is executed (select *).
 	 * When a wildcard query is executed on a table that has more columns than
-	 * are mapped in your model object this creates a column mapping issue. JaQu
-	 * assumed that you can always use the integer index of the reflectively
-	 * mapped field definition to determine position in the result set.
+	 * are mapped in your model object, this creates a column mapping issue.
+	 * JaQu assumed that you can always use the integer index of the
+	 * reflectively mapped field definition to determine position in the result
+	 * set.
 	 * 
 	 * This is not always true.
 	 * 
-	 * So iciql maps column names to column index in the result set to properly
-	 * map the results of wildcard queries.
+	 * iciql identifies when a select * query is executed and maps column names
+	 * to a column index from the result set. If the select statement is
+	 * explicit, then the standard assumed column index is used instead.
 	 * 
 	 * @param rs
 	 * @return
 	 */
-	int[] mapColumns(ResultSet rs) {
+	int[] mapColumns(boolean wildcardSelect, ResultSet rs) {
 		int[] columns = new int[fields.size()];
 		for (int i = 0; i < fields.size(); i++) {
 			try {
 				FieldDefinition def = fields.get(i);
 				int columnIndex;
-				if (def.isFunction) {
-					// XXX review functions _always_ map after fields?
-					columnIndex = i + 1;
+				if (wildcardSelect) {
+					// select *
+					// create column index by field name
+					columnIndex = rs.findColumn(def.columnName);
 				} else {
-					columnIndex = rs.findColumn(def.columnName);	
-				}				
+					// select alpha, beta, gamma, etc
+					// explicit select order
+					columnIndex = i + 1;
+				}
 				columns[i] = columnIndex;
 			} catch (SQLException s) {
 				throw new IciqlException(s);
@@ -761,7 +758,7 @@ public class TableDefinition<T> {
 
 	void readRow(Object item, ResultSet rs, int[] columns) {
 		for (int i = 0; i < fields.size(); i++) {
-			FieldDefinition def = fields.get(i);			
+			FieldDefinition def = fields.get(i);
 			int index = columns[i];
 			Object o = def.read(rs, index);
 			def.setValue(item, o);

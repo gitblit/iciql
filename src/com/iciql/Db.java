@@ -37,8 +37,8 @@ import javax.sql.DataSource;
 import com.iciql.DbUpgrader.DefaultDbUpgrader;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
-import com.iciql.util.JdbcUtils;
 import com.iciql.util.IciqlLogger;
+import com.iciql.util.JdbcUtils;
 import com.iciql.util.StringUtils;
 import com.iciql.util.Utils;
 import com.iciql.util.WeakIdentityHashMap;
@@ -139,20 +139,6 @@ public class Db {
 		}
 	}
 	
-	/**
-	 * Convenience function to avoid import statements in application code.
-	 */
-	public static void activateConsoleLogger() {
-		IciqlLogger.activateConsoleLogger();
-	}
-
-	/**
-	 * Convenience function to avoid import statements in application code.
-	 */
-	public static void deactivateConsoleLogger() {
-		IciqlLogger.deactivateConsoleLogger();
-	}
-
 	public static Db open(String url) {
 		try {
 			Connection conn = JdbcUtils.getConnection(null, url, null, null);
@@ -161,7 +147,7 @@ public class Db {
 			throw new IciqlException(e);
 		}
 	}
-	
+
 	public static Db open(String url, String user, String password) {
 		try {
 			Connection conn = JdbcUtils.getConnection(null, url, user, password);
@@ -201,6 +187,20 @@ public class Db {
 		} catch (SQLException e) {
 			throw new IciqlException(e);
 		}
+	}
+	
+	/**
+	 * Convenience function to avoid import statements in application code.
+	 */
+	public void activateConsoleLogger() {
+		IciqlLogger.activateConsoleLogger();
+	}
+
+	/**
+	 * Convenience function to avoid import statements in application code.
+	 */
+	public void deactivateConsoleLogger() {
+		IciqlLogger.deactivateConsoleLogger();
 	}
 
 	public <T> void insert(T t) {
@@ -282,12 +282,16 @@ public class Db {
 		return rc;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> List<T> buildObjects(Class<? extends T> modelClass, ResultSet rs) {
+		return buildObjects(modelClass, false, rs);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> List<T> buildObjects(Class<? extends T> modelClass, boolean wildcardSelect, ResultSet rs) {
 		List<T> result = new ArrayList<T>();
 		TableDefinition<T> def = (TableDefinition<T>) define(modelClass);
 		try {
-			int [] columns = def.mapColumns(rs);
+			int[] columns = def.mapColumns(wildcardSelect, rs);
 			while (rs.next()) {
 				T item = Utils.newObject(modelClass);
 				def.readRow(item, rs, columns);
@@ -463,7 +467,6 @@ public class Db {
 		return (TableDefinition<T>) classMap.get(clazz);
 	}
 
-
 	/**
 	 * Run a SQL query directly against the database.
 	 * 
@@ -482,7 +485,7 @@ public class Db {
 	public ResultSet executeQuery(String sql, List<?> args) {
 		return executeQuery(sql, args.toArray());
 	}
-	
+
 	/**
 	 * Run a SQL query directly against the database.
 	 * 
@@ -528,7 +531,7 @@ public class Db {
 	public <T> List<T> executeQuery(Class<? extends T> modelClass, String sql, List<?> args) {
 		return executeQuery(modelClass, sql, args.toArray());
 	}
-	
+
 	/**
 	 * Run a SQL query directly against the database and map the results to the
 	 * model class.
@@ -552,7 +555,9 @@ public class Db {
 				}
 				rs = stat.executeQuery();
 			}
-			return buildObjects(modelClass, rs);
+			boolean wildcardSelect = sql.toLowerCase().startsWith("select *")
+					|| sql.toLowerCase().startsWith("select distinct *");
+			return buildObjects(modelClass, wildcardSelect, rs);
 		} catch (SQLException e) {
 			throw new IciqlException(e);
 		} finally {

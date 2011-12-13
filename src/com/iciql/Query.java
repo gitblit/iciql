@@ -123,7 +123,7 @@ public class Query<T> {
 		appendFromWhere(stat);
 		ResultSet rs = stat.executeQuery();
 		try {
-			int[] columns = def.mapColumns(rs);
+			int[] columns = def.mapColumns(false, rs);
 			while (rs.next()) {
 				T item = from.newObject();
 				def.readRow(item, rs, columns);
@@ -271,7 +271,7 @@ public class Query<T> {
 		appendFromWhere(stat);
 		ResultSet rs = stat.executeQuery();
 		try {
-			int[] columns = def.mapColumns(rs);
+			int[] columns = def.mapColumns(false, rs);
 			while (rs.next()) {
 				X row = Utils.newObject(clazz);
 				def.readRow(row, rs, columns);
