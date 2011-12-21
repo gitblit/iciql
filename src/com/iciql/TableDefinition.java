@@ -486,6 +486,10 @@ public class TableDefinition<T> {
 			buff.appendExceptFirst(", ");
 			buff.append('?');
 			Object value = getValue(obj, field);
+			if (value == null && !field.nullable) {
+				// try to interpret and instantiate a default value
+				value = ModelUtils.getDefaultValue(field, db.getDialect().getDateTimeClass());
+			}
 			stat.addParameter(value);
 		}
 		buff.append(')');
@@ -508,6 +512,19 @@ public class TableDefinition<T> {
 			} else if (value == null) {
 				// skip null object autoincrement values
 				return true;
+			}
+		} else {
+			// conditionally skip insert of null
+			Object value = getValue(obj, field);
+			if (value == null) {
+				if (field.nullable) {
+					// skip null assignment, field is nullable
+					return true;
+				} else if (StringUtils.isNullOrEmpty(field.defaultValue)) {
+					IciqlLogger.warn("no default value, skipping null insert assignment for {0}.{1}",
+							tableName, field.columnName);
+					return true;
+				}
 			}
 		}
 		return false;
@@ -536,10 +553,14 @@ public class TableDefinition<T> {
 
 		for (FieldDefinition field : fields) {
 			if (!field.isPrimaryKey) {
+				Object value = getValue(obj, field);
+				if (value == null && !field.nullable) {
+					// try to interpret and instantiate a default value
+					value = ModelUtils.getDefaultValue(field, db.getDialect().getDateTimeClass());
+				}
 				buff.appendExceptFirst(", ");
 				buff.append(db.getDialect().prepareColumnName(field.columnName));
 				buff.append(" = ?");
-				Object value = getValue(obj, field);
 				stat.addParameter(value);
 			}
 		}

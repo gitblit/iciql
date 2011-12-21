@@ -21,6 +21,7 @@ import static com.iciql.util.StringUtils.isNullOrEmpty;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -223,7 +224,7 @@ class ModelUtils {
 				// leading or trailing _
 				continue;
 			}
-			String [] subchunks = StringUtils.arraySplit(chunk, ' ', false);
+			String[] subchunks = StringUtils.arraySplit(chunk, ' ', false);
 			for (String subchunk : subchunks) {
 				if (subchunk.length() == 0) {
 					// leading or trailing space
@@ -249,6 +250,112 @@ class ModelUtils {
 			lower += "Value";
 		}
 		return lower;
+	}
+
+	/**
+	 * Converts a DEFAULT clause value into an object.
+	 * 
+	 * @param field
+	 *            definition
+	 * @return object
+	 */
+	static Object getDefaultValue(FieldDefinition def, Class<? extends Date> dateTimeClass) {
+		Class<?> valueType = getClassForSqlType(def.dataType, dateTimeClass);
+		if (String.class.isAssignableFrom(valueType)) {
+			if (StringUtils.isNullOrEmpty(def.defaultValue)) {
+				// literal default must be specified within single quotes
+				return null;
+			}
+			if (def.defaultValue.charAt(0) == '\''
+					&& def.defaultValue.charAt(def.defaultValue.length() - 1) == '\'') {
+				// strip leading and trailing single quotes
+				return def.defaultValue.substring(1, def.defaultValue.length() - 2);
+			}
+			return def.defaultValue;
+		}
+
+		if (StringUtils.isNullOrEmpty(def.defaultValue)) {
+			// can not create object from empty string
+			return null;
+		}
+
+		// strip leading and trailing single quotes
+		String content = def.defaultValue;
+		if (content.charAt(0) == '\'') {
+			content = content.substring(1);
+		}
+		if (content.charAt(content.length() - 1) == '\'') {
+			content = content.substring(0, content.length() - 2);
+		}
+
+		if (StringUtils.isNullOrEmpty(content)) {
+			// can not create object from empty string
+			return null;
+		}
+
+		if (Boolean.class.isAssignableFrom(valueType) || boolean.class.isAssignableFrom(valueType)) {
+			return Boolean.parseBoolean(content);
+		}
+
+		if (Number.class.isAssignableFrom(valueType)) {
+			try {
+				// delegate to static valueOf() method to parse string
+				Method m = valueType.getMethod("valueOf", String.class);
+				return m.invoke(null, content);
+			} catch (NumberFormatException e) {
+				throw new IciqlException(e, "Failed to parse {0} as a number!", def.defaultValue);
+			} catch (Throwable t) {
+			}
+		}
+
+		String dateRegex = "[0-9]{1,4}[-/\\.][0-9]{1,2}[-/\\.][0-9]{1,2}";
+		String timeRegex = "[0-2]{1}[0-9]{1}:[0-5]{1}[0-9]{1}:[0-5]{1}[0-9]{1}";
+
+		if (java.sql.Date.class.isAssignableFrom(valueType)) {
+			// this may be a little loose....
+			// 00-00-00
+			// 00/00/00
+			// 00.00.00
+			Pattern pattern = Pattern.compile(dateRegex);
+			if (pattern.matcher(content).matches()) {
+				DateFormat df = DateFormat.getDateInstance();
+				try {
+					return df.parse(content);
+				} catch (Exception e) {
+					throw new IciqlException(e, "Failed to parse {0} as a date!", def.defaultValue);
+				}
+			}
+		}
+
+		if (java.sql.Time.class.isAssignableFrom(valueType)) {
+			// 00:00:00
+			Pattern pattern = Pattern.compile(timeRegex);
+			if (pattern.matcher(content).matches()) {
+				DateFormat df = DateFormat.getTimeInstance();
+				try {
+					return df.parse(content);
+				} catch (Exception e) {
+					throw new IciqlException(e, "Failed to parse {0} as a time!", def.defaultValue);
+				}
+			}
+		}
+
+		if (java.util.Date.class.isAssignableFrom(valueType)) {
+			// this may be a little loose....
+			// 00-00-00 00:00:00
+			// 00/00/00T00:00:00
+			// 00.00.00T00:00:00
+			Pattern pattern = Pattern.compile(dateRegex + "." + timeRegex);
+			if (pattern.matcher(content).matches()) {
+				DateFormat df = DateFormat.getDateTimeInstance();
+				try {
+					return df.parse(content);
+				} catch (Exception e) {
+					throw new IciqlException(e, "Failed to parse {0} as a datetimestamp!", def.defaultValue);
+				}
+			}
+		}
+		return content;
 	}
 
 	/**

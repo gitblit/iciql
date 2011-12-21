@@ -6,6 +6,10 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- Iciql now tries to instantiate a default value from an annotated default value IFF the field object is null, it is specified *nullable = false*, and a defaultValue exists.  This only applies to *db.insert* or *db.update*.
+
+**0.7.5** &nbsp; *released 2011-12-12*
+
 - Iciql now identifies wildcard queries and builds a dynamic column lookup.  Otherwise, the original field-position-based approach is used.  This corrects the performance regression released in 0.7.4 while still fixing the wildcard statement column mapping problem. 
 
 **0.7.4** &nbsp; *released 2011-12-06*
