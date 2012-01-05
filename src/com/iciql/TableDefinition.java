@@ -415,7 +415,30 @@ public class TableDefinition<T> {
 	void checkMultipleBooleans() {
 		if (multiplePrimitiveBools) {
 			throw new IciqlException(
-					"Can not explicitly reference multiple primitive booleans in a model class!");
+					"Can not explicitly reference a primitive boolean if there are multiple boolean fields in your model class!");
+		}
+	}
+	
+	void checkMultipleEnums(Object o) {
+		 if (o == null) {
+			 return;
+		 }
+		Class<?> clazz = o.getClass();
+		if (!clazz.isEnum()) {
+			return;
+		}
+		
+		int fieldCount = 0;
+		for (FieldDefinition fieldDef : fields) {
+			Class<?> targetType = fieldDef.field.getType();
+			if (clazz.equals(targetType)) {
+				fieldCount++;
+			}
+		}
+		
+		if (fieldCount > 1) {
+			throw new IciqlException(
+					"Can not explicitly reference {0} because there are {1} {0} fields in your model class!", clazz.getSimpleName(), fieldCount);
 		}
 	}
 

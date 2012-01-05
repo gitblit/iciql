@@ -17,6 +17,7 @@
 package com.iciql.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.iciql.Db;
+import com.iciql.IciqlException;
 import com.iciql.test.models.EnumModels;
 import com.iciql.test.models.EnumModels.EnumIdModel;
 import com.iciql.test.models.EnumModels.EnumOrdinalModel;
@@ -107,5 +109,21 @@ public class EnumsTest {
 		// between is a string compare
 		list = db.from(e).where(e.tree()).between(Tree.MAPLE).and(Tree.PINE).select();
 		assertEquals(3, list.size());
+	}
+	
+	@Test
+	public void testMultipleEnumInstances() {
+		BadEnums b = new BadEnums();
+		try {
+			db.from(b).where(b.tree1).is(Tree.BIRCH).and (b.tree2).is(Tree.MAPLE).getSQL();
+			assertTrue("Failed to detect multiple Tree fields?!", false);
+		} catch (IciqlException e) {
+			assertTrue(e.getMessage(), e.getMessage().startsWith("Can not explicitly reference Tree"));
+		}
+	}
+	
+	public static class BadEnums {
+		Tree tree1 = Tree.BIRCH;
+		Tree tree2 = Tree.MAPLE;
 	}
 }

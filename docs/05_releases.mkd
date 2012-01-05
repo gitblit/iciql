@@ -6,6 +6,18 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- added *Query.toSQL()* and *QueryWhere.toSQL()* methods which, when combined with the following new methods, allows for generation of a parameterized, static sql string to be reused with a dynamic query or a PreparedStatement.  
+    - QueryCondition.isParameter()
+    - QueryCondition.atLeastParameter()
+    - QueryCondition.atMostParameter()
+    - QueryCondition.exceedsParameter()
+    - QueryCondition.lessThanParameter()
+    - QueryCondition.likeParameter()
+    - QueryCondition.isNotParameter()
+- Disallow **declaring and explicitly referencing** multiple instances of an enum type within a single model.<br/>A runtime exception will be thrown if an attempt to use where/set/on/and/or/groupBy/orderBy(enum) and your model has multiple fields of a single enum type.
+
+**0.7.6** &nbsp; *released 2011-12-21*
+
 - Iciql now tries to instantiate a default value from an annotated default value IFF the field object is null, it is specified *nullable = false*, and a defaultValue exists.  This only applies to *db.insert* or *db.update*.
 
 **0.7.5** &nbsp; *released 2011-12-12*
