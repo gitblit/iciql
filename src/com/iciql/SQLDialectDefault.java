@@ -20,6 +20,7 @@ package com.iciql;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 
 import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
@@ -31,6 +32,9 @@ import com.iciql.util.StringUtils;
  * Default implementation of an SQL dialect.
  */
 public class SQLDialectDefault implements SQLDialect {
+	
+	final String LITERAL = "'";
+
 	float databaseVersion;
 	String databaseName;
 	String productVersion;
@@ -265,5 +269,21 @@ public class SQLDialectDefault implements SQLDialect {
 		if (offset > 0) {
 			stat.appendSQL(" OFFSET " + offset);
 		}
+	}
+	
+	@Override
+	public String prepareParameter(Object o) {
+		if (o instanceof String) {
+			return LITERAL + o.toString().replace(LITERAL, "''") + LITERAL;
+		} else if (o instanceof Character) {
+			return LITERAL + o.toString() + LITERAL;
+		} else if (o instanceof java.sql.Time) {
+			return LITERAL + new SimpleDateFormat("HH:mm:ss").format(o) + LITERAL;
+		} else if (o instanceof java.sql.Date) {
+			return LITERAL + new SimpleDateFormat("yyyy-MM-dd").format(o) + LITERAL;
+		} else if (o instanceof java.util.Date) {
+			return LITERAL + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(o) + LITERAL;
+		}
+		return o.toString();
 	}
 }

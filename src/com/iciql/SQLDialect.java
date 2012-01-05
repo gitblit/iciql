@@ -125,4 +125,13 @@ public interface SQLDialect {
 	 * @return preferred DATETIME class
 	 */
 	Class<? extends java.util.Date> getDateTimeClass();
+
+	/**
+	 * When building static string statements this method flattens an object to
+	 * a string representation suitable for a static string statement.
+	 * 
+	 * @param o
+	 * @return the string equivalent of this object
+	 */
+	String prepareParameter(Object o);
 }

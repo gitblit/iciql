@@ -85,4 +85,39 @@ public class QueryCondition<T, A> {
 		return new QueryWhere<T>(query);
 	}
 
+	/*
+	 * These method allows you to generate "x=?", "x!=?", etc where conditions.
+	 * Parameter substitution must be done manually later with db.executeQuery.
+	 * This allows for building re-usable SQL string statements from your model
+	 * classes.
+	 */
+	public QueryWhere<T> isParameter() {
+		query.addConditionToken(new RuntimeParameter<A>(x, CompareType.EQUAL));
+		return new QueryWhere<T>(query);
+	}
+
+	public QueryWhere<T> isNotParameter() {
+		query.addConditionToken(new RuntimeParameter<A>(x, CompareType.NOT_EQUAL));
+		return new QueryWhere<T>(query);
+	}
+
+	public QueryWhere<T> exceedsParameter() {
+		query.addConditionToken(new RuntimeParameter<A>(x, CompareType.EXCEEDS));
+		return new QueryWhere<T>(query);
+	}
+
+	public QueryWhere<T> lessThanParameter() {
+		query.addConditionToken(new RuntimeParameter<A>(x, CompareType.LESS_THAN));
+		return new QueryWhere<T>(query);
+	}
+
+	public QueryWhere<T> atMostParameter() {
+		query.addConditionToken(new RuntimeParameter<A>(x, CompareType.AT_MOST));
+		return new QueryWhere<T>(query);
+	}
+
+	public QueryWhere<T> likeParameter() {
+		query.addConditionToken(new RuntimeParameter<A>(x, CompareType.LIKE));
+		return new QueryWhere<T>(query);
+	}
 }

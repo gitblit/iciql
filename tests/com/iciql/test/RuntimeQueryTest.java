@@ -19,12 +19,16 @@ import static org.junit.Assert.assertEquals;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.junit.Assume;
 import org.junit.Test;
 
 import com.iciql.Db;
+import com.iciql.test.models.EnumModels.Tree;
 import com.iciql.test.models.Product;
+import com.iciql.test.models.StaticQueries;
 import com.iciql.util.JdbcUtils;
 
 /**
@@ -32,6 +36,50 @@ import com.iciql.util.JdbcUtils;
  */
 public class RuntimeQueryTest {
 
+	@Test
+	public void testParameters() {
+		Db db = IciqlSuite.openNewDb();
+		
+		// do not test non-H2 databases because dialects will get in the way
+		// e.g. column quoting, etc
+		Assume.assumeTrue(IciqlSuite.isH2(db));
+
+		Product p = new Product();
+		String q1 = db.from(p).where(p.unitsInStock).isParameter().and(p.productName).likeParameter().orderBy(p.productId).toSQL();
+		String q2 = db.from(p).where(p.unitsInStock).lessThan(100).and(p.productName).like("test").or(p.productName).likeParameter().orderBy(p.productId).toSQL();
+		
+		StaticQueries.StaticModel1 m1 = new StaticQueries.StaticModel1();
+		String q3 = db.from(m1).where(m1.myTree).is(Tree.MAPLE).and(m1.myTree).isParameter().toSQL();
+		
+		StaticQueries.StaticModel2 m2 = new StaticQueries.StaticModel2();
+		String q4 = db.from(m2).where(m2.myTree).is(Tree.MAPLE).and(m2.myTree).isParameter().toSQL();
+
+		StaticQueries.StaticModel3 m3 = new StaticQueries.StaticModel3();
+		String q5 = db.from(m3).where(m3.myTree).is(Tree.MAPLE).and(m3.myTree).isParameter().toSQL();
+
+		long now = System.currentTimeMillis();
+		java.sql.Date aDate = new java.sql.Date(now);
+		java.sql.Time aTime = new java.sql.Time(now);
+		java.sql.Timestamp aTimestamp = new java.sql.Timestamp(now);
+		
+		String q6 = db.from(m1).where(m1.myDate).is(aDate).and(m1.myDate).isParameter().toSQL();
+		String q7 = db.from(m1).where(m1.myTime).is(aTime).and(m1.myTime).isParameter().toSQL();
+		String q8 = db.from(m1).where(m1.myTimestamp).is(aTimestamp).and(m1.myTimestamp).isParameter().toSQL();
+
+		db.close();
+		assertEquals("SELECT * FROM Product WHERE unitsInStock = ? AND productName LIKE ?  ORDER BY productId", q1);
+		assertEquals("SELECT * FROM Product WHERE unitsInStock < 100 AND productName LIKE 'test' OR productName LIKE ?  ORDER BY productId", q2);
+		
+		assertEquals("SELECT * FROM StaticQueryTest1 WHERE myTree = 'MAPLE' AND myTree = ?", q3);
+		assertEquals("SELECT * FROM StaticQueryTest2 WHERE myTree = 50 AND myTree = ?", q4);
+		assertEquals("SELECT * FROM StaticQueryTest3 WHERE myTree = 4 AND myTree = ?", q5);
+
+		java.util.Date refDate = new java.util.Date(now);
+		assertEquals("SELECT * FROM StaticQueryTest1 WHERE myDate = '" + new SimpleDateFormat("yyyy-MM-dd").format(refDate) + "' AND myDate = ?", q6);
+		assertEquals("SELECT * FROM StaticQueryTest1 WHERE myTime = '" + new SimpleDateFormat("HH:mm:ss").format(refDate) + "' AND myTime = ?", q7);
+		assertEquals("SELECT * FROM StaticQueryTest1 WHERE myTimestamp = '" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(refDate) + "' AND myTimestamp = ?", q8);
+	}
+	
 	@Test
 	public void testRuntimeQuery() {
 		Db db = IciqlSuite.openNewDb();

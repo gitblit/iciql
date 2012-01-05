@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import com.iciql.util.JdbcUtils;
 
@@ -57,11 +58,51 @@ public class SQLStatement {
 		return appendSQL(db.getDialect().prepareColumnName(column));
 	}
 
+	/**
+	 * getSQL returns a simple string representation of the parameterized
+	 * statement which will be used later, internally, with prepareStatement.
+	 * 
+	 * @return a simple sql statement
+	 */
 	String getSQL() {
 		if (sql == null) {
 			sql = buff.toString();
 		}
 		return sql;
+	}
+
+	/**
+	 * toSQL creates a static sql statement with the referenced parameters
+	 * encoded in the statement.
+	 * 
+	 * @return a complete sql statement
+	 */
+	String toSQL() {
+		if (sql == null) {
+			sql = buff.toString();
+		}
+		if (params.size() == 0) {
+			return sql;
+		}
+		StringBuilder sb = new StringBuilder();
+		// TODO this needs to me more sophisticated
+		StringTokenizer st = new StringTokenizer(sql, "?", false);
+		int i = 0;
+		while (st.hasMoreTokens()) {
+			sb.append(st.nextToken());
+			if (i < params.size()) {
+				Object o = params.get(i);
+				if (RuntimeParameter.PARAMETER == o) {
+					// dynamic parameter
+					sb.append('?');
+				} else {
+					// static parameter
+					sb.append(db.getDialect().prepareParameter(o));
+				}
+				i++;
+			}
+		}
+		return sb.toString();
 	}
 
 	public SQLStatement addParameter(Object o) {

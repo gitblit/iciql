@@ -115,6 +115,35 @@ public class Query<T> {
 		return stat.getSQL().trim();
 	}
 
+	/**
+	 * toSQL returns a static string version of the query with runtime variables
+	 * properly encoded. This method is also useful when combined with the where
+	 * clause methods like isParameter() or atLeastParameter() which allows
+	 * iciql to generate re-usable parameterized string statements.
+	 * 
+	 * @return the sql query as plain text
+	 */
+	public String toSQL() {
+		return toSQL(false);
+	}
+	
+	/**
+	 * toSQL returns a static string version of the query with runtime variables
+	 * properly encoded. This method is also useful when combined with the where
+	 * clause methods like isParameter() or atLeastParameter() which allows
+	 * iciql to generate re-usable parameterized string statements.
+	 * 
+	 * @param distinct
+	 *            if true SELECT DISTINCT is used for the query
+	 * @return the sql query as plain text
+	 */	
+	public String toSQL(boolean distinct) {
+		SQLStatement stat = getSelectStatement(distinct);
+		stat.appendSQL("*");
+		appendFromWhere(stat);
+		return stat.toSQL().trim();
+	}
+
 	private List<T> select(boolean distinct) {
 		List<T> result = Utils.newArrayList();
 		TableDefinition<T> def = from.getAliasDefinition();
@@ -607,8 +636,13 @@ public class Query<T> {
 	 *            the value
 	 */
 	public void appendSQL(SQLStatement stat, Object alias, Object value) {
-		if (value == Function.count()) {
+		if (Function.count() == value) {
 			stat.appendSQL("COUNT(*)");
+			return;
+		}
+		if (RuntimeParameter.PARAMETER == value) {
+			stat.appendSQL("?");
+			addParameter(stat, alias, value);
 			return;
 		}
 		Token token = Db.getToken(value);

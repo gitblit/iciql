@@ -112,7 +112,7 @@ public class QueryWhere<T> {
 		return addPrimitive(ConditionAndOr.AND, x);
 	}
 
-	private <A> QueryCondition<T, A> addPrimitive(ConditionAndOr condition, A x) {		
+	private <A> QueryCondition<T, A> addPrimitive(ConditionAndOr condition, A x) {
 		query.addConditionToken(condition);
 		A alias = query.getPrimitiveAliasByValue(x);
 		if (alias == null) {
@@ -234,15 +234,48 @@ public class QueryWhere<T> {
 		return this;
 	}
 
-	public <X, Z> List<X> select(Z x) {
-		return query.select(x);
-	}
-
 	public String getSQL() {
 		SQLStatement stat = new SQLStatement(query.getDb());
 		stat.appendSQL("SELECT *");
 		query.appendFromWhere(stat);
 		return stat.getSQL().trim();
+	}
+
+	/**
+	 * toSQL returns a static string version of the query with runtime variables
+	 * properly encoded. This method is also useful when combined with the where
+	 * clause methods like isParameter() or atLeastParameter() which allows
+	 * iciql to generate re-usable parameterized string statements.
+	 * 
+	 * @return the sql query as plain text
+	 */
+	public String toSQL() {
+		return this.toSQL(false);
+	}
+
+	/**
+	 * toSQL returns a static string version of the query with runtime variables
+	 * properly encoded. This method is also useful when combined with the where
+	 * clause methods like isParameter() or atLeastParameter() which allows
+	 * iciql to generate re-usable parameterized string statements.
+	 * 
+	 * @param distinct
+	 *            if true SELECT DISTINCT is used for the query
+	 * @return the sql query as plain text
+	 */
+	public String toSQL(boolean distinct) {
+		SQLStatement stat = new SQLStatement(query.getDb());
+		if (distinct) {
+			stat.appendSQL("SELECT DISTINCT *");
+		} else {
+			stat.appendSQL("SELECT *");
+		}
+		query.appendFromWhere(stat);
+		return stat.toSQL().trim();
+	}
+
+	public <X, Z> List<X> select(Z x) {
+		return query.select(x);
 	}
 
 	public <X, Z> List<X> selectDistinct(Z x) {
