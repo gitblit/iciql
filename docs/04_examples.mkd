@@ -114,6 +114,10 @@ Dynamic queries skip all field type checking and, depending on which approach yo
 // where fragment with object parameters
 List&lt;Product&gt; restock = db.from(p).where("unitsInStock=? and productName like ? order by productId", 0, "Chef%").select();
 
+// parameterized query which can be cached and re-used later
+String q = db.from(p).where(p.unitsInStock).isParameter().and(p.productName).likeParameter().orderBy(p.productId).toSQL();
+List&lt;Product&gt; allProducts = db.executeQuery(Product.class, q, 0, "Chef%");
+
 // statement with binding to your model class
 List&lt;Product&gt; allProducts = db.executeQuery(Product.class, "select * from products");
 

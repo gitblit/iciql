@@ -54,6 +54,11 @@ There may be times when the hybrid approach is still too restrictive and you'd p
 %BEGINCODE%
 List&lt;Product&gt; allProducts = db.executeQuery(Product.class, "select * from products");
 List&lt;Product&gt; restock = db.executeQuery(Product.class, "select * from products where unitsInStock=?", 0);
+
+// parameterized query which can be cached and re-used later
+String q = db.from(p).where(p.unitsInStock).isParameter().toSQL();
+List&lt;Product&gt; restock = db.executeQuery(Product.class, q, 0);
+
 %ENDCODE% 
 
 Or if you want access to the raw *ResultSet* before building your model object instances...
