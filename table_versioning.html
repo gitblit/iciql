@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title>iciql</title>
+		<link rel="stylesheet" type="text/css" href="./iciql.css"/>
+		<link rel="stylesheet" type="text/css" href="./markdown.css"/>
+		<link rel="shortcut icon" type="image/png" href="./iciql-favicon.png" />
+		<meta name="ROBOTS" content="INDEX">
+		<meta http-equiv="imagetoolbar" content="no" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="keywords" content="java sql query jaqu" />
+				
+		<script type="text/javascript" src="prettify.js"></script>
+		<link href="prettify.css" type="text/css" rel="stylesheet" />
+						
+		<!-- Place this tag in your head or just before your close body tag -->
+		<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+				
+		<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-24377072-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+	</head>
+	<body style="width:900px" onload="prettyPrint()">
+		<a href="http://github.com/iciql><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>
+		<div class="page_header">
+			<a title="iciql homepage" href="http://iciql.com/">
+				<img src="./iciql.png" width="76" height="48" alt="iciql" class="logo"/>
+			</a>
+			<span style="color:black;">iciql</span>
+			<!-- Google Plus One -->
+			<g:plusone></g:plusone>
+		</div>
+		<div class="page_nav"><a href='index.html'>overview</a> | <a href='model_classes.html'>model classes</a> | <a href='table_versioning.html'>versioning</a> | <a href='usage.html'>usage</a> | <a href='performance.html'>performance</a> | <a href='examples.html'>examples</a> | <a href='tools.html'>tools</a> | <a href='building.html'>building</a> | <a href='javadoc.html'>javadoc</a> | <a href='releases.html'>releases</a> | <a href='jaqu_comparison.html'>jaqu comparison</a></div>
+		<div class="markdown">
+<h2> Database &amp; Table Versioning</h2>
+
+<p>Iciql supports an optional, simple versioning mechanism.  There are two parts to the mechanism.</p>
+
+<ol>
+<li>You must supply an implementation of <code>com.iciql.DbUpgrader</code> to your <code>com.iciql.Db</code> instance.</li>
+<li>One or more of your table model classes must specify the <code>IQVersion(version)</code> annotation<br>
+AND/OR<br/>
+Your <code>com.iciql.DbUpgrader</code> implementation must specify the <code>IQVersion(version)</code> annotation</li>
+</ol>
+
+<h3> How does it work?</h3>
+
+<p>If you choose to use versioning, iciql will maintain a table within your database named <em>iq_versions</em> which is defined as:</p>
+
+<pre><code>CREATE TABLE IQ_VERSIONS(SCHEMANAME VARCHAR(255) NOT NULL, TABLENAME VARCHAR(255) NOT NULL, VERSION INT NOT NULL)
+</code></pre>
+
+<p>This database table is automatically created if and only if at least one of your model classes specifies a <em>version</em> &gt; 0.</p>
+
+<p>When you generate a statement, iciql will compare the annotated version field of your model class to its last known value in the <em>iq_versions</em> table.  If <em>iq_versions</em> lags behind the model annotation, iciql will immediately call the registered <code>com.iciql.DbUpgrader</code> implementation before generating and executing the current statement.</p>
+
+<p>When an upgrade scenario is identified, the current version and the annotated version information is passed to either:</p>
+
+<ul>
+<li><code>DbUpgrader.upgradeDatabase(db, fromVersion, toVersion)</code></li>
+<li><code>DbUpgrader.upgradeTable(db, schema, table, fromVersion, toVersion)</code></li>
+</ul>
+
+<p>both of which allow for non-linear upgrades.  If the upgrade method call is successful and returns <em>true</em>, iciql will update the <em>iq_versions</em> table with the annotated version number.</p>
+
+<p>The actual upgrade procedure is beyond the scope of iciql and is your responsibility to implement.  This is simply a mechanism to automatically identify when an upgrade is necessary.</p>
+
+<p><strong>NOTE:</strong><br/>
+The database entry of the <em>iq_versions</em> table is specified as SCHEMANAME='' and TABLENAME=''.</p>	</div>
+	<div style="margin-top:10px" class="page_footer">
+		<div style="float:right;">generated 2012-01-11</div>
+	The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.
+	</div>
+</body>
+</html>

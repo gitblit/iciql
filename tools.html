@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title>iciql</title>
+		<link rel="stylesheet" type="text/css" href="./iciql.css"/>
+		<link rel="stylesheet" type="text/css" href="./markdown.css"/>
+		<link rel="shortcut icon" type="image/png" href="./iciql-favicon.png" />
+		<meta name="ROBOTS" content="INDEX">
+		<meta http-equiv="imagetoolbar" content="no" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="keywords" content="java sql query jaqu" />
+				
+		<script type="text/javascript" src="prettify.js"></script>
+		<link href="prettify.css" type="text/css" rel="stylesheet" />
+						
+		<!-- Place this tag in your head or just before your close body tag -->
+		<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+				
+		<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-24377072-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+	</head>
+	<body style="width:900px" onload="prettyPrint()">
+		<a href="http://github.com/iciql><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>
+		<div class="page_header">
+			<a title="iciql homepage" href="http://iciql.com/">
+				<img src="./iciql.png" width="76" height="48" alt="iciql" class="logo"/>
+			</a>
+			<span style="color:black;">iciql</span>
+			<!-- Google Plus One -->
+			<g:plusone></g:plusone>
+		</div>
+		<div class="page_nav"><a href='index.html'>overview</a> | <a href='model_classes.html'>model classes</a> | <a href='table_versioning.html'>versioning</a> | <a href='usage.html'>usage</a> | <a href='performance.html'>performance</a> | <a href='examples.html'>examples</a> | <a href='tools.html'>tools</a> | <a href='building.html'>building</a> | <a href='javadoc.html'>javadoc</a> | <a href='releases.html'>releases</a> | <a href='jaqu_comparison.html'>jaqu comparison</a></div>
+		<div class="markdown">
+<h2> Model Generation</h2>
+
+<p>If you do not have or do not want to annotate your existing model classes, you can use the included model generation tool to create iciql model classes.</p>
+
+<pre><code>java -jar iciql.jar &lt;parameters&gt;
+</code></pre>
+
+<h3> Parameters</h3>
+
+<table>
+<tr><th>-url</th><td>JDBC url for the database</td><td><em>REQUIRED</em></td></tr>
+<tr><th>-username</th><td>username for JDBC connection</td><td><em>optional</em></td></tr>
+<tr><th>-password</th><td>password for JDBC connection</td><td><em>optional</em></td></tr>
+<tr><th>-schema</th><td>the target schema for model generation</td><td><em>default:</em> all schemas</td></tr>
+<tr><th>-table</th><td>the target table for model generation</td><td><em>default:</em> all tables</td></tr>
+<tr><th>-package</th><td>the destination package name for generated models</td><td><em>default:</em> default package</td></tr>
+<tr><th>-folder</th><td>the output folder for .java files</td><td><em>default:</em> current folder</td></tr>
+<tr><th>-annotateSchema</th><td>include the schema name in the class annotations</td><td><em>default:</em> true</td></tr>
+<tr><th>-trimStrings</th><td>annotate trimStrings=true for any VARCHAR string mappings &nbsp; </td><td><em>default:</em> false</td></tr>
+</table>
+<h2> Model Validation</h2>
+
+<p>Iciql can validate your model classes against your database to ensure that your models are optimally defined and are consistent with the current table and index definitions.</p>
+
+<p>Each <code>com.iciql.ValidationRemark</code> returned by the validation has an associated level from the following enum:
+<pre class='prettyprint lang-java'>
+public static enum Level {
+	CONSIDER, WARN, ERROR;
+}
+</pre></p>
+
+<p>A typical validation may output recommendations for adjusting a model field annotation such as setting the <em>maxLength</em> of a string to match the length of its linked VARCHAR column.</p>
+
+<h3> Sample Model Validation using JUnit 4</h3>
+
+<p><pre class='prettyprint lang-java'>
+import static org.junit.Assert.assertTrue;
+
+import java.sql.SQLException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ErrorCollector;
+
+import com.iciql.Db;
+import com.iciql.DbInspector;
+import com.iciql.ValidationRemark;
+import com.iciql.test.models.Product;
+import com.iciql.test.models.ProductAnnotationOnly;
+import com.iciql.test.models.ProductMixedAnnotation;
+
+public class ValidateModels {
+
+	/*
+	 * The ErrorCollector Rule allows execution of a test to continue after the
+	 * first problem is found and report them all at once
+	 */
+	@Rule
+	public ErrorCollector errorCollector = new ErrorCollector();
+	
+	private Db db;
+	
+	@Before
+	public void setUp() {
+		db = Db.open("jdbc:h2:mem:", "sa", "sa");
+	}
+
+	@After
+	public void tearDown() {
+		db.close();
+	}
+	
+	@Test
+	public void testValidateModels() {
+		DbInspector inspector = new DbInspector(db);
+		validateModel(inspector, new Product());
+		validateModel(inspector, new ProductAnnotationOnly());
+		validateModel(inspector, new ProductMixedAnnotation());
+	}
+	
+	private void validateModel(DbInspector inspector, Object o) {
+		List&lt;ValidationRemark&gt; remarks = inspector.validateModel(o, false);
+		assertTrue("Validation remarks are null for " + o.getClass().getName(), remarks != null);
+		log("Validation remarks for " + o.getClass().getName());
+		for (ValidationRemark remark : remarks) {
+			log(remark.toString());
+			if (remark.isError()) {
+				errorCollector.addError(new SQLException(remark.toString()));
+			}
+		}
+	}
+	
+	private void log(String message) {
+		System.out.println(message);
+	}
+}
+</pre></p>	</div>
+	<div style="margin-top:10px" class="page_footer">
+		<div style="float:right;">generated 2012-01-11</div>
+	The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.
+	</div>
+</body>
+</html>

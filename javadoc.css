@@ -1,0 +1,52 @@
+/* Javadoc style sheet */
+
+/* Define colors, fonts and other style attributes here to override the defaults */
+
+/* Page background color */
+body { font-size:13px; background-color: #FFFFFF; color:#000000 }
+
+hr {	
+	color: #ffffff;
+	background-color: #ffffff;
+	height: 1px; !important
+}
+
+/* Headings */
+h1 { font-size: 1.5em }
+h2 { font-size: 1.5em }
+
+table {
+	border: 1px solid #ccc; !important   
+}
+
+table th {
+	border: 0px solid #ccc; !important
+	font-size: 1.0em; !important
+}
+
+table th font {   
+	font-size: 1.3em; !important
+}
+
+table td {
+	border: 0px solid; !important
+}
+
+/* Table colors */
+.TableHeadingColor     { background-color: #f0f0f0; } /* light gray */
+.TableSubHeadingColor  { background-color: #f0f0f0; } /* light gray */
+.TableRowColor         { } 
+
+/* Font used in left-hand frame lists */
+.FrameTitleFont   { }
+.FrameHeadingFont { }
+.FrameItemFont    { }
+
+/* Navigation bar fonts and colors */
+.NavBarCell1    { background-color:#f0f0f0; } /* light gray */
+.NavBarCell1Rev { background-color:#00008B; color:#ffffff} /* Dark Blue */
+.NavBarFont1    { }
+.NavBarFont1Rev { color:#ffffff;}
+
+.NavBarCell2    { }
+.NavBarCell3    { }

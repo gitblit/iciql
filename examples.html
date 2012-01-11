@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title>iciql</title>
+		<link rel="stylesheet" type="text/css" href="./iciql.css"/>
+		<link rel="stylesheet" type="text/css" href="./markdown.css"/>
+		<link rel="shortcut icon" type="image/png" href="./iciql-favicon.png" />
+		<meta name="ROBOTS" content="INDEX">
+		<meta http-equiv="imagetoolbar" content="no" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="keywords" content="java sql query jaqu" />
+				
+		<script type="text/javascript" src="prettify.js"></script>
+		<link href="prettify.css" type="text/css" rel="stylesheet" />
+						
+		<!-- Place this tag in your head or just before your close body tag -->
+		<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+				
+		<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-24377072-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+	</head>
+	<body style="width:900px" onload="prettyPrint()">
+		<a href="http://github.com/iciql><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>
+		<div class="page_header">
+			<a title="iciql homepage" href="http://iciql.com/">
+				<img src="./iciql.png" width="76" height="48" alt="iciql" class="logo"/>
+			</a>
+			<span style="color:black;">iciql</span>
+			<!-- Google Plus One -->
+			<g:plusone></g:plusone>
+		</div>
+		<div class="page_nav"><a href='index.html'>overview</a> | <a href='model_classes.html'>model classes</a> | <a href='table_versioning.html'>versioning</a> | <a href='usage.html'>usage</a> | <a href='performance.html'>performance</a> | <a href='examples.html'>examples</a> | <a href='tools.html'>tools</a> | <a href='building.html'>building</a> | <a href='javadoc.html'>javadoc</a> | <a href='releases.html'>releases</a> | <a href='jaqu_comparison.html'>jaqu comparison</a></div>
+		<div class="markdown">
+<h2> Select Statements</h2>
+
+<p><pre class='prettyprint lang-java'>
+// select * from products
+List&lt;Product&gt; allProducts = db.from(p).select();
+
+// select * from customers where region='WA'
+Customer c = new Customer();
+List&lt;Customer&gt; waCustomers = db.from(c). where(c.region).is("WA").select();
+
+public static class ProductPrice {
+	public String productName;
+	public String category;
+	public Double price;
+}
+
+// select with generation of new anonymous inner class
+List&lt;ProductPrice&gt; productPrices =
+    db.from(p).
+    orderBy(p.productId).
+    select(new ProductPrice() {{
+        productName = p.productName;
+        category = p.category;
+        price = p.unitPrice;
+    }});
+</pre></p>
+
+<h2> Insert Statements</h2>
+
+<p><pre class='prettyprint lang-java'>
+// single record insertion
+db.insert(singleProduct);
+
+// single record insertion with primary key retrieval
+Long key = db.insertAndGetKey(singleProduct);
+
+// batch record insertion
+db.insertAll(myProducts);
+
+// batch insertion with primary key retrieval
+List&lt;Long&gt; myKeys = db.insertAllAndGetKeys(list);
+</pre></p>
+
+<h2> Update Statements</h2>
+
+<p><pre class='prettyprint lang-java'>
+// single record update
+db.update(singleProduct);
+
+// batch record updates
+db.updateAll(myProducts);
+
+// update query
+db.from(p).set(p.productName).to("updated")
+	.increment(p.unitPrice).by(3.14)
+	.increment(p.unitsInStock).by(2)
+	.where(p.productId).is(1).update();
+</pre></p>
+
+<h2> Merge Statements</h2>
+
+<p>Merge statements currently generate the <a href="http://h2database.com/html/grammar.html#merge">H2 merge syntax</a>.</p>
+
+<p><pre class='prettyprint lang-java'>
+Product pChang = db.from(p).where(p.productName).is("Chang").selectFirst();
+pChang.unitPrice = 19.5;
+pChang.unitsInStock = 16;
+db.merge(pChang);
+</pre></p>
+
+<h2> Delete Statements</h2>
+
+<p><pre class='prettyprint lang-java'>
+// single record deletion
+db.delete(singleProduct);  
+
+// batch record deletion
+db.deleteAll(myProducts);
+
+// delete query
+db.from(p).where(p.productId).atLeast(10).delete();
+
+</pre></p>
+
+<h2> Inner Join Statements</h2>
+
+<p><pre class='prettyprint lang-java'>
+final Customer c = new Customer();
+final Order o = new Order();
+
+List&lt;Customer&gt; customersWithLargeOrders =
+    db.from(c).
+    innerJoin(o).on(c.customerId).is(o.customerId).
+    where(o.total).greaterThan(new BigDecimal("500.00")).
+    groupBy(c.customerId).select();
+
+
+List&lt;CustOrder&gt; orders =
+    db.from(c).
+    innerJoin(o).on(c.customerId).is(o.customerId).
+    where(o.total).lessThan(new BigDecimal("500.00")).
+    orderBy(1).
+    select(new CustOrder() {{
+        customerId = c.customerId;
+        orderId = o.orderId;
+        total = o.total;
+    }});
+</pre></p>
+
+<h2> Dynamic Queries</h2>
+
+<p>Dynamic queries skip all field type checking and, depending on which approach you use, may skip model class/table name checking too.</p>
+
+<p><pre class='prettyprint lang-java'>
+// where fragment with object parameters
+List&lt;Product&gt; restock = db.from(p).where("unitsInStock=? and productName like ? order by productId", 0, "Chef%").select();
+
+// parameterized query which can be cached and re-used later
+String q = db.from(p).where(p.unitsInStock).isParameter().and(p.productName).likeParameter().orderBy(p.productId).toSQL();
+List&lt;Product&gt; allProducts = db.executeQuery(Product.class, q, 0, "Chef%");
+
+// statement with binding to your model class
+List&lt;Product&gt; allProducts = db.executeQuery(Product.class, "select * from products");
+
+// statement with object parameters and binding to your model class
+List&lt;Product&gt; restock = db.executeQuery(Product.class, "select * from products where unitsInStock=?", 0);
+
+/**
+ * If you want to process the intermediate ResultSet
+ * yourself make sure to use the <i>closeSilently()</i> method 
+ * to ensure the parent statement is closed too.
+ */
+ResultSet rs = db.executeQuery("select * from products");
+List&lt;Product&gt; allProducts = db.buildObjects(Product.class, rs);
+JdbcUtils.closeSilently(rs, true);
+
+</pre></p>	</div>
+	<div style="margin-top:10px" class="page_footer">
+		<div style="float:right;">generated 2012-01-11</div>
+	The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.
+	</div>
+</body>
+</html>
