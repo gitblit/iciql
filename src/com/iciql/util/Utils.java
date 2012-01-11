@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.iciql.Iciql.EnumId;
@@ -47,10 +48,22 @@ import com.iciql.IciqlException;
 public class Utils {
 
 	public static final AtomicLong COUNTER = new AtomicLong(0);
+	
+	public static final AtomicInteger AS_COUNTER = new AtomicInteger(0);
 
 	private static final boolean MAKE_ACCESSIBLE = true;
 
 	private static final int BUFFER_BLOCK_SIZE = 4 * 1024;
+	
+	public static synchronized int nextAsCount() {
+		// prevent negative values and use a threadsafe counter
+		int count = AS_COUNTER.incrementAndGet();
+		if (count == Integer.MAX_VALUE) {
+			count = 0;
+			AS_COUNTER.set(count);			
+		}
+		return count;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <X> Class<X> getClass(X x) {

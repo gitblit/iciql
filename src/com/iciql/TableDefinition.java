@@ -418,16 +418,16 @@ public class TableDefinition<T> {
 					"Can not explicitly reference a primitive boolean if there are multiple boolean fields in your model class!");
 		}
 	}
-	
+
 	void checkMultipleEnums(Object o) {
-		 if (o == null) {
-			 return;
-		 }
+		if (o == null) {
+			return;
+		}
 		Class<?> clazz = o.getClass();
 		if (!clazz.isEnum()) {
 			return;
 		}
-		
+
 		int fieldCount = 0;
 		for (FieldDefinition fieldDef : fields) {
 			Class<?> targetType = fieldDef.field.getType();
@@ -435,10 +435,11 @@ public class TableDefinition<T> {
 				fieldCount++;
 			}
 		}
-		
+
 		if (fieldCount > 1) {
 			throw new IciqlException(
-					"Can not explicitly reference {0} because there are {1} {0} fields in your model class!", clazz.getSimpleName(), fieldCount);
+					"Can not explicitly reference {0} because there are {1} {0} fields in your model class!",
+					clazz.getSimpleName(), fieldCount);
 		}
 	}
 
@@ -820,10 +821,25 @@ public class TableDefinition<T> {
 	}
 
 	<Y, X> void appendSelectList(SQLStatement stat, Query<Y> query, X x) {
+		// select t0.col1, t0.col2, t0.col3...
+		// select table1.col1, table1.col2, table1.col3...
+		String selectDot = "";
+		SelectTable<?> sel = query.getSelectTable(x);
+		if (sel != null) {
+			if (query.isJoin()) {
+				selectDot = sel.getAs() + ".";
+			} else {
+				String sn = sel.getAliasDefinition().schemaName;
+				String tn = sel.getAliasDefinition().tableName;
+				selectDot = query.getDb().getDialect().prepareTableName(sn, tn) + ".";
+			}
+		}
+
 		for (int i = 0; i < fields.size(); i++) {
 			if (i > 0) {
 				stat.appendSQL(", ");
 			}
+			stat.appendSQL(selectDot);
 			FieldDefinition def = fields.get(i);
 			if (def.isPrimitive) {
 				Object obj = def.getValue(x);

@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -26,10 +27,12 @@ import org.junit.Assume;
 import org.junit.Test;
 
 import com.iciql.Db;
+import com.iciql.QueryWhere;
 import com.iciql.test.models.EnumModels.Tree;
 import com.iciql.test.models.Product;
 import com.iciql.test.models.StaticQueries;
 import com.iciql.util.JdbcUtils;
+import com.iciql.util.Utils;
 
 /**
  * Tests the runtime dynamic query function.
@@ -78,6 +81,46 @@ public class RuntimeQueryTest {
 		assertEquals("SELECT * FROM StaticQueryTest1 WHERE myDate = '" + new SimpleDateFormat("yyyy-MM-dd").format(refDate) + "' AND myDate = ?", q6);
 		assertEquals("SELECT * FROM StaticQueryTest1 WHERE myTime = '" + new SimpleDateFormat("HH:mm:ss").format(refDate) + "' AND myTime = ?", q7);
 		assertEquals("SELECT * FROM StaticQueryTest1 WHERE myTimestamp = '" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(refDate) + "' AND myTimestamp = ?", q8);
+	}
+	
+	@Test
+	public void testRuntimeSelectWildcards() {
+		Db db = IciqlSuite.openNewDb();
+		
+		// do not test non-H2 databases because dialects will get in the way
+		// e.g. column quoting, etc
+		Assume.assumeTrue(IciqlSuite.isH2(db));
+		
+		StaticQueries.StaticModel1 m1 = new StaticQueries.StaticModel1();
+		StaticQueries.StaticModel2 m2 = new StaticQueries.StaticModel2();
+		StaticQueries.StaticModel2 m3 = new StaticQueries.StaticModel2();
+		
+		int t0 = Utils.AS_COUNTER.get() + 1;
+		int t1 = t0 + 1;
+		
+		QueryWhere<?> where = db.from(m1).innerJoin(m2).on(m1.id).is(m2.id).where(m2.myTree).is(Tree.MAPLE); 
+		String q1 = where.toSQL(false);
+		String q2 = where.toSQL(true);
+		String q3 = where.toSQL(false, m1);
+		String q4 = where.toSQL(true, m1);
+		String q5 = where.toSQL(false, m2);
+		String q6 = where.toSQL(true, m2);
+		
+		// test unused alias
+		String q7 = where.toSQL(true, m3);
+		
+		db.close();
+		
+		assertEquals(MessageFormat.format("SELECT * FROM StaticQueryTest1 AS T{0,number,0} INNER JOIN StaticQueryTest2 AS T{1,number,0} ON T{0,number,0}.id = T{1,number,0}.id  WHERE T{1,number,0}.myTree = 50", t0, t1), q1);
+		assertEquals(MessageFormat.format("SELECT DISTINCT * FROM StaticQueryTest1 AS T{0,number,0} INNER JOIN StaticQueryTest2 AS T{1,number,0} ON T{0,number,0}.id = T{1,number,0}.id  WHERE T{1,number,0}.myTree = 50", t0, t1), q2);
+		
+		assertEquals(MessageFormat.format("SELECT T{0,number,0}.* FROM StaticQueryTest1 AS T{0,number,0} INNER JOIN StaticQueryTest2 AS T{1,number,0} ON T{0,number,0}.id = T{1,number,0}.id  WHERE T{1,number,0}.myTree = 50", t0, t1), q3);
+		assertEquals(MessageFormat.format("SELECT DISTINCT T{0,number,0}.* FROM StaticQueryTest1 AS T{0,number,0} INNER JOIN StaticQueryTest2 AS T{1,number,0} ON T{0,number,0}.id = T{1,number,0}.id  WHERE T{1,number,0}.myTree = 50", t0, t1), q4);
+		
+		assertEquals(MessageFormat.format("SELECT T{1,number,0}.* FROM StaticQueryTest1 AS T{0,number,0} INNER JOIN StaticQueryTest2 AS T{1,number,0} ON T{0,number,0}.id = T{1,number,0}.id  WHERE T{1,number,0}.myTree = 50", t0, t1), q5);
+		assertEquals(MessageFormat.format("SELECT DISTINCT T{1,number,0}.* FROM StaticQueryTest1 AS T{0,number,0} INNER JOIN StaticQueryTest2 AS T{1,number,0} ON T{0,number,0}.id = T{1,number,0}.id  WHERE T{1,number,0}.myTree = 50", t0, t1), q6);
+		
+		assertEquals(MessageFormat.format("SELECT DISTINCT * FROM StaticQueryTest1 AS T{0,number,0} INNER JOIN StaticQueryTest2 AS T{1,number,0} ON T{0,number,0}.id = T{1,number,0}.id  WHERE T{1,number,0}.myTree = 50", t0, t1), q7);
 	}
 	
 	@Test

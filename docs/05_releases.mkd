@@ -6,6 +6,15 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- Replaced non-threadsafe counter used for assigning AS identifiers in JOIN statements with an AtomicInteger
+- Prevent negative rollover of the AS counter
+- Added optional alias parameter to *Query.toSQL* and *QueryWhere.toSQL* to force generated statement to prefix an AS identifier or, alternatively, the tablename.  
+    - Query.toSQL(boolean distinct, K alias)
+    - QueryWhere.toSQL(boolean distinct, K alias)
+- Fixed bug in Query.select(Z z) which assumed that Z must always be an anonymous inner class which may not always be true.  This allows for specifying an existing alias to force table or identifier usage in the generated select list.  This is very useful for DISTINCT JOIN statements where only the columns of the primary table are of interest.
+
+**0.7.7** &nbsp; *released 2012-01-05*
+
 - added *Query.toSQL()* and *QueryWhere.toSQL()* methods which, when combined with the following new methods, allows for generation of a parameterized, static sql string to be reused with a dynamic query or a PreparedStatement.  
     - QueryCondition.isParameter()
     - QueryCondition.atLeastParameter()

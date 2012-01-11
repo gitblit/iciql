@@ -30,7 +30,6 @@ import com.iciql.util.Utils;
 
 class SelectTable<T> {
 
-	private static int asCounter;
 	private Query<T> query;
 	private Class<T> clazz;
 	private T current;
@@ -47,7 +46,7 @@ class SelectTable<T> {
 		this.outerJoin = outerJoin;
 		aliasDef = (TableDefinition<T>) db.getTableDefinition(alias.getClass());
 		clazz = Utils.getClass(alias);
-		as = "T" + asCounter++;
+		as = "T" + Utils.nextAsCount();
 	}
 
 	T getAlias() {

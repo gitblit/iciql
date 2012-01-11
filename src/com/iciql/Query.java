@@ -126,7 +126,7 @@ public class Query<T> {
 	public String toSQL() {
 		return toSQL(false);
 	}
-	
+
 	/**
 	 * toSQL returns a static string version of the query with runtime variables
 	 * properly encoded. This method is also useful when combined with the where
@@ -136,10 +136,55 @@ public class Query<T> {
 	 * @param distinct
 	 *            if true SELECT DISTINCT is used for the query
 	 * @return the sql query as plain text
-	 */	
+	 */
 	public String toSQL(boolean distinct) {
-		SQLStatement stat = getSelectStatement(distinct);
-		stat.appendSQL("*");
+		return toSQL(distinct, null);
+	}
+
+	/**
+	 * toSQL returns a static string version of the query with runtime variables
+	 * properly encoded. This method is also useful when combined with the where
+	 * clause methods like isParameter() or atLeastParameter() which allows
+	 * iciql to generate re-usable parameterized string statements.
+	 * 
+	 * @param distinct
+	 *            if true SELECT DISTINCT is used for the query
+	 * @param k
+	 *            k is used to select only the columns of the specified alias
+	 *            for an inner join statement. An example of a generated
+	 *            statement is: SELECT DISTINCT t1.* FROM sometable AS t1 INNER
+	 *            JOIN othertable AS t2 ON t1.id = t2.id WHERE t2.flag = true
+	 *            without the alias parameter the statement would start with
+	 *            SELECT DISTINCT * FROM...
+	 * @return the sql query as plain text
+	 */
+	public <K> String toSQL(boolean distinct, K k) {
+		SQLStatement stat = new SQLStatement(getDb());
+		stat.appendSQL("SELECT ");
+		if (distinct) {
+			stat.appendSQL("DISTINCT ");
+		}
+		if (k != null) {
+			SelectTable<?> sel = getSelectTable(k);
+			if (sel == null) {
+				// unknown alias, use wildcard
+				IciqlLogger.warn("Alias {0} is not defined in the statement!", k.getClass());
+				stat.appendSQL("*");
+			} else if (isJoin()) {
+				// join query, use AS alias
+				String as = sel.getAs();
+				stat.appendSQL(as + ".*");
+			} else {
+				// schema.table.*
+				String schema = sel.getAliasDefinition().schemaName;
+				String table = sel.getAliasDefinition().tableName;
+				String as = getDb().getDialect().prepareTableName(schema, table);
+				stat.appendSQL(as + ".*");
+			}
+		} else {
+			// alias unspecified, use wildcard
+			stat.appendSQL("*");
+		}
 		appendFromWhere(stat);
 		return stat.toSQL().trim();
 	}
@@ -289,7 +334,11 @@ public class Query<T> {
 		if (Utils.isSimpleType(clazz)) {
 			return selectSimple((X) x, distinct);
 		}
-		clazz = clazz.getSuperclass();
+		Class<?> enclosingClass = clazz.getEnclosingClass();
+		if (enclosingClass != null) {
+			// anonymous inner class
+			clazz = clazz.getSuperclass();
+		}
 		return select((Class<X>) clazz, (X) x, distinct);
 	}
 
@@ -792,6 +841,19 @@ public class Query<T> {
 
 	boolean isJoin() {
 		return !joins.isEmpty();
+	}
+
+	SelectTable<?> getSelectTable(Object alias) {
+		if (from.getAlias() == alias) {
+			return from;
+		} else {
+			for (SelectTable<?> join : joins) {
+				if (join.getAlias() == alias) {
+					return join;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**

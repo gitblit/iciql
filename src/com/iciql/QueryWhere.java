@@ -252,7 +252,7 @@ public class QueryWhere<T> {
 	 * @return the sql query as plain text
 	 */
 	public String toSQL() {
-		return this.toSQL(false);
+		return query.toSQL(false);
 	}
 
 	/**
@@ -266,14 +266,28 @@ public class QueryWhere<T> {
 	 * @return the sql query as plain text
 	 */
 	public String toSQL(boolean distinct) {
-		SQLStatement stat = new SQLStatement(query.getDb());
-		if (distinct) {
-			stat.appendSQL("SELECT DISTINCT *");
-		} else {
-			stat.appendSQL("SELECT *");
-		}
-		query.appendFromWhere(stat);
-		return stat.toSQL().trim();
+		return query.toSQL(distinct);
+	}
+
+	/**
+	 * toSQL returns a static string version of the query with runtime variables
+	 * properly encoded. This method is also useful when combined with the where
+	 * clause methods like isParameter() or atLeastParameter() which allows
+	 * iciql to generate re-usable parameterized string statements.
+	 * 
+	 * @param distinct
+	 *            if true SELECT DISTINCT is used for the query
+	 * @param k
+	 *            k is used to select only the columns of the specified alias
+	 *            for an inner join statement. An example of a generated
+	 *            statement is: SELECT DISTINCT t1.* FROM sometable AS t1 INNER
+	 *            JOIN othertable AS t2 ON t1.id = t2.id WHERE t2.flag = true
+	 *            without the alias parameter the statement would start with
+	 *            SELECT DISTINCT * FROM...
+	 * @return the sql query as plain text
+	 */
+	public <K> String toSQL(boolean distinct, K k) {
+		return query.toSQL(distinct, k);
 	}
 
 	public <X, Z> List<X> select(Z x) {

@@ -105,8 +105,10 @@ public class SamplesTest {
 
 		Product p = new Product();
 		List<Product> soldOutProducts = db.from(p).where(p.unitsInStock).is(0).orderBy(p.productId).select();
+		List<Product> soldOutProducts2 = db.from(p).where(p.unitsInStock).is(0).orderBy(p.productId).select(p);
 
 		assertEquals("[Chef Anton's Gumbo Mix: 0]", soldOutProducts.toString());
+		assertEquals(soldOutProducts.toString(), soldOutProducts2.toString());
 	}
 
 	@Test
