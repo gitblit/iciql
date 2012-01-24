@@ -31,6 +31,7 @@ public class UpdateColumnSet<T, A> implements UpdateColumn {
 	private Query<T> query;
 	private A x;
 	private A y;
+	private boolean isParameter;
 
 	UpdateColumnSet(Query<T> query, A x) {
 		this.query = query;
@@ -43,10 +44,20 @@ public class UpdateColumnSet<T, A> implements UpdateColumn {
 		return query;
 	}
 
+	public Query<T> toParameter() {
+		query.addUpdateColumnDeclaration(this);
+		isParameter = true;
+		return query;
+	}
+
 	public void appendSQL(SQLStatement stat) {
 		query.appendSQL(stat, null, x);
-		stat.appendSQL("=");
-		query.appendSQL(stat, x, y);
+		stat.appendSQL(" = ");
+		if (isParameter) {			
+			query.appendSQL(stat, x, RuntimeParameter.PARAMETER);
+		} else {
+			query.appendSQL(stat, x, y);
+		}
 	}
 
 }

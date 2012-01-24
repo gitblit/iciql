@@ -572,11 +572,22 @@ public class Db {
 	 *            the SQL statement
 	 * @return the update count
 	 */
-	public int executeUpdate(String sql) {
+	public int executeUpdate(String sql, Object... args) {
 		Statement stat = null;
 		try {
-			stat = conn.createStatement();
-			int updateCount = stat.executeUpdate(sql);
+			int updateCount;
+			if (args.length == 0) {
+				stat = conn.createStatement();
+				updateCount = stat.executeUpdate(sql);
+			} else {
+				PreparedStatement ps = conn.prepareStatement(sql);				
+				int i = 1;
+				for (Object arg : args) {
+					ps.setObject(i++, arg);
+				}
+				updateCount = ps.executeUpdate();
+				stat = ps;
+			}			
 			return updateCount;
 		} catch (SQLException e) {
 			throw new IciqlException(e);

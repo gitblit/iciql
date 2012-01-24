@@ -6,6 +6,12 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- Added toParameter() option for SET commands and allow generating parameterized UPDATE statements<br/>
+String q = db.from(t).set(t.timestamp).toParameter().where(t.id).is(5).toSQL();<br/>
+db.executeUpdate(q, new Date());
+
+**0.7.8** &nbsp; *released 2012-01-11*
+
 - Replaced non-threadsafe counter used for assigning AS identifiers in JOIN statements with an AtomicInteger
 - Prevent negative rollover of the AS counter
 - Added optional alias parameter to *Query.toSQL* and *QueryWhere.toSQL* to force generated statement to prefix an AS identifier or, alternatively, the tablename.  

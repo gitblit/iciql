@@ -84,6 +84,21 @@ public class RuntimeQueryTest {
 	}
 	
 	@Test
+	public void testRuntimeSet() {
+		Db db = IciqlSuite.openNewDb();
+		
+		// do not test non-H2 databases because dialects will get in the way
+		// e.g. column quoting, etc
+		Assume.assumeTrue(IciqlSuite.isH2(db));
+		
+		StaticQueries.StaticModel1 m = new StaticQueries.StaticModel1();
+		String q = db.from(m).set(m.myTimestamp).toParameter().where(m.id).isParameter().toSQL();
+		db.close();
+		
+		assertEquals("UPDATE StaticQueryTest1 SET myTimestamp = ? WHERE id = ?", q);
+	}
+	
+	@Test
 	public void testRuntimeSelectWildcards() {
 		Db db = IciqlSuite.openNewDb();
 		

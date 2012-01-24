@@ -55,6 +55,11 @@ db.from(p).set(p.productName).to("updated")
 	.increment(p.unitPrice).by(3.14)
 	.increment(p.unitsInStock).by(2)
 	.where(p.productId).is(1).update();
+	
+// reusable, parameterized update query
+String q = db.from(p).set(p.productName).toParameter().where(p.productId).is(1).toSQL();
+db.executeUpdate(q, "Lettuce");
+
 %ENDCODE%
 
 ## Merge Statements

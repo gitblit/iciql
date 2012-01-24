@@ -160,32 +160,46 @@ public class Query<T> {
 	 */
 	public <K> String toSQL(boolean distinct, K k) {
 		SQLStatement stat = new SQLStatement(getDb());
-		stat.appendSQL("SELECT ");
-		if (distinct) {
-			stat.appendSQL("DISTINCT ");
-		}
-		if (k != null) {
-			SelectTable<?> sel = getSelectTable(k);
-			if (sel == null) {
-				// unknown alias, use wildcard
-				IciqlLogger.warn("Alias {0} is not defined in the statement!", k.getClass());
-				stat.appendSQL("*");
-			} else if (isJoin()) {
-				// join query, use AS alias
-				String as = sel.getAs();
-				stat.appendSQL(as + ".*");
-			} else {
-				// schema.table.*
-				String schema = sel.getAliasDefinition().schemaName;
-				String table = sel.getAliasDefinition().tableName;
-				String as = getDb().getDialect().prepareTableName(schema, table);
-				stat.appendSQL(as + ".*");
+		if (updateColumnDeclarations.size() > 0) {
+			stat.appendSQL("UPDATE ");
+			from.appendSQL(stat);
+			stat.appendSQL(" SET ");
+			int i = 0;
+			for (UpdateColumn declaration : updateColumnDeclarations) {
+				if (i++ > 0) {
+					stat.appendSQL(", ");
+				}
+				declaration.appendSQL(stat);
 			}
+			appendWhere(stat);
 		} else {
-			// alias unspecified, use wildcard
-			stat.appendSQL("*");
-		}
-		appendFromWhere(stat);
+			stat.appendSQL("SELECT ");
+			if (distinct) {
+				stat.appendSQL("DISTINCT ");
+			}
+			if (k != null) {
+				SelectTable<?> sel = getSelectTable(k);
+				if (sel == null) {
+					// unknown alias, use wildcard
+					IciqlLogger.warn("Alias {0} is not defined in the statement!", k.getClass());
+					stat.appendSQL("*");
+				} else if (isJoin()) {
+					// join query, use AS alias
+					String as = sel.getAs();
+					stat.appendSQL(as + ".*");
+				} else {
+					// schema.table.*
+					String schema = sel.getAliasDefinition().schemaName;
+					String table = sel.getAliasDefinition().tableName;
+					String as = getDb().getDialect().prepareTableName(schema, table);
+					stat.appendSQL(as + ".*");
+				}
+			} else {
+				// alias unspecified, use wildcard
+				stat.appendSQL("*");
+			}
+			appendFromWhere(stat);
+		}		
 		return stat.toSQL().trim();
 	}
 
