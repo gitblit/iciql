@@ -48,7 +48,15 @@
 <h3> Current Release</h3>
 
 <span class="warning">iciql is undergoing rapid development so api and configuration are subject to change from release to release</span>
-<p><strong>0.7.8</strong> (<a href="http://code.google.com/p/iciql/downloads/detail?name=C:\projects\git\iciql/iciql-0.7.8.zip">zip</a>|<a href="http://code.google.com/p/iciql/downloads/detail?name=C:\projects\git\iciql/iciql-0.7.8.jar">jar</a>) &nbsp; <em>released 2012-01-11</em></p>
+<p><strong>0.7.9</strong> (<a href="http://code.google.com/p/iciql/downloads/detail?name=C:\projects\git\iciql/iciql-0.7.9.zip">zip</a>|<a href="http://code.google.com/p/iciql/downloads/detail?name=C:\projects\git\iciql/iciql-0.7.9.jar">jar</a>) &nbsp; <em>released 2012-01-24</em></p>
+
+<ul>
+<li>Added toParameter() option for SET commands and allow generating parameterized UPDATE statements<br/>
+String q = db.from(t).set(t.timestamp).toParameter().where(t.id).is(5).toSQL();<br/>
+db.executeUpdate(q, new Date());</li>
+</ul>
+
+<p><strong>0.7.8</strong> &nbsp; <em>released 2012-01-11</em></p>
 
 <ul>
 <li>Replaced non-threadsafe counter used for assigning AS identifiers in JOIN statements with an AtomicInteger</li>
@@ -280,7 +288,7 @@ Date myDate = new Date(100, 1, 1);
 </li>
 </ul>	</div>
 	<div style="margin-top:10px" class="page_footer">
-		<div style="float:right;">generated 2012-01-11</div>
+		<div style="float:right;">generated 2012-01-24</div>
 	The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.
 	</div>
 </body>

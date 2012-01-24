@@ -100,6 +100,11 @@ db.from(p).set(p.productName).to("updated")
 	.increment(p.unitPrice).by(3.14)
 	.increment(p.unitsInStock).by(2)
 	.where(p.productId).is(1).update();
+	
+// reusable, parameterized update query
+String q = db.from(p).set(p.productName).toParameter().where(p.productId).is(1).toSQL();
+db.executeUpdate(q, "Lettuce");
+
 </pre></p>
 
 <h2> Merge Statements</h2>
@@ -181,7 +186,7 @@ JdbcUtils.closeSilently(rs, true);
 
 </pre></p>	</div>
 	<div style="margin-top:10px" class="page_footer">
-		<div style="float:right;">generated 2012-01-11</div>
+		<div style="float:right;">generated 2012-01-24</div>
 	The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.
 	</div>
 </body>
