@@ -269,7 +269,7 @@ class ModelUtils {
 			if (def.defaultValue.charAt(0) == '\''
 					&& def.defaultValue.charAt(def.defaultValue.length() - 1) == '\'') {
 				// strip leading and trailing single quotes
-				return def.defaultValue.substring(1, def.defaultValue.length() - 2);
+				return def.defaultValue.substring(1, def.defaultValue.length() - 1).trim();
 			}
 			return def.defaultValue;
 		}

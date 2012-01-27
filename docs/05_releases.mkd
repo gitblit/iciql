@@ -6,6 +6,10 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- Fixed default String value bug where a default empty string threw an IndexOutOfBounds exception
+
+**0.7.9** &nbsp; *released 2012-01-24*
+
 - Added toParameter() option for SET commands and allow generating parameterized UPDATE statements<br/>
 String q = db.from(t).set(t.timestamp).toParameter().where(t.id).is(5).toSQL();<br/>
 db.executeUpdate(q, new Date());
