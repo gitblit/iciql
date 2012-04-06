@@ -81,6 +81,16 @@ public class JoinTest {
 		assertEquals(2, users.get(0).id);
 	}
 
+    @Test
+    public void testLeftJoin() throws Exception {
+        final UserId u = new UserId();
+        final UserNote n = new UserNote();
+
+        List<UserId> notes = db.from(u).leftJoin(n).on(u.id).is(n.userId).where(u.id).is(4).select();
+        assertEquals(1, notes.size());
+        assertEquals(4, notes.get(0).id);
+    }
+
 	@IQTable
 	public static class UserId {
 
@@ -104,7 +114,7 @@ public class JoinTest {
 		}
 
 		public static List<UserId> getList() {
-			UserId[] list = { new UserId(1, "Tom"), new UserId(2, "Dick"), new UserId(3, "Harry") };
+			UserId[] list = { new UserId(1, "Tom"), new UserId(2, "Dick"), new UserId(3, "Harry"), new UserId(4, "Jack") };
 			return Arrays.asList(list);
 		}
 	}

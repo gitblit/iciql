@@ -845,6 +845,15 @@ public class Query<T> {
 		return new QueryJoin(this, join);
 	}
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public <A> QueryJoin<T> leftJoin(A alias) {
+        TableDefinition<T> def = (TableDefinition<T>) db.define(alias.getClass());
+        SelectTable<T> join = new SelectTable(db, this, alias, true);
+        def.initSelectObject(join, alias, aliasMap);
+        joins.add(join);
+        return new QueryJoin(this, join);
+    }
+
 	Db getDb() {
 		return db;
 	}
