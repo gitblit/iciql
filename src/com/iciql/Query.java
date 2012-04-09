@@ -836,14 +836,22 @@ public class Query<T> {
 	 * @return the joined query
 	 */
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <A> QueryJoin<T> innerJoin(A alias) {
-		TableDefinition<T> def = (TableDefinition<T>) db.define(alias.getClass());
-		SelectTable<T> join = new SelectTable(db, this, alias, false);
-		def.initSelectObject(join, alias, aliasMap);
-		joins.add(join);
-		return new QueryJoin(this, join);
+        return join(alias, false);
 	}
+
+    public <A> QueryJoin<T> leftJoin(A alias) {
+        return join(alias, true);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private <A> QueryJoin<T> join(A alias, boolean outerJoin) {
+        TableDefinition<T> def = (TableDefinition<T>) db.define(alias.getClass());
+        SelectTable<T> join = new SelectTable(db, this, alias, outerJoin);
+        def.initSelectObject(join, alias, aliasMap);
+        joins.add(join);
+        return new QueryJoin(this, join);
+    }
 
 	Db getDb() {
 		return db;
