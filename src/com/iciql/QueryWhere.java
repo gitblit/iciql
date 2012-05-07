@@ -289,7 +289,39 @@ public class QueryWhere<T> {
 	public <K> String toSQL(boolean distinct, K k) {
 		return query.toSQL(distinct, k);
 	}
+	
+	public <Z> SubQuery<T, Z> subQuery(Z x) {
+		return new SubQuery<T, Z>(query, x);
+	}
 
+	public SubQuery<T, Boolean> subQuery(boolean x) {		
+		return subQuery(query.getPrimitiveAliasByValue(x));
+	}
+
+	public SubQuery<T, Byte> subQuery(byte x) {
+		return subQuery(query.getPrimitiveAliasByValue(x));
+	}
+
+	public SubQuery<T, Short> subQuery(short x) {
+		return subQuery(query.getPrimitiveAliasByValue(x));
+	}
+
+	public SubQuery<T, Integer> subQuery(int x) {
+		return subQuery(query.getPrimitiveAliasByValue(x));
+	}
+
+	public SubQuery<T, Long> subQuery(long x) {
+		return subQuery(query.getPrimitiveAliasByValue(x));
+	}
+
+	public SubQuery<T, Float> subQuery(float x) {
+		return subQuery(query.getPrimitiveAliasByValue(x));
+	}
+
+	public SubQuery<T, Double> subQuery(double x) {
+		return subQuery(query.getPrimitiveAliasByValue(x));
+	}
+	
 	public <X, Z> List<X> select(Z x) {
 		return query.select(x);
 	}

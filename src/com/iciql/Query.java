@@ -203,6 +203,15 @@ public class Query<T> {
 		return stat.toSQL().trim();
 	}
 
+	<Z> String toSubQuery(Z z) {
+		SQLStatement stat = getSelectStatement(false);
+		SelectColumn<T> col = aliasMap.get(z);
+		String columnName = col.getFieldDefinition().columnName;
+		stat.appendColumn(columnName);
+		appendFromWhere(stat);
+		return stat.toSQL();
+	}	
+
 	private List<T> select(boolean distinct) {
 		List<T> result = Utils.newArrayList();
 		TableDefinition<T> def = from.getAliasDefinition();

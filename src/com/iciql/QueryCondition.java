@@ -36,6 +36,11 @@ public class QueryCondition<T, A> {
 		this.x = x;
 	}
 
+	public <Q, Z> QueryWhere<T> in(SubQuery<Q, Z> q) {
+		query.addConditionToken(new SubQueryCondition<A, Q, Z>(x, q));
+		return new QueryWhere<T>(query);
+	}
+
 	public QueryWhere<T> is(A y) {
 		query.addConditionToken(new Condition<A>(x, y, CompareType.EQUAL));
 		return new QueryWhere<T>(query);

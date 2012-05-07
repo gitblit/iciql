@@ -28,6 +28,7 @@ import org.junit.Test;
 import com.iciql.Db;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
+import com.iciql.QueryWhere;
 
 /**
  * Tests of Joins.
@@ -91,6 +92,17 @@ public class JoinTest {
         assertEquals(4, notes.get(0).id);
     }
 
+    @Test
+    public void testSubQuery() throws Exception {
+        final UserId u = new UserId();
+        final UserNote n = new UserNote();
+
+        QueryWhere<UserId> q = db.from(u).where(u.id).in(db.from(n).where(n.userId).exceeds(0).subQuery(n.userId));
+        assertEquals("SELECT * FROM UserId WHERE id in (SELECT userId FROM UserNote WHERE userId > 0 )", q.toSQL());
+        List<UserId> notes = q.select();
+        assertEquals(3, notes.size());
+    }
+    
 	@IQTable
 	public static class UserId {
 
