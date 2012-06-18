@@ -25,7 +25,7 @@ import com.iciql.util.Utils;
 public class Function implements Token {
 
 	// must be a new instance
-	private static final Long COUNT_STAR = Long.valueOf(0);
+	private static final Long COUNT_STAR = new Long(0);
 
 	protected Object[] x;
 	private String name;

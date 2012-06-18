@@ -10,7 +10,7 @@
 	<property name="project.site.dir" value="${basedir}/site" />
 
 	<!-- Load publication servers, paths, and credentials --> 
-	<loadproperties srcfile="${basedir}/build.properties" />
+	<!--<loadproperties srcfile="${basedir}/build.properties" />-->
 	
 	
 	<!--
