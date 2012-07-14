@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -98,9 +99,15 @@ public class JoinTest {
         final UserNote n = new UserNote();
 
         QueryWhere<UserId> q = db.from(u).where(u.id).in(db.from(n).where(n.userId).exceeds(0).subQuery(n.userId));
-        assertEquals("SELECT * FROM UserId WHERE id in (SELECT userId FROM UserNote WHERE userId > 0 )", q.toSQL());
         List<UserId> notes = q.select();
         assertEquals(3, notes.size());
+
+        // do not test MySQL on this statement because the databases
+		if (IciqlSuite.isMySQL(db)) {
+			assertEquals("SELECT * FROM UserId WHERE `id` in (SELECT `userId` FROM UserNote WHERE `userId` > 0 )", q.toSQL());
+		} else {
+			assertEquals("SELECT * FROM UserId WHERE id in (SELECT userId FROM UserNote WHERE userId > 0 )", q.toSQL());
+		}
     }
     
 	@IQTable
