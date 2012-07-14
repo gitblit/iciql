@@ -76,10 +76,10 @@
 			</filterchain>
 		</loadfile>
 
-		<property name="library.jar" value="${basedir}/iciql-${iq.version}.jar" />
-		<property name="javadoc.jar" value="${basedir}/iciql-${iq.version}-javadoc.jar" />
-		<property name="sources.jar" value="${basedir}/iciql-${iq.version}-sources.jar" />
-		<property name="distribution.zip" value="${basedir}/iciql-${iq.version}.zip" />
+		<property name="library.jar" value="iciql-${iq.version}.jar" />
+		<property name="javadoc.jar" value="iciql-${iq.version}-javadoc.jar" />
+		<property name="sources.jar" value="/iciql-${iq.version}-sources.jar" />
+		<property name="distribution.zip" value="iciql-${iq.version}.zip" />
 	</target>
 
 	
