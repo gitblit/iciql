@@ -6,6 +6,8 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- Issue CREATE TABLE and CREATE INDEX statements once per-db instance/table-mapping
+- Fixed bug in using 0L primitive values in where clauses.  These were confused with the COUNT(*) function. (Github/kc5nra,issue 5)
 - Added support for single column subquery *select name, address from user_table where user_id in (select user_id from invoice table where paid = false)*
 - Added support for left outer join (Github/backpaper0)
 
