@@ -650,6 +650,9 @@ public class TableDefinition<T> {
 			db.upgradeTable(this);
 			return this;
 		}
+		if (db.hasCreated(clazz)) {
+			return this;
+		}
 		SQLStatement stat = new SQLStatement(db);
 		db.getDialect().prepareCreateTable(stat, this);
 		IciqlLogger.create(stat.getSQL());

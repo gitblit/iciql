@@ -279,6 +279,8 @@ public class Db {
 		}
 		// remove this model class from the table definition cache
 		classMap.remove(modelClass);
+		// remove this model class from the upgrade checked cache
+		upgradeChecked.remove(modelClass);
 		return rc;
 	}
 
@@ -394,6 +396,10 @@ public class Db {
 			}
 		}
 		return def;
+	}
+	
+	<T> boolean hasCreated(Class<T> clazz) {
+		return upgradeChecked.contains(clazz);
 	}
 
 	public synchronized void setDbUpgrader(DbUpgrader upgrader) {
