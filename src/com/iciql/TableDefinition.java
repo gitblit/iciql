@@ -18,6 +18,7 @@
 package com.iciql;
 
 import java.lang.reflect.Field;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -488,6 +489,38 @@ public class TableDefinition<T> {
 
 		// return the value unchanged
 		return value;
+	}
+	
+	PreparedStatement createInsertStatement(Db db, Object obj, boolean returnKey) {
+		SQLStatement stat = new SQLStatement(db);
+		StatementBuilder buff = new StatementBuilder("INSERT INTO ");
+		buff.append(db.getDialect().prepareTableName(schemaName, tableName)).append('(');
+		for (FieldDefinition field : fields) {
+			if (skipInsertField(field, obj)) {
+				continue;
+			}
+			buff.appendExceptFirst(", ");
+			buff.append(db.getDialect().prepareColumnName(field.columnName));
+		}
+		buff.append(") VALUES(");
+		buff.resetCount();
+		for (FieldDefinition field : fields) {
+			if (skipInsertField(field, obj)) {
+				continue;
+			}
+			buff.appendExceptFirst(", ");
+			buff.append('?');
+			Object value = getValue(obj, field);
+			if (value == null && !field.nullable) {
+				// try to interpret and instantiate a default value
+				value = ModelUtils.getDefaultValue(field, db.getDialect().getDateTimeClass());
+			}
+			stat.addParameter(value);
+		}
+		buff.append(')');
+		stat.setSQL(buff.toString());
+		IciqlLogger.insert(stat.getSQL());
+		return stat.prepare(returnKey);
 	}
 
 	long insert(Db db, Object obj, boolean returnKey) {

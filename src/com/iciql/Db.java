@@ -22,6 +22,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.Savepoint;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,7 +60,7 @@ public class Db {
 	private static final Map<Object, Token> TOKENS;
 
 	private static final Map<String, Class<? extends SQLDialect>> DIALECTS;
-
+	
 	private final Connection conn;
 	private final Map<Class<?>, TableDefinition<?>> classMap = Collections
 			.synchronizedMap(new HashMap<Class<?>, TableDefinition<?>>());
@@ -431,28 +433,88 @@ public class Db {
 	}
 
 	public <T> void insertAll(List<T> list) {
-		for (T t : list) {
-			insert(t);
+		if (list.size() == 0) {
+			return;
+		}
+		Savepoint savepoint = null;
+		try {
+			Class<?> clazz = list.get(0).getClass();
+			TableDefinition<?> def = define(clazz).createIfRequired(this);
+			savepoint = prepareSavepoint();
+			for (T t : list) {
+				PreparedStatement ps = def.createInsertStatement(this, t, false);
+				int rc = ps.executeUpdate();
+				if (rc == 0) {
+					throw new IciqlException("Failed to insert {0}.  Affected rowcount == 0.", t);
+				}
+			}
+			commit(savepoint);
+		} catch (SQLException e) {
+			rollback(savepoint);
+			throw new IciqlException(e);
+		} catch (IciqlException e) {
+			rollback(savepoint);
+			throw e;
 		}
 	}
 
 	public <T> List<Long> insertAllAndGetKeys(List<T> list) {
 		List<Long> identities = new ArrayList<Long>();
-		for (T t : list) {
-			identities.add(insertAndGetKey(t));
+		if (list.size() == 0) {
+			return identities;
+		}
+		Savepoint savepoint = null;
+		try {
+			Class<?> clazz = list.get(0).getClass();
+			TableDefinition<?> def = define(clazz).createIfRequired(this);
+			savepoint = prepareSavepoint();
+			for (T t : list) {
+				long key = def.insert(this,  t, true);
+				identities.add(key);
+			}
+			commit(savepoint);
+		} catch (IciqlException e) {
+			rollback(savepoint);
+			throw e;
 		}
 		return identities;
 	}
 
 	public <T> void updateAll(List<T> list) {
-		for (T t : list) {
-			update(t);
+		if (list.size() == 0) {
+			return;
+		}
+		Savepoint savepoint = null;
+		try {
+			Class<?> clazz = list.get(0).getClass();
+			TableDefinition<?> def = define(clazz).createIfRequired(this);
+			savepoint = prepareSavepoint();
+			for (T t : list) {
+				def.update(this, t);
+			}
+			commit(savepoint);
+		} catch (IciqlException e) {
+			rollback(savepoint);
+			throw e;
 		}
 	}
 
 	public <T> void deleteAll(List<T> list) {
-		for (T t : list) {
-			delete(t);
+		if (list.size() == 0) {
+			return;
+		}
+		Savepoint savepoint = null;
+		try {
+			Class<?> clazz = list.get(0).getClass();
+			TableDefinition<?> def = define(clazz).createIfRequired(this);
+			savepoint = prepareSavepoint();
+			for (T t : list) {
+				def.delete(this,  t);
+			}
+			commit(savepoint);
+		} catch (IciqlException e) {
+			rollback(savepoint);
+			throw e;
 		}
 	}
 
@@ -465,6 +527,42 @@ public class Db {
 			return conn.prepareStatement(sql);
 		} catch (SQLException e) {
 			throw IciqlException.fromSQL(sql, e);
+		}
+	}
+	
+	Savepoint prepareSavepoint() {
+		// create a savepoint
+		Savepoint savepoint = null;
+		try {
+			conn.setAutoCommit(false);
+			savepoint = conn.setSavepoint();
+		} catch (SQLFeatureNotSupportedException e) {
+			// jdbc driver does not support save points			
+		} catch (SQLException e) {
+			throw new IciqlException(e, "Could not create save point");
+		}
+		return savepoint;
+	}
+	
+	void commit(Savepoint savepoint) {
+		if (savepoint != null) {
+			try {
+				conn.commit();
+				conn.setAutoCommit(true);
+			} catch (SQLException e) {
+				throw new IciqlException(e, "Failed to commit pending transactions");
+			}
+		}
+	}
+	
+	void rollback(Savepoint savepoint) {
+		if (savepoint != null) {
+			try {
+				conn.rollback(savepoint);
+				conn.setAutoCommit(true);
+			} catch (SQLException s) {
+				throw new IciqlException(s, "Failed to rollback transactions");
+			}
 		}
 	}
 

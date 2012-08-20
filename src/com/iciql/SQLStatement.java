@@ -166,7 +166,7 @@ public class SQLStatement {
 		}
 	}
 
-	private PreparedStatement prepare(boolean returnGeneratedKeys) {
+	PreparedStatement prepare(boolean returnGeneratedKeys) {
 		PreparedStatement prep = db.prepare(getSQL(), returnGeneratedKeys);
 		for (int i = 0; i < params.size(); i++) {
 			Object o = params.get(i);

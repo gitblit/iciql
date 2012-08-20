@@ -4,6 +4,10 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- All bulk operations (insert all, update all, delete all) now use JDBC savepoints to ensure atomicity of the transaction
+
+**1.0.0** &nbsp; *released 2012-07-14*
+
 - Issue CREATE TABLE and CREATE INDEX statements once per-db instance/table-mapping
 - Fixed bug in using 0L primitive values in where clauses.  These were confused with the COUNT(*) function. (Github/kc5nra,issue 5)
 - Added support for single column subquery *select name, address from user_table where user_id in (select user_id from invoice table where paid = false)*
