@@ -36,9 +36,9 @@ select * from products
 </table>
 
 ### Supported Databases (Unit-Tested)
-- [H2](http://h2database.com) 1.3.162
-- [HSQLDB](http://hsqldb.org) 2.2.6 
-- [Derby](http://db.apache.org/derby) 10.7.1.1 & 10.8.1.2
+- [H2](http://h2database.com) 1.3.168
+- [HSQLDB](http://hsqldb.org) 2.2.8 
+- [Derby](http://db.apache.org/derby) 10.9.1.0
 - [MySQL](http://mysql.com) 5.0.51b
 - [PostgreSQL](http://postgresql.org) 9.0
 
@@ -49,6 +49,8 @@ Support for others is possible and may only require creating a simple "dialect" 
 iciql requires a Java 6 Runtime Environment (JRE) or a Java 6 Development Kit (JDK).
  
 ### Current Release
+
+<span class="warning">iciql is undergoing rapid development so api and configuration are subject to change from release to release</span>
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
