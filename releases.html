@@ -34,7 +34,13 @@
 
 <h3> Current Release</h3>
 
-<p><strong>1.0.0</strong> (<a href="http://code.google.com/p/iciql/downloads/detail?name=iciql-1.0.0.zip">zip</a>|<a href="http://code.google.com/p/iciql/downloads/detail?name=iciql-1.0.0.jar">jar</a>) &nbsp; <em>released 2012-07-14</em></p>
+<p><strong>1.1.0</strong> (<a href="http://code.google.com/p/iciql/downloads/detail?name=iciql-1.1.0.zip">zip</a>|<a href="http://code.google.com/p/iciql/downloads/detail?name=iciql-1.1.0.jar">jar</a>) &nbsp; <em>released 2012-08-20</em></p>
+
+<ul>
+<li>All bulk operations (insert all, update all, delete all) now use JDBC savepoints to ensure atomicity of the transaction</li>
+</ul>
+
+<p><strong>1.0.0</strong> &nbsp; <em>released 2012-07-14</em></p>
 
 <ul>
 <li>Issue CREATE TABLE and CREATE INDEX statements once per-db instance/table-mapping</li>
@@ -289,7 +295,7 @@ Date myDate = new Date(100, 1, 1);
 </li>
 </ul>	</div>
 	<div style="margin-top:10px" class="page_footer">
-		<div style="float:right;">generated 2012-07-14</div>
+		<div style="float:right;">generated 2012-08-20</div>
 	The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.
 	</div>
 </body>
