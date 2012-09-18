@@ -4,6 +4,10 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- Fixed password bug in model generator (issue 7)
+
+**1.1.0** &nbsp; *released 2012-08-20*
+
 - All bulk operations (insert all, update all, delete all) now use JDBC savepoints to ensure atomicity of the transaction
 
 **1.0.0** &nbsp; *released 2012-07-14*

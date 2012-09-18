@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -158,6 +157,15 @@ public class Db {
 			throw new IciqlException(e);
 		}
 	}
+	
+	public static Db open(String url, String user, char[] password) {
+		try {
+			Connection conn = JdbcUtils.getConnection(null, url, user, password == null ? null : new String(password));
+			return new Db(conn);
+		} catch (SQLException e) {
+			throw new IciqlException(e);
+		}
+	}
 
 	/**
 	 * Create a new database instance using a data source. This method is fast,
@@ -179,17 +187,7 @@ public class Db {
 		return new Db(conn);
 	}
 
-	public static Db open(String url, String user, char[] password) {
-		try {
-			Properties prop = new Properties();
-			prop.setProperty("user", user);
-			prop.put("password", password);
-			Connection conn = JdbcUtils.getConnection(null, url, prop);
-			return new Db(conn);
-		} catch (SQLException e) {
-			throw new IciqlException(e);
-		}
-	}
+	
 	
 	/**
 	 * Convenience function to avoid import statements in application code.

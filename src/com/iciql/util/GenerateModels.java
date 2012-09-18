@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -130,14 +128,12 @@ public class GenerateModels {
 	public static void execute(String url, String user, String password, String schema, String table,
 			String packageName, String folder, boolean annotateSchema, boolean trimStrings)
 			throws SQLException {
-		Connection conn = null;
 		try {
-			conn = DriverManager.getConnection(url, user, password);
 			Db db;
 			if (password == null) {
 				db = Db.open(url, user, (String) null);
 			} else {
-				db = Db.open(url, user, password.toCharArray());
+				db = Db.open(url, user, password);
 			}
 			DbInspector inspector = new DbInspector(db);
 			List<String> models = inspector.generateModel(schema, table, packageName, annotateSchema,
@@ -164,8 +160,6 @@ public class GenerateModels {
 			}
 		} catch (IOException io) {
 			throw new SQLException("could not generate model", io);
-		} finally {
-			JdbcUtils.closeSilently(conn);
 		}
 	}
 
