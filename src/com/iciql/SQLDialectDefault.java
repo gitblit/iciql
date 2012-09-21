@@ -134,10 +134,6 @@ public class SQLDialectDefault implements SQLDialect {
 						field.isAutoIncrement, field.isPrimaryKey);
 			}
 
-			if (!field.nullable) {
-				buff.append(" NOT NULL");
-			}
-
 			// default values
 			if (!field.isAutoIncrement && !field.isPrimaryKey) {
 				String dv = field.defaultValue;
@@ -147,6 +143,10 @@ public class SQLDialectDefault implements SQLDialect {
 						buff.append(" DEFAULT " + dv);
 					}
 				}
+			}
+
+			if (!field.nullable) {
+				buff.append(" NOT NULL");
 			}
 		}
 
