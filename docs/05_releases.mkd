@@ -5,6 +5,7 @@
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
 - Fixed order of DEFAULT value in create table statement (issue 11)
+- Support inheritance of IQVersion for DbUpgrader implementations (issue 10)
 - Fixed password bug in model generator (issue 7)
 
 **1.1.0** &nbsp; *released 2012-08-20*

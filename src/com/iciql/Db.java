@@ -311,6 +311,13 @@ public class Db {
 			upgradeChecked.add(dbUpgrader.getClass());
 
 			IQVersion model = dbUpgrader.getClass().getAnnotation(IQVersion.class);
+			if (model.value() == 0) {
+				// try superclass
+				Class<?> superClass = dbUpgrader.getClass().getSuperclass();
+				if (superClass.isAnnotationPresent(IQVersion.class)) {
+					model = superClass.getAnnotation(IQVersion.class);
+				}
+			}
 			if (model.value() > 0) {
 				DbVersion v = new DbVersion();
 				// (SCHEMA="" && TABLE="") == DATABASE

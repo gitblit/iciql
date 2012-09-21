@@ -72,6 +72,43 @@ public class UpgradesTest {
 		db.close();
 		db2.close();
 	}
+	
+	@Test
+	public void testDatabaseInheritedUpgrade() {
+		Db db = IciqlSuite.openNewDb();
+
+		List<Product> products = Product.getList();
+
+		// set the v1 upgrader and insert a record.
+		// this will trigger the upgrade.
+		V1DbUpgrader v1 = new V1DbUpgrader();
+		db.setDbUpgrader(v1);
+		db.insert(products.get(0));
+
+		// confirm that upgrade occurred
+		assertEquals(0, v1.oldVersion.get());
+		assertEquals(1, v1.newVersion.get());
+
+		// open a second connection to the database
+		// and then apply the v2 upgrade.
+		// For H2 its important to keep the first connection
+		// alive so that the database is not destroyed.
+		Db db2 = IciqlSuite.openCurrentDb();
+
+		// set the v2 upgrader and insert a record.
+		// this will trigger the upgrade.
+		V2DbUpgraderImpl v2 = new V2DbUpgraderImpl();
+		db2.setDbUpgrader(v2);
+		db2.insert(products.get(1));
+
+		// confirm that upgrade occurred
+		assertEquals(1, v2.oldVersion.get());
+		assertEquals(2, v2.newVersion.get());
+
+		db.executeUpdate("DROP TABLE iq_versions");
+		db.close();
+		db2.close();
+	}
 
 	@Test
 	public void testTableUpgrade() {
@@ -129,6 +166,15 @@ public class UpgradesTest {
 	 */
 	@IQVersion(2)
 	class V2DbUpgrader extends BaseDbUpgrader {
+	}
+
+	
+	/**
+	 * A sample V2 database upgrader class which inherits its
+	 * version from the parent class.
+	 */
+	@IQVersion()
+	class V2DbUpgraderImpl extends V2DbUpgrader {
 	}
 
 }
