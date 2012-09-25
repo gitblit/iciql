@@ -38,6 +38,7 @@ import javax.sql.DataSource;
 import com.iciql.DbUpgrader.DefaultDbUpgrader;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
+import com.iciql.Iciql.IQView;
 import com.iciql.util.IciqlLogger;
 import com.iciql.util.JdbcUtils;
 import com.iciql.util.StringUtils;
@@ -284,6 +285,27 @@ public class Db {
 		return rc;
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T> int dropView(Class<? extends T> modelClass) {
+		TableDefinition<T> def = (TableDefinition<T>) define(modelClass);
+		SQLStatement stat = new SQLStatement(this);
+		getDialect().prepareDropView(stat, def);
+		IciqlLogger.drop(stat.getSQL());
+		int rc = 0;
+		try {
+			rc = stat.executeUpdate();
+		} catch (IciqlException e) {
+			if (e.getIciqlCode() != IciqlException.CODE_OBJECT_NOT_FOUND) {
+				throw e;
+			}
+		}
+		// remove this model class from the table definition cache
+		classMap.remove(modelClass);
+		// remove this model class from the upgrade checked cache
+		upgradeChecked.remove(modelClass);
+		return rc;
+	}
+
 	public <T> List<T> buildObjects(Class<? extends T> modelClass, ResultSet rs) {
 		return buildObjects(modelClass, false, rs);
 	}
@@ -396,6 +418,11 @@ public class Db {
 				Iciql table = (Iciql) t;
 				Define.define(def, table);
 			} else if (clazz.isAnnotationPresent(IQTable.class)) {
+				// annotated classes skip the Define().define() static
+				// initializer
+				T t = instance(clazz);
+				def.mapObject(t);
+			} else if (clazz.isAnnotationPresent(IQView.class)) {
 				// annotated classes skip the Define().define() static
 				// initializer
 				T t = instance(clazz);

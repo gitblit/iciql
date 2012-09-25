@@ -115,6 +115,18 @@ public class SQLStatement {
 		params.add(o);
 		return this;
 	}
+	
+	void execute() {
+		PreparedStatement ps = null;
+		try {
+			ps = prepare(false);
+			ps.execute();
+		} catch (SQLException e) {
+			throw IciqlException.fromSQL(getSQL(), e);
+		} finally {
+			JdbcUtils.closeSilently(ps);
+		}
+	}
 
 	ResultSet executeQuery() {
 		try {

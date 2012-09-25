@@ -107,6 +107,23 @@ public class Query<T> {
 		List<X> list = (List<X>) select(x);
 		return list.isEmpty() ? null : list.get(0);
 	}
+	
+	public <X> void createView(Class<X> viewClass) {
+		TableDefinition<X> viewDef = db.define(viewClass);
+		
+		SQLStatement fromWhere = new SQLStatement(db);
+		appendFromWhere(fromWhere, false);
+		
+		SQLStatement stat = new SQLStatement(db);
+		db.getDialect().prepareCreateView(stat, viewDef, fromWhere.toSQL());
+		IciqlLogger.create(stat.toSQL());
+		stat.execute();
+	}
+
+	public <X> void replaceView(Class<X> viewClass) {
+		db.dropView(viewClass);
+		createView(viewClass);
+	}
 
 	public String getSQL() {
 		SQLStatement stat = getSelectStatement(false);
@@ -803,8 +820,12 @@ public class Query<T> {
 			}
 		}
 	}
-
+	
 	void appendFromWhere(SQLStatement stat) {
+		appendFromWhere(stat, true);
+	}
+	
+	void appendFromWhere(SQLStatement stat, boolean log) {
 		stat.appendSQL(" FROM ");
 		from.appendSQL(stat);
 		for (SelectTable<T> join : joins) {
@@ -834,7 +855,9 @@ public class Query<T> {
 			}
 		}
 		db.getDialect().appendLimitOffset(stat, limit, offset);
-		IciqlLogger.select(stat.getSQL());
+		if (log) {
+			IciqlLogger.select(stat.getSQL());
+		}
 	}
 
 	/**

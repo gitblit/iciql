@@ -166,6 +166,57 @@ public class SQLDialectDefault implements SQLDialect {
 		stat.setSQL(buff.toString());
 	}
 
+	@Override
+	public <T> void prepareDropView(SQLStatement stat, TableDefinition<T> def) {
+		StatementBuilder buff = new StatementBuilder("DROP VIEW "
+				+ prepareTableName(def.schemaName, def.tableName));
+		stat.setSQL(buff.toString());
+		return;
+	}
+
+	protected <T> String prepareCreateView(TableDefinition<T> def) {
+		return "CREATE VIEW";
+	}
+
+	@Override
+	public <T> void prepareCreateView(SQLStatement stat, TableDefinition<T> def) {
+		StatementBuilder buff = new StatementBuilder();
+		buff.append(" FROM ");
+		buff.append(prepareTableName(def.schemaName, def.viewTableName));
+
+		StatementBuilder where = new StatementBuilder();
+		for (FieldDefinition field : def.fields) {
+			if (!StringUtils.isNullOrEmpty(field.constraint)) {
+				where.appendExceptFirst(", ");
+				String col = prepareColumnName(field.columnName);
+				String constraint = field.constraint.replace("{0}", col).replace("this", col);
+				where.append(constraint);
+			}
+		}
+		if (where.length() > 0) {
+			buff.append(" WHERE ");
+			buff.append(where.toString());
+		}
+		
+		prepareCreateView(stat, def, buff.toString());
+	}
+	
+	@Override
+	public <T> void prepareCreateView(SQLStatement stat, TableDefinition<T> def, String fromWhere) {
+		StatementBuilder buff = new StatementBuilder();
+		buff.append(prepareCreateView(def));
+		buff.append(" ");
+		buff.append(prepareTableName(def.schemaName, def.tableName));
+
+		buff.append(" AS SELECT ");
+		for (FieldDefinition field : def.fields) {
+			buff.appendExceptFirst(", ");
+			buff.append(prepareColumnName(field.columnName));
+		}
+		buff.append(fromWhere);
+		stat.setSQL(buff.toString());
+	}
+	
 	protected boolean isIntegerType(String dataType) {
 		if ("INT".equals(dataType)) {
 			return true;

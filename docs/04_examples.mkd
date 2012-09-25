@@ -111,6 +111,61 @@ List&lt;CustOrder&gt; orders =
     }});
 %ENDCODE%
 
+## View Statements
+
+%BEGINCODE%
+// the view named "ProductView" is created from the "Products" table
+@IQView(viewTableName = "Products")
+public class ProductView {
+
+    @IQColumn
+    @IQConstraint("this >= 200 AND this < 300")
+    Long id;
+	
+    @IQColumn
+    String name;
+}
+
+final ProductView v = new ProductView();
+List&lt;ProductView&gt; allProducts = db.from(v).select();
+
+// this version of the view model "ProductView" inherits table metadata
+// from the Products class which is annotated with IQTable
+@IQView(inheritColumns = true)
+public class ProductView extends Products {
+
+    // inherited BUT replaced to define the constraint
+    @IQColumn
+    @IQConstraint("this >= 200 AND this < 300")
+    Long id;
+	
+    // inherited from Products
+    //@IQColumn
+    //String name;
+}
+
+final ProductView v = new ProductView();
+List&lt;ProductView&gt; allProducts = db.from(v).select();
+
+// in this example we are creating a view based on a fluent query
+// and using 2 levels of inheritance.  IQConstraints are ignored
+// when using this approach because we are fluently defining them.
+@IQView(inheritColumns = true)
+public class ProductViewInherited extends ProductView {
+
+}
+
+final Products p = new Products();
+db.from(p).where(p.id).atLeast(200L).and(p.id).lessThan(300L).createView(ProductViewInherited.class);
+
+// now replace the view with a variation
+db.from(p).where(p.id).atLeast(250L).and(p.id).lessThan(350L).replaceView(ProductViewInherited.class);
+
+// now drop the view from the database
+db.dropView(ProductViewInherited.class);
+
+%ENDCODE%
+
 ## Dynamic Queries
 
 Dynamic queries skip all field type checking and, depending on which approach you use, may skip model class/table name checking too.

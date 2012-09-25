@@ -294,6 +294,67 @@ public interface Iciql {
 	}
 
 	/**
+	 * Annotation to define a view.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public @interface IQView {
+
+		/**
+		 * The view name. If not specified the class name is used as the view
+		 * name.
+		 * <p>
+		 * The view name may still be overridden in the define() method if the
+		 * model class is not annotated with IQView. Default: unspecified.
+		 */
+		String name() default "";
+		
+		/**
+		 * The source table for the view.
+		 * <p>
+		 * The view name may still be overridden in the define() method if the
+		 * model class is not annotated with IQView. Default: unspecified.
+		 */
+		String tableName() default "";
+
+		/**
+		 * The inherit columns allows this model class to inherit columns from
+		 * its super class. Any IQTable annotation present on the super class is
+		 * ignored. Default: false.
+		 */
+		boolean inheritColumns() default false;
+
+		/**
+		 * Whether or not iciql tries to create the view. Default:
+		 * true.
+		 */
+		boolean create() default true;
+
+		/**
+		 * If true, only fields that are explicitly annotated as IQColumn are
+		 * mapped. Default: true.
+		 */
+		boolean annotationsOnly() default true;
+	}
+	
+	/**
+	 * String snippet defining SQL constraints for a field. Use "this" as
+	 * a placeholder for the column name.  "this" will be substituted at
+	 * runtime.
+	 * <p>
+	 * IQConstraint("this > 2 AND this <= 7")
+	 * <p>
+	 * This snippet may still be overridden in the define() method if the
+	 * model class is not annotated with IQTable or IQView. Default: unspecified.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public @interface IQConstraint {
+
+		String value() default "";
+	}	
+	
+	/**
 	 * Annotation to specify multiple indexes.
 	 */
 	@Retention(RetentionPolicy.RUNTIME)

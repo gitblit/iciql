@@ -347,6 +347,14 @@ public class QueryWhere<T> {
 	public List<T> selectDistinct() {
 		return query.selectDistinct();
 	}
+	
+	public void createView(Class<?> viewClass) {
+		query.createView(viewClass);
+	}
+
+	public void replaceView(Class<?> viewClass) {
+		query.replaceView(viewClass);
+	}
 
 	/**
 	 * Order by primitive boolean field

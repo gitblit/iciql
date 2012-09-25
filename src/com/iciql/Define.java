@@ -59,6 +59,11 @@ public class Define {
 		currentTableDefinition.defineTableName(tableName);
 	}
 
+	public static void viewTableName(String viewTableName) {
+		checkInDefine();
+		currentTableDefinition.defineViewTableName(viewTableName);
+	}
+	
 	public static void memoryTable() {
 		checkInDefine();
 		currentTableDefinition.defineMemoryTable();
@@ -98,7 +103,12 @@ public class Define {
 		checkInDefine();
 		currentTableDefinition.defineDefaultValue(column, defaultValue);
 	}
-	
+
+	public static void constraint(Object column, String constraint) {
+		checkInDefine();
+		currentTableDefinition.defineConstraint(column, constraint);
+	}
+
 	static synchronized <T> void define(TableDefinition<T> tableDefinition, Iciql table) {
 		currentTableDefinition = tableDefinition;
 		currentTable = table;

@@ -60,6 +60,10 @@ import com.iciql.test.models.Product;
 import com.iciql.test.models.ProductAnnotationOnly;
 import com.iciql.test.models.ProductInheritedAnnotation;
 import com.iciql.test.models.ProductMixedAnnotation;
+import com.iciql.test.models.ProductView;
+import com.iciql.test.models.ProductViewFromQuery;
+import com.iciql.test.models.ProductViewInherited;
+import com.iciql.test.models.ProductViewInheritedComplex;
 import com.iciql.test.models.SupportedTypes;
 import com.iciql.util.IciqlLogger;
 import com.iciql.util.IciqlLogger.IciqlListener;
@@ -85,7 +89,7 @@ import com.iciql.util.Utils;
 @SuiteClasses({ AliasMapTest.class, AnnotationsTest.class, BooleanModelTest.class, ClobTest.class,
 		ConcurrencyTest.class, EnumsTest.class, ModelsTest.class, PrimitivesTest.class,
 		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UpgradesTest.class, JoinTest.class,
-		UUIDTest.class })
+		UUIDTest.class, ViewsTest.class })
 public class IciqlSuite {
 
 	private static final TestDb[] TEST_DBS = {
@@ -154,6 +158,12 @@ public class IciqlSuite {
 			connectionFactories.put(testUrl, factory);
 		}
 		db = Db.open(dataSource);
+
+		// drop views
+		db.dropView(ProductView.class);
+		db.dropView(ProductViewInherited.class);
+		db.dropView(ProductViewFromQuery.class);
+		db.dropView(ProductViewInheritedComplex.class);
 
 		// drop tables
 		db.dropTable(BooleanModel.class);

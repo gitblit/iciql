@@ -13,8 +13,9 @@ This is an overview of the fundamental differences between the original JaQu pro
 <tr><td>column mappings</td><td>wildcard queries index result sets by column name</td><td>all result sets built by field index<br/>this can fail for wildcard queries</td></tr>
 <tr><td>savepoints</td><td>bulk operations (insert, update, delete) use savepoints with rollback in the event of failure</td><td>--</td></tr>
 <tr><th colspan="3">syntax and api</th></tr>
+<tr><td>VIEWs</td><td>create readonly views either from a class definition or from a fluent statement</td><td>--</td></tr>
 <tr><td>dynamic queries</td><td>methods and where clauses for dynamic queries that build iciql objects</td><td>--</td></tr>
-<tr><td>DROP</td><td>syntax to drop a table</td><td></td></tr>
+<tr><td>DROP</td><td>syntax to drop a table or view</td><td></td></tr>
 <tr><td>BETWEEN</td><td>syntax for specifying a BETWEEN x AND y clause</td><td>--</td></tr>
 <tr><th colspan="3">types</th></tr>
 <tr><td>primitives</td><td>fully supported</td><td>--</td></tr>

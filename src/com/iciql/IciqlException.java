@@ -121,6 +121,9 @@ public class IciqlException extends RuntimeException {
 			} else if ("42P01".equals(state)) {
 				// PostgreSQL table not found
 				iciqlCode = CODE_OBJECT_NOT_FOUND;
+			} else if ("X0X05".equals(state)) {
+				// Derby view/table not found exists
+				iciqlCode = CODE_OBJECT_NOT_FOUND;
 			} else if ("X0Y32".equals(state)) {
 				// Derby table already exists
 				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;

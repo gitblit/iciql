@@ -37,6 +37,19 @@ public class SQLDialectH2 extends SQLDialectDefault {
 			return "CREATE CACHED TABLE IF NOT EXISTS";
 		}
 	}
+	
+	@Override
+	protected <T> String prepareCreateView(TableDefinition<T> def) {
+		return "CREATE VIEW IF NOT EXISTS";
+	}
+
+	@Override
+	public <T> void prepareDropView(SQLStatement stat, TableDefinition<T> def) {
+		StatementBuilder buff = new StatementBuilder("DROP VIEW IF EXISTS "
+				+ prepareTableName(def.schemaName, def.tableName));
+		stat.setSQL(buff.toString());
+		return;
+	}
 
 	@Override
 	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType,

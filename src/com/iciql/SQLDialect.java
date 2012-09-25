@@ -79,6 +79,32 @@ public interface SQLDialect {
 	 */
 	<T> void prepareDropTable(SQLStatement stat, TableDefinition<T> def);
 
+	
+	/**
+	 * Get the CREATE VIEW statement.
+	 * 
+	 * @param stat
+	 * @param def
+	 */
+	<T> void prepareCreateView(SQLStatement stat, TableDefinition<T> def);
+
+	/**
+	 * Get the CREATE VIEW statement.
+	 * 
+	 * @param stat
+	 * @param def
+	 * @param fromWhere
+	 */
+	<T> void prepareCreateView(SQLStatement stat, TableDefinition<T> def, String fromWhere);
+
+	/**
+	 * Get the DROP VIEW statement.
+	 * 
+	 * @param stat
+	 * @param def
+	 */
+	<T> void prepareDropView(SQLStatement stat, TableDefinition<T> def);
+	
 	/**
 	 * Get the CREATE INDEX statement.
 	 * 

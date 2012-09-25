@@ -24,12 +24,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
+import com.iciql.Iciql.IQConstraint;
 import com.iciql.Iciql.IQEnum;
 import com.iciql.Iciql.IQIgnore;
 import com.iciql.Iciql.IQIndex;
@@ -37,6 +40,7 @@ import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQSchema;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
+import com.iciql.Iciql.IQView;
 import com.iciql.Iciql.IndexType;
 import com.iciql.util.IciqlLogger;
 import com.iciql.util.StatementBuilder;
@@ -81,6 +85,7 @@ public class TableDefinition<T> {
 		String defaultValue;
 		EnumType enumType;
 		boolean isPrimitive;
+		String constraint;
 
 		Object getValue(Object obj) {
 			try {
@@ -140,6 +145,7 @@ public class TableDefinition<T> {
 	public ArrayList<FieldDefinition> fields = Utils.newArrayList();
 	String schemaName;
 	String tableName;
+	String viewTableName;
 	int tableVersion;
 	List<String> primaryKeyColumnNames;
 	boolean memoryTable;
@@ -170,6 +176,10 @@ public class TableDefinition<T> {
 
 	void defineTableName(String tableName) {
 		this.tableName = tableName;
+	}
+
+	void defineViewTableName(String viewTableName) {
+		this.viewTableName = viewTableName;
 	}
 
 	void defineMemoryTable() {
@@ -302,6 +312,13 @@ public class TableDefinition<T> {
 		}
 	}
 
+	void defineConstraint(Object column, String constraint) {
+		FieldDefinition def = fieldMap.get(column);
+		if (def != null) {
+			def.constraint = constraint;
+		}
+	}
+
 	void mapFields() {
 		boolean byAnnotationsOnly = false;
 		boolean inheritColumns = false;
@@ -311,11 +328,33 @@ public class TableDefinition<T> {
 			inheritColumns = tableAnnotation.inheritColumns();
 		}
 
+		if (clazz.isAnnotationPresent(IQView.class)) {
+			IQView viewAnnotation = clazz.getAnnotation(IQView.class);
+			byAnnotationsOnly = viewAnnotation.annotationsOnly();
+			inheritColumns = viewAnnotation.inheritColumns();
+		}
+
 		List<Field> classFields = Utils.newArrayList();
 		classFields.addAll(Arrays.asList(clazz.getDeclaredFields()));
 		if (inheritColumns) {
 			Class<?> superClass = clazz.getSuperclass();
 			classFields.addAll(Arrays.asList(superClass.getDeclaredFields()));
+			
+			if (superClass.isAnnotationPresent(IQView.class)) {
+				IQView superView = superClass.getAnnotation(IQView.class);
+				if (superView.inheritColumns()) {
+					// inherit columns from super.super.class
+					Class<?> superSuperClass = superClass.getSuperclass();
+					classFields.addAll(Arrays.asList(superSuperClass.getDeclaredFields()));
+				}
+			} else if (superClass.isAnnotationPresent(IQTable.class)) {
+				IQTable superTable = superClass.getAnnotation(IQTable.class);
+				if (superTable.inheritColumns()) {
+					// inherit columns from super.super.class
+					Class<?> superSuperClass = superClass.getSuperclass();
+					classFields.addAll(Arrays.asList(superSuperClass.getDeclaredFields()));
+				}
+			}
 		}
 
 		Set<FieldDefinition> uniqueFields = new LinkedHashSet<FieldDefinition>();
@@ -336,6 +375,7 @@ public class TableDefinition<T> {
 			boolean nullable = !f.getType().isPrimitive();
 			EnumType enumType = null;
 			String defaultValue = "";
+			String constraint = "";
 			// configure Java -> SQL enum mapping
 			if (f.getType().isEnum()) {
 				enumType = EnumType.DEFAULT_TYPE;
@@ -388,9 +428,18 @@ public class TableDefinition<T> {
 					defaultValue = col.defaultValue();
 				}
 			}
+			
+			boolean hasConstraint = f.isAnnotationPresent(IQConstraint.class);
+			if (hasConstraint) {
+				IQConstraint con = f.getAnnotation(IQConstraint.class);
+				// annotation overrides
+				if (!StringUtils.isNullOrEmpty(con.value())) {
+					constraint = con.value();
+				}
+			}
 
 			boolean reflectiveMatch = !byAnnotationsOnly;
-			if (reflectiveMatch || hasAnnotation) {
+			if (reflectiveMatch || hasAnnotation || hasConstraint) {
 				FieldDefinition fieldDef = new FieldDefinition();
 				fieldDef.isPrimitive = f.getType().isPrimitive();
 				fieldDef.field = f;
@@ -404,6 +453,7 @@ public class TableDefinition<T> {
 				fieldDef.defaultValue = defaultValue;
 				fieldDef.enumType = enumType;
 				fieldDef.dataType = ModelUtils.getDataType(fieldDef);
+				fieldDef.constraint = constraint;
 				uniqueFields.add(fieldDef);
 			}
 		}
@@ -540,6 +590,9 @@ public class TableDefinition<T> {
 	}
 
 	long insert(Db db, Object obj, boolean returnKey) {
+		if (!StringUtils.isNullOrEmpty(viewTableName)) {
+			throw new IciqlException("Iciql does not support inserting rows into views!");
+		}
 		SQLStatement stat = new SQLStatement(db);
 		StatementBuilder buff = new StatementBuilder("INSERT INTO ");
 		buff.append(db.getDialect().prepareTableName(schemaName, tableName)).append('(');
@@ -615,6 +668,9 @@ public class TableDefinition<T> {
 	}
 
 	int update(Db db, Object obj) {
+		if (!StringUtils.isNullOrEmpty(viewTableName)) {
+			throw new IciqlException("Iciql does not support updating rows in views!");
+		}
 		if (primaryKeyColumnNames == null || primaryKeyColumnNames.size() == 0) {
 			throw new IllegalStateException("No primary key columns defined for table " + obj.getClass()
 					+ " - no update possible");
@@ -661,6 +717,9 @@ public class TableDefinition<T> {
 	}
 
 	int delete(Db db, Object obj) {
+		if (!StringUtils.isNullOrEmpty(viewTableName)) {
+			throw new IciqlException("Iciql does not support deleting rows from views!");
+		}
 		if (primaryKeyColumnNames == null || primaryKeyColumnNames.size() == 0) {
 			throw new IllegalStateException("No primary key columns defined for table " + obj.getClass()
 					+ " - no update possible");
@@ -703,7 +762,11 @@ public class TableDefinition<T> {
 			return this;
 		}
 		SQLStatement stat = new SQLStatement(db);
-		db.getDialect().prepareCreateTable(stat, this);
+		if (StringUtils.isNullOrEmpty(viewTableName)) {
+			db.getDialect().prepareCreateTable(stat, this);
+		} else {
+			db.getDialect().prepareCreateView(stat, this);
+		}
 		IciqlLogger.create(stat.getSQL());
 		try {
 			stat.executeUpdate();
@@ -773,6 +836,64 @@ public class TableDefinition<T> {
 			}
 		}
 
+		if (clazz.isAnnotationPresent(IQView.class)) {
+			IQView viewAnnotation = clazz.getAnnotation(IQView.class);
+
+			// setup view name mapping, if properly annotated
+			// set this as the table name so it fits in seemlessly with iciql
+			if (!StringUtils.isNullOrEmpty(viewAnnotation.name())) {
+				tableName = viewAnnotation.name();
+			} else {
+				tableName = clazz.getSimpleName();
+			}
+
+			// setup source table name mapping, if properly annotated
+			if (!StringUtils.isNullOrEmpty(viewAnnotation.tableName())) {
+				viewTableName = viewAnnotation.tableName();
+			} else {
+				// check for IQTable annotation on super class
+				Class<?> superClass = clazz.getSuperclass();
+				if (superClass.isAnnotationPresent(IQTable.class)) {
+					IQTable table = superClass.getAnnotation(IQTable.class);
+					if (StringUtils.isNullOrEmpty(table.name())) {
+						// super.SimpleClassName
+						viewTableName = superClass.getSimpleName();
+					} else {
+						// super.IQTable.name()
+						viewTableName = table.name();
+					}
+				} else if (superClass.isAnnotationPresent(IQView.class)) {
+					// super class is a view
+					IQView parentView = superClass.getAnnotation(IQView.class);
+					if (StringUtils.isNullOrEmpty(parentView.tableName())) {
+						// parent view does not define a tableName, must be inherited
+						Class<?> superParent = superClass.getSuperclass();
+						if (superParent != null && superParent.isAnnotationPresent(IQTable.class)) {
+							IQTable superParentTable = superParent.getAnnotation(IQTable.class);
+							if (StringUtils.isNullOrEmpty(superParentTable.name())) {
+								// super.super.SimpleClassName
+								viewTableName = superParent.getSimpleName();
+							} else {
+								// super.super.IQTable.name()
+								viewTableName = superParentTable.name();
+							}
+						}
+					} else {
+						// super.IQView.tableName()
+						viewTableName = parentView.tableName();
+					}
+				}
+				
+				if (StringUtils.isNullOrEmpty(viewTableName)) {
+					// still missing view table name
+					throw new IciqlException("View model class \"{0}\" is missing a table name!", tableName);
+				}
+			}
+			
+			// allow control over createTableIfRequired()
+			createIfRequired = viewAnnotation.create();
+		}
+		
 		if (clazz.isAnnotationPresent(IQIndex.class)) {
 			// single table index
 			IQIndex index = clazz.getAnnotation(IQIndex.class);

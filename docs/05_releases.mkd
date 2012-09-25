@@ -4,9 +4,15 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- Implemented readonly view support. (issue 8)<br/>
+View models may be specified using the IQView annotation or Iciql.define().  Views can either be created automatically as part of a query of the view OR views may be constructed from a fluent statement.
+- Support inheriting columns from super.super class, if super.super is annotated.<br/>This allows for an inheritance hierarchy like:<br/>
+@IQTable class MyTable -> @IQView abstract class MyBaseView -> @IQView class MyConstrainedView
 - Fixed order of DEFAULT value in create table statement (issue 11)
 - Support inheritance of IQVersion for DbUpgrader implementations (issue 10)
 - Fixed password bug in model generator (issue 7)
+
+### Older Releases
 
 **1.1.0** &nbsp; *released 2012-08-20*
 
@@ -68,8 +74,6 @@ db.executeUpdate(q, new Date());
 - Fixed inherited JaQu bug related to model classes and wildcard queries (select *).<p/>
 Iciql maps resultset columns by the index of the model class field from a list.  This assumes that *all* columns in the resultset have a corresponding model field definition.  This works fine for most queries because iciql explicitly selects columns from the table (*select alpha, beta...*) when you execute *select()*.  The problem is when iciql issues a dynamic wildcard query and your model does not represent all columns in the resultset: columns and fields may fail to correctly line-up.<p/>
 Iciql now maps all fields by their column name, not by their position.
-
-### Older Releases
 
 **0.7.3** &nbsp; *released 2011-12-06*
 
