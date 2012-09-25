@@ -122,6 +122,19 @@ public class TableDefinition<T> {
 				throw new IciqlException(e);
 			}
 		}
+		
+		@Override
+		public int hashCode() {
+			return columnName.hashCode();
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof FieldDefinition) {
+				return o.hashCode() == hashCode();
+			}
+			return false;
+		}
 	}
 
 	public ArrayList<FieldDefinition> fields = Utils.newArrayList();
@@ -305,6 +318,7 @@ public class TableDefinition<T> {
 			classFields.addAll(Arrays.asList(superClass.getDeclaredFields()));
 		}
 
+		Set<FieldDefinition> uniqueFields = new LinkedHashSet<FieldDefinition>();
 		T defaultObject = Db.instance(clazz);
 		for (Field f : classFields) {
 			// check if we should skip this field
@@ -390,9 +404,11 @@ public class TableDefinition<T> {
 				fieldDef.defaultValue = defaultValue;
 				fieldDef.enumType = enumType;
 				fieldDef.dataType = ModelUtils.getDataType(fieldDef);
-				fields.add(fieldDef);
+				uniqueFields.add(fieldDef);
 			}
 		}
+		fields.addAll(uniqueFields);
+		
 		List<String> primaryKey = Utils.newArrayList();
 		int primitiveBoolean = 0;
 		for (FieldDefinition fieldDef : fields) {
