@@ -209,9 +209,13 @@ public class TableDefinition<T> {
 	 */
 	private void setPrimaryKey(List<String> columnNames) {
 		primaryKeyColumnNames = Utils.newArrayList(columnNames);
+		List<String> pkNames = Utils.newArrayList();
+		for (String name : columnNames) {
+			pkNames.add(name.toLowerCase());
+		}
 		// set isPrimaryKey flag for all field definitions
 		for (FieldDefinition fieldDefinition : fieldMap.values()) {
-			fieldDefinition.isPrimaryKey = this.primaryKeyColumnNames.contains(fieldDefinition.columnName);
+			fieldDefinition.isPrimaryKey = pkNames.contains(fieldDefinition.columnName.toLowerCase());
 		}
 	}
 

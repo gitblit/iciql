@@ -4,6 +4,7 @@
 
 **%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
 
+- Fixed case-sensitivity bug on setting a compound primary key from an annotation (issue 12)
 - Implemented readonly view support. (issue 8)<br/>
 View models may be specified using the IQView annotation or Iciql.define().  Views can either be created automatically as part of a query of the view OR views may be constructed from a fluent statement.
 - Support inheriting columns from super.super class, if super.super is annotated.<br/>This allows for an inheritance hierarchy like:<br/>
