@@ -1,6 +1,7 @@
 /*
  * Copyright 2004-2011 H2 Group.
  * Copyright 2011 James Moger.
+ * Copyright 2012 Frédéric Gaillard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +43,8 @@ import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQSchema;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IndexType;
+import com.iciql.TableDefinition.ConstraintForeignKeyDefinition;
+import com.iciql.TableDefinition.ConstraintUniqueDefinition;
 import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.StatementBuilder;
@@ -470,6 +473,10 @@ public class TableInspector {
 		}
 		// TODO complete index validation.
 		// need to actually compare index types and columns within each index.
+		
+		// TODO add constraints validation
+		List<ConstraintUniqueDefinition> defContraintsU = def.getContraintsUnique();
+		List<ConstraintForeignKeyDefinition> defContraintsFK = def.getContraintsForeignKey();
 	}
 
 	/**
