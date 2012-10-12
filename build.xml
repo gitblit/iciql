@@ -78,7 +78,7 @@
 
 		<property name="library.jar" value="iciql-${iq.version}.jar" />
 		<property name="javadoc.jar" value="iciql-${iq.version}-javadoc.jar" />
-		<property name="sources.jar" value="/iciql-${iq.version}-sources.jar" />
+		<property name="sources.jar" value="iciql-${iq.version}-sources.jar" />
 		<property name="distribution.zip" value="iciql-${iq.version}.zip" />
 	</target>
 

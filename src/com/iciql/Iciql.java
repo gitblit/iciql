@@ -1,6 +1,7 @@
 /*
  * Copyright 2004-2011 H2 Group.
  * Copyright 2011 James Moger.
+ * Copyright 2012 Frédéric Gaillard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -293,6 +294,160 @@ public interface Iciql {
 		String[] value() default {};
 	}
 
+	/**
+	 * Enumeration defining the ON DELETE actions.
+	 */
+	public static enum ConstraintDeleteType {
+		UNSET, CASCADE, RESTRICT, SET_NULL, NO_ACTION, SET_DEFAULT;
+	}
+
+	/**
+	 * Enumeration defining the ON UPDATE actions.
+	 */
+	public static enum ConstraintUpdateType {
+		UNSET, CASCADE, RESTRICT, SET_NULL, NO_ACTION, SET_DEFAULT;
+	}
+	
+	/**
+	 * Enumeration defining the deferrability.
+	 */
+	public static enum ConstraintDeferrabilityType {
+		UNSET, DEFERRABLE_INITIALLY_DEFERRED, DEFERRABLE_INITIALLY_IMMEDIATE, NOT_DEFERRABLE;
+	}
+	
+	/**
+	 * A foreign key constraint annotation.
+	 * <p>
+	 * <ul>
+	 * <li>@IQContraintForeignKey(
+	 *    foreignColumns = { "idaccount"}, 
+	 *    referenceName = "account", 
+	 *    referenceColumns = { "id" },
+	 *    deleteType = ConstrainDeleteType.CASCADE,
+	 *    updateType = ConstraintUpdateType.NO_ACTION )
+	 * </ul>
+	 * Note : reference columns should have a unique constraint defined in referenceName table,
+	 * some database used to define a unique index instead of a unique constraint
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public @interface IQContraintForeignKey {
+
+		/**
+		 * Constraint name. If null or empty, iciql will generate one.
+		 */
+		String name() default "";
+
+		/**
+		 * Type of the action on delete, default to unspecified.
+		 * <ul>
+		 * <li>com.iciql.iciql.ConstrainDeleteType.CASCADE
+		 * <li>com.iciql.iciql.ConstrainDeleteType.RESTRICT
+		 * <li>com.iciql.iciql.ConstrainDeleteType.SET_NULL
+		 * <li>com.iciql.iciql.ConstrainDeleteType.NO_ACTION
+		 * <li>com.iciql.iciql.ConstrainDeleteType.SET_DEFAULT
+		 * </ul>
+		 */
+		ConstraintDeleteType deleteType() default ConstraintDeleteType.UNSET;
+
+		/**
+		 * Type of the action on update, default to unspecified.
+		 * <ul>
+		 * <li>com.iciql.iciql.ConstrainUpdateType.CASCADE
+		 * <li>com.iciql.iciql.ConstrainUpdateType.RESTRICT
+		 * <li>com.iciql.iciql.ConstrainUpdateType.SET_NULL
+		 * <li>com.iciql.iciql.ConstrainUpdateType.NO_ACTION
+		 * <li>com.iciql.iciql.ConstrainUpdateType.SET_DEFAULT
+		 * </ul>
+		 */
+		ConstraintUpdateType updateType() default ConstraintUpdateType.UNSET;
+
+		/**
+		 * Type of the deferrability mode, default to unspecified
+		 * <ul>
+		 * <li>com.iciql.iciql.ConstrainUpdateType.CASCADE
+		 * <li>ConstraintDeferrabilityType.DEFERRABLE_INITIALLY_DEFERRED
+		 * <li>ConstraintDeferrabilityType.DEFERRABLE_INITIALLY_IMMEDIATE
+		 * <li>ConstraintDeferrabilityType.NOT_DEFERRABLE
+		 * </ul>
+		 */
+		ConstraintDeferrabilityType deferrabilityType() default ConstraintDeferrabilityType.UNSET;
+		
+		/**
+		 * The source table for the columns defined as foreign.
+		 */
+		String tableName() default "";
+
+		/**
+		 * Columns defined as 'foreign'.
+		 * <ul>
+		 * <li>single column : foreignColumns = "id"
+		 * <li>multiple column : foreignColumns = { "id", "name", "date" }
+		 * </ul>
+		 */
+		String[] foreignColumns() default {};
+
+		/**
+		 * The reference table for the columns defined as references.
+		 */
+		String referenceName() default "";
+		
+		/**
+		 * Columns defined as 'references'.
+		 * <ul>
+		 * <li>single column : referenceColumns = "id"
+		 * <li>multiple column : referenceColumns = { "id", "name", "date" }
+		 * </ul>
+		 */
+		String[] referenceColumns() default {};
+	}
+
+	/**
+	 * Annotation to specify multiple foreign keys constraints.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public @interface IQContraintsForeignKey {
+		IQContraintForeignKey[] value() default {};
+	}
+	
+	/**
+	 * A unique constraint annotation.
+	 * <p>
+	 * <ul>
+	 * <li>@IQContraintUnique(uniqueColumns = { "street", "city" })
+	 * <li>@IQContraintUnique(name="streetconstraint", uniqueColumns = { "street", "city" })
+	 * </ul>
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public @interface IQContraintUnique {
+
+		/**
+		 * Constraint name. If null or empty, iciql will generate one.
+		 */
+		String name() default "";
+
+		/**
+		 * Columns defined as 'unique'.
+		 * <ul>
+		 * <li>single column : uniqueColumns = "id"
+		 * <li>multiple column : uniqueColumns = { "id", "name", "date" }
+		 * </ul>
+		 */
+		String[] uniqueColumns() default {};
+
+	}
+
+	/**
+	 * Annotation to specify multiple unique constraints.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public @interface IQContraintsUnique {
+		IQContraintUnique[] value() default {};
+	}
+	
 	/**
 	 * Annotation to define a view.
 	 */

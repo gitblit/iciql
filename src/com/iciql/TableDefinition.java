@@ -1,6 +1,7 @@
 /*
  * Copyright 2004-2011 H2 Group.
  * Copyright 2011 James Moger.
+ * Copyright 2012 Frédéric Gaillard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,11 +30,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.iciql.Iciql.ConstraintDeferrabilityType;
+import com.iciql.Iciql.ConstraintDeleteType;
+import com.iciql.Iciql.ConstraintUpdateType;
 import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQConstraint;
+import com.iciql.Iciql.IQContraintUnique;
+import com.iciql.Iciql.IQContraintsUnique;
 import com.iciql.Iciql.IQEnum;
+import com.iciql.Iciql.IQContraintForeignKey;
+import com.iciql.Iciql.IQContraintsForeignKey;
 import com.iciql.Iciql.IQIgnore;
 import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQIndexes;
@@ -68,6 +76,32 @@ public class TableDefinition<T> {
 		public List<String> columnNames;
 	}
 
+	/**
+	 * The meta data of a constraint on foreign key.
+	 */
+	
+	public static class ConstraintForeignKeyDefinition {
+
+		public String constraintName;
+		public List<String> foreignColumns;
+		public String referenceTable;
+		public List<String> referenceColumns;
+		public ConstraintDeleteType deleteType = ConstraintDeleteType.UNSET;
+		public ConstraintUpdateType updateType = ConstraintUpdateType.UNSET;
+		public ConstraintDeferrabilityType deferrabilityType = ConstraintDeferrabilityType.UNSET;
+	}
+	
+	/**
+	 * The meta data of a unique constraint.
+	 */
+	
+	public static class ConstraintUniqueDefinition {
+
+		public String constraintName;
+		public List<String> uniqueColumns;
+	}
+	
+	
 	/**
 	 * The meta data of a field.
 	 */
@@ -155,6 +189,8 @@ public class TableDefinition<T> {
 	private Class<T> clazz;
 	private IdentityHashMap<Object, FieldDefinition> fieldMap = Utils.newIdentityHashMap();
 	private ArrayList<IndexDefinition> indexes = Utils.newArrayList();
+	private ArrayList<ConstraintForeignKeyDefinition> constraintsForeignKey = Utils.newArrayList();
+	private ArrayList<ConstraintUniqueDefinition> constraintsUnique = Utils.newArrayList();
 
 	TableDefinition(Class<T> clazz) {
 		this.clazz = clazz;
@@ -267,6 +303,77 @@ public class TableDefinition<T> {
 		indexes.add(index);
 	}
 
+	/**
+	 * Defines an unique constraint with the specified model fields.
+	 * 
+	 * @param name
+	 *            the constraint name (optional)
+	 * @param modelFields
+	 *            the ordered list of model fields
+	 */
+	void defineConstraintUnique(String name, Object[] modelFields) {
+		List<String> columnNames = mapColumnNames(modelFields);
+		addConstraintUnique(name, columnNames);
+	}
+
+	/**
+	 * Defines an unique constraint.
+	 * 
+	 * @param name
+	 * @param columnNames
+	 */
+	private void addConstraintUnique(String name, List<String> columnNames) {
+		ConstraintUniqueDefinition constraint = new ConstraintUniqueDefinition();
+		if (StringUtils.isNullOrEmpty(name)) {
+			constraint.constraintName = tableName + "_" + constraintsUnique.size();
+		} else {
+			constraint.constraintName = name;
+		}
+		constraint.uniqueColumns = Utils.newArrayList(columnNames);
+		constraintsUnique.add(constraint);
+	}
+
+	/**
+	 * Defines a foreign key constraint with the specified model fields.
+	 * 
+	 * @param name
+	 *            the constraint name (optional)
+	 * @param modelFields
+	 *            the ordered list of model fields
+	 */
+	void defineForeignKey(String name, Object[] modelFields, String refTableName, Object[] refModelFields,
+			ConstraintDeleteType deleteType, ConstraintUpdateType updateType,
+			ConstraintDeferrabilityType deferrabilityType) {
+		List<String> columnNames = mapColumnNames(modelFields);
+		List<String> referenceColumnNames = mapColumnNames(refModelFields);
+		addForeignKey(name, columnNames, refTableName, referenceColumnNames,
+				deleteType, updateType, deferrabilityType);
+	}
+
+	/**
+	 * Defines a foreign key constraint.
+	 * 
+	 * @param name
+	 * @param columnNames
+	 */
+	private void addForeignKey(String name, List<String> columnNames, String referenceTableName, 
+			List<String> referenceColumnNames, ConstraintDeleteType deleteType, 
+			ConstraintUpdateType updateType, ConstraintDeferrabilityType deferrabilityType) {
+		ConstraintForeignKeyDefinition constraint = new ConstraintForeignKeyDefinition();
+		if (StringUtils.isNullOrEmpty(name)) {
+			constraint.constraintName = tableName + "_" + constraintsUnique.size();
+		} else {
+			constraint.constraintName = name;
+		}
+		constraint.foreignColumns = Utils.newArrayList(columnNames);
+		constraint.referenceTable = referenceTableName;
+		constraint.referenceColumns = Utils.newArrayList(referenceColumnNames);
+		constraint.deleteType = deleteType;
+		constraint.updateType = updateType;
+		constraint.deferrabilityType = deferrabilityType;
+		constraintsForeignKey.add(constraint);
+	}
+	
 	void defineColumnName(Object column, String columnName) {
 		FieldDefinition def = fieldMap.get(column);
 		if (def != null) {
@@ -795,6 +902,36 @@ public class TableDefinition<T> {
 			}
 		}
 
+		// create unique constraints
+		for (ConstraintUniqueDefinition constraint : constraintsUnique) {
+			stat = new SQLStatement(db);
+			db.getDialect().prepareCreateConstraintUnique(stat, schemaName, tableName, constraint);
+			IciqlLogger.create(stat.getSQL());
+			try {
+				stat.executeUpdate();
+			} catch (IciqlException e) {
+				// maybe we should check more error codes
+				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS) {
+					throw e;
+				}
+			}
+		}
+		
+		// create foreign keys constraints
+		for (ConstraintForeignKeyDefinition constraint : constraintsForeignKey) {
+			stat = new SQLStatement(db);
+			db.getDialect().prepareCreateConstraintForeignKey(stat, schemaName, tableName, constraint);
+			IciqlLogger.create(stat.getSQL());
+			try {
+				stat.executeUpdate();
+			} catch (IciqlException e) {
+				// maybe we should check more error codes
+				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS) {
+					throw e;
+				}
+			}
+		}
+
 		// tables are created using IF NOT EXISTS
 		// but we may still need to upgrade
 		db.upgradeTable(this);
@@ -911,6 +1048,102 @@ public class TableDefinition<T> {
 				addIndex(index);
 			}
 		}
+		
+		if (clazz.isAnnotationPresent(IQContraintUnique.class)) {
+			// single table unique constraint
+			IQContraintUnique constraint = clazz.getAnnotation(IQContraintUnique.class);
+			addConstraintUnique(constraint);
+		}
+
+		if (clazz.isAnnotationPresent(IQContraintsUnique.class)) {
+			// multiple table unique constraints
+			IQContraintsUnique constraints = clazz.getAnnotation(IQContraintsUnique.class);
+			for (IQContraintUnique constraint : constraints.value()) {
+				addConstraintUnique(constraint);
+			}
+		}
+		
+		if (clazz.isAnnotationPresent(IQContraintForeignKey.class)) {
+			// single table constraint
+			IQContraintForeignKey constraint = clazz.getAnnotation(IQContraintForeignKey.class);
+			addConstraintForeignKey(constraint);
+		}
+
+		if (clazz.isAnnotationPresent(IQContraintsForeignKey.class)) {
+			// multiple table constraints
+			IQContraintsForeignKey constraints = clazz.getAnnotation(IQContraintsForeignKey.class);
+			for (IQContraintForeignKey constraint : constraints.value()) {
+				addConstraintForeignKey(constraint);
+			}
+		}
+		
+	}
+
+	private void addConstraintForeignKey(IQContraintForeignKey constraint) {
+		List<String> foreignColumns = Arrays.asList(constraint.foreignColumns());
+		List<String> referenceColumns = Arrays.asList(constraint.referenceColumns());
+		addContraintForeignKey(constraint.name(), foreignColumns, constraint.referenceName(), referenceColumns, constraint.deleteType(), constraint.updateType(), constraint.deferrabilityType());
+	}
+	
+	private void addConstraintUnique(IQContraintUnique constraint) {
+		List<String> uniqueColumns = Arrays.asList(constraint.uniqueColumns());
+		addContraintUnique(constraint.name(), uniqueColumns);
+	}
+	
+	/**
+	 * Defines a foreign key constraint with the specified parameters.
+	 * 
+	 * @param name
+	 *            name of the constraint
+	 * @param foreignColumns
+	 *            list of columns declared as foreign
+	 * @param referenceName
+	 *            reference table name
+	 * @param referenceColumns
+	 *            list of columns used in reference table
+	 * @param deleteType
+	 *            action on delete
+	 * @param updateType
+	 *            action on update
+	 * @param deferrabilityType
+	 *            deferrability mode
+	 */
+	private void addContraintForeignKey(String name,
+			List<String> foreignColumns, String referenceName,
+			List<String> referenceColumns, ConstraintDeleteType deleteType,
+			ConstraintUpdateType updateType, ConstraintDeferrabilityType deferrabilityType) {
+		ConstraintForeignKeyDefinition constraint = new ConstraintForeignKeyDefinition();
+		if (StringUtils.isNullOrEmpty(name)) {
+			constraint.constraintName = tableName + "_" + constraintsForeignKey.size();
+		} else {
+			constraint.constraintName = name;
+		}
+		constraint.foreignColumns = Utils.newArrayList(foreignColumns);
+		constraint.referenceColumns = Utils.newArrayList(referenceColumns);
+		constraint.referenceTable = referenceName;
+		constraint.deleteType = deleteType;
+		constraint.updateType = updateType;
+		constraint.deferrabilityType = deferrabilityType;
+		constraintsForeignKey.add(constraint);
+	}
+
+	/**
+	 * Defines a unique constraint with the specified parameters.
+	 * 
+	 * @param name
+	 *            name of the constraint
+	 * @param uniqueColumns
+	 *            list of columns declared as unique
+	 */
+	private void addContraintUnique(String name, List<String> uniqueColumns) {
+		ConstraintUniqueDefinition constraint = new ConstraintUniqueDefinition();
+		if (StringUtils.isNullOrEmpty(name)) {
+			constraint.constraintName = tableName + "_" + constraintsUnique.size();
+		} else {
+			constraint.constraintName = name;
+		}
+		constraint.uniqueColumns = Utils.newArrayList(uniqueColumns);
+		constraintsUnique.add(constraint);
 	}
 
 	private void addIndex(IQIndex index) {
@@ -922,6 +1155,14 @@ public class TableDefinition<T> {
 		return indexes;
 	}
 
+	List<ConstraintUniqueDefinition> getContraintsUnique() {
+		return constraintsUnique;
+	}
+	
+	List<ConstraintForeignKeyDefinition> getContraintsForeignKey() {
+		return constraintsForeignKey;
+	}
+	
 	private void initObject(Object obj, Map<Object, FieldDefinition> map) {
 		for (FieldDefinition def : fields) {
 			Object newValue = def.initWithNewObject(obj);

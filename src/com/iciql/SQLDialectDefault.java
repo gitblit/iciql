@@ -1,6 +1,7 @@
 /*
  * Copyright 2004-2011 H2 Group.
  * Copyright 2011 James Moger.
+ * Copyright 2012 Frédéric Gaillard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +23,10 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 
+import com.iciql.Iciql.ConstraintDeleteType;
+import com.iciql.Iciql.ConstraintUpdateType;
+import com.iciql.TableDefinition.ConstraintForeignKeyDefinition;
+import com.iciql.TableDefinition.ConstraintUniqueDefinition;
 import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.IciqlLogger;
@@ -257,6 +262,8 @@ public class SQLDialectDefault implements SQLDialect {
 		buff.append("INDEX ");
 		buff.append(index.indexName);
 		buff.append(" ON ");
+		// FIXME maybe we can use schemaName ?
+		// buff.append(prepareTableName(schemaName, tableName));
 		buff.append(tableName);
 		buff.append("(");
 		for (String col : index.columnNames) {
@@ -337,4 +344,102 @@ public class SQLDialectDefault implements SQLDialect {
 		}
 		return o.toString();
 	}
+
+	@SuppressWarnings("incomplete-switch")
+	@Override
+	public void prepareCreateConstraintForeignKey(SQLStatement stat, String schemaName, String tableName, ConstraintForeignKeyDefinition constraint) {
+		StatementBuilder buff = new StatementBuilder();
+		buff.append("ALTER TABLE ");
+		buff.append(prepareTableName(schemaName, tableName));
+		buff.append(" ADD CONSTRAINT ");
+		buff.append(constraint.constraintName);
+		buff.append(" FOREIGN KEY ");
+		buff.append(" (");
+		for (String col : constraint.foreignColumns) {
+			buff.appendExceptFirst(", ");
+			buff.append(prepareColumnName(col));
+		}
+		buff.append(") ");
+		buff.append(" REFERENCES ");
+		buff.append(constraint.referenceTable);
+		buff.append(" (");
+		buff.resetCount();
+		for (String col : constraint.referenceColumns) {
+			buff.appendExceptFirst(", ");
+			buff.append(prepareColumnName(col));
+		}
+		buff.append(") ");
+		if (constraint.deleteType != ConstraintDeleteType.UNSET) {
+			buff.append(" ON DELETE ");
+			switch (constraint.deleteType) {
+			case CASCADE:
+				buff.append("CASCADE ");
+				break;
+			case RESTRICT:
+				buff.append("RESTRICT ");
+				break;
+			case SET_NULL:
+				buff.append("SET NULL ");
+				break;
+			case NO_ACTION:
+				buff.append("NO ACTION ");
+				break;
+			case SET_DEFAULT:
+				buff.append("SET DEFAULT ");
+				break;
+			}
+		}
+		if (constraint.updateType != ConstraintUpdateType.UNSET) {
+			buff.append(" ON UPDATE ");
+			switch (constraint.updateType) {
+			case CASCADE:
+				buff.append("CASCADE ");
+				break;
+			case RESTRICT:
+				buff.append("RESTRICT ");
+				break;
+			case SET_NULL:
+				buff.append("SET NULL ");
+				break;
+			case NO_ACTION:
+				buff.append("NO ACTION ");
+				break;
+			case SET_DEFAULT:
+				buff.append("SET DEFAULT ");
+				break;
+			}
+		}
+		switch (constraint.deferrabilityType) {
+		case DEFERRABLE_INITIALLY_DEFERRED:
+			buff.append("DEFERRABLE INITIALLY DEFERRED ");
+			break;
+		case DEFERRABLE_INITIALLY_IMMEDIATE:
+			buff.append("DEFERRABLE INITIALLY IMMEDIATE ");
+			break;
+		case NOT_DEFERRABLE:
+			buff.append("NOT DEFERRABLE ");
+			break;
+		case UNSET:
+			break;
+		}
+		stat.setSQL(buff.toString().trim());
+	}
+
+	@Override
+	public void prepareCreateConstraintUnique(SQLStatement stat, String schemaName, String tableName, ConstraintUniqueDefinition constraint) {
+		StatementBuilder buff = new StatementBuilder();
+		buff.append("ALTER TABLE ");
+		buff.append(prepareTableName(schemaName, tableName));
+		buff.append(" ADD CONSTRAINT ");
+		buff.append(constraint.constraintName);
+		buff.append(" UNIQUE ");
+		buff.append(" (");
+		for (String col : constraint.uniqueColumns) {
+			buff.appendExceptFirst(", ");
+			buff.append(prepareColumnName(col));
+		}
+		buff.append(") ");
+		stat.setSQL(buff.toString().trim());
+	}
+
 }
