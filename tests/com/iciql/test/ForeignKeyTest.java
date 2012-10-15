@@ -17,12 +17,14 @@
 package com.iciql.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.iciql.Db;
+import com.iciql.IciqlException;
 import com.iciql.test.models.CategoryAnnotationOnly;
 import com.iciql.test.models.ProductAnnotationOnlyWithForeignKey;
 
@@ -62,6 +64,15 @@ public class ForeignKeyTest {
 		
 		assertEquals(count1, count2 + 2L);
 	}
-
+	
+	@Test
+	public void testForeignKeyDropReferenceTable() {
+		try {
+			db.dropTable(CategoryAnnotationOnly.class);
+			assertTrue("Should not be able to drop reference table!", false);
+		} catch (IciqlException e) {
+			assertEquals(e.getMessage(), IciqlException.CODE_CONSTRAINT_VIOLATION, e.getIciqlCode());
+		}
+	}
 
 }
