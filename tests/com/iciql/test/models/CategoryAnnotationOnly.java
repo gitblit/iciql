@@ -1,5 +1,6 @@
 /*
  * Copyright 2012 Frédéric Gaillard.
+ * Copyright 2012 James Moger.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +28,7 @@ import com.iciql.Iciql.IQTable;
  * A table containing category data.
  */
 
-@IQTable(name = "AnnotatedCatagory", primaryKey = "id")
+@IQTable(name = "AnnotatedCategory", primaryKey = "id")
 // @IQIndex(value = "categ", type=IndexType.UNIQUE)
 @IQContraintUnique(uniqueColumns = { "categ" })
 public class CategoryAnnotationOnly {

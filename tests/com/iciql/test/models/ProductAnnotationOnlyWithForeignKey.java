@@ -1,7 +1,6 @@
 /*
- * Copyright 2004-2011 H2 Group.
- * Copyright 2011 James Moger.
  * Copyright 2012 Frédéric Gaillard.
+ * Copyright 2012 James Moger.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +36,7 @@ import com.iciql.Iciql.IndexType;
 @IQIndexes({ @IQIndex({ "name", "cat" }), @IQIndex(name = "nameidx", type = IndexType.HASH, value = "name") })
 @IQContraintForeignKey(
 		foreignColumns= { "cat" }, 
-		referenceName = "AnnotatedCatagory",
+		referenceName = "AnnotatedCategory",
 		referenceColumns = { "categ" },
 		deleteType = ConstraintDeleteType.CASCADE
 )
