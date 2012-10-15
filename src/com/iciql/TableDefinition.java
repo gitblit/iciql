@@ -294,7 +294,7 @@ public class TableDefinition<T> {
 	private void addIndex(String name, IndexType type, List<String> columnNames) {
 		IndexDefinition index = new IndexDefinition();
 		if (StringUtils.isNullOrEmpty(name)) {
-			index.indexName = tableName + "_" + indexes.size();
+			index.indexName = tableName + "_idx_" + indexes.size();
 		} else {
 			index.indexName = name;
 		}
@@ -325,7 +325,7 @@ public class TableDefinition<T> {
 	private void addConstraintUnique(String name, List<String> columnNames) {
 		ConstraintUniqueDefinition constraint = new ConstraintUniqueDefinition();
 		if (StringUtils.isNullOrEmpty(name)) {
-			constraint.constraintName = tableName + "_" + constraintsUnique.size();
+			constraint.constraintName = tableName + "_unique_" + constraintsUnique.size();
 		} else {
 			constraint.constraintName = name;
 		}
@@ -886,8 +886,8 @@ public class TableDefinition<T> {
 			try {
 				stat.executeUpdate();
 			} catch (IciqlException e) {
-				// maybe we should check more error codes
-				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS) {
+				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS
+						&& e.getIciqlCode() != IciqlException.CODE_DUPLICATE_KEY) {
 					throw e;
 				}
 			}
@@ -901,8 +901,8 @@ public class TableDefinition<T> {
 			try {
 				stat.executeUpdate();
 			} catch (IciqlException e) {
-				// maybe we should check more error codes
-				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS) {
+				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS
+						&& e.getIciqlCode() != IciqlException.CODE_DUPLICATE_KEY) {
 					throw e;
 				}
 			}
@@ -1090,7 +1090,7 @@ public class TableDefinition<T> {
 			ConstraintUpdateType updateType, ConstraintDeferrabilityType deferrabilityType) {
 		ConstraintForeignKeyDefinition constraint = new ConstraintForeignKeyDefinition();
 		if (StringUtils.isNullOrEmpty(name)) {
-			constraint.constraintName = tableName + "_" + constraintsForeignKey.size();
+			constraint.constraintName = tableName + "_fkey_" + constraintsForeignKey.size();
 		} else {
 			constraint.constraintName = name;
 		}

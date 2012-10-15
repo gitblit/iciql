@@ -123,20 +123,20 @@ public class ModelsTest {
 		// a poor test, but a start
 		String dbName = IciqlSuite.getDatabaseEngineName(db);
 		if (dbName.equals("H2")) {
-			assertEquals(1579, models.get(0).length());
+			assertEquals(1587, models.get(0).length());
 		} else if (dbName.startsWith("HSQL")) {
 			// HSQL uses Double instead of Float
-			assertEquals(1583, models.get(0).length());
+			assertEquals(1591, models.get(0).length());
 		} else if (dbName.equals("Apache Derby")) {
 			// Derby uses java.sql.Timestamp not java.util.Date
 			// Derby uses username as schema name
-			assertEquals(1593, models.get(0).length());
+			assertEquals(1601, models.get(0).length());
 		} else if (dbName.equals("PostgreSQL")) {
-			assertEquals(1635, models.get(0).length());
+			assertEquals(1643, models.get(0).length());
 		} else if (dbName.equals("MySQL")) {
 			// MySQL uses timestamp default values like
 			// 0000-00-00 00:00:00 and CURRENT_TIMESTAMP
-			assertEquals(1665, models.get(0).length());
+			assertEquals(1673, models.get(0).length());
 		} else {
 			// unknown database
 			assertEquals(0, models.get(0).length());
