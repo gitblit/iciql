@@ -130,6 +130,9 @@ public class IciqlException extends RuntimeException {
 			} else if ("42P07".equals(state)) {
 				// PostgreSQL table or index already exists
 				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
+			} else if ("42S01".equals(state)) {
+				// MySQL view already exists
+				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
 			} else if ("42S11".equals(state)) {
 				// H2 index already exists
 				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
