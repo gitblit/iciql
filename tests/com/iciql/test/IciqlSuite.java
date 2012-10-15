@@ -49,16 +49,19 @@ import com.beust.jcommander.Parameters;
 import com.iciql.Constants;
 import com.iciql.Db;
 import com.iciql.test.models.BooleanModel;
+import com.iciql.test.models.CategoryAnnotationOnly;
 import com.iciql.test.models.ComplexObject;
 import com.iciql.test.models.Customer;
 import com.iciql.test.models.DefaultValuesModel;
 import com.iciql.test.models.EnumModels.EnumIdModel;
 import com.iciql.test.models.EnumModels.EnumOrdinalModel;
 import com.iciql.test.models.EnumModels.EnumStringModel;
+import com.iciql.test.models.MultipleBoolsModel;
 import com.iciql.test.models.Order;
 import com.iciql.test.models.PrimitivesModel;
 import com.iciql.test.models.Product;
 import com.iciql.test.models.ProductAnnotationOnly;
+import com.iciql.test.models.ProductAnnotationOnlyWithForeignKey;
 import com.iciql.test.models.ProductInheritedAnnotation;
 import com.iciql.test.models.ProductMixedAnnotation;
 import com.iciql.test.models.ProductView;
@@ -183,6 +186,10 @@ public class IciqlSuite {
 		db.dropTable(SupportedTypes.class);
 		db.dropTable(JoinTest.UserId.class);
 		db.dropTable(JoinTest.UserNote.class);
+		db.dropTable(EnumsTest.BadEnums.class);
+		db.dropTable(MultipleBoolsModel.class);
+		db.dropTable(ProductAnnotationOnlyWithForeignKey.class);
+		db.dropTable(CategoryAnnotationOnly.class);
 
 		return db;
 	}
