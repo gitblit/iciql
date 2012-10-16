@@ -1,6 +1,7 @@
 /*
  * Copyright 2004-2011 H2 Group.
  * Copyright 2011 James Moger.
+ * Copyright 2012 Frédéric Gaillard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +20,8 @@ package com.iciql;
 
 import java.sql.DatabaseMetaData;
 
+import com.iciql.TableDefinition.ConstraintForeignKeyDefinition;
+import com.iciql.TableDefinition.ConstraintUniqueDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 
 /**
@@ -84,7 +87,9 @@ public interface SQLDialect {
 	 * Get the CREATE VIEW statement.
 	 * 
 	 * @param stat
+	 *            return the SQL statement
 	 * @param def
+	 *            table definition
 	 */
 	<T> void prepareCreateView(SQLStatement stat, TableDefinition<T> def);
 
@@ -92,7 +97,9 @@ public interface SQLDialect {
 	 * Get the CREATE VIEW statement.
 	 * 
 	 * @param stat
+	 *            return the SQL statement
 	 * @param def
+	 *            table definition
 	 * @param fromWhere
 	 */
 	<T> void prepareCreateView(SQLStatement stat, TableDefinition<T> def, String fromWhere);
@@ -101,32 +108,68 @@ public interface SQLDialect {
 	 * Get the DROP VIEW statement.
 	 * 
 	 * @param stat
+	 *            return the SQL statement
 	 * @param def
+	 *            table definition
 	 */
 	<T> void prepareDropView(SQLStatement stat, TableDefinition<T> def);
 	
 	/**
 	 * Get the CREATE INDEX statement.
 	 * 
+	 * @param stat
+	 *            return the SQL statement
 	 * @param schemaName
 	 *            the schema name
 	 * @param tableName
 	 *            the table name
 	 * @param index
 	 *            the index definition
-	 * @return the SQL statement
 	 */
 	void prepareCreateIndex(SQLStatement stat, String schemaName, String tableName, IndexDefinition index);
 
 	/**
-	 * Get a MERGE or REPLACE INTO statement.
+	 * Get the ALTER statement.
 	 * 
+	 * @param stat
+	 *            return the SQL statement
 	 * @param schemaName
 	 *            the schema name
 	 * @param tableName
 	 *            the table name
-	 * @param index
-	 *            the index definition
+	 * @param constraint
+	 *            the constraint definition
+	 */
+	void prepareCreateConstraintForeignKey(SQLStatement stat, String schemaName, String tableName, ConstraintForeignKeyDefinition constraint);
+
+	/**
+	 * Get the ALTER statement.
+	 * 
+	 * @param stat
+	 *            return the SQL statement
+	 * @param schemaName
+	 *            the schema name
+	 * @param tableName
+	 *            the table name
+	 * @param constraint
+	 *            the constraint definition
+	 * return the SQL statement
+	 */
+	void prepareCreateConstraintUnique(SQLStatement stat, String schemaName, String tableName, ConstraintUniqueDefinition constraint);
+
+	/**
+	 * Get a MERGE or REPLACE INTO statement.
+	 * 
+	 * @param stat
+	 *            return the SQL statement
+	 * @param schemaName
+	 *            the schema name
+	 * @param tableName
+	 *            the table name
+	 * @param def
+	 *            the table definition
+	 * @param obj
+	 *            values
 	 */
 	<T> void prepareMerge(SQLStatement stat, String schemaName, String tableName, TableDefinition<T> def,
 			Object obj);

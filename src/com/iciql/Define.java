@@ -1,6 +1,7 @@
 /*
  * Copyright 2004-2011 H2 Group.
  * Copyright 2011 James Moger.
+ * Copyright 2012 Frédéric Gaillard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +45,21 @@ public class Define {
 		currentTableDefinition.defineIndex(name, type, columns);
 	}
 
+	public static void constraintUnique(String name, Object... columns) {
+		checkInDefine();
+		currentTableDefinition.defineConstraintUnique(name, columns);
+	}
+	
+	/*
+	 * The variable argument type Object can't be used twice :-)
+	 */
+//	public static void constraintForeignKey(String name, String refTableName,
+//			ConstraintDeleteType deleteType, ConstraintUpdateType updateType,
+//			ConstraintDeferrabilityType deferrabilityType, Object... columns, Object... refColumns) {
+//		checkInDefine();
+//		currentTableDefinition.defineForeignKey(name, columns, refTableName, Columns, deleteType, updateType, deferrabilityType);
+//	}
+	
 	public static void primaryKey(Object... columns) {
 		checkInDefine();
 		currentTableDefinition.definePrimaryKey(columns);
