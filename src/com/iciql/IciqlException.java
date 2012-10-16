@@ -29,6 +29,7 @@ public class IciqlException extends RuntimeException {
 	public static final int CODE_DUPLICATE_KEY = 2;
 	public static final int CODE_OBJECT_NOT_FOUND = 3;
 	public static final int CODE_OBJECT_ALREADY_EXISTS = 4;
+	public static final int CODE_CONSTRAINT_VIOLATION = 5;
 
 	private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|\\<\\>|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";
 
@@ -97,6 +98,9 @@ public class IciqlException extends RuntimeException {
 			if ("23000".equals(state)) {
 				// MySQL duplicate primary key on insert
 				iciqlCode = CODE_DUPLICATE_KEY;
+				if (s.getErrorCode() == 1217) {
+					iciqlCode = CODE_CONSTRAINT_VIOLATION;	
+				}
 			} else if ("23505".equals(state)) {
 				// Derby duplicate primary key on insert
 				iciqlCode = CODE_DUPLICATE_KEY;
@@ -130,12 +134,24 @@ public class IciqlException extends RuntimeException {
 			} else if ("42P07".equals(state)) {
 				// PostgreSQL table or index already exists
 				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
+			} else if ("42S01".equals(state)) {
+				// MySQL view already exists
+				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
 			} else if ("42S11".equals(state)) {
 				// H2 index already exists
 				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
 			} else if ("42504".equals(state)) {
 				// HSQL index already exists
 				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
+			} else if ("2BP01".equals(state)) {
+				// PostgreSQL constraint violation
+				iciqlCode = CODE_CONSTRAINT_VIOLATION;
+			} else if ("42533".equals(state)) {
+				// HSQL constraint violation
+				iciqlCode = CODE_CONSTRAINT_VIOLATION;
+			} else if ("X0Y25".equals(state)) {
+				// Derby constraint violation
+				iciqlCode = CODE_CONSTRAINT_VIOLATION;
 			}
 		}
 	}

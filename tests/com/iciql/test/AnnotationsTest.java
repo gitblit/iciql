@@ -79,8 +79,8 @@ public class AnnotationsTest {
 			String index = rs.getString("INDEX_NAME");
 			list.add((col + ":" +  index).toLowerCase());
 		}
-		assertTrue(list.contains("name:annotatedproduct_0"));
-		assertTrue(list.contains("cat:annotatedproduct_0"));
+		assertTrue(list.contains("name:annotatedproduct_idx_0"));
+		assertTrue(list.contains("cat:annotatedproduct_idx_0"));
 		assertTrue(list.contains("name:nameidx"));
 	}
 

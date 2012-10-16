@@ -79,7 +79,7 @@ public class TableDefinition<T> {
 	/**
 	 * The meta data of a constraint on foreign key.
 	 */
-	
+
 	public static class ConstraintForeignKeyDefinition {
 
 		public String constraintName;
@@ -90,18 +90,18 @@ public class TableDefinition<T> {
 		public ConstraintUpdateType updateType = ConstraintUpdateType.UNSET;
 		public ConstraintDeferrabilityType deferrabilityType = ConstraintDeferrabilityType.UNSET;
 	}
-	
+
 	/**
 	 * The meta data of a unique constraint.
 	 */
-	
+
 	public static class ConstraintUniqueDefinition {
 
 		public String constraintName;
 		public List<String> uniqueColumns;
 	}
-	
-	
+
+
 	/**
 	 * The meta data of a field.
 	 */
@@ -161,12 +161,12 @@ public class TableDefinition<T> {
 				throw new IciqlException(e);
 			}
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return columnName.hashCode();
 		}
-		
+
 		@Override
 		public boolean equals(Object o) {
 			if (o instanceof FieldDefinition) {
@@ -294,7 +294,7 @@ public class TableDefinition<T> {
 	private void addIndex(String name, IndexType type, List<String> columnNames) {
 		IndexDefinition index = new IndexDefinition();
 		if (StringUtils.isNullOrEmpty(name)) {
-			index.indexName = tableName + "_" + indexes.size();
+			index.indexName = tableName + "_idx_" + indexes.size();
 		} else {
 			index.indexName = name;
 		}
@@ -325,7 +325,7 @@ public class TableDefinition<T> {
 	private void addConstraintUnique(String name, List<String> columnNames) {
 		ConstraintUniqueDefinition constraint = new ConstraintUniqueDefinition();
 		if (StringUtils.isNullOrEmpty(name)) {
-			constraint.constraintName = tableName + "_" + constraintsUnique.size();
+			constraint.constraintName = tableName + "_unique_" + constraintsUnique.size();
 		} else {
 			constraint.constraintName = name;
 		}
@@ -346,34 +346,10 @@ public class TableDefinition<T> {
 			ConstraintDeferrabilityType deferrabilityType) {
 		List<String> columnNames = mapColumnNames(modelFields);
 		List<String> referenceColumnNames = mapColumnNames(refModelFields);
-		addForeignKey(name, columnNames, refTableName, referenceColumnNames,
+		addConstraintForeignKey(name, columnNames, refTableName, referenceColumnNames,
 				deleteType, updateType, deferrabilityType);
 	}
 
-	/**
-	 * Defines a foreign key constraint.
-	 * 
-	 * @param name
-	 * @param columnNames
-	 */
-	private void addForeignKey(String name, List<String> columnNames, String referenceTableName, 
-			List<String> referenceColumnNames, ConstraintDeleteType deleteType, 
-			ConstraintUpdateType updateType, ConstraintDeferrabilityType deferrabilityType) {
-		ConstraintForeignKeyDefinition constraint = new ConstraintForeignKeyDefinition();
-		if (StringUtils.isNullOrEmpty(name)) {
-			constraint.constraintName = tableName + "_" + constraintsUnique.size();
-		} else {
-			constraint.constraintName = name;
-		}
-		constraint.foreignColumns = Utils.newArrayList(columnNames);
-		constraint.referenceTable = referenceTableName;
-		constraint.referenceColumns = Utils.newArrayList(referenceColumnNames);
-		constraint.deleteType = deleteType;
-		constraint.updateType = updateType;
-		constraint.deferrabilityType = deferrabilityType;
-		constraintsForeignKey.add(constraint);
-	}
-	
 	void defineColumnName(Object column, String columnName) {
 		FieldDefinition def = fieldMap.get(column);
 		if (def != null) {
@@ -450,7 +426,7 @@ public class TableDefinition<T> {
 		if (inheritColumns) {
 			Class<?> superClass = clazz.getSuperclass();
 			classFields.addAll(Arrays.asList(superClass.getDeclaredFields()));
-			
+
 			if (superClass.isAnnotationPresent(IQView.class)) {
 				IQView superView = superClass.getAnnotation(IQView.class);
 				if (superView.inheritColumns()) {
@@ -539,7 +515,7 @@ public class TableDefinition<T> {
 					defaultValue = col.defaultValue();
 				}
 			}
-			
+
 			boolean hasConstraint = f.isAnnotationPresent(IQConstraint.class);
 			if (hasConstraint) {
 				IQConstraint con = f.getAnnotation(IQConstraint.class);
@@ -569,7 +545,7 @@ public class TableDefinition<T> {
 			}
 		}
 		fields.addAll(uniqueFields);
-		
+
 		List<String> primaryKey = Utils.newArrayList();
 		int primitiveBoolean = 0;
 		for (FieldDefinition fieldDef : fields) {
@@ -667,7 +643,7 @@ public class TableDefinition<T> {
 		// return the value unchanged
 		return value;
 	}
-	
+
 	PreparedStatement createInsertStatement(Db db, Object obj, boolean returnKey) {
 		SQLStatement stat = new SQLStatement(db);
 		StatementBuilder buff = new StatementBuilder("INSERT INTO ");
@@ -910,13 +886,13 @@ public class TableDefinition<T> {
 			try {
 				stat.executeUpdate();
 			} catch (IciqlException e) {
-				// maybe we should check more error codes
-				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS) {
+				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS
+						&& e.getIciqlCode() != IciqlException.CODE_DUPLICATE_KEY) {
 					throw e;
 				}
 			}
 		}
-		
+
 		// create foreign keys constraints
 		for (ConstraintForeignKeyDefinition constraint : constraintsForeignKey) {
 			stat = new SQLStatement(db);
@@ -925,8 +901,8 @@ public class TableDefinition<T> {
 			try {
 				stat.executeUpdate();
 			} catch (IciqlException e) {
-				// maybe we should check more error codes
-				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS) {
+				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS
+						&& e.getIciqlCode() != IciqlException.CODE_DUPLICATE_KEY) {
 					throw e;
 				}
 			}
@@ -1024,17 +1000,17 @@ public class TableDefinition<T> {
 						viewTableName = parentView.tableName();
 					}
 				}
-				
+
 				if (StringUtils.isNullOrEmpty(viewTableName)) {
 					// still missing view table name
 					throw new IciqlException("View model class \"{0}\" is missing a table name!", tableName);
 				}
 			}
-			
+
 			// allow control over createTableIfRequired()
 			createIfRequired = viewAnnotation.create();
 		}
-		
+
 		if (clazz.isAnnotationPresent(IQIndex.class)) {
 			// single table index
 			IQIndex index = clazz.getAnnotation(IQIndex.class);
@@ -1048,7 +1024,7 @@ public class TableDefinition<T> {
 				addIndex(index);
 			}
 		}
-		
+
 		if (clazz.isAnnotationPresent(IQContraintUnique.class)) {
 			// single table unique constraint
 			IQContraintUnique constraint = clazz.getAnnotation(IQContraintUnique.class);
@@ -1062,7 +1038,7 @@ public class TableDefinition<T> {
 				addConstraintUnique(constraint);
 			}
 		}
-		
+
 		if (clazz.isAnnotationPresent(IQContraintForeignKey.class)) {
 			// single table constraint
 			IQContraintForeignKey constraint = clazz.getAnnotation(IQContraintForeignKey.class);
@@ -1076,20 +1052,20 @@ public class TableDefinition<T> {
 				addConstraintForeignKey(constraint);
 			}
 		}
-		
+
 	}
 
 	private void addConstraintForeignKey(IQContraintForeignKey constraint) {
 		List<String> foreignColumns = Arrays.asList(constraint.foreignColumns());
 		List<String> referenceColumns = Arrays.asList(constraint.referenceColumns());
-		addContraintForeignKey(constraint.name(), foreignColumns, constraint.referenceName(), referenceColumns, constraint.deleteType(), constraint.updateType(), constraint.deferrabilityType());
+		addConstraintForeignKey(constraint.name(), foreignColumns, constraint.referenceName(), referenceColumns, constraint.deleteType(), constraint.updateType(), constraint.deferrabilityType());
 	}
-	
+
 	private void addConstraintUnique(IQContraintUnique constraint) {
 		List<String> uniqueColumns = Arrays.asList(constraint.uniqueColumns());
-		addContraintUnique(constraint.name(), uniqueColumns);
+		addConstraintUnique(constraint.name(), uniqueColumns);
 	}
-	
+
 	/**
 	 * Defines a foreign key constraint with the specified parameters.
 	 * 
@@ -1108,13 +1084,13 @@ public class TableDefinition<T> {
 	 * @param deferrabilityType
 	 *            deferrability mode
 	 */
-	private void addContraintForeignKey(String name,
+	private void addConstraintForeignKey(String name,
 			List<String> foreignColumns, String referenceName,
 			List<String> referenceColumns, ConstraintDeleteType deleteType,
 			ConstraintUpdateType updateType, ConstraintDeferrabilityType deferrabilityType) {
 		ConstraintForeignKeyDefinition constraint = new ConstraintForeignKeyDefinition();
 		if (StringUtils.isNullOrEmpty(name)) {
-			constraint.constraintName = tableName + "_" + constraintsForeignKey.size();
+			constraint.constraintName = tableName + "_fkey_" + constraintsForeignKey.size();
 		} else {
 			constraint.constraintName = name;
 		}
@@ -1125,25 +1101,6 @@ public class TableDefinition<T> {
 		constraint.updateType = updateType;
 		constraint.deferrabilityType = deferrabilityType;
 		constraintsForeignKey.add(constraint);
-	}
-
-	/**
-	 * Defines a unique constraint with the specified parameters.
-	 * 
-	 * @param name
-	 *            name of the constraint
-	 * @param uniqueColumns
-	 *            list of columns declared as unique
-	 */
-	private void addContraintUnique(String name, List<String> uniqueColumns) {
-		ConstraintUniqueDefinition constraint = new ConstraintUniqueDefinition();
-		if (StringUtils.isNullOrEmpty(name)) {
-			constraint.constraintName = tableName + "_" + constraintsUnique.size();
-		} else {
-			constraint.constraintName = name;
-		}
-		constraint.uniqueColumns = Utils.newArrayList(uniqueColumns);
-		constraintsUnique.add(constraint);
 	}
 
 	private void addIndex(IQIndex index) {
@@ -1158,11 +1115,11 @@ public class TableDefinition<T> {
 	List<ConstraintUniqueDefinition> getContraintsUnique() {
 		return constraintsUnique;
 	}
-	
+
 	List<ConstraintForeignKeyDefinition> getContraintsForeignKey() {
 		return constraintsForeignKey;
 	}
-	
+
 	private void initObject(Object obj, Map<Object, FieldDefinition> map) {
 		for (FieldDefinition def : fields) {
 			Object newValue = def.initWithNewObject(obj);
