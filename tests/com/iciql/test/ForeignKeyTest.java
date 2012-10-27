@@ -55,16 +55,16 @@ public class ForeignKeyTest {
 	public void testForeignKeyWithOnDeleteCascade() {
 		ProductAnnotationOnlyWithForeignKey p = new ProductAnnotationOnlyWithForeignKey();
 		long count1 = db.from(p).selectCount();
-
+		
 		// should remove 2 associated products
 		CategoryAnnotationOnly c = new CategoryAnnotationOnly();
 		db.from(c).where(c.categoryId).is(1L).delete();
-
+		
 		long count2 = db.from(p).selectCount();
-
+		
 		assertEquals(count1, count2 + 2L);
 	}
-
+	
 	@Test
 	public void testForeignKeyDropReferenceTable() {
 		try {

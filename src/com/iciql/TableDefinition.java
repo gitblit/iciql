@@ -79,7 +79,7 @@ public class TableDefinition<T> {
 	/**
 	 * The meta data of a constraint on foreign key.
 	 */
-
+	
 	public static class ConstraintForeignKeyDefinition {
 
 		public String constraintName;
@@ -90,18 +90,18 @@ public class TableDefinition<T> {
 		public ConstraintUpdateType updateType = ConstraintUpdateType.UNSET;
 		public ConstraintDeferrabilityType deferrabilityType = ConstraintDeferrabilityType.UNSET;
 	}
-
+	
 	/**
 	 * The meta data of a unique constraint.
 	 */
-
+	
 	public static class ConstraintUniqueDefinition {
 
 		public String constraintName;
 		public List<String> uniqueColumns;
 	}
-
-
+	
+	
 	/**
 	 * The meta data of a field.
 	 */
@@ -161,12 +161,12 @@ public class TableDefinition<T> {
 				throw new IciqlException(e);
 			}
 		}
-
+		
 		@Override
 		public int hashCode() {
 			return columnName.hashCode();
 		}
-
+		
 		@Override
 		public boolean equals(Object o) {
 			if (o instanceof FieldDefinition) {
@@ -426,7 +426,7 @@ public class TableDefinition<T> {
 		if (inheritColumns) {
 			Class<?> superClass = clazz.getSuperclass();
 			classFields.addAll(Arrays.asList(superClass.getDeclaredFields()));
-
+			
 			if (superClass.isAnnotationPresent(IQView.class)) {
 				IQView superView = superClass.getAnnotation(IQView.class);
 				if (superView.inheritColumns()) {
@@ -515,7 +515,7 @@ public class TableDefinition<T> {
 					defaultValue = col.defaultValue();
 				}
 			}
-
+			
 			boolean hasConstraint = f.isAnnotationPresent(IQConstraint.class);
 			if (hasConstraint) {
 				IQConstraint con = f.getAnnotation(IQConstraint.class);
@@ -545,7 +545,7 @@ public class TableDefinition<T> {
 			}
 		}
 		fields.addAll(uniqueFields);
-
+		
 		List<String> primaryKey = Utils.newArrayList();
 		int primitiveBoolean = 0;
 		for (FieldDefinition fieldDef : fields) {
@@ -643,7 +643,7 @@ public class TableDefinition<T> {
 		// return the value unchanged
 		return value;
 	}
-
+	
 	PreparedStatement createInsertStatement(Db db, Object obj, boolean returnKey) {
 		SQLStatement stat = new SQLStatement(db);
 		StatementBuilder buff = new StatementBuilder("INSERT INTO ");
@@ -892,7 +892,7 @@ public class TableDefinition<T> {
 				}
 			}
 		}
-
+		
 		// create foreign keys constraints
 		for (ConstraintForeignKeyDefinition constraint : constraintsForeignKey) {
 			stat = new SQLStatement(db);
@@ -1000,17 +1000,17 @@ public class TableDefinition<T> {
 						viewTableName = parentView.tableName();
 					}
 				}
-
+				
 				if (StringUtils.isNullOrEmpty(viewTableName)) {
 					// still missing view table name
 					throw new IciqlException("View model class \"{0}\" is missing a table name!", tableName);
 				}
 			}
-
+			
 			// allow control over createTableIfRequired()
 			createIfRequired = viewAnnotation.create();
 		}
-
+		
 		if (clazz.isAnnotationPresent(IQIndex.class)) {
 			// single table index
 			IQIndex index = clazz.getAnnotation(IQIndex.class);
@@ -1024,7 +1024,7 @@ public class TableDefinition<T> {
 				addIndex(index);
 			}
 		}
-
+		
 		if (clazz.isAnnotationPresent(IQContraintUnique.class)) {
 			// single table unique constraint
 			IQContraintUnique constraint = clazz.getAnnotation(IQContraintUnique.class);
@@ -1038,7 +1038,7 @@ public class TableDefinition<T> {
 				addConstraintUnique(constraint);
 			}
 		}
-
+		
 		if (clazz.isAnnotationPresent(IQContraintForeignKey.class)) {
 			// single table constraint
 			IQContraintForeignKey constraint = clazz.getAnnotation(IQContraintForeignKey.class);
@@ -1052,7 +1052,7 @@ public class TableDefinition<T> {
 				addConstraintForeignKey(constraint);
 			}
 		}
-
+		
 	}
 
 	private void addConstraintForeignKey(IQContraintForeignKey constraint) {
@@ -1060,12 +1060,12 @@ public class TableDefinition<T> {
 		List<String> referenceColumns = Arrays.asList(constraint.referenceColumns());
 		addConstraintForeignKey(constraint.name(), foreignColumns, constraint.referenceName(), referenceColumns, constraint.deleteType(), constraint.updateType(), constraint.deferrabilityType());
 	}
-
+	
 	private void addConstraintUnique(IQContraintUnique constraint) {
 		List<String> uniqueColumns = Arrays.asList(constraint.uniqueColumns());
 		addConstraintUnique(constraint.name(), uniqueColumns);
 	}
-
+	
 	/**
 	 * Defines a foreign key constraint with the specified parameters.
 	 * 
@@ -1115,11 +1115,11 @@ public class TableDefinition<T> {
 	List<ConstraintUniqueDefinition> getContraintsUnique() {
 		return constraintsUnique;
 	}
-
+	
 	List<ConstraintForeignKeyDefinition> getContraintsForeignKey() {
 		return constraintsForeignKey;
 	}
-
+	
 	private void initObject(Object obj, Map<Object, FieldDefinition> map) {
 		for (FieldDefinition def : fields) {
 			Object newValue = def.initWithNewObject(obj);
