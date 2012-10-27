@@ -1,5 +1,6 @@
 /*
  * Copyright 2011 James Moger.
+ * Copyright 2012 Frederic Gaillard
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +31,7 @@ public class IciqlException extends RuntimeException {
 	public static final int CODE_OBJECT_NOT_FOUND = 3;
 	public static final int CODE_OBJECT_ALREADY_EXISTS = 4;
 	public static final int CODE_CONSTRAINT_VIOLATION = 5;
+	public static final int CODE_UNCHARACTERIZED = 6;
 
 	private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|\\<\\>|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";
 
@@ -152,6 +154,9 @@ public class IciqlException extends RuntimeException {
 			} else if ("X0Y25".equals(state)) {
 				// Derby constraint violation
 				iciqlCode = CODE_CONSTRAINT_VIOLATION;
+			} else {
+				// uncharacterized SQL code, we can always rely on iciqlCode != 0 in IciqlException
+				iciqlCode = s.getErrorCode() == 0 ? CODE_UNCHARACTERIZED : s.getErrorCode();
 			}
 		}
 	}
