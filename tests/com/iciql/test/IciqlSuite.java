@@ -1,6 +1,6 @@
 /*
  * Copyright 2011 James Moger.
- * Copyright 2012 Frédéric Gaillard.
+ * Copyright 2012 Frederic Gaillard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ import com.iciql.util.Utils;
 @SuiteClasses({ AliasMapTest.class, AnnotationsTest.class, BooleanModelTest.class, ClobTest.class,
 		ConcurrencyTest.class, EnumsTest.class, ModelsTest.class, PrimitivesTest.class,
 		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UpgradesTest.class, JoinTest.class,
-		UUIDTest.class, ViewsTest.class, ForeignKeyTest.class })
+		UUIDTest.class, ViewsTest.class, ForeignKeyTest.class, TransactionTest.class })
 public class IciqlSuite {
 
 	private static final TestDb[] TEST_DBS = {
