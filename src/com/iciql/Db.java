@@ -1,6 +1,7 @@
 /*
  * Copyright 2004-2011 H2 Group.
  * Copyright 2011 James Moger.
+ * Copyright 2012 Frederic Gaillard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +69,9 @@ public class Db {
 	private DbUpgrader dbUpgrader = new DefaultDbUpgrader();
 	private final Set<Class<?>> upgradeChecked = Collections.synchronizedSet(new HashSet<Class<?>>());
 
+	private boolean skipCreate;
+	private boolean autoSavePoint = true;
+	
 	static {
 		TOKENS = Collections.synchronizedMap(new WeakIdentityHashMap<Object, Token>());
 		DIALECTS = Collections.synchronizedMap(new HashMap<String, Class<? extends SQLDialect>>());
@@ -563,6 +567,11 @@ public class Db {
 	}
 	
 	Savepoint prepareSavepoint() {
+		// don't change auto-commit mode.
+		// don't create save point.
+		if (!autoSavePoint) {
+			return null;
+		}
 		// create a savepoint
 		Savepoint savepoint = null;
 		try {
@@ -731,4 +740,33 @@ public class Db {
 			JdbcUtils.closeSilently(stat);
 		}
 	}
+
+	/**
+	 * Allow to enable/disable globally createIfRequired in TableDefinition.
+	 * For advanced user wanting to gain full control of transactions.
+	 * Default value is false.
+	 * @param skipCreate
+	 */
+	public void setSkipCreate(boolean skipCreate) {
+		this.skipCreate = skipCreate;
+	}
+
+	public boolean getSkipCreate() {
+		return this.skipCreate;
+	}
+	
+	/**
+	 * Allow to enable/disable usage of save point.
+	 * For advanced user wanting to gain full control of transactions.
+	 * Default value is false.
+	 * @param autoSavePoint
+	 */
+	public void setAutoSavePoint(boolean autoSavePoint) {
+		this.autoSavePoint = autoSavePoint;
+	}
+
+	public boolean getAutoSavePoint() {
+		return this.autoSavePoint;
+	}
+	
 }

@@ -28,6 +28,9 @@ import com.iciql.IciqlException;
 import com.iciql.test.models.CategoryAnnotationOnly;
 import com.iciql.test.models.ProductAnnotationOnlyWithForeignKey;
 
+/**
+ * Tests of Foreign Keys.
+ */
 public class ForeignKeyTest {
 
 	/**
