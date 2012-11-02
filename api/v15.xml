@@ -43,7 +43,7 @@
  type="java.lang.String"
  transient="false"
  volatile="false"
- value="&quot;1.0.0&quot;"
+ value="&quot;1.2.0-SNAPSHOT&quot;"
  static="true"
  final="true"
  deprecated="not deprecated"
@@ -54,7 +54,7 @@
  type="java.lang.String"
  transient="false"
  volatile="false"
- value="&quot;2012-07-14&quot;"
+ value="&quot;PENDING&quot;"
  static="true"
  final="true"
  deprecated="not deprecated"
@@ -162,6 +162,19 @@
 </parameter>
 </method>
 <method name="dropTable"
+ return="int"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="modelClass" type="java.lang.Class&lt;? extends T&gt;">
+</parameter>
+</method>
+<method name="dropView"
  return="int"
  abstract="false"
  native="false"
@@ -736,6 +749,36 @@
 <parameter name="columnName" type="java.lang.String">
 </parameter>
 </method>
+<method name="constraint"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="column" type="java.lang.Object">
+</parameter>
+<parameter name="constraint" type="java.lang.String">
+</parameter>
+</method>
+<method name="constraintUnique"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
+<parameter name="columns" type="java.lang.Object...">
+</parameter>
+</method>
 <method name="defaultValue"
  return="void"
  abstract="false"
@@ -900,6 +943,19 @@
  visibility="public"
 >
 <parameter name="column" type="java.lang.Object">
+</parameter>
+</method>
+<method name="viewTableName"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="viewTableName" type="java.lang.String">
 </parameter>
 </method>
 </class>
@@ -1146,6 +1202,105 @@
 >
 </method>
 </interface>
+<class name="Iciql.ConstraintDeferrabilityType"
+ extends="java.lang.Enum"
+ abstract="false"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<method name="valueOf"
+ return="com.iciql.Iciql.ConstraintDeferrabilityType"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
+</method>
+<method name="values"
+ return="com.iciql.Iciql.ConstraintDeferrabilityType[]"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+</class>
+<class name="Iciql.ConstraintDeleteType"
+ extends="java.lang.Enum"
+ abstract="false"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<method name="valueOf"
+ return="com.iciql.Iciql.ConstraintDeleteType"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
+</method>
+<method name="values"
+ return="com.iciql.Iciql.ConstraintDeleteType[]"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+</class>
+<class name="Iciql.ConstraintUpdateType"
+ extends="java.lang.Enum"
+ abstract="false"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<method name="valueOf"
+ return="com.iciql.Iciql.ConstraintUpdateType"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
+</method>
+<method name="values"
+ return="com.iciql.Iciql.ConstraintUpdateType[]"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+</class>
 <interface name="Iciql.EnumId"
  abstract="true"
  static="true"
@@ -1209,6 +1364,61 @@
 </field>
 </class>
 <class name="Iciql.IQColumn"
+ extends="java.lang.Object"
+ abstract="true"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<implements name="java.lang.annotation.Annotation">
+</implements>
+</class>
+<class name="Iciql.IQConstraint"
+ extends="java.lang.Object"
+ abstract="true"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<implements name="java.lang.annotation.Annotation">
+</implements>
+</class>
+<class name="Iciql.IQContraintForeignKey"
+ extends="java.lang.Object"
+ abstract="true"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<implements name="java.lang.annotation.Annotation">
+</implements>
+</class>
+<class name="Iciql.IQContraintUnique"
+ extends="java.lang.Object"
+ abstract="true"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<implements name="java.lang.annotation.Annotation">
+</implements>
+</class>
+<class name="Iciql.IQContraintsForeignKey"
+ extends="java.lang.Object"
+ abstract="true"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<implements name="java.lang.annotation.Annotation">
+</implements>
+</class>
+<class name="Iciql.IQContraintsUnique"
  extends="java.lang.Object"
  abstract="true"
  static="true"
@@ -1286,6 +1496,17 @@
 </implements>
 </class>
 <class name="Iciql.IQVersion"
+ extends="java.lang.Object"
+ abstract="true"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<implements name="java.lang.annotation.Annotation">
+</implements>
+</class>
+<class name="Iciql.IQView"
  extends="java.lang.Object"
  abstract="true"
  static="true"
@@ -1525,6 +1746,19 @@
 <parameter name="valueRight" type="java.lang.Object">
 </parameter>
 <parameter name="compareType" type="com.iciql.CompareType">
+</parameter>
+</method>
+<method name="createView"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="viewClass" type="java.lang.Class&lt;X&gt;">
 </parameter>
 </method>
 <method name="delete"
@@ -1937,6 +2171,19 @@
  visibility="public"
 >
 <parameter name="expr" type="java.lang.Object">
+</parameter>
+</method>
+<method name="replaceView"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="viewClass" type="java.lang.Class&lt;X&gt;">
 </parameter>
 </method>
 <method name="select"
@@ -2925,6 +3172,19 @@
 <parameter name="x" type="short">
 </parameter>
 </method>
+<method name="createView"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="viewClass" type="java.lang.Class&lt;?&gt;">
+</parameter>
+</method>
 <method name="delete"
  return="int"
  abstract="false"
@@ -3257,6 +3517,19 @@
  visibility="public"
 >
 <parameter name="expr" type="java.lang.Object">
+</parameter>
+</method>
+<method name="replaceView"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="viewClass" type="java.lang.Class&lt;?&gt;">
 </parameter>
 </method>
 <method name="select"
@@ -3611,6 +3884,44 @@
 <parameter name="name" type="java.lang.String">
 </parameter>
 </method>
+<method name="prepareCreateConstraintForeignKey"
+ return="void"
+ abstract="true"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="stat" type="com.iciql.SQLStatement">
+</parameter>
+<parameter name="schemaName" type="java.lang.String">
+</parameter>
+<parameter name="tableName" type="java.lang.String">
+</parameter>
+<parameter name="constraint" type="com.iciql.TableDefinition.ConstraintForeignKeyDefinition">
+</parameter>
+</method>
+<method name="prepareCreateConstraintUnique"
+ return="void"
+ abstract="true"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="stat" type="com.iciql.SQLStatement">
+</parameter>
+<parameter name="schemaName" type="java.lang.String">
+</parameter>
+<parameter name="tableName" type="java.lang.String">
+</parameter>
+<parameter name="constraint" type="com.iciql.TableDefinition.ConstraintUniqueDefinition">
+</parameter>
+</method>
 <method name="prepareCreateIndex"
  return="void"
  abstract="true"
@@ -3645,7 +3956,54 @@
 <parameter name="def" type="com.iciql.TableDefinition&lt;T&gt;">
 </parameter>
 </method>
+<method name="prepareCreateView"
+ return="void"
+ abstract="true"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="stat" type="com.iciql.SQLStatement">
+</parameter>
+<parameter name="def" type="com.iciql.TableDefinition&lt;T&gt;">
+</parameter>
+</method>
+<method name="prepareCreateView"
+ return="void"
+ abstract="true"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="stat" type="com.iciql.SQLStatement">
+</parameter>
+<parameter name="def" type="com.iciql.TableDefinition&lt;T&gt;">
+</parameter>
+<parameter name="fromWhere" type="java.lang.String">
+</parameter>
+</method>
 <method name="prepareDropTable"
+ return="void"
+ abstract="true"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="stat" type="com.iciql.SQLStatement">
+</parameter>
+<parameter name="def" type="com.iciql.TableDefinition&lt;T&gt;">
+</parameter>
+</method>
+<method name="prepareDropView"
  return="void"
  abstract="true"
  native="false"
@@ -3829,6 +4187,44 @@
 <parameter name="name" type="java.lang.String">
 </parameter>
 </method>
+<method name="prepareCreateConstraintForeignKey"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="stat" type="com.iciql.SQLStatement">
+</parameter>
+<parameter name="schemaName" type="java.lang.String">
+</parameter>
+<parameter name="tableName" type="java.lang.String">
+</parameter>
+<parameter name="constraint" type="com.iciql.TableDefinition.ConstraintForeignKeyDefinition">
+</parameter>
+</method>
+<method name="prepareCreateConstraintUnique"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="stat" type="com.iciql.SQLStatement">
+</parameter>
+<parameter name="schemaName" type="java.lang.String">
+</parameter>
+<parameter name="tableName" type="java.lang.String">
+</parameter>
+<parameter name="constraint" type="com.iciql.TableDefinition.ConstraintUniqueDefinition">
+</parameter>
+</method>
 <method name="prepareCreateIndex"
  return="void"
  abstract="false"
@@ -3876,7 +4272,67 @@
 <parameter name="def" type="com.iciql.TableDefinition&lt;T&gt;">
 </parameter>
 </method>
+<method name="prepareCreateView"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="stat" type="com.iciql.SQLStatement">
+</parameter>
+<parameter name="def" type="com.iciql.TableDefinition&lt;T&gt;">
+</parameter>
+</method>
+<method name="prepareCreateView"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="stat" type="com.iciql.SQLStatement">
+</parameter>
+<parameter name="def" type="com.iciql.TableDefinition&lt;T&gt;">
+</parameter>
+<parameter name="fromWhere" type="java.lang.String">
+</parameter>
+</method>
+<method name="prepareCreateView"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="def" type="com.iciql.TableDefinition&lt;T&gt;">
+</parameter>
+</method>
 <method name="prepareDropTable"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="stat" type="com.iciql.SQLStatement">
+</parameter>
+<parameter name="def" type="com.iciql.TableDefinition&lt;T&gt;">
+</parameter>
+</method>
+<method name="prepareDropView"
  return="void"
  abstract="false"
  native="false"
@@ -4146,6 +4602,130 @@
 >
 <field name="fields"
  type="java.util.ArrayList"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+</class>
+<class name="TableDefinition.ConstraintForeignKeyDefinition"
+ extends="java.lang.Object"
+ abstract="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="TableDefinition.ConstraintForeignKeyDefinition"
+ type="com.iciql.TableDefinition.ConstraintForeignKeyDefinition"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<field name="constraintName"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="deferrabilityType"
+ type="com.iciql.Iciql.ConstraintDeferrabilityType"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="deleteType"
+ type="com.iciql.Iciql.ConstraintDeleteType"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="foreignColumns"
+ type="java.util.List"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="referenceColumns"
+ type="java.util.List"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="referenceTable"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="updateType"
+ type="com.iciql.Iciql.ConstraintUpdateType"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+</class>
+<class name="TableDefinition.ConstraintUniqueDefinition"
+ extends="java.lang.Object"
+ abstract="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="TableDefinition.ConstraintUniqueDefinition"
+ type="com.iciql.TableDefinition.ConstraintUniqueDefinition"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<field name="constraintName"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="uniqueColumns"
+ type="java.util.List"
  transient="false"
  volatile="false"
  static="false"
