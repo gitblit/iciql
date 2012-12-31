@@ -2,6 +2,7 @@
  * Copyright 2004-2011 H2 Group.
  * Copyright 2011 James Moger.
  * Copyright 2012 Frederic Gaillard.
+ * Copyright 2012 Alex Telepov.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,6 +84,7 @@ public class Db {
 		DIALECTS.put("HSQL Database Engine", SQLDialectHSQL.class);
 		DIALECTS.put("MySQL", SQLDialectMySQL.class);
 		DIALECTS.put("PostgreSQL", SQLDialectPostgreSQL.class);
+	    DIALECTS.put("Microsoft SQL Server", SQLDialectMSSQL.class);
 	}
 
 	private Db(Connection conn) {
