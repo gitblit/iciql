@@ -1,7 +1,7 @@
 /*
  * Copyright 2004-2011 H2 Group.
  * Copyright 2011 James Moger.
- * Copyright 2012 Frederic Gaillard.
+ * Copyright 2012 Frédéric Gaillard.
  * Copyright 2012 Alex Telepov.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

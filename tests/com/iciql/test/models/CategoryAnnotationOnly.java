@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Frédéric Gaillard.
+ * Copyright 2012 FrÃ©dÃ©ric Gaillard.
  * Copyright 2012 James Moger.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
