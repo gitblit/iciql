@@ -1,0 +1,40 @@
+
+// GLOBAL VALUES
+// --------------------------------------------------
+@standardGray:				#ccc;
+@cornflower:				#abd4ff;
+@white:						#fff;
+
+// Dropdown
+// -------------------------
+@dropdownLinkBackgroundHover:   @cornflower;
+
+// Navbar
+// -------------------------
+@navbarHeight:                    55px;
+@navbarBackground:                @cornflower;
+@navbarBackgroundHighlight:       @cornflower;
+@navbarText:                      @white;
+@navbarLinkColor:                 @white;
+@navbarLinkColorHover:            @white;
+@navbarLinkColorActive:           @white;
+@navbarLinkBackgroundHover:       transparent;
+@navbarLinkBackgroundActive:      transparent;
+
+.navbar {
+	.brand {
+		@elementHeight: 48px;
+		padding: 7px;
+	}
+}
+
+.navbar .nav > li > a {
+  font-size: @baseFontSize + 2;  
+  text-shadow: 0 1px 0 #6b94df;
+}
+
+body { padding-top: @navbarHeight + 15 } /* 60px to make the container go all the way to the bottom of the topbar */
+footer { margin-top: 25px; padding: 15px 0 16px; border-top: 1px solid #E5E5E5; }
+
+a:hover { text-decoration: underline !important; }
+em { color: #50a000; }

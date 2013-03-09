@@ -1,6 +1,6 @@
 ## Usage
 
-Aside from this brief usage guide, please consult the [examples](examples.html), the [javadoc](javadoc.html) and the [source code](https://code.google.com/p/iciql/source/browse).
+Aside from this brief usage guide, please consult the [examples](examples.html), the [javadoc](javadoc.html) and the [source code](${project.scmUrl}).
 
 ### Instantiating a Db
 
@@ -20,7 +20,7 @@ Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
 db.insertAll(Product.getList());
 db.insertAll(Customer.getList());
 
-List&lt;Product&gt; restock =
+List<Product> restock =
 	db.from(p).
 	where(p.unitsInStock).
 	is(0).orderBy(p.productId).select();
@@ -42,7 +42,7 @@ Iciql gives you compile-time type-safety, but it becomes inconvenient if your de
 #### Where String Fragment Approach
 This approach is a mixture of iciql and jdbc.  It uses the traditional prepared statement *field=?* tokens with iciql compile-time model class type checking.  There is no field token type-safety checking.
 %BEGINCODE%
-List&lt;Product&gt; restock = db.from(p).where("unitsInStock=? and productName like ? order by productId", 0, "Chef%").select();
+List<Product> restock = db.from(p).where("unitsInStock=? and productName like ? order by productId", 0, "Chef%").select();
 %ENDCODE%
 
 #### Db.executeQuery Approaches
@@ -52,12 +52,12 @@ There may be times when the hybrid approach is still too restrictive and you'd p
 2. There is no model class type checking nor field type checking. 
 
 %BEGINCODE%
-List&lt;Product&gt; allProducts = db.executeQuery(Product.class, "select * from products");
-List&lt;Product&gt; restock = db.executeQuery(Product.class, "select * from products where unitsInStock=?", 0);
+List<Product> allProducts = db.executeQuery(Product.class, "select * from products");
+List<Product> restock = db.executeQuery(Product.class, "select * from products where unitsInStock=?", 0);
 
 // parameterized query which can be cached and re-used later
 String q = db.from(p).where(p.unitsInStock).isParameter().toSQL();
-List&lt;Product&gt; restock = db.executeQuery(Product.class, q, 0);
+List<Product> restock = db.executeQuery(Product.class, q, 0);
 
 %ENDCODE% 
 
@@ -65,7 +65,7 @@ Or if you want access to the raw *ResultSet* before building your model object i
 
 %BEGINCODE%
 ResultSet rs = db.executeQuery("select * from products");
-List&lt;Product&gt; allProducts = db.buildObjects(Product.class, rs);
+List<Product> allProducts = db.buildObjects(Product.class, rs);
 // This method ensures the creating statement is closed
 JdbcUtils.closeSilently(rs, true);
 %ENDCODE% 
@@ -84,12 +84,12 @@ The proposed syntax is:
 long count = db.from(co).
     where(new Filter() { public boolean where() {
         return co.id == x
-            &amp;&amp; co.name.equals(name)
-            &amp;&amp; co.value == new BigDecimal("1")
-            &amp;&amp; co.amount == 1L
-            &amp;&amp; co.birthday.before(new java.util.Date())
-            &amp;&amp; co.created.before(java.sql.Timestamp.valueOf("2005-05-05 05:05:05"))
-            &amp;&amp; co.time.before(java.sql.Time.valueOf("23:23:23"));
+            && co.name.equals(name)
+            && co.value == new BigDecimal("1")
+            && co.amount == 1L
+            && co.birthday.before(new java.util.Date())
+            && co.created.before(java.sql.Timestamp.valueOf("2005-05-05 05:05:05"))
+            && co.time.before(java.sql.Time.valueOf("23:23:23"));
         }
     }).selectCount();
 %ENDCODE%
@@ -135,14 +135,14 @@ IciqlLogger.unregisterListener(custom);
 Consider the following example:
 %BEGINCODE%
 Product p = new Product();
-List&lt;Product&gt; restock = db.from(p).where(p.unitsInStock).is(0).select();
+List<Product> restock = db.from(p).where(p.unitsInStock).is(0).select();
 %ENDCODE%
 
 The Product model class instance named **p** is an *alias* object.  An *alias* is simply an instance of your model class that is only used to build the compile-time/runtime representation of your table.
 
 1. *Alias* instances are **NOT** thread-safe and must not be used concurrently.
 2. *Alias* instances have no other purpose than to provide a compile-time/runtime map of your table.
-3. If you inspected an *alias* instance after using one you would find that it's fields have been assigned numeric values.<br/>These values are assigned from a static counter in `com.iciql.Utils.newObject()` during execution of the *db.from()* method.<p>For *Object* fields, these values are meaningless since objects are mapped by reference.<br/>For *Primitive* fields these values do matter because primitives are mapped by value.  The proper alias is selected as long as the primitive variant methods are used.  e.g. db.from(p).where(int).is(Integer).select()
+3. If you inspected an *alias* instance after using one you would find that it's fields have been assigned numeric values.<br/>These values are assigned from a static counter in `com.iciql.Utils.newObject()` during execution of the *db.from()* method.<p/>For *Object* fields, these values are meaningless since objects are mapped by reference.<br/>For *Primitive* fields these values do matter because primitives are mapped by value.  The proper alias is selected as long as the primitive variant methods are used.  e.g. db.from(p).where(int).is(Integer).select()
 
 If your statement is a query, like in the above example, iciql will generate new instances of your *alias* model class and return them as a list where each entry of the list represents a row from the JDBC `ResultSet`.
  
@@ -153,7 +153,7 @@ The _db.from(p)_ call reinstantiates each member field of p.  Those reinstantiat
 Depending on your design, you might consider using a [ThreadLocal](http://download.oracle.com/javase/6/docs/api/java/lang/ThreadLocal.html) variable if you do not want to keep instantiating *alias* instances.  A utility function is included for easily creating ThreadLocal variables.
 
 %BEGINCODE%
-final ThreadLocal&lt;Product&gt; p = Utils.newThreadLocal(Product.class);
+final ThreadLocal<Product> p = Utils.newThreadLocal(Product.class);
 db.from(p.get()).select();
 %ENDCODE%
 
@@ -161,7 +161,9 @@ db.from(p.get()).select();
 
 1. Close your *Db* instances when you are done with them, this closes the underlying connection or directs the pool to "close" the connection.
 2. Aliases instances are not thread-safe so DO NOT SHARE an alias!<br/>Consider using a *ThreadLocal* alias instance with the `com.iciql.Utils.newThreadLocal()` utility method.
-<table>
+
+<p/>
+<table class="table">
 <tr><th>Not Thread-Safe</th><th>Thread-Safe</th></tr>
 <tr><td>
 %BEGINCODE%
@@ -176,18 +178,20 @@ for (int i = 0; i < 5; i++) {
     thread.start();
 }
 %ENDCODE%
+
 </td><td>
 %BEGINCODE%
-final ThreadLocal&lt;Product&gt; p = Utils.newThreadLocal(Product.class);
+final ThreadLocal<Product> p = Utils.newThreadLocal(Product.class);
 for (int i = 0; i < 5; i++) {
     Thread thread = new Thread(new Runnable() {
         public void run() {
-            // p.get() returns a Product instance unique to this thread            
+            // a unique p for this thread            
             db.from(p.get()).select();
         }
     }, "Thread-" + i);
     thread.start();
 }
 %ENDCODE%
+
 </td></tr>
 </table>

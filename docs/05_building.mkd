@@ -4,26 +4,23 @@
 
 Additionally, [eclipse-cs](http://eclipse-cs.sourceforge.net), [FindBugs](http://findbugs.sourceforge.net), and [EclEmma](http://www.eclemma.org) are recommended development tools.
 
-### Build Dependencies (bundled)
-- [google-code-prettify](http://code.google.com/p/google-code-prettify) (Apache 2.0)
+### Build Dependencies (bundled in repository)
+- [ant-googlecode](http://code.google.com/p/ant-googlecode) (New BSD)
 
 ### Build Dependencies (downloaded during build)
+- [Moxie Build Toolkit](http://moxie.gitblit.com) (Apache 2.0)
 - [H2 Database](http://h2database.com) (Eclipse Public License 1.0)
 - [HSQL Database Engine](http://hsqldb.org) (BSD)
 - [Apache Derby Database](http://db.apache.org/derby) (Apache 2.0)
 - [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j) (GPL)
 - [PostgreSQL JDBC Connector](http://jdbc.postgresql.org) (BSD)
 - [JUnit](http://junit.org) (Common Public License)
-- [commons-net](http://commons.apache.org/net) (Apache 2.0)
-- [ant-googlecode](http://code.google.com/p/ant-googlecode) (New BSD)
-- [MarkdownPapers](http://markdown.tautua.org) (Apache 2.0)
-- [doclava](http://code.google.com/p/doclava) (Apache 2.0)
 - [SLF4J](http://www.slf4j.org) (MIT/X11)
 - [Apache Commons Pool](http://commons.apache.org/pool) (Apache 2.0)
 - [Apache Commons DBCP](http://commons.apache.org/dbcp) (Apache 2.0)
 
 ### Instructions
-1. Clone the git repository from [GoogleCode][iciqlsrc].
+1. Clone the git repository from [Github](${project.scmUrl}).
 2. Import the iciql project into your Eclipse workspace.<br/>
 *There will be some build errors.*
 3. Using Ant, execute the `build.xml` script in the project root.<br/>
@@ -35,5 +32,4 @@ Patches welcome in any form.
 
 Contributions must be your own original work and must licensed under the [Apache License, Version 2.0][apachelicense], the same license used by iciql.
 
-[iciqlsrc]: https://code.google.com/p/iciql/ "iciql git repository"
 [apachelicense]: http://www.apache.org/licenses/LICENSE-2.0 "Apache License, Version 2.0"

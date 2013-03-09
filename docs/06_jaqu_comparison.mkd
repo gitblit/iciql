@@ -3,7 +3,7 @@
 
 This is an overview of the fundamental differences between the original JaQu project and the current featureset of iciql.  
 
-<table>
+<table class="table">
 <tr><th></th><th>Iciql</th><th>JaQu</th></tr>
 <tr><th colspan="3">core</th></tr>
 <tr><td>deployment</td><td>small, discrete library</td><td>depends on H2 database jar file</td></tr>
@@ -22,10 +22,10 @@ This is an overview of the fundamental differences between the original JaQu pro
 <tr><td>enums</td><td>fully supported</td><td>--</td></tr>
 <tr><td>DECIMAL(length,scale)</td><td>can specify length/precision and scale</td><td>--</td></tr>
 <tr><td>BOOLEAN</td><td>flexible mapping of boolean as bool, varchar, or int</td><td>--</td></tr>
-<tr><td>BLOB</td><td>partially supported *(can not be used in a WHERE clause)*</td><td>--</td></tr>
-<tr><td>UUID</td><td>fully supported *(H2 only)* </td><td>--</td></tr>
+<tr><td>BLOB</td><td>partially supported <em>(can not be used in a WHERE clause)</em></td><td>--</td></tr>
+<tr><td>UUID</td><td>fully supported <em>(H2 only)</em> </td><td>--</td></tr>
 <tr><th colspan="3">configuration</th></tr>
-<tr><td>DEFAULT values</td><td>set from annotation, *default object values*, or Define.defaultValue()</td><td>set from annotations</td></tr>
-<tr><td>Interface Configuration<br/>Mapped Fields</td><td>*all fields* are mapped regardless of scope<br/>fields are ignored by annotating with @IQIgnore</td><td>*all public fields* are mapped<br/>fields are ignored by reducing their scope</td></tr>
+<tr><td>DEFAULT values</td><td>set from annotation, <em>default object values</em>, or Define.defaultValue()</td><td>set from annotations</td></tr>
+<tr><td>Interface Configuration<br/>Mapped Fields</td><td><em>all fields</em> are mapped regardless of scope<br/>fields are ignored by annotating with @IQIgnore</td><td><em>all public fields</em> are mapped<br/>fields are ignored by reducing their scope</td></tr>
 <tr><td>Index names</td><td>can be set</td><td>--</td></tr>
 </table>

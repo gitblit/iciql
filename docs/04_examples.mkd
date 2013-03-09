@@ -2,11 +2,11 @@
 
 %BEGINCODE%
 // select * from products
-List&lt;Product&gt; allProducts = db.from(p).select();
+List<Product> allProducts = db.from(p).select();
 
 // select * from customers where region='WA'
 Customer c = new Customer();
-List&lt;Customer&gt; waCustomers = db.from(c). where(c.region).is("WA").select();
+List<Customer> waCustomers = db.from(c). where(c.region).is("WA").select();
 
 public static class ProductPrice {
 	public String productName;
@@ -15,7 +15,7 @@ public static class ProductPrice {
 }
 
 // select with generation of new anonymous inner class
-List&lt;ProductPrice&gt; productPrices =
+List<ProductPrice> productPrices =
     db.from(p).
     orderBy(p.productId).
     select(new ProductPrice() {{
@@ -38,7 +38,7 @@ Long key = db.insertAndGetKey(singleProduct);
 db.insertAll(myProducts);
 
 // batch insertion with primary key retrieval
-List&lt;Long&gt; myKeys = db.insertAllAndGetKeys(list);
+List<Long> myKeys = db.insertAllAndGetKeys(list);
 %ENDCODE%
 
 ## Update Statements
@@ -92,14 +92,14 @@ db.from(p).where(p.productId).atLeast(10).delete();
 final Customer c = new Customer();
 final Order o = new Order();
 
-List&lt;Customer&gt; customersWithLargeOrders =
+List<Customer> customersWithLargeOrders =
     db.from(c).
     innerJoin(o).on(c.customerId).is(o.customerId).
     where(o.total).greaterThan(new BigDecimal("500.00")).
     groupBy(c.customerId).select();
 
 
-List&lt;CustOrder&gt; orders =
+List<CustOrder> orders =
     db.from(c).
     innerJoin(o).on(c.customerId).is(o.customerId).
     where(o.total).lessThan(new BigDecimal("500.00")).
@@ -127,7 +127,7 @@ public class ProductView {
 }
 
 final ProductView v = new ProductView();
-List&lt;ProductView&gt; allProducts = db.from(v).select();
+List<ProductView> allProducts = db.from(v).select();
 
 // this version of the view model "ProductView" inherits table metadata
 // from the Products class which is annotated with IQTable
@@ -145,7 +145,7 @@ public class ProductView extends Products {
 }
 
 final ProductView v = new ProductView();
-List&lt;ProductView&gt; allProducts = db.from(v).select();
+List<ProductView> allProducts = db.from(v).select();
 
 // in this example we are creating a view based on a fluent query
 // and using 2 levels of inheritance.  IQConstraints are ignored
@@ -172,17 +172,17 @@ Dynamic queries skip all field type checking and, depending on which approach yo
 
 %BEGINCODE%
 // where fragment with object parameters
-List&lt;Product&gt; restock = db.from(p).where("unitsInStock=? and productName like ? order by productId", 0, "Chef%").select();
+List<Product> restock = db.from(p).where("unitsInStock=? and productName like ? order by productId", 0, "Chef%").select();
 
 // parameterized query which can be cached and re-used later
 String q = db.from(p).where(p.unitsInStock).isParameter().and(p.productName).likeParameter().orderBy(p.productId).toSQL();
-List&lt;Product&gt; allProducts = db.executeQuery(Product.class, q, 0, "Chef%");
+List<Product> allProducts = db.executeQuery(Product.class, q, 0, "Chef%");
 
 // statement with binding to your model class
-List&lt;Product&gt; allProducts = db.executeQuery(Product.class, "select * from products");
+List<Product> allProducts = db.executeQuery(Product.class, "select * from products");
 
 // statement with object parameters and binding to your model class
-List&lt;Product&gt; restock = db.executeQuery(Product.class, "select * from products where unitsInStock=?", 0);
+List<Product> restock = db.executeQuery(Product.class, "select * from products where unitsInStock=?", 0);
 
 /**
  * If you want to process the intermediate ResultSet
@@ -190,7 +190,7 @@ List&lt;Product&gt; restock = db.executeQuery(Product.class, "select * from prod
  * to ensure the parent statement is closed too.
  */
 ResultSet rs = db.executeQuery("select * from products");
-List&lt;Product&gt; allProducts = db.buildObjects(Product.class, rs);
+List<Product> allProducts = db.buildObjects(Product.class, rs);
 JdbcUtils.closeSilently(rs, true);
 
 %ENDCODE%

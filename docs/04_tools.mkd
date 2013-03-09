@@ -4,16 +4,16 @@ If you do not have or do not want to annotate your existing model classes, you c
     java -jar iciql.jar <parameters>
 
 ### Parameters
-<table>
-<tr><th>-url</th><td>JDBC url for the database</td><td>*REQUIRED*</td></tr>
-<tr><th>-username</th><td>username for JDBC connection</td><td>*optional*</td></tr>
-<tr><th>-password</th><td>password for JDBC connection</td><td>*optional*</td></tr>
-<tr><th>-schema</th><td>the target schema for model generation</td><td>*default:* all schemas</td></tr>
-<tr><th>-table</th><td>the target table for model generation</td><td>*default:* all tables</td></tr>
-<tr><th>-package</th><td>the destination package name for generated models</td><td>*default:* default package</td></tr>
-<tr><th>-folder</th><td>the output folder for .java files</td><td>*default:* current folder</td></tr>
-<tr><th>-annotateSchema</th><td>include the schema name in the class annotations</td><td>*default:* true</td></tr>
-<tr><th>-trimStrings</th><td>annotate trimStrings=true for any VARCHAR string mappings &nbsp; </td><td>*default:* false</td></tr>
+<table class="table">
+<tr><th>-url</th><td>JDBC url for the database</td><td><em>REQUIRED</em></td></tr>
+<tr><th>-username</th><td>username for JDBC connection</td><td><em>optional</em></td></tr>
+<tr><th>-password</th><td>password for JDBC connection</td><td><em>optional</em></td></tr>
+<tr><th>-schema</th><td>the target schema for model generation</td><td><em>default:</em> all schemas</td></tr>
+<tr><th>-table</th><td>the target table for model generation</td><td><em>default:</em> all tables</td></tr>
+<tr><th>-package</th><td>the destination package name for generated models</td><td><em>default:</em> default package</td></tr>
+<tr><th>-folder</th><td>the output folder for .java files</td><td><em>default:</em> current folder</td></tr>
+<tr><th>-annotateSchema</th><td>include the schema name in the class annotations</td><td><em>default:</em> true</td></tr>
+<tr><th>-trimStrings</th><td>annotate trimStrings=true for any VARCHAR string mappings &nbsp; </td><td><em>default:</em> false</td></tr>
 </table>
 
 ## Model Validation
@@ -77,7 +77,7 @@ public class ValidateModels {
 	}
 	
 	private void validateModel(DbInspector inspector, Object o) {
-		List&lt;ValidationRemark&gt; remarks = inspector.validateModel(o, false);
+		List<ValidationRemark> remarks = inspector.validateModel(o, false);
 		assertTrue("Validation remarks are null for " + o.getClass().getName(), remarks != null);
 		log("Validation remarks for " + o.getClass().getName());
 		for (ValidationRemark remark : remarks) {

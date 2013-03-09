@@ -5,7 +5,7 @@ iciql **is**...
 - a model-based, database access wrapper for JDBC
 - for modest database schemas and basic statement generation
 - for those who want to write code, instead of SQL, using IDE completion and compile-time type-safety
-- small (125KB) with no runtime dependencies
+- small (200KB) with debug symbols and no runtime dependencies
 - pronounced *icicle* (although it could be French: *ici ql* - here query language)
 - a friendly fork of the H2 [JaQu][jaqu] project
 
@@ -16,7 +16,7 @@ iciql **is not**...
 - designed to compete with enterprise [ORM][orm] tools like [Hibernate][hibernate] or [mybatis][mybatis]
 
 ### Example Usage
-<table>
+<table class="table">
 <tr>
 <th>iciql</th><th>sql</th>
 </tr>
@@ -24,9 +24,10 @@ iciql **is not**...
 <td>
 %BEGINCODE%
 Product p = new Product();
-List&lt;Product&gt; restock = db.from(p).where(p.unitsInStock).is(0).select();
-List&lt;Product&gt; all = db.executeQuery(Product.class, "select * from products");
+List<Product> restock = db.from(p).where(p.unitsInStock).is(0).select();
+List<Product> all = db.executeQuery(Product.class, "select * from products");
 %ENDCODE%
+
 </td><td>
 <br/>
 select * from products p where p.unitsInStock = 0<br/>
@@ -36,11 +37,11 @@ select * from products
 </table>
 
 ### Supported Databases (Unit-Tested)
-- [H2](http://h2database.com) 1.3.168
-- [HSQLDB](http://hsqldb.org) 2.2.8 
-- [Derby](http://db.apache.org/derby) 10.9.1.0
-- [MySQL](http://mysql.com) 5.0.51b
-- [PostgreSQL](http://postgresql.org) 9.0
+- [H2](http://h2database.com) ${h2.version}
+- [HSQLDB](http://hsqldb.org) ${hsqldb.version}
+- [Derby](http://db.apache.org/derby) ${derby.version}
+- [MySQL](http://mysql.com) ${mysql.version}
+- [PostgreSQL](http://postgresql.org) ${postgresql.version}
 
 Support for others is possible and may only require creating a simple "dialect" class.
 
@@ -48,13 +49,6 @@ Support for others is possible and may only require creating a simple "dialect" 
 
 iciql requires a Java 6 Runtime Environment (JRE) or a Java 6 Development Kit (JDK).
  
-### Current Release
-
-**%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
-
-issues, binaries, & source @ [Google Code][googlecode]<br/>
-sources @ [Github][github]
-
 ### License
 iciql is distributed under the terms of the [Apache Software Foundation license, version 2.0][apachelicense]
 

@@ -4,4 +4,4 @@
  | <a href="javadoc/deprecated-list.html" target="javadoc">deprecated</a>
  | <a href="javadoc/index-all.html" target="javadoc">index</a>
 </div>
-<iframe name="javadoc" src="javadoc/overview-summary.html" width="100%" height="700" frameborder="0"></iframe>
+<iframe name="javadoc" src="javadoc/overview-summary.html" width="100%" height="650" frameborder="0"></iframe>

@@ -6,13 +6,13 @@ This is an aggregated NOTICE file for the projects included
 in this distribution or linked to by this distribution.
 
 ---------------------------------------------------------------------------
-google-code-prettify
+Moxie Build Toolkit
 ---------------------------------------------------------------------------
-   google-code-prettify, released under the
+   Moxie Build Toolkit, released under the
    Apache Software License, Version 2.0.
-
-   http://code.google.com/p/google-code-prettify
-
+   
+   http://moxie.gitblit.com   
+   
 ---------------------------------------------------------------------------
 JUnit
 ---------------------------------------------------------------------------
@@ -52,22 +52,6 @@ Apache Derby Database
    Apache Software License, Version 2.0.
    
    http://db.apache.org/derby   
-
----------------------------------------------------------------------------
-MarkdownPapers
----------------------------------------------------------------------------
-   MarkdownPapers, released under the
-   Apache Software License, Version 2.0.
-
-   http://markdown.tautua.org
-
----------------------------------------------------------------------------
-doclava
----------------------------------------------------------------------------
-   doclava, released under the
-   Apache Software License, Version 2.0.
-   
-   http://code.google.com/p/doclava
 
 ---------------------------------------------------------------------------
 SLF4J

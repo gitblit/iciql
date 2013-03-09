@@ -2,7 +2,7 @@
 
 ### Current Release
 
-**%VERSION%** ([zip](http://code.google.com/p/iciql/downloads/detail?name=%ZIP%)|[jar](http://code.google.com/p/iciql/downloads/detail?name=%JAR%)) &nbsp; *released %BUILDDATE%*
+**${project.version}**
 
 - Fixed case-sensitivity bug on setting a compound primary key from an annotation (issue 12)
 - Implemented readonly view support. (issue 8)<br/>

@@ -1,85 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="iciql" default="buildAll" basedir=".">
+<project name="iciql" default="build" xmlns:mx="antlib:org.moxie">
 
 	<!-- Google Code upload task -->
 	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" 
 		classpath="${basedir}/tools/ant-googlecode-0.0.3.jar" name="gcupload"/>
 
-	<!-- Project Properties -->
-	<property name="project.build.dir" value="${basedir}/build" />
-	<property name="project.site.dir" value="${basedir}/site" />
+	<!--
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Retrieve Moxie Toolkit
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<property name="moxie.version" value="0.6.2" />
+	<property name="moxie.url" value="http://gitblit.github.com/moxie/maven" />
+	<property name="moxie.jar" value="moxie-toolkit-${moxie.version}.jar" />
+	<property name="moxie.dir" value="${user.home}/.moxie" />
+	
+	<!-- Download Moxie from it's Maven repository to user.home -->
+	<get src="${moxie.url}/org/moxie/moxie-toolkit/${moxie.version}/${moxie.jar}"
+		dest="${moxie.dir}" skipexisting="true" verbose="true" />
+	
+	<!-- Register Moxie tasks -->
+	<taskdef uri="antlib:org.moxie">
+		<classpath location="${moxie.dir}/${moxie.jar}" />
+	</taskdef>
 
-	<available property="hasBuildProps" file="${basedir}/build.properties"/>
 	
 	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		Load build.properties, if available
+		Initialize Moxie and setup build properties
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<target name="buildprops" if="hasBuildProps">
-		<!-- Load publication servers, paths, and credentials --> 
-		<loadproperties>
-			<file file="${basedir}/build.properties" />
-		</loadproperties>
-	</target>	
-
-
-	<!--
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		Scrape the version info from code and setup the build properties 
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	-->
-	<target name="buildinfo" depends="buildprops">
-	
-		<!-- extract iciql version number from source code -->
-		<loadfile property="iq.version" srcfile="${basedir}/src/com/iciql/Constants.java">
-			<filterchain>
-				<linecontains>
-					<contains value="public static final String VERSION = " />
-				</linecontains>
-				<striplinebreaks />
-				<tokenfilter>
-					<replacestring from="public static final String VERSION = &quot;" to="" />
-					<replacestring from="&quot;;" to="" />
-					<trim />
-				</tokenfilter>
-			</filterchain>
-		</loadfile>
-
-		<!-- extract iciql version date from source code -->
-		<loadfile property="iq.versionDate" srcfile="${basedir}/src/com/iciql/Constants.java">
-			<filterchain>
-				<linecontains>
-					<contains value="public static final String VERSION_DATE = " />
-				</linecontains>
-				<striplinebreaks />
-				<tokenfilter>
-					<replacestring from="public static final String VERSION_DATE = &quot;" to="" />
-					<replacestring from="&quot;;" to="" />
-					<trim />
-				</tokenfilter>
-			</filterchain>
-		</loadfile>
+	<target name="prepare"  description="Retrieves dependencies and sets up build properties">
 		
-		<!-- extract iciql current api version from source code -->
-		<loadfile property="iq.apiCurrent" srcfile="${basedir}/src/com/iciql/Constants.java">
-			<filterchain>
-				<linecontains>
-					<contains value="public static final String API_CURRENT = " />
-				</linecontains>
-				<striplinebreaks />
-				<tokenfilter>
-					<replacestring from="public static final String API_CURRENT = &quot;" to="" />
-					<replacestring from="&quot;;" to="" />
-					<trim />
-				</tokenfilter>
-			</filterchain>
-		</loadfile>
+		<mx:init />
 
-		<property name="library.jar" value="iciql-${iq.version}.jar" />
-		<property name="javadoc.jar" value="iciql-${iq.version}-javadoc.jar" />
-		<property name="sources.jar" value="iciql-${iq.version}-sources.jar" />
-		<property name="distribution.zip" value="iciql-${iq.version}.zip" />
+	</target>
+
+
+	<!--
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Clean
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="clean" depends="prepare" description="Cleans build directory">
+
+		<mx:clean />
+
 	</target>
 
 	
@@ -88,86 +54,30 @@
 		Compile
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<target name="compile" depends="buildinfo" description="Retrieves dependencies and compiles iciql from source">
-		<!-- Compile the build tool and execute it.
-			 This downloads missing compile-time dependencies from Maven. -->
+	<target name="compile" depends="prepare" description="Compiles iciql from source">
 
-		<delete dir="${project.build.dir}" />
-		<mkdir dir="${project.build.dir}" />
-		<javac encoding="utf-8" debug="true" srcdir="${basedir}/src" destdir="${project.build.dir}">
-			<include name="com/iciql/build/Build.java" />
-			<include name="com/iciql/Constants.java" />
-			<include name="com/iciql/utils/Utils.java" />
-			<include name="com/iciql/utils/StringUtils.java" />
-		</javac>
-		<java classpath="${project.build.dir}" classname="com.iciql.build.Build" />
+		<mx:javac />
 
-		<!-- Compile Project -->
-		<path id="master-classpath">
-			<fileset dir="${basedir}/ext">
-				<include name="*.jar" />
-			</fileset>
-		</path>
-		<javac encoding="utf-8" debug="true" destdir="${project.build.dir}" failonerror="false">
-			<src path="${basedir}/src" />
-			<src path="${basedir}/tests" />
-			<classpath refid="master-classpath" />
-		</javac>
-		<copy todir="${project.build.dir}">
-			<fileset dir="${basedir}/src" excludes="**/*.java,**/thumbs.db" />
-		</copy>
+	</target>
 
-		<!-- Execute the test suite -->
-		<echo>Executing iciql ${iq.version} test suite</echo>
-		<echo>This will take a few minutes...</echo>
-		<java classpath="${project.build.dir}" classname="com.iciql.test.IciqlSuite">
-			<classpath refid="master-classpath" />
+
+	<!--
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TestSuite
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="testsuite" depends="compile" description="runs the benchmark test suite against all databases">
+		<echo/>
+		<echo>This will take a minute or two...</echo>
+		<echo/>
+		<mx:javac scope="test" />
+		<mx:run scope="test" classname="com.iciql.test.IciqlSuite">
 			<arg value="--dbFile" />
-			<arg value="${basedir}/performance_db.txt" />
-				
+			<arg value="${project.outputDirectory}/performance_db.txt" />
+							
 			<arg value="--sqlFile" />
-			<arg value="${basedir}/performance_sql.txt" />
-		</java>
-		
-		<!-- Build Standard Javadoc -->
-		<delete dir="${basedir}/javadoc" />
-		<javadoc destdir="${basedir}/javadoc" nonavbar="true" stylesheetfile="${basedir}/docs/resources/javadoc.css">
-			<fileset dir="${basedir}/src" defaultexcludes="yes">
-		  		<include name="com/iciql/**/*.java"/>
-		  		<exclude name="com/iciql/build/**"/>
-			</fileset>
-		</javadoc>
-
-		<!-- Build Doclava Javadoc -->
-		<!-- Build API XML file -->
-		<delete dir="${basedir}/doclava" />
-		<javadoc destdir="${basedir}/doclava" 
-			docletpath="${basedir}/ext/doclava-1.0.3.jar"
-			bootclasspath="${java.home}/lib/rt.jar">
-		 	<doclet name="com.google.doclava.Doclava">
-		        <param name="-hdf"/> <param name="project.name"/> <param name="iciql"/>
-		 		
-		        <!-- versioning -->
-		 		<param name="-since"/> <param name="api/v1.xml"/> <param name="v1" />
-		 		<param name="-since"/> <param name="api/v2.xml"/> <param name="v2" />
-		 		<param name="-since"/> <param name="api/v3.xml"/> <param name="v3" />
-		 		<param name="-since"/> <param name="api/v4.xml"/> <param name="v4" />
-		 		<param name="-since"/> <param name="api/v5.xml"/> <param name="v5" />
-		        <param name="-apiversion" value="v${iq.apiCurrent}"/>
-		 		
-		 		<param name="-apixml" value="api/v${iq.apiCurrent}.xml"/>
-		 		
-		        <!-- federation -->
-		        <param name="-federate" /><param name="JDK"/>
-		        <param name="http://download.oracle.com/javase/6/docs/api/index.html?"/>
-		        <param name="-federationxml"/><param name="JDK"/>
-		        <param name="http://doclava.googlecode.com/svn/static/api/openjdk-6.xml"/>
-		      </doclet>
-			<fileset dir="${basedir}/src" defaultexcludes="yes">
-			  <include name="com/iciql/**/*.java"/>
-			  <exclude name="com/iciql/build/**"/>
-			</fileset>
-		</javadoc>
+			<arg value="${project.outputDirectory}/performance_sql.txt" />
+		</mx:run>
 	</target>
 
 	
@@ -178,209 +88,195 @@
 	-->
 	<target name="build" depends="compile" description="Builds iciql from source">
 		
-		<echo>Building iciql binaries ${iq.version}</echo>
-		
-		<!-- delete any old artifacts -->
-		<delete>
+		<mx:jar packageSources="true" />		
+		<mx:javadoc redirect="true" />
+		<mx:zip>
+			<artifact />
+			<artifact classifier="sources"/>
+			<artifact classifier="javadoc"/>
 			<fileset dir="${basedir}">
-				<include name="*.jar"/>
-				<include name="*.zip"/>
-			</fileset>
-		</delete>
-		
-		<!-- library jar -->
-		<jar destfile="${library.jar}">
-			<manifest>
-				<attribute name="Main-Class" value="com.iciql.util.GenerateModels" />
-			</manifest>
-			<fileset dir="${project.build.dir}">
-				<include name="**/*" />
-				<exclude name="com/iciql/build/" />
-				<exclude name="com/iciql/test/" />
-				<exclude name="**/*.html" />
-			</fileset>
-		</jar>
-		
-		<!-- standard javadoc jar -->
-		<jar destfile="${javadoc.jar}">
-			<fileset dir="${basedir}/javadoc">
-				<include name="**/*" />
-			</fileset>
-		</jar>
-		
-		<!-- sources jar -->		
-		<jar destfile="${sources.jar}">
-			<fileset dir="${basedir}/src">
-				<include name="**/*" />
-				<exclude name="com/iciql/build/" />
-				<exclude name="com/iciql/tests/" />
-				<exclude name="**/*.html" />
-			</fileset>
-		</jar>
-		
-		<!-- zip distribution file -->
-		<jar destfile="${distribution.zip}">
-			<fileset dir="${basedir}">
-				<include name="*.jar" />
 				<include name="LICENSE" />
 				<include name="NOTICE" />
-				<include name="javadoc/**/*" />
 			</fileset>
-		</jar>
-	</target>
+		</mx:zip>
+		
+		<!-- Deploy the artifacts into the version-controlled repository -->		
+		<mx:deploy basedir="${basedir}/maven" allowSnapshots="false" />
 
+	</target>
 	
+
+	<!--
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Upload artifacts to GoogleCode and the remote Maven repository
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-->
+	<target name="uploadArtifacts" depends="build">
+			
+		<gcupload 
+				 username="${googlecode.user}" 
+				 password="${googlecode.password}" 
+				 projectname="iciql" 
+				 filename="${project.targetDirectory}/${project.artifactid}-${project.version}.zip" 
+				 targetfilename="${project.artifactid}-${project.version}.zip"
+				 summary="Version ${project.version} -- library, sources, and javadoc"
+				 labels="Featured, Type-Package, OpSys-All" />
+						 	
+		<mx:ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}"
+			remotedir="${ftp.maven.dir}" verbose="yes" depends="yes" timediffauto="true"
+			preservelastmodified="true">
+			<fileset dir="${basedir}/maven">
+				<!-- exclude root files -->
+				<exclude name="*.md" />
+				<exclude name=".git*" />
+			</fileset>
+		</mx:ftp>
+	</target>
+	
+				
 	<!-- 
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Build the iciql website
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<target name="buildSite" depends="compile" description="Build the iciql website">
-		
-		<echo>Building iciql website ${iq.version}</echo>
+	<target name="buildSite" depends="build" description="Build the iciql website">
+		<!-- ensure we have performance data -->
+		<mx:if>
+			<not>
+				<available file="${project.outputDirectory}/performance_db.txt" />
+			</not>
+			<then>
+				<fail />
+			</then>
+		</mx:if>
+					
+		<!-- Download links -->
+		<property name="gc.url" value="http://code.google.com/p/iciql/downloads/detail?name=" />
 
-		<!-- Build Site -->
-		<delete dir="${project.site.dir}" />
-		<mkdir dir="${project.site.dir}" />
-		<copy todir="${project.site.dir}">
-			<fileset dir="${basedir}/docs/resources">
-				<include name="*.png" />
-				<include name="*.css" />
-				<include name="*.js" />
-			</fileset>
-		</copy>
-		
+		<mx:doc googleplusone="true" injectprettify="true" prettifyTheme="hemisu-dark"
+			minify="true" customless="custom.less">
+
+			<logo file="iciql_white.png" />
+			<favicon file="iciql-favicon.png" />
+
+			<load token="%DBPERFORMANCE%" file="${project.outputDirectory}/performance_db.txt" />
+			<nomarkdown startToken="%BEGINCODE%" endToken="%ENDCODE%" prettify="true" lang="java" />
+			<regex searchPattern="\b(issue)(\s*[#]?|-){0,1}(\d+)\b"
+				replacePattern="&lt;a href='${project.issuesUrl}/detail?id=$3'&gt;issue $3&lt;/a&gt;" />
+
+			<structure>
+	
+				<menu name="about" pager="true" pagerPlacement="bottom" pagerLayout="justified">
+					<page name="overview" src="00_index.mkd" out="index.html" />
+					<page name="performance" src="03_performance.mkd" out="performance.html" />
+					<page name="jaqu comparison" src="06_jaqu_comparison.mkd" out="jaqu_comparison.html" />
+				</menu>
+	
+				<menu name="getting started" pager="true" pagerPlacement="bottom" pagerLayout="justified">
+					<page name="models" src="01_model_classes.mkd" out="model_classes.html" headerLinks="true" />
+					<page name="versioning" src="02_table_versioning.mkd" out="table_versioning.html" headerLinks="true" />
+					<page name="usage" src="02_usage.mkd" out="usage.html" headerLinks="true" />
+					<page name="examples" src="04_examples.mkd" out="examples.html" headerLinks="true" />
+					<page name="tools" src="04_tools.mkd" out="tools.html" headerLinks="true" />
+				</menu>
+	
+				<page name="building" src="05_building.mkd" out="building.html" />
+				<page name="javadoc" src="05_javadoc.mkd" out="javadoc.html" />
+				<page name="releases" src="05_releases.mkd" out="releases.html" />
+
+				<!--<page name="release notes" out="releasenotes.html">
+					<template src="releasecurrent.ftl" data="${basedir}/releases.moxie" />
+				</page>
+				<page out="releases.html" navbarlink="false">
+					<template src="releasehistory.ftl" data="${basedir}/releases.moxie" />
+				</page>-->
+					
+				<menu name="downloads">
+					<link name="${project.artifactId}-${project.releaseVersion}"
+						src="${gc.url}${project.artifactId}-${project.releaseVersion}.zip" />
+					<divider />
+					<link name="Maven Repository" src="${project.mavenUrl}" />
+				</menu>
+						
+				<menu name="links">
+					<link name="Github" src="${project.scmUrl}" />
+					<link name="Issues" src="${project.issuesUrl}" />
+					<link name="Maven Repository" src="${project.mavenUrl}" />
+				</menu>
+				<divider />
+			</structure>
+						
+			<!-- Generate RSS and Atom feeds from the release history -->
+			<!--<page as="atom.xml">
+				<template src="atom.ftl" data="${basedir}/releases.moxie" />
+			</page>
+			<page as="rss.xml">
+				<template src="rss.ftl" data="${basedir}/releases.moxie" />
+			</page>-->
+						
+		</mx:doc>
+						
 		<!-- Copy standard javadoc -->
-		<mkdir dir="${project.site.dir}/javadoc" />
-		<copy todir="${project.site.dir}/javadoc">
-			<fileset dir="${basedir}/javadoc">
-				<include name="**/*" />
-			</fileset>
+		<mkdir dir="${project.siteTargetDirectory}/javadoc" />
+		<copy todir="${project.siteTargetDirectory}/javadoc">
+			<fileset dir="${project.javadocTargetDirectory}" />
 		</copy>
+	</target>
+
+
+	<!--
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+		Copy the built site to the gh-pages branch
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+	-->
+	<target name="updateGhpages" depends="buildSite">
+		<mx:ghpages obliterate="false" />
+	</target>
+
 		
-		<!-- Build site pages -->
-		<java classpath="${project.build.dir}" classname="com.iciql.build.BuildSite">
-			<classpath refid="master-classpath" />
-			<arg value="--sourceFolder" />
-			<arg value="${basedir}/docs" />
-
-			<arg value="--outputFolder" />
-			<arg value="${project.site.dir}" />
-
-			<arg value="--pageHeader" />
-			<arg value="${basedir}/docs/resources/site_header.html" />
-			
-			<arg value="--pageFooter" />
-			<arg value="${basedir}/docs/resources/site_footer.html" />
-
-			<arg value="--analyticsSnippet" />
-			<arg value="${basedir}/docs/resources/site_analytics.html" />
-
-			<arg value="--adSnippet" />
-			<arg value="${basedir}/docs/resources/site_ads.html" />
-
-			<arg value="--alias" />
-			<arg value="index=overview" />
-
-			<arg value="--alias" />
-			<arg value="table_versioning=versioning" />
-
-			<arg value="--nomarkdown" />
-			<arg value="%BEGINCODE%:%ENDCODE%" />
-
-			<arg value="--substitute" />
-			<arg value="%VERSION%=${iq.version}" />
-
-			<arg value="--substitute" />
-			<arg value="%BUILDDATE%=${iq.versionDate}" />
-
-			<arg value="--substitute" />
-			<arg value="%JAR%=${library.jar}" />
-
-			<arg value="--substitute" />
-			<arg value="%ZIP%=${distribution.zip}" />
-
-			<arg value="--substitute" />
-			<arg value="&quot;%BEGINCODE%=&lt;pre class='prettyprint lang-java'&gt;&quot;" />
-
-			<arg value="--substitute" />
-			<arg value="%ENDCODE%=&lt;/pre&gt;" />
-			
-			<arg value="--regex" />
-			<arg value="&quot;\b(issue)(\s*[#]?|-){0,1}(\d+)\b!!!&lt;a href='http://code.google.com/p/iciql/issues/detail?id=$3'&gt;issue $3&lt;/a&gt;&quot;" />
-
-			<arg value="--load" />
-			<arg value="%DBPERFORMANCE%=${basedir}/performance_db.txt" />
-
-		</java>	
-	</target>
-
-	
-	<!-- 
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		Build binary artifacts and site 
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	-->
-	<target name="buildAll" description="Build the iciql artifacts and the site" depends="build,buildSite">
-	</target>
-
-	<!-- 
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		Publish binaries to Google Code
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	-->
-	<target name="publishBinaries" depends="build" description="Publish the iciql binaries to Google Code">
-
-		<echo>Uploading iciql ${iq.version} binaries</echo>
-
-		<gcupload 
-			 username="${googlecode.user}" 
-			 password="${googlecode.password}" 
-			 projectname="iciql" 
-			 filename="${distribution.zip}" 
-			 targetfilename="iciql-${iq.version}.zip"
-			 summary="Version ${iq.version} -- library, sources, and javadoc"
-			 labels="Featured, Type-Package, OpSys-All" />
-	
-		<gcupload 
-			 username="${googlecode.user}" 
-			 password="${googlecode.password}" 
-			 projectname="iciql" 
-			 filename="${library.jar}" 
-			 targetfilename="iciql-${iq.version}.jar"
-			 summary="Version ${iq.version} -- library"
-			 labels="Featured, Type-Package, OpSys-All" />
-	</target>
-
-	
 	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 		Publish site to hosting service
-		You must add ext/commons-net-1.4.0.jar to your ANT classpath.
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<target name="publishSite" depends="buildSite" description="Publish the iciql site to a webserver (requires ext/commons-net-1.4.0.jar)" >
+	<target name="publishSite" depends="updateGhpages" description="Publish the iciql site to a webserver" >
 
-		<echo>Uploading iciql ${iq.version} website</echo>
+		<echo>Uploading ${project.artifactId} ${project.version} website</echo>
 
-		<ftp server="${ftp.server}"
+		<mx:ftp server="${ftp.server}"
 			userid="${ftp.user}"
 			password="${ftp.password}"
-			remotedir="${ftp.dir}"
+			remotedir="${ftp.site.dir}"
 			passive="true"
 			verbose="yes">
-			<fileset dir="${project.site.dir}" />
-		</ftp>
+			<fileset dir="${project.siteTargetDirectory}" />
+		</mx:ftp>
 	</target>
 
-
+	
 	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-		Compile from source, publish binaries, and build & deploy site
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Tag a new version and prepare for the next development cycle.
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 	-->
-	<target name="publishAll" depends="publishBinaries,publishSite">
-		<!-- Cleanup -->
-		<delete dir="${project.build.dir}" />
+	<target name="tagRelease" depends="prepare">
+		<!-- release -->
+		<property name="dryrun" value="false" />
+		<mx:version stage="release" dryrun="${dryrun}" />		
+		<!-- commit build.moxie & releases.moxie (automatic) and maven artifacts -->
+		<mx:commit showtitle="no">
+		    <message>Prepare ${project.version} release</message>
+			<tag name="v${project.version}">
+				<message>${project.name} ${project.version} release</message>
+			</tag>
+		</mx:commit>
+
+		<!-- next cycle -->
+		<mx:version stage="snapshot" incrementNumber="minor" dryrun="${dryrun}" />
+		<mx:commit showtitle="no">
+		    <message>Reset build identifiers for next development cycle</message>
+		</mx:commit>
 	</target>
+	
+
 </project>
