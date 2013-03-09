@@ -7,7 +7,7 @@ requires: 0.6.2
 
 # Project Metadata
 name: Iciql
-description: a model-based database access wrapper for JDBC
+description: 'a model-based database access wrapper for JDBC'
 groupId: com.iciql
 artifactId: iciql
 version: 1.2.0-SNAPSHOT
@@ -24,14 +24,14 @@ mavenUrl: 'http://gitblit.github.com/iciql/maven'
 
 licenses:
 - {
-    name: Apache ASL v2.0
+    name: 'Apache ASL v2.0'
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
   }
 
 developers:
 - {
   id: james
-  name: James Moger
+  name: 'James Moger'
   url: 'https://plus.google.com/u/0/116428776452027956920'
   organization: VAS
   organizationUrl: 'http://www.vas.com'
@@ -49,12 +49,12 @@ scm: {
 mainclass: com.iciql.util.GenerateModels
 
 sourceDirectories:
-- compile 'src'
-- test 'tests'
-- site 'docs'
+- compile 'src/main/java'
+- test 'src/test/java'
+- site 'src/site'
 
 resourceDirectories:
-- site 'docs/resources'
+- site 'src/site/resources'
 
 # compile for Java 6 class format
 tasks: {

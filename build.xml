@@ -146,7 +146,7 @@
 				<available file="${project.outputDirectory}/performance_db.txt" />
 			</not>
 			<then>
-				<fail />
+				<fail message="Please run the &quot;testsuite&quot; target!"/>
 			</then>
 		</mx:if>
 					
