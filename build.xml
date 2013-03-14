@@ -10,7 +10,7 @@
 		Retrieve Moxie Toolkit
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<property name="moxie.version" value="0.6.2" />
+	<property name="moxie.version" value="0.7.0-SNAPSHOT" />
 	<property name="moxie.url" value="http://gitblit.github.com/moxie/maven" />
 	<property name="moxie.jar" value="moxie-toolkit-${moxie.version}.jar" />
 	<property name="moxie.dir" value="${user.home}/.moxie" />
@@ -152,9 +152,11 @@
 					
 		<!-- Download links -->
 		<property name="gc.url" value="http://code.google.com/p/iciql/downloads/detail?name=" />
-
-		<mx:doc googleplusone="true" injectprettify="true" prettifyTheme="hemisu-dark"
-			minify="true" customless="custom.less">
+		<property name="releaselog" value="${basedir}/releases.moxie" />
+			
+		<mx:doc googleplusone="true" injectprettify="true" prettifyTheme="hemisu-dark" minify="true" 
+			templateDir="${project.siteSourceDirectory}/templates"
+			customless="custom.less" rssFeed="rss.xml" atomFeed="atom.xml">
 
 			<logo file="iciql_white.png" />
 			<favicon file="iciql-favicon.png" />
@@ -167,29 +169,28 @@
 			<structure>
 	
 				<menu name="about" pager="true" pagerPlacement="bottom" pagerLayout="justified">
-					<page name="overview" src="00_index.mkd" out="index.html" />
-					<page name="performance" src="03_performance.mkd" out="performance.html" />
-					<page name="jaqu comparison" src="06_jaqu_comparison.mkd" out="jaqu_comparison.html" />
+					<page name="overview" src="index.mkd" out="index.html" />
+					<page name="performance" src="performance.mkd" out="performance.html" />
+					<page name="jaqu comparison" src="jaqu_comparison.mkd" out="jaqu_comparison.html" />
 				</menu>
 	
 				<menu name="getting started" pager="true" pagerPlacement="bottom" pagerLayout="justified">
-					<page name="models" src="01_model_classes.mkd" out="model_classes.html" headerLinks="true" />
-					<page name="versioning" src="02_table_versioning.mkd" out="table_versioning.html" headerLinks="true" />
-					<page name="usage" src="02_usage.mkd" out="usage.html" headerLinks="true" />
-					<page name="examples" src="04_examples.mkd" out="examples.html" headerLinks="true" />
-					<page name="tools" src="04_tools.mkd" out="tools.html" headerLinks="true" />
+					<page name="models" src="model_classes.mkd" out="model_classes.html" headerLinks="true" />
+					<page name="versioning" src="table_versioning.mkd" out="table_versioning.html" headerLinks="true" />
+					<page name="usage" src="usage.mkd" out="usage.html" headerLinks="true" />
+					<page name="examples" src="examples.mkd" out="examples.html" headerLinks="true" />
+					<page name="tools" src="tools.mkd" out="tools.html" headerLinks="true" />
 				</menu>
 	
-				<page name="building" src="05_building.mkd" out="building.html" />
-				<page name="javadoc" src="05_javadoc.mkd" out="javadoc.html" />
-				<page name="releases" src="05_releases.mkd" out="releases.html" />
+				<page name="building" src="building.mkd" out="building.html" />
+				<page name="javadoc" src="javadoc.mkd" out="javadoc.html" />
 
-				<!--<page name="release notes" out="releasenotes.html">
-					<template src="releasecurrent.ftl" data="${basedir}/releases.moxie" />
+				<page name="release notes" out="releasenotes.html">
+					<template src="releasecurrent.ftl" data="${releaselog}" />
 				</page>
 				<page out="releases.html" navbarlink="false">
-					<template src="releasehistory.ftl" data="${basedir}/releases.moxie" />
-				</page>-->
+					<template src="releasehistory.ftl" data="${releaselog}" />
+				</page>
 					
 				<menu name="downloads">
 					<link name="${project.artifactId}-${project.releaseVersion}"
@@ -207,12 +208,12 @@
 			</structure>
 						
 			<!-- Generate RSS and Atom feeds from the release history -->
-			<!--<page as="atom.xml">
-				<template src="atom.ftl" data="${basedir}/releases.moxie" />
+			<page as="atom.xml">
+				<template src="atom.ftl" data="${releaselog}" />
 			</page>
 			<page as="rss.xml">
-				<template src="rss.ftl" data="${basedir}/releases.moxie" />
-			</page>-->
+				<template src="rss.ftl" data="${releaselog}" />
+			</page>
 						
 		</mx:doc>
 						
