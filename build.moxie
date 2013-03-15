@@ -11,6 +11,7 @@ description: 'a model-based database access wrapper for JDBC'
 groupId: com.iciql
 artifactId: iciql
 version: 1.2.0-SNAPSHOT
+packaging: jar+zip
 inceptionYear: 2011
 
 # Current stable release

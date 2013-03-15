@@ -86,19 +86,10 @@
 		Build
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<target name="build" depends="compile" description="Builds iciql from source">
-		
-		<mx:jar packageSources="true" />		
-		<mx:javadoc redirect="true" />
-		<mx:zip>
-			<artifact />
-			<artifact classifier="sources"/>
-			<artifact classifier="javadoc"/>
-			<fileset dir="${basedir}">
-				<include name="LICENSE" />
-				<include name="NOTICE" />
-			</fileset>
-		</mx:zip>
+	<target name="build" depends="compile" description="Packages iciql for deployment">
+
+		<!-- Package the jar, javadoc, sources, and zip distribution -->
+		<mx:package />
 		
 		<!-- Deploy the artifacts into the version-controlled repository -->		
 		<mx:deploy basedir="${basedir}/maven" allowSnapshots="false" />
