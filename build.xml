@@ -10,7 +10,7 @@
 		Retrieve Moxie Toolkit
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<property name="moxie.version" value="0.7.0-SNAPSHOT" />
+	<property name="moxie.version" value="0.7.0" />
 	<property name="moxie.url" value="http://gitblit.github.com/moxie/maven" />
 	<property name="moxie.jar" value="moxie-toolkit-${moxie.version}.jar" />
 	<property name="moxie.dir" value="${user.home}/.moxie" />
@@ -145,7 +145,7 @@
 		<property name="gc.url" value="http://code.google.com/p/iciql/downloads/detail?name=" />
 		<property name="releaselog" value="${basedir}/releases.moxie" />
 			
-		<mx:doc googleplusone="true" injectprettify="true" prettifyTheme="hemisu-dark" minify="true" 
+		<mx:doc googleplusone="true" prettifyTheme="googlecode" minify="true" 
 			templateDir="${project.siteSourceDirectory}/templates"
 			customless="custom.less" rssFeed="rss.xml" atomFeed="atom.xml">
 
@@ -153,7 +153,6 @@
 			<favicon file="iciql-favicon.png" />
 
 			<load token="%DBPERFORMANCE%" file="${project.outputDirectory}/performance_db.txt" />
-			<nomarkdown startToken="%BEGINCODE%" endToken="%ENDCODE%" prettify="true" lang="java" />
 			<regex searchPattern="\b(issue)(\s*[#]?|-){0,1}(\d+)\b"
 				replacePattern="&lt;a href='${project.issuesUrl}/detail?id=$3'&gt;issue $3&lt;/a&gt;" />
 

@@ -30,6 +30,8 @@ Iciql artifacts may now be retrieved by your favorite Maven 2-compatible build t
        View models may be specified using the IQView annotation or Iciql.define().  Views can either be created automatically as part of a query of the view OR views may be constructed from a fluent statement.
        ''
      - Support inheritance of IQVersion for DbUpgrader implementations (issue 10)
+	 - Added @IQConstraintForeignKey annotation (issue 13)
+	 - Added MS SQL Server dialect (issue 14)
 }
 
 #

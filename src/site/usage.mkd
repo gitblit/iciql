@@ -15,7 +15,7 @@ Use one of the static utility methods to instantiate a Db instance:
 
 You compose your statements using the builder pattern where each method call returns an object that is used to specify the next part of the statement.  Through clever usage of generics, pioneered by the original JaQu project, compile-time safety flows through the statement.
 
-%BEGINCODE%
+---JAVA---
 Db db = Db.open("jdbc:h2:mem:", "sa", "sa");
 db.insertAll(Product.getList());
 db.insertAll(Customer.getList());
@@ -31,7 +31,7 @@ for (Product product : restock) {
 	where(p.productId).is(product.productId).update();
 }
 db.close();
-%ENDCODE%
+---JAVA---
  
 Please see the [examples](examples.html) page for more code samples. 
  
@@ -41,9 +41,9 @@ Iciql gives you compile-time type-safety, but it becomes inconvenient if your de
 
 #### Where String Fragment Approach
 This approach is a mixture of iciql and jdbc.  It uses the traditional prepared statement *field=?* tokens with iciql compile-time model class type checking.  There is no field token type-safety checking.
-%BEGINCODE%
+---JAVA---
 List<Product> restock = db.from(p).where("unitsInStock=? and productName like ? order by productId", 0, "Chef%").select();
-%ENDCODE%
+---JAVA---
 
 #### Db.executeQuery Approaches
 There may be times when the hybrid approach is still too restrictive and you'd prefer to write straight SQL.  You can do that too and use iciql to build objects from your ResultSet, but be careful:
@@ -51,24 +51,62 @@ There may be times when the hybrid approach is still too restrictive and you'd p
 1. Make sure to _select *_ in your query otherwise db.buildObjects() will throw a RuntimeException
 2. There is no model class type checking nor field type checking. 
 
-%BEGINCODE%
+---JAVA---
 List<Product> allProducts = db.executeQuery(Product.class, "select * from products");
 List<Product> restock = db.executeQuery(Product.class, "select * from products where unitsInStock=?", 0);
 
 // parameterized query which can be cached and re-used later
 String q = db.from(p).where(p.unitsInStock).isParameter().toSQL();
 List<Product> restock = db.executeQuery(Product.class, q, 0);
-
-%ENDCODE% 
+---JAVA---
 
 Or if you want access to the raw *ResultSet* before building your model object instances...
 
-%BEGINCODE%
+---JAVA---
 ResultSet rs = db.executeQuery("select * from products");
 List<Product> allProducts = db.buildObjects(Product.class, rs);
 // This method ensures the creating statement is closed
 JdbcUtils.closeSilently(rs, true);
-%ENDCODE% 
+---JAVA---
+
+### Read-only Views
+
+View model classes can inherit their field definitions from a parent table model class.
+
+---JAVA---
+@IQView(name = "AnnotatedProductViewInherited", inheritColumns = true)
+public class ProductViewFromQuery extends ProductAnnotationOnly {
+
+    public String unmappedField;
+
+    @IQColumn(name = "id")
+    public Long productId;
+
+    public String toString() {
+        return productName + " (" + productId + ")";
+    }
+}
+---JAVA---
+
+You can then create or replace the VIEW in the database using a fluent syntax.
+
+---JAVA---
+// create view from query
+ProductAnnotationOnly product = new ProductAnnotationOnly();
+db.from(product).where(product.productId).exceeds(2L)
+    .and(product.productId).atMost(7L).createView(ProductViewFromQuery.class);
+	
+// select from the created view
+ProductViewFromQuery view = new ProductViewFromQuery();
+List<ProductViewFromQuery> products = db.from(view).select();
+	
+// replace the view
+db.from(product).where(product.productId).exceeds(3L)
+    .and(product.productId).atMost(8L).replaceView(ProductViewFromQuery.class);
+	
+// select from the replaced view
+products = db.from(view).select();
+---JAVA---
 
 ### Natural Syntax
 
@@ -80,7 +118,7 @@ This works by decompiling a Java expression, at runtime, to an SQL condition.  T
 A proof-of-concept decompiler is included, but is incomplete.
 
 The proposed syntax is:
-%BEGINCODE%
+---JAVA---
 long count = db.from(co).
     where(new Filter() { public boolean where() {
         return co.id == x
@@ -92,7 +130,7 @@ long count = db.from(co).
             && co.time.before(java.sql.Time.valueOf("23:23:23"));
         }
     }).selectCount();
-%ENDCODE%
+---JAVA---
 
 ### JDBC Statements, ResultSets, and Exception Handling
 
@@ -105,23 +143,23 @@ Iciql does not throw any [checked exceptions](http://en.wikipedia.org/wiki/Excep
 Iciql provides a mechanism to log generated statements and warnings to the console, to SLF4J, or to your own logging framework.  Exceptions are not logged using this mechanism; exceptions are wrapped and rethrown as `IciqlException`, which is a RuntimeException.
 
 #### Console Logging
-%BEGINCODE%
+---JAVA---
 IciqlLogger.activeConsoleLogger();
 IciqlLogger.deactiveConsoleLogger();
-%ENDCODE%
+---JAVA---
 
 #### SLF4J Logging
-%BEGINCODE%
+---JAVA---
 Slf4jIciqlListener slf4j = new Slf4jIciqlListener();
 slf4j.setLevel(StatementType.CREATE, Level.WARN);
 slf4j.setLevel(StatementType.DELETE, Level.WARN);
 slf4j.setLevel(StatementType.MERGE, Level.OFF);
 IciqlLogger.registerListener(slf4j);
 IciqlLogger.unregisterListener(slf4j);
-%ENDCODE%
+---JAVA---
 
 #### Custom Logging
-%BEGINCODE%
+---JAVA---
 IciqlListener custom = new IciqlListener() {
     public void logIciql(StatementType type, String statement) {
         // do log
@@ -129,14 +167,14 @@ IciqlListener custom = new IciqlListener() {
 };
 IciqlLogger.registerListener(custom);
 IciqlLogger.unregisterListener(custom);
-%ENDCODE%
+---JAVA---
 
 ## Understanding Aliases and Model Classes
 Consider the following example:
-%BEGINCODE%
+---JAVA---
 Product p = new Product();
 List<Product> restock = db.from(p).where(p.unitsInStock).is(0).select();
-%ENDCODE%
+---JAVA---
 
 The Product model class instance named **p** is an *alias* object.  An *alias* is simply an instance of your model class that is only used to build the compile-time/runtime representation of your table.
 
@@ -152,10 +190,10 @@ The _db.from(p)_ call reinstantiates each member field of p.  Those reinstantiat
 
 Depending on your design, you might consider using a [ThreadLocal](http://download.oracle.com/javase/6/docs/api/java/lang/ThreadLocal.html) variable if you do not want to keep instantiating *alias* instances.  A utility function is included for easily creating ThreadLocal variables.
 
-%BEGINCODE%
+---JAVA---
 final ThreadLocal<Product> p = Utils.newThreadLocal(Product.class);
 db.from(p.get()).select();
-%ENDCODE%
+---JAVA---
 
 ## Best Practices
 
@@ -166,7 +204,7 @@ db.from(p.get()).select();
 <table class="table">
 <tr><th>Not Thread-Safe</th><th>Thread-Safe</th></tr>
 <tr><td>
-%BEGINCODE%
+---JAVA---
 final Product p = new Product();
 for (int i = 0; i < 5; i++) {
     Thread thread = new Thread(new Runnable() {
@@ -177,10 +215,10 @@ for (int i = 0; i < 5; i++) {
     }, "Thread-" + i);
     thread.start();
 }
-%ENDCODE%
+---JAVA---
 
 </td><td>
-%BEGINCODE%
+---JAVA---
 final ThreadLocal<Product> p = Utils.newThreadLocal(Product.class);
 for (int i = 0; i < 5; i++) {
     Thread thread = new Thread(new Runnable() {
@@ -191,7 +229,7 @@ for (int i = 0; i < 5; i++) {
     }, "Thread-" + i);
     thread.start();
 }
-%ENDCODE%
+---JAVA---
 
 </td></tr>
 </table>

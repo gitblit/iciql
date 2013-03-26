@@ -1,6 +1,6 @@
 ## Select Statements
 
-%BEGINCODE%
+---JAVA---
 // select * from products
 List<Product> allProducts = db.from(p).select();
 
@@ -23,11 +23,11 @@ List<ProductPrice> productPrices =
         category = p.category;
         price = p.unitPrice;
     }});
-%ENDCODE%
+---JAVA---
 
 ## Insert Statements
 
-%BEGINCODE%
+---JAVA---
 // single record insertion
 db.insert(singleProduct);
 
@@ -39,11 +39,11 @@ db.insertAll(myProducts);
 
 // batch insertion with primary key retrieval
 List<Long> myKeys = db.insertAllAndGetKeys(list);
-%ENDCODE%
+---JAVA---
 
 ## Update Statements
 
-%BEGINCODE%
+---JAVA---
 // single record update
 db.update(singleProduct);
 
@@ -59,22 +59,21 @@ db.from(p).set(p.productName).to("updated")
 // reusable, parameterized update query
 String q = db.from(p).set(p.productName).toParameter().where(p.productId).is(1).toSQL();
 db.executeUpdate(q, "Lettuce");
-
-%ENDCODE%
+---JAVA---
 
 ## Merge Statements
 Merge statements currently generate the [H2 merge syntax](http://h2database.com/html/grammar.html#merge).
  
-%BEGINCODE%
+---JAVA---
 Product pChang = db.from(p).where(p.productName).is("Chang").selectFirst();
 pChang.unitPrice = 19.5;
 pChang.unitsInStock = 16;
 db.merge(pChang);
-%ENDCODE%
+---JAVA---
 
 ## Delete Statements
 
-%BEGINCODE%
+---JAVA---
 // single record deletion
 db.delete(singleProduct);  
 
@@ -83,12 +82,11 @@ db.deleteAll(myProducts);
 
 // delete query
 db.from(p).where(p.productId).atLeast(10).delete();
-
-%ENDCODE%
+---JAVA---
 
 ## Inner Join Statements
 
-%BEGINCODE%
+---JAVA---
 final Customer c = new Customer();
 final Order o = new Order();
 
@@ -97,7 +95,6 @@ List<Customer> customersWithLargeOrders =
     innerJoin(o).on(c.customerId).is(o.customerId).
     where(o.total).greaterThan(new BigDecimal("500.00")).
     groupBy(c.customerId).select();
-
 
 List<CustOrder> orders =
     db.from(c).
@@ -109,11 +106,11 @@ List<CustOrder> orders =
         orderId = o.orderId;
         total = o.total;
     }});
-%ENDCODE%
+---JAVA---
 
 ## View Statements
 
-%BEGINCODE%
+---JAVA---
 // the view named "ProductView" is created from the "Products" table
 @IQView(viewTableName = "Products")
 public class ProductView {
@@ -163,14 +160,13 @@ db.from(p).where(p.id).atLeast(250L).and(p.id).lessThan(350L).replaceView(Produc
 
 // now drop the view from the database
 db.dropView(ProductViewInherited.class);
-
-%ENDCODE%
+---JAVA---
 
 ## Dynamic Queries
 
 Dynamic queries skip all field type checking and, depending on which approach you use, may skip model class/table name checking too.
 
-%BEGINCODE%
+---JAVA---
 // where fragment with object parameters
 List<Product> restock = db.from(p).where("unitsInStock=? and productName like ? order by productId", 0, "Chef%").select();
 
@@ -192,5 +188,4 @@ List<Product> restock = db.executeQuery(Product.class, "select * from products w
 ResultSet rs = db.executeQuery("select * from products");
 List<Product> allProducts = db.buildObjects(Product.class, rs);
 JdbcUtils.closeSilently(rs, true);
-
-%ENDCODE%
+---JAVA---

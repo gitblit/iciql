@@ -20,16 +20,16 @@ If you do not have or do not want to annotate your existing model classes, you c
 Iciql can validate your model classes against your database to ensure that your models are optimally defined and are consistent with the current table and index definitions.
 
 Each `com.iciql.ValidationRemark` returned by the validation has an associated level from the following enum:
-%BEGINCODE%
+---JAVA---
 public static enum Level {
 	CONSIDER, WARN, ERROR;
 }
-%ENDCODE%
+---JAVA---
 
 A typical validation may output recommendations for adjusting a model field annotation such as setting the *maxLength* of a string to match the length of its linked VARCHAR column.
 
 ### Sample Model Validation using JUnit 4
-%BEGINCODE%
+---JAVA---
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
@@ -92,4 +92,4 @@ public class ValidateModels {
 		System.out.println(message);
 	}
 }
-%ENDCODE%
+---JAVA---

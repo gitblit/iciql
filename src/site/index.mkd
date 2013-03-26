@@ -22,11 +22,11 @@ iciql **is not**...
 </tr>
 <tr>
 <td>
-%BEGINCODE%
+---JAVA---
 Product p = new Product();
 List<Product> restock = db.from(p).where(p.unitsInStock).is(0).select();
 List<Product> all = db.executeQuery(Product.class, "select * from products");
-%ENDCODE%
+---JAVA---
 
 </td><td>
 <br/>

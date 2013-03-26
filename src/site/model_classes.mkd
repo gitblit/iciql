@@ -113,35 +113,35 @@ You may specify default values for an *@IQColumn* by either:
 1. specifying the default value string within your annotation<br/>
 **NOTE:**<br/>
 The annotated default value always takes priority over a field default value.
-%BEGINCODE%
+---JAVA---
 // notice the single ticks!
 @IQColumn(defaultValue="'2000-01-01 00:00:00'")
 Date myDate;
-%ENDCODE%
+---JAVA---
 
 2. setting a default value on the field<br/>
 **NOTE:**<br/>
 Primitive types have an implicit default value of *0* or *false*.
-%BEGINCODE%
+---JAVA---
 @IQColumn
 Date myDate = new Date(100, 0, 1);
 
 @IQColumn
 int myId;
-%ENDCODE%
+---JAVA---
 
 If you want to specify a database-specific variable or function as your default value (e.g. CURRENT_TIMESTAMP) you must do that within the annotation.  Also note that the *IQColumn.defaultValue* must be a well-formatted SQL DEFAULT expression whereas object defaults will be automatically converted to an SQL DEFAULT expression.
 
 ### Special Case: primitive autoincrement fields and 0
-%BEGINCODE%
+---JAVA---
 @IQColumn(autoIncrement = true)
 int myId;
-%ENDCODE%
+---JAVA---
 
 Because primitive types have implicit default values, this field will be excluded from an INSERT statement if its value is 0.  Iciql can not differentiate an implicit/uninitialized 0 from a explicitly assigned 0.
 
 ### Example Annotated Model
-%BEGINCODE%
+---JAVA---
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQEnum;
@@ -188,7 +188,59 @@ public class Product {
 		// default constructor
 	}
 }
-%ENDCODE%
+---JAVA---
+
+### Foreign Keys
+
+---JAVA---
+@IQTable(name = "AnnotatedProduct", primaryKey = "id")
+@IQIndexes({ @IQIndex({ "name", "cat" }), @IQIndex(name = "nameidx", type = IndexType.HASH, value = "name") })
+@IQContraintForeignKey(
+    foreignColumns= { "cat" }, 
+    referenceName = "AnnotatedCategory",
+    referenceColumns = { "categ" },
+    deleteType = ConstraintDeleteType.CASCADE
+)
+public class ProductAnnotationOnlyWithForeignKey {
+
+    public String unmappedField;
+
+    @IQColumn(name = "id", autoIncrement = true)
+    public Long productId;
+
+    @IQColumn(name = "cat", length = 15, trim = true)
+    public String category;
+
+    @IQColumn(name = "name", length = 50)
+    public String productName;
+
+    @SuppressWarnings("unused")
+    @IQColumn
+    private Double unitPrice;
+
+    @IQColumn
+    private Integer unitsInStock;
+}
+---JAVA---
+
+### Views with Field Constraints
+---JAVA---
+@IQView(name = "AnnotatedProductView", tableName = "AnnotatedProduct")
+public class ProductView {
+
+    public String unmappedField;
+
+    @IQColumn(name = "id", autoIncrement = true)
+    @IQConstraint("this <= 7 AND this > 2")
+    public Long productId;     
+    @IQColumn(name = "name")
+    public String productName;
+
+    public String toString() {
+        return productName + " (" + productId + ")";
+    }
+}
+---JAVA---
 
 ## Interface Configuration
 Alternatively, you may map your model classes using the interface approach by implementing the `com.iciql.Iciql` interface.
@@ -231,26 +283,26 @@ You may specify default values for an field by either:
 1. specifying the default value string within your *defineIQ()* method<br/>
 **NOTE:**<br/>
 The defineIQ() value always takes priority over a field default value.
-%BEGINCODE%
+---JAVA---
 Date myDate;
 
 public void defineIQ() {
     // notice the single ticks!
     Define.defaultValue(myDate, "'2000-01-01 00:00:00'");
 }
-%ENDCODE%
+---JAVA---
 
 2. setting a default value on the field<br/>
 **NOTE:**<br/>
 Primitive types have an implicit default value of *0* or *false*.
-%BEGINCODE%
+---JAVA---
 Date myDate = new Date(100, 0, 1);
 
 int myId;
-%ENDCODE%
+---JAVA---
 
 ### Example Interface Model
-%BEGINCODE%
+---JAVA---
 import com.iciql.Iciql;
 import com.iciql.Iciql.IQIgnore;
 
@@ -276,8 +328,7 @@ public class Product implements Iciql {
 		com.iciql.Define.index(productName, category);
 	}
 }
-%ENDCODE%
-
+---JAVA---
 
 ## POJO (Plain Old Java Object) Configuration
 
@@ -309,14 +360,14 @@ You may specify a default value on the field.
 
 **NOTE:**<br/>
 Primitive types have an implicit default value of *0* or *false*.
-%BEGINCODE%
+---JAVA---
 Date myDate = new Date(100, 0, 1);
 
 int myId;
-%ENDCODE%
+---JAVA---
 
 ### Example POJO Model
-%BEGINCODE%
+---JAVA---
 import com.iciql.Iciql.IQIgnore;
 
 public class Product {
@@ -332,4 +383,4 @@ public class Product {
 	public Product() {
 	}   
 }
-%ENDCODE%
+---JAVA---
