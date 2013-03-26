@@ -108,8 +108,8 @@
 				 username="${googlecode.user}" 
 				 password="${googlecode.password}" 
 				 projectname="iciql" 
-				 filename="${project.targetDirectory}/${project.artifactid}-${project.version}.zip" 
-				 targetfilename="${project.artifactid}-${project.version}.zip"
+				 filename="${project.targetDirectory}/${project.artifactId}-${project.version}.zip" 
+				 targetfilename="${project.artifactId}-${project.version}.zip"
 				 summary="Version ${project.version} -- library, sources, and javadoc"
 				 labels="Featured, Type-Package, OpSys-All" />
 						 	
