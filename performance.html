@@ -1,59 +1,103 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
-	<head>
-		<title>iciql</title>
-		<link rel="stylesheet" type="text/css" href="./iciql.css"/>
-		<link rel="stylesheet" type="text/css" href="./markdown.css"/>
-		<link rel="shortcut icon" type="image/png" href="./iciql-favicon.png" />
-		<meta name="ROBOTS" content="INDEX">
-		<meta http-equiv="imagetoolbar" content="no" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta name="keywords" content="java sql query jaqu" />
-				
-		<script type="text/javascript" src="prettify.js"></script>
-		<link href="prettify.css" type="text/css" rel="stylesheet" />
-						
-		<!-- Place this tag in your head or just before your close body tag -->
-		<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-				
-		<!-- ANALYTICS -->
-	</head>
-	<body style="width:900px" onload="prettyPrint()">
-		<a href="http://github.com/iciql><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>
-		<div class="page_header">
-			<a title="iciql homepage" href="http://iciql.com/">
-				<img src="./iciql.png" width="76" height="48" alt="iciql" class="logo"/>
-			</a>
-			<span style="color:black;">iciql</span>
-			<!-- Google Plus One -->
-			<g:plusone></g:plusone>
-		</div>
-		<div class="page_nav"><a href='index.html'>overview</a> | <a href='model_classes.html'>model classes</a> | <a href='table_versioning.html'>versioning</a> | <a href='usage.html'>usage</a> | <a href='performance.html'>performance</a> | <a href='examples.html'>examples</a> | <a href='tools.html'>tools</a> | <a href='building.html'>building</a> | <a href='javadoc.html'>javadoc</a> | <a href='releases.html'>releases</a> | <a href='jaqu_comparison.html'>jaqu comparison</a></div>
-		<div class="markdown">
-<h2> Performance</h2>
+<head>
+<!-- Begin Header -->
+<title>Iciql</title>
+<meta charset="utf-8">
+<meta name="ROBOTS" content="INDEX">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+<link rel='shortcut icon' type='image/png' href='./iciql-favicon.png' />
+<link rel="stylesheet" href="./prettify/googlecode.css" /><link rel="alternate" type="application/rss+xml" title="Iciql RSS 2.0" href="./rss.xml" />
+<link rel="alternate" type="application/atom+xml" title="Iciql Atom" href="./atom.xml" />
 
+<!-- Google Plus One -->
+<link rel="canonical" href="http://iciql.com" />
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+<style type="text/css"> div.gplusone { margin-top:12px; } </style>
+
+<script src="./prettify/prettify.js"></script>
+<script src="./bootstrap/js/jquery.js"></script>
+<script src="./bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body onload='prettyPrint()'>		<!-- Navigation Bar -->
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+          			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+          			</a>
+          			<a class="brand" href="./"><img src="./iciql_white.png" alt="Iciql"></img></a>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>about<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='index.html'>overview</a></li>
+<li><a href='performance.html'>performance</a></li>
+<li><a href='jaqu_comparison.html'>jaqu comparison</a></li>
+</ul></li> <!-- End Menu -->
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='model_classes.html'>models</a></li>
+<li><a href='table_versioning.html'>versioning</a></li>
+<li><a href='usage.html'>usage</a></li>
+<li><a href='examples.html'>examples</a></li>
+<li><a href='tools.html'>tools</a></li>
+</ul></li> <!-- End Menu -->
+<li><a href='building.html'>building</a></li>
+<li><a href='javadoc.html'>javadoc</a></li>
+<li><a href='releasenotes.html'>release notes</a></li>
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='http://code.google.com/p/iciql/downloads/detail?name=iciql-1.2.0.zip'>iciql-1.2.0</a></li>
+<li class='divider'></li>
+<li><a href='http://gitblit.github.com/iciql/maven'>Maven Repository</a></li>
+</ul></li> <!-- End Menu -->
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>links<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='https://github.com/gitblit/iciql'>Github</a></li>
+<li><a href='http://code.google.com/p/iciql/issues'>Issues</a></li>
+<li><a href='http://gitblit.github.com/iciql/maven'>Maven Repository</a></li>
+</ul></li> <!-- End Menu -->
+<li class='divider-vertical'></li>
+<li><div class='gplusone'><g:plusone size='small' href='http://iciql.com'></g:plusone></div></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div><!-- end Navigation Bar -->
+<div class='container'>
+<!-- Begin Markdown -->
+<h2 class="section" id="H1"><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Performance</h2>
 <p>The information provided here may be based on flawed test procedures.  You have to be the judge of what is performant and non-performant.</p>
 
-<h3> iciql statement generation</h3>
-
+<h3 class="section" id="H2"><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>iciql statement generation</h3>
 <p>Performance of iciql statement generation is not currently benchmarked.</p>
 
-<h3> iciql+database performance comparison</h3>
-
+<h3 class="section" id="H3"><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>iciql+database performance comparison</h3>
 <p>The following data was generated by running the <em>single-threaded</em> iciql test suite.  All database connections are pooled and re-used within each execution of the test suite using <a href="http://commons.apache.org/dbcp">Apache Commons DBCP</a>.</p>
 
 <p>Connections are pooled to normalize embedded database performance with out-of-process database performance.  Some of the Java embedded database configurations have a very high startup-time penalty.  Notably, H2 is slow to open a database and its performance is substantially affected if connection pooling is not enabled to keep the embedded database open.</p>
 
 <p>All tables are created as CACHED when the database distinguishes between CACHED and MEMORY tables.</p>
 
-<p>All performance numbers include the combined overhead of iciql statement generation and JUnit 4 test framework execution so they are not bare-metal database metrics.  </p>
+<p>All performance numbers include the combined overhead of iciql statement generation and JUnit 4 test framework execution so they are not bare-metal database metrics.</p>
 
 <pre>
-*******************************************************************************<br/>iciql 1.1.0 (2012-08-20) testing 10 database configurations<br/>*******************************************************************************<br/><br/> java.vendor              Sun Microsystems Inc.<br/> java.runtime.version     1.6.0_31-b05<br/> java.vm.name             Java HotSpot(TM) 64-Bit Server VM<br/> os.name                  Windows 7<br/> os.version               6.1<br/> os.arch                  amd64<br/> available processors     8<br/> available memory         1811.6 GB<br/><br/>-------------------------------------------------------------------------------<br/>Testing H2 1.3.168 (2012-07-13)<br/>        jdbc:h2:mem:iciql<br/>-------------------------------------------------------------------------------<br/>57 tests (0 failures, 2 ignores)  2,445 statements in 1.255 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing H2 1.3.168 (2012-07-13)<br/>        jdbc:h2:file:testdbs/h2/iciql<br/>-------------------------------------------------------------------------------<br/>57 tests (0 failures, 2 ignores)  2,445 statements in 0.872 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing H2 1.3.168 (2012-07-13)<br/>        jdbc:h2:tcp://localhost/C:\projects\git\iciql/testdbs/h2tcp/iciql<br/>-------------------------------------------------------------------------------<br/>57 tests (0 failures, 2 ignores)  2,445 statements in 1.109 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing HSQL 2.2.8<br/>        jdbc:hsqldb:mem:iciql<br/>-------------------------------------------------------------------------------<br/>57 tests (0 failures, 2 ignores)  2,409 statements in 0.823 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing HSQL 2.2.8<br/>        jdbc:hsqldb:file:testdbs/hsql/iciql<br/>-------------------------------------------------------------------------------<br/>57 tests (0 failures, 2 ignores)  2,409 statements in 0.695 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing HSQL 2.2.8<br/>        jdbc:hsqldb:hsql://localhost/iciql<br/>-------------------------------------------------------------------------------<br/>57 tests (0 failures, 2 ignores)  2,409 statements in 1.841 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing Derby 10.8.1.2 - (1095077)<br/>        jdbc:derby:memory:iciql;create=true<br/>-------------------------------------------------------------------------------<br/>57 tests (0 failures, 2 ignores)  2,413 statements in 4.280 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing Derby 10.8.1.2 - (1095077)<br/>        jdbc:derby:directory:testdbs/derby/iciql;create=true<br/>-------------------------------------------------------------------------------<br/>57 tests (0 failures, 2 ignores)  2,413 statements in 8.048 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing MySQL 5.0.51b-community<br/>        jdbc:mysql://localhost:7000/iciql<br/>-------------------------------------------------------------------------------<br/>57 tests (0 failures, 2 ignores)  2,409 statements in 6.999 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing PostgreSQL 9.0.4<br/>        jdbc:postgresql://localhost:5432/iciql<br/>-------------------------------------------------------------------------------<br/>57 tests (2 failures, 2 ignores)  2,405 statements in 5.420 secs<br/><br/>  + testBooleanColumn(com.iciql.test.BooleanModelTest)<br/>    ERROR: column &quot;mybool&quot; is of type boolean but expression is of type integer<br/>  Hint: You will need to rewrite or cast the expression.<br/>  Position: 33<br/><br/>  + testIntColumn(com.iciql.test.BooleanModelTest)<br/>    ERROR: column &quot;mybool&quot; is of type integer but expression is of type boolean<br/>  Hint: You will need to rewrite or cast the expression.<br/>  Position: 33<br/><br/><br/>*******************************************************************************<br/>iciql 1.1.0 (2012-08-20) test suite performance results<br/>*******************************************************************************<br/>Name        Type  Version                 Stats/Sec  Runtime<br/>-------------------------------------------------------------------------------<br/>HSQL        E F   2.2.8                       3466      0.7s  (1.0x)<br/>HSQL        E M   2.2.8                       2927      0.8s  (1.2x)<br/>H2          E F   1.3.168 (2012-07-13)        2803      0.9s  (1.3x)<br/>H2          T F   1.3.168 (2012-07-13)        2204      1.1s  (1.6x)<br/>H2          E M   1.3.168 (2012-07-13)        1948      1.3s  (1.8x)<br/>HSQL        T F   2.2.8                       1308      1.8s  (2.6x)<br/>Derby       E M   10.8.1.2 - (1095077)         563      4.3s  (6.2x)<br/>PostgreSQL  T F   9.0.4                        443      5.4s  (7.8x)<br/>MySQL       T F   5.0.51b-community            344      7.0s  (10.1x)<br/>Derby       E F   10.8.1.2 - (1095077)         299      8.0s  (11.6x)<br/>-------------------------------------------------------------------------------<br/>  E = embedded connection<br/>  T = tcp/ip connection<br/>  M = memory database<br/>  F = file/persistent database<br/>
-</pre>	</div>
-	<div style="margin-top:10px" class="page_footer">
-		<div style="float:right;">generated 2012-08-20</div>
-	The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.
-	</div>
+*******************************************************************************<br/>iciql 1.2.0-SNAPSHOT (PENDING) testing 10 database configurations<br/>*******************************************************************************<br/><br/> java.vendor              Sun Microsystems Inc.<br/> java.runtime.version     1.6.0_31-b05<br/> java.vm.name             Java HotSpot(TM) 64-Bit Server VM<br/> os.name                  Windows 7<br/> os.version               6.1<br/> os.arch                  amd64<br/> available processors     8<br/> available memory         1811.6 GB<br/><br/>-------------------------------------------------------------------------------<br/>Testing H2 1.3.168 (2012-07-13)<br/>        jdbc:h2:mem:iciql<br/>-------------------------------------------------------------------------------<br/>65 tests (1 failures, 2 ignores)  3,252 statements in 1.482 secs<br/><br/>  + testForeignKeyDropReferenceTable(com.iciql.test.ForeignKeyTest)<br/>    Should not be able to drop reference table!<br/><br/>-------------------------------------------------------------------------------<br/>Testing H2 1.3.168 (2012-07-13)<br/>        jdbc:h2:file:testdbs/h2/iciql<br/>-------------------------------------------------------------------------------<br/>65 tests (1 failures, 2 ignores)  3,252 statements in 0.829 secs<br/><br/>  + testForeignKeyDropReferenceTable(com.iciql.test.ForeignKeyTest)<br/>    Should not be able to drop reference table!<br/><br/>-------------------------------------------------------------------------------<br/>Testing H2 1.3.168 (2012-07-13)<br/>        jdbc:h2:tcp://localhost/C:\projects\git\iciql/testdbs/h2tcp/iciql<br/>-------------------------------------------------------------------------------<br/>65 tests (1 failures, 2 ignores)  3,252 statements in 1.110 secs<br/><br/>  + testForeignKeyDropReferenceTable(com.iciql.test.ForeignKeyTest)<br/>    Should not be able to drop reference table!<br/><br/>-------------------------------------------------------------------------------<br/>Testing HSQL 2.2.8<br/>        jdbc:hsqldb:mem:iciql<br/>-------------------------------------------------------------------------------<br/>65 tests (0 failures, 2 ignores)  3,216 statements in 0.998 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing HSQL 2.2.8<br/>        jdbc:hsqldb:file:testdbs/hsql/iciql<br/>-------------------------------------------------------------------------------<br/>65 tests (0 failures, 2 ignores)  3,216 statements in 0.827 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing HSQL 2.2.8<br/>        jdbc:hsqldb:hsql://localhost/iciql<br/>-------------------------------------------------------------------------------<br/>65 tests (0 failures, 2 ignores)  3,216 statements in 2.153 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing Derby 10.9.1.0 - (1344872)<br/>        jdbc:derby:memory:iciql;create=true<br/>-------------------------------------------------------------------------------<br/>65 tests (0 failures, 2 ignores)  3,220 statements in 4.664 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing Derby 10.9.1.0 - (1344872)<br/>        jdbc:derby:directory:testdbs/derby/iciql;create=true<br/>-------------------------------------------------------------------------------<br/>65 tests (0 failures, 2 ignores)  3,220 statements in 11.154 secs<br/><br/>  100% successful test suite run.<br/><br/>-------------------------------------------------------------------------------<br/>Testing MySQL OFFLINE<br/>        jdbc:mysql://localhost:7000/iciql<br/>-------------------------------------------------------------------------------<br/>Skipping.  Could not find jdbc:mysql://localhost:7000/iciql<br/><br/>-------------------------------------------------------------------------------<br/>Testing PostgreSQL 9.0.4<br/>        jdbc:postgresql://localhost:5432/iciql<br/>-------------------------------------------------------------------------------<br/>65 tests (2 failures, 2 ignores)  3,212 statements in 10.670 secs<br/><br/>  + testBooleanColumn(com.iciql.test.BooleanModelTest)<br/>    ERROR: column &quot;mybool&quot; is of type boolean but expression is of type integer<br/>  Hint: You will need to rewrite or cast the expression.<br/>  Position: 33<br/><br/>  + testIntColumn(com.iciql.test.BooleanModelTest)<br/>    ERROR: column &quot;mybool&quot; is of type integer but expression is of type boolean<br/>  Hint: You will need to rewrite or cast the expression.<br/>  Position: 33<br/><br/><br/>*******************************************************************************<br/>iciql 1.2.0-SNAPSHOT (PENDING) test suite performance results<br/>*******************************************************************************<br/>Name        Type  Version                 Stats/Sec  Runtime<br/>-------------------------------------------------------------------------------<br/>H2          E F   1.3.168 (2012-07-13)        3922      0.8s  (1.0x)<br/>HSQL        E F   2.2.8                       3888      0.8s  (1.0x)<br/>HSQL        E M   2.2.8                       3222      1.0s  (1.2x)<br/>H2          T F   1.3.168 (2012-07-13)        2929      1.1s  (1.3x)<br/>H2          E M   1.3.168 (2012-07-13)        2194      1.5s  (1.8x)<br/>HSQL        T F   2.2.8                       1493      2.2s  (2.6x)<br/>Derby       E M   10.9.1.0 - (1344872)         690      4.7s  (5.6x)<br/>PostgreSQL  T F   9.0.4                        301     10.7s  (12.9x)<br/>Derby       E F   10.9.1.0 - (1344872)         288     11.2s  (13.5x)<br/>MySQL       T F   OFFLINE                        0      0.0s  (0.0x)<br/>-------------------------------------------------------------------------------<br/>  E = embedded connection<br/>  T = tcp/ip connection<br/>  M = memory database<br/>  F = file/persistent database<br/>
+</pre>
+<!-- End Markdown -->
+<div ><ul class="pager"><li class="previous"><a href="index.html">&larr; overview</a></li> <li class="next"><a href="jaqu_comparison.html">jaqu comparison &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2013-03-25</p>
+<p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
+</footer>
+</div>
 </body>
 </html>

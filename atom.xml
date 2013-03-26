@@ -1,0 +1,148 @@
+<?xml version="1.0" standalone='yes'?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<generator uri="http://iciql.com" version="1.2.0">Iciql</generator>
+	<title><![CDATA[Iciql]]></title>
+	<updated>2013-03-25</updated>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.5.0 Released]]></title>
+   		<summary type="text"><![CDATA[Initial release of blessed JaQu fork]]></summary>
+   		<link href="http://iciql.com/history.html#0.5.0" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.5.0</guid>
+   		<content><![CDATA[Initial release of blessed JaQu fork]]></content>
+   		<published>2011-08-03T00:00:00-0400</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.6.2 Released]]></title>
+   		<link href="http://iciql.com/history.html#0.6.2" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.6.2</guid>
+   		<published>2011-08-05T00:00:00-0400</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.6.3 Released]]></title>
+   		<link href="http://iciql.com/history.html#0.6.3" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.6.3</guid>
+   		<published>2011-08-08T00:00:00-0400</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.6.4 released]]></title>
+   		<link href="http://iciql.com/history.html#0.6.4" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.6.4</guid>
+   		<published>2011-08-12T00:00:00-0400</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.6.5 released]]></title>
+   		<link href="http://iciql.com/history.html#0.6.5" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.6.5</guid>
+   		<published>2011-08-12T00:00:00-0400</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.6.6 released]]></title>
+   		<link href="http://iciql.com/history.html#0.6.6" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.6.6</guid>
+   		<published>2011-08-15T00:00:00-0400</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.0 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.0" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.0</guid>
+   		<published>2011-08-17T00:00:00-0400</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.1 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.1" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.1</guid>
+   		<published>2011-08-31T00:00:00-0400</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.2 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.2" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.2</guid>
+   		<published>2011-11-30T00:00:00-0500</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.3 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.3" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.3</guid>
+   		<published>2011-12-06T00:00:00-0500</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.4 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.4" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.4</guid>
+   		<published>2011-12-06T00:00:00-0500</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.5 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.5" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.5</guid>
+   		<published>2011-12-12T00:00:00-0500</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.6 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.6" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.6</guid>
+   		<published>2011-12-21T00:00:00-0500</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.7 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.7" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.7</guid>
+   		<published>2012-01-05T00:00:00-0500</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.8 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.8" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.8</guid>
+   		<published>2012-01-11T00:00:00-0500</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.9 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.9" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.9</guid>
+   		<published>2012-01-24T00:00:00-0500</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 0.7.10 released]]></title>
+   		<link href="http://iciql.com/history.html#0.7.10" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#0.7.10</guid>
+   		<published>2012-01-27T00:00:00-0500</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 1.0.0 released]]></title>
+   		<link href="http://iciql.com/history.html#1.0.0" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#1.0.0</guid>
+   		<published>2012-07-14T00:00:00-0400</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 1.1.0 released]]></title>
+   		<link href="http://iciql.com/history.html#1.1.0" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#1.1.0</guid>
+   		<published>2012-08-20T00:00:00-0400</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 1.2.0 released]]></title>
+   		<link href="http://iciql.com/history.html#1.2.0" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#1.2.0</guid>
+   		<published>2013-03-25T00:00:00-0400</published>
+	</entry>
+</feed>

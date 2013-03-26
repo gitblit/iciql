@@ -1,0 +1,150 @@
+/*!
+ * Bootstrap v2.3.1
+ *
+ * Copyright 2012 Twitter, Inc
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Designed and built with all the love in the world @twitter by @mdo and @fat.
+ */
+
+// Core variables and mixins
+@import "variables.less"; // Modify this for custom colors, font-sizes, etc
+@import "mixins.less";
+
+// CSS Reset
+@import "reset.less";
+
+// Grid system and page structure
+@import "scaffolding.less";
+@import "grid.less";
+@import "layouts.less";
+
+// Base CSS
+@import "type.less";
+@import "code.less";
+@import "forms.less";
+@import "tables.less";
+
+// Components: common
+@import "sprites.less";
+@import "dropdowns.less";
+@import "wells.less";
+@import "component-animations.less";
+@import "close.less";
+
+// Components: Buttons & Alerts
+@import "buttons.less";
+@import "button-groups.less";
+@import "alerts.less"; // Note: alerts share common CSS with buttons and thus have styles in buttons.less
+
+// Components: Nav
+@import "navs.less";
+@import "navbar.less";
+@import "breadcrumbs.less";
+@import "pagination.less";
+@import "pager.less";
+
+// Components: Popovers
+@import "modals.less";
+@import "tooltip.less";
+@import "popovers.less";
+
+// Components: Misc
+@import "thumbnails.less";
+@import "media.less";
+@import "labels-badges.less";
+@import "progress-bars.less";
+@import "accordion.less";
+@import "carousel.less";
+@import "hero-unit.less";
+
+// Utility classes
+@import "utilities.less"; // Has to be last to override when necessary
+
+h1 > a.sectionlink, h2 > a.sectionlink, h3 > a.sectionlink,
+h4 > a.sectionlink, h5 > a.sectionlink, h6 > a.sectionlink {
+	margin-left:-20px;
+	padding-right: 3px;
+	color: inherit;
+	font-decoration: none;
+}
+h1 > a.sectionlink > i, h2 > a.sectionlink > i, h3 > a.sectionlink > i,
+h4 > a.sectionlink > i, h5 > a.sectionlink > i, h6 > a.sectionlink > i { 
+	visibility: hidden;
+	font-size: inherit;
+	vertical-align: middle;
+}
+h1.section:hover > a.sectionlink > i, h2.section:hover > a.sectionlink > i,
+h3.section:hover > a.sectionlink > i, h4.section:hover > a.sectionlink > i,
+h5.section:hover > a.sectionlink > i, h6.section:hover > a.sectionlink > i {
+	visibility: visible;
+	font-decoration: none;
+}
+pre.prettyprint { overflow: hidden; }
+a:focus { outline: none; }
+table {	font-size: inherit; }
+
+h1.section:before, h2.section:before, h3.section:before,
+h4.section:before, h5.section:before, h6.section:before {
+    display:block; 
+    content:""; 
+    height: (@navbarHeight + 15); 
+    margin: (@navbarHeight + 15)*-1 0 0; 
+}
+
+
+// GLOBAL VALUES
+// --------------------------------------------------
+@standardGray:				#ccc;
+@iciql:						#95C7F9;
+@white:						#fff;
+
+// Dropdown
+// -------------------------
+@dropdownLinkBackgroundHover:   @iciql;
+
+// Navbar
+// -------------------------
+@navbarHeight:                    50px;
+@navbarBackground:                @iciql;
+@navbarBackgroundHighlight:       @iciql;
+@navbarText:                      @white;
+@navbarLinkColor:                 @white;
+@navbarLinkColorHover:            @white;
+@navbarLinkColorActive:           @white;
+@navbarLinkBackgroundHover:       transparent;
+@navbarLinkBackgroundActive:      transparent;
+
+.navbar {
+	.brand {
+		@elementHeight: 48px;
+		padding: 5px;
+	}
+}
+
+.navbar .nav > li > a {
+  font-size: @baseFontSize + 1;  
+  text-shadow: 0 1px 0 #6b94df;
+}
+
+
+.navbar .nav > li > a:hover {
+ text-shadow: 0 0 1em white;
+}
+.navbar .nav > .active > a, 
+ .navbar .nav > .active > a:hover,
+ .navbar .nav > .active > a:focus {
+  box-shadow: none;
+  text-decoration: underline;
+}
+
+.dropdown-submenu > a:after {
+	margin-right: -5px;
+}
+
+body { padding-top: @navbarHeight + 15 } /* 60px to make the container go all the way to the bottom of the topbar */
+footer { margin-top: 25px; padding: 15px 0 16px; border-top: 1px solid #E5E5E5; }
+
+a:hover { text-decoration: underline !important; }
+em { color: #50a000; }

@@ -1,0 +1,65 @@
+{
+    "ring" : "0",
+    "name" : "iciql 1.2.0",
+    "children" : [
+    {
+        "ring" : "1",
+        "name" : "jcommander 1.17"
+    }
+,
+    {
+        "ring" : "1",
+        "name" : "h2 1.3.168"
+    }
+,
+    {
+        "ring" : "1",
+        "name" : "hsqldb 2.2.8"
+    }
+,
+    {
+        "ring" : "1",
+        "name" : "derby 10.9.1.0"
+    }
+,
+    {
+        "ring" : "1",
+        "name" : "mysql-connector-java 5.1.15"
+    }
+,
+    {
+        "ring" : "1",
+        "name" : "postgresql 9.0-801.jdbc4"
+    }
+,
+    {
+        "ring" : "1",
+        "name" : "slf4j-api 1.6.1"
+    }
+,
+    {
+        "ring" : "1",
+        "name" : "commons-pool 1.5.6"
+    }
+,
+    {
+        "ring" : "1",
+        "name" : "commons-dbcp 1.4"
+    }
+,
+    {
+        "ring" : "1",
+        "name" : "junit 4.11",
+        "children" : [
+        {
+            "ring" : "2",
+            "name" : "hamcrest-core 1.3"
+        }
+    
+        ]
+    
+    }
+
+    ]
+
+}

@@ -1,45 +1,89 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
-	<head>
-		<title>iciql</title>
-		<link rel="stylesheet" type="text/css" href="./iciql.css"/>
-		<link rel="stylesheet" type="text/css" href="./markdown.css"/>
-		<link rel="shortcut icon" type="image/png" href="./iciql-favicon.png" />
-		<meta name="ROBOTS" content="INDEX">
-		<meta http-equiv="imagetoolbar" content="no" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta name="keywords" content="java sql query jaqu" />
-				
-		<script type="text/javascript" src="prettify.js"></script>
-		<link href="prettify.css" type="text/css" rel="stylesheet" />
-						
-		<!-- Place this tag in your head or just before your close body tag -->
-		<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-				
-		<!-- ANALYTICS -->
-	</head>
-	<body style="width:900px" onload="prettyPrint()">
-		<a href="http://github.com/iciql><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>
-		<div class="page_header">
-			<a title="iciql homepage" href="http://iciql.com/">
-				<img src="./iciql.png" width="76" height="48" alt="iciql" class="logo"/>
-			</a>
-			<span style="color:black;">iciql</span>
-			<!-- Google Plus One -->
-			<g:plusone></g:plusone>
-		</div>
-		<div class="page_nav"><a href='index.html'>overview</a> | <a href='model_classes.html'>model classes</a> | <a href='table_versioning.html'>versioning</a> | <a href='usage.html'>usage</a> | <a href='performance.html'>performance</a> | <a href='examples.html'>examples</a> | <a href='tools.html'>tools</a> | <a href='building.html'>building</a> | <a href='javadoc.html'>javadoc</a> | <a href='releases.html'>releases</a> | <a href='jaqu_comparison.html'>jaqu comparison</a></div>
-		<div class="markdown">
-<h2> Model Generation</h2>
+<head>
+<!-- Begin Header -->
+<title>Iciql</title>
+<meta charset="utf-8">
+<meta name="ROBOTS" content="INDEX">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+<link rel='shortcut icon' type='image/png' href='./iciql-favicon.png' />
+<link rel="stylesheet" href="./prettify/googlecode.css" /><link rel="alternate" type="application/rss+xml" title="Iciql RSS 2.0" href="./rss.xml" />
+<link rel="alternate" type="application/atom+xml" title="Iciql Atom" href="./atom.xml" />
 
+<!-- Google Plus One -->
+<link rel="canonical" href="http://iciql.com" />
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+<style type="text/css"> div.gplusone { margin-top:12px; } </style>
+
+<script src="./prettify/prettify.js"></script>
+<script src="./bootstrap/js/jquery.js"></script>
+<script src="./bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body onload='prettyPrint()'>		<!-- Navigation Bar -->
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+          			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+          			</a>
+          			<a class="brand" href="./"><img src="./iciql_white.png" alt="Iciql"></img></a>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>about<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='index.html'>overview</a></li>
+<li><a href='performance.html'>performance</a></li>
+<li><a href='jaqu_comparison.html'>jaqu comparison</a></li>
+</ul></li> <!-- End Menu -->
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='model_classes.html'>models</a></li>
+<li><a href='table_versioning.html'>versioning</a></li>
+<li><a href='usage.html'>usage</a></li>
+<li><a href='examples.html'>examples</a></li>
+<li><a href='tools.html'>tools</a></li>
+</ul></li> <!-- End Menu -->
+<li><a href='building.html'>building</a></li>
+<li><a href='javadoc.html'>javadoc</a></li>
+<li><a href='releasenotes.html'>release notes</a></li>
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='http://code.google.com/p/iciql/downloads/detail?name=iciql-1.2.0.zip'>iciql-1.2.0</a></li>
+<li class='divider'></li>
+<li><a href='http://gitblit.github.com/iciql/maven'>Maven Repository</a></li>
+</ul></li> <!-- End Menu -->
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>links<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='https://github.com/gitblit/iciql'>Github</a></li>
+<li><a href='http://code.google.com/p/iciql/issues'>Issues</a></li>
+<li><a href='http://gitblit.github.com/iciql/maven'>Maven Repository</a></li>
+</ul></li> <!-- End Menu -->
+<li class='divider-vertical'></li>
+<li><div class='gplusone'><g:plusone size='small' href='http://iciql.com'></g:plusone></div></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div><!-- end Navigation Bar -->
+<div class='container'>
+<!-- Begin Markdown -->
+<h2 class="section" id="H1"><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Model Generation</h2>
 <p>If you do not have or do not want to annotate your existing model classes, you can use the included model generation tool to create iciql model classes.</p>
 
 <pre><code>java -jar iciql.jar &lt;parameters&gt;
 </code></pre>
 
-<h3> Parameters</h3>
-
-<table>
+<h3 class="section" id="H2"><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>Parameters</h3>
+<table class="table">
 <tr><th>-url</th><td>JDBC url for the database</td><td><em>REQUIRED</em></td></tr>
 <tr><th>-username</th><td>username for JDBC connection</td><td><em>optional</em></td></tr>
 <tr><th>-password</th><td>password for JDBC connection</td><td><em>optional</em></td></tr>
@@ -50,8 +94,7 @@
 <tr><th>-annotateSchema</th><td>include the schema name in the class annotations</td><td><em>default:</em> true</td></tr>
 <tr><th>-trimStrings</th><td>annotate trimStrings=true for any VARCHAR string mappings &nbsp; </td><td><em>default:</em> false</td></tr>
 </table>
-<h2> Model Validation</h2>
-
+<h2 class="section" id="H3"><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>Model Validation</h2>
 <p>Iciql can validate your model classes against your database to ensure that your models are optimally defined and are consistent with the current table and index definitions.</p>
 
 <p>Each <code>com.iciql.ValidationRemark</code> returned by the validation has an associated level from the following enum:
@@ -63,8 +106,7 @@ public static enum Level {
 
 <p>A typical validation may output recommendations for adjusting a model field annotation such as setting the <em>maxLength</em> of a string to match the length of its linked VARCHAR column.</p>
 
-<h3> Sample Model Validation using JUnit 4</h3>
-
+<h3 class="section" id="H4"><a href="#H4" class="sectionlink"><i class="icon-share-alt"> </i></a>Sample Model Validation using JUnit 4</h3>
 <p><pre class='prettyprint lang-java'>
 import static org.junit.Assert.assertTrue;
 
@@ -96,7 +138,7 @@ public class ValidateModels {
 	
 	@Before
 	public void setUp() {
-		db = Db.open("jdbc:h2:mem:", "sa", "sa");
+		db = Db.open(&quot;jdbc:h2:mem:&quot;, &quot;sa&quot;, &quot;sa&quot;);
 	}
 
 	@After
@@ -114,8 +156,8 @@ public class ValidateModels {
 	
 	private void validateModel(DbInspector inspector, Object o) {
 		List&lt;ValidationRemark&gt; remarks = inspector.validateModel(o, false);
-		assertTrue("Validation remarks are null for " + o.getClass().getName(), remarks != null);
-		log("Validation remarks for " + o.getClass().getName());
+		assertTrue(&quot;Validation remarks are null for &quot; + o.getClass().getName(), remarks != null);
+		log(&quot;Validation remarks for &quot; + o.getClass().getName());
 		for (ValidationRemark remark : remarks) {
 			log(remark.toString());
 			if (remark.isError()) {
@@ -128,10 +170,11 @@ public class ValidateModels {
 		System.out.println(message);
 	}
 }
-</pre></p>	</div>
-	<div style="margin-top:10px" class="page_footer">
-		<div style="float:right;">generated 2012-08-20</div>
-	The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.
-	</div>
+</pre>
+<!-- End Markdown -->
+<div ><ul class="pager"><li class="previous"><a href="examples.html">&larr; examples</a></li> </ul></div><footer class="footer"><p class="pull-right">generated 2013-03-25</p>
+<p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
+</footer>
+</div>
 </body>
 </html>

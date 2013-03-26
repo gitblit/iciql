@@ -1,0 +1,150 @@
+<?xml version="1.0" standalone='yes'?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+	<channel>
+		<title><![CDATA[Iciql]]></title>
+		<link>http://iciql.com</link>
+		<description><![CDATA[a model-based database access wrapper for JDBC]]></description>
+		<generator>Moxie Toolkit</generator>
+  		<item>
+    		<title><![CDATA[Iciql 0.5.0 Released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.5.0]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.5.0</guid>
+    		<description><![CDATA[Initial release of blessed JaQu fork]]></description>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Wed, 03 Aug 2011 00:00:00 -0400</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.6.2 Released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.6.2]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.6.2</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Fri, 05 Aug 2011 00:00:00 -0400</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.6.3 Released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.6.3]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.6.3</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Mon, 08 Aug 2011 00:00:00 -0400</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.6.4 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.6.4]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.6.4</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Fri, 12 Aug 2011 00:00:00 -0400</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.6.5 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.6.5]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.6.5</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Fri, 12 Aug 2011 00:00:00 -0400</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.6.6 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.6.6]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.6.6</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Mon, 15 Aug 2011 00:00:00 -0400</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.0 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.0]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.0</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Wed, 17 Aug 2011 00:00:00 -0400</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.1 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.1]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.1</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Wed, 31 Aug 2011 00:00:00 -0400</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.2 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.2]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.2</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Wed, 30 Nov 2011 00:00:00 -0500</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.3 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.3]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.3</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Tue, 06 Dec 2011 00:00:00 -0500</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.4 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.4]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.4</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Tue, 06 Dec 2011 00:00:00 -0500</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.5 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.5]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.5</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Mon, 12 Dec 2011 00:00:00 -0500</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.6 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.6]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.6</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Wed, 21 Dec 2011 00:00:00 -0500</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.7 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.7]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.7</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Thu, 05 Jan 2012 00:00:00 -0500</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.8 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.8]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.8</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Wed, 11 Jan 2012 00:00:00 -0500</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.9 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.9]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.9</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Tue, 24 Jan 2012 00:00:00 -0500</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 0.7.10 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#0.7.10]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#0.7.10</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Fri, 27 Jan 2012 00:00:00 -0500</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 1.0.0 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#1.0.0]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#1.0.0</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Sat, 14 Jul 2012 00:00:00 -0400</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 1.1.0 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#1.1.0]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#1.1.0</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Mon, 20 Aug 2012 00:00:00 -0400</pubDate>
+  		</item>
+  		<item>
+    		<title><![CDATA[Iciql 1.2.0 released]]></title>
+    		<link><![CDATA[http://iciql.com/releases.html#1.2.0]]></link>
+    		<guid isPermaLink="true">http://iciql.com/releases.html#1.2.0</guid>
+   			<dc:creator><![CDATA[Iciql]]></dc:creator>
+    		<pubDate>Mon, 25 Mar 2013 00:00:00 -0400</pubDate>
+  		</item>
+  	</channel>
+</rss>

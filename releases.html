@@ -1,302 +1,581 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
-	<head>
-		<title>iciql</title>
-		<link rel="stylesheet" type="text/css" href="./iciql.css"/>
-		<link rel="stylesheet" type="text/css" href="./markdown.css"/>
-		<link rel="shortcut icon" type="image/png" href="./iciql-favicon.png" />
-		<meta name="ROBOTS" content="INDEX">
-		<meta http-equiv="imagetoolbar" content="no" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta name="keywords" content="java sql query jaqu" />
-				
-		<script type="text/javascript" src="prettify.js"></script>
-		<link href="prettify.css" type="text/css" rel="stylesheet" />
-						
-		<!-- Place this tag in your head or just before your close body tag -->
-		<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-				
-		<!-- ANALYTICS -->
-	</head>
-	<body style="width:900px" onload="prettyPrint()">
-		<a href="http://github.com/iciql><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>
-		<div class="page_header">
-			<a title="iciql homepage" href="http://iciql.com/">
-				<img src="./iciql.png" width="76" height="48" alt="iciql" class="logo"/>
-			</a>
-			<span style="color:black;">iciql</span>
-			<!-- Google Plus One -->
-			<g:plusone></g:plusone>
-		</div>
-		<div class="page_nav"><a href='index.html'>overview</a> | <a href='model_classes.html'>model classes</a> | <a href='table_versioning.html'>versioning</a> | <a href='usage.html'>usage</a> | <a href='performance.html'>performance</a> | <a href='examples.html'>examples</a> | <a href='tools.html'>tools</a> | <a href='building.html'>building</a> | <a href='javadoc.html'>javadoc</a> | <a href='releases.html'>releases</a> | <a href='jaqu_comparison.html'>jaqu comparison</a></div>
-		<div class="markdown">
-<h2> Release History</h2>
+<head>
+<!-- Begin Header -->
+<title>Iciql</title>
+<meta charset="utf-8">
+<meta name="ROBOTS" content="INDEX">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+<link rel='shortcut icon' type='image/png' href='./iciql-favicon.png' />
+<link rel="stylesheet" href="./prettify/googlecode.css" /><link rel="alternate" type="application/rss+xml" title="Iciql RSS 2.0" href="./rss.xml" />
+<link rel="alternate" type="application/atom+xml" title="Iciql Atom" href="./atom.xml" />
 
-<h3> Current Release</h3>
+<!-- Google Plus One -->
+<link rel="canonical" href="http://iciql.com" />
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+<style type="text/css"> div.gplusone { margin-top:12px; } </style>
 
-<p><strong>1.1.0</strong> (<a href="http://code.google.com/p/iciql/downloads/detail?name=iciql-1.1.0.zip">zip</a>|<a href="http://code.google.com/p/iciql/downloads/detail?name=iciql-1.1.0.jar">jar</a>) &nbsp; <em>released 2012-08-20</em></p>
+<script src="./prettify/prettify.js"></script>
+<script src="./bootstrap/js/jquery.js"></script>
+<script src="./bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body onload='prettyPrint()'>		<!-- Navigation Bar -->
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+          			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+          			</a>
+          			<a class="brand" href="./"><img src="./iciql_white.png" alt="Iciql"></img></a>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>about<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='index.html'>overview</a></li>
+<li><a href='performance.html'>performance</a></li>
+<li><a href='jaqu_comparison.html'>jaqu comparison</a></li>
+</ul></li> <!-- End Menu -->
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='model_classes.html'>models</a></li>
+<li><a href='table_versioning.html'>versioning</a></li>
+<li><a href='usage.html'>usage</a></li>
+<li><a href='examples.html'>examples</a></li>
+<li><a href='tools.html'>tools</a></li>
+</ul></li> <!-- End Menu -->
+<li><a href='building.html'>building</a></li>
+<li><a href='javadoc.html'>javadoc</a></li>
+<li><a href='releasenotes.html'>release notes</a></li>
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='http://code.google.com/p/iciql/downloads/detail?name=iciql-1.2.0.zip'>iciql-1.2.0</a></li>
+<li class='divider'></li>
+<li><a href='http://gitblit.github.com/iciql/maven'>Maven Repository</a></li>
+</ul></li> <!-- End Menu -->
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>links<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='https://github.com/gitblit/iciql'>Github</a></li>
+<li><a href='http://code.google.com/p/iciql/issues'>Issues</a></li>
+<li><a href='http://gitblit.github.com/iciql/maven'>Maven Repository</a></li>
+</ul></li> <!-- End Menu -->
+<li class='divider-vertical'></li>
+<li><div class='gplusone'><g:plusone size='small' href='http://iciql.com'></g:plusone></div></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div><!-- end Navigation Bar -->
+<div class='container'>
+<!-- Begin Markdown -->
 
-<ul>
-<li>All bulk operations (insert all, update all, delete all) now use JDBC savepoints to ensure atomicity of the transaction</li>
-</ul>
+<!-- HISTORY -->
+	<p></p>
+	<h2>All Releases</h2>
+	<table class="table">
+		<tbody>
+		<!-- RELEASE HISTORY -->
+		<tr id="1.2.0">
+			<td style="width:100px" id="1.2.0">
+				<b><a href="#1.2.0">1.2.0</a></b><br/>
+				2013-03-25
+			</td>
+			<td>		<p class="lead">Iciql 1.2.0 released</p>		
+	
+		<p><span class="alert alert-success">
+Iciql artifacts may now be retrieved by your favorite Maven 2-compatible build tool from <a href="http://gitblit.github.com/iciql/maven">here</a>.
+</span>
+	</p>
+	
 
-<p><strong>1.0.0</strong> &nbsp; <em>released 2012-07-14</em></p>
 
-<ul>
-<li>Issue CREATE TABLE and CREATE INDEX statements once per-db instance/table-mapping</li>
-<li>Fixed bug in using 0L primitive values in where clauses.  These were confused with the COUNT(*) function. (Github/kc5nra,<a href='http://code.google.com/p/iciql/issues/detail?id=5'>issue 5</a>)</li>
-<li>Added support for single column subquery <em>select name, address from user_table where user_id in (select user_id from invoice table where paid = false)</em></li>
-<li>Added support for left outer join (Github/backpaper0)</li>
-</ul>
+   	<h4>fixes</h4>
+	<ul>
+		<li>Fixed case-sensitivity bug on setting a compound primary key from an annotation (<a href='http://code.google.com/p/iciql/issues/detail?id=12'>issue 12</a>)</li>
+		<li>Fixed order of DEFAULT value in create table statement (<a href='http://code.google.com/p/iciql/issues/detail?id=11'>issue 11</a>)</li>
+		<li>Fixed password bug in model generator (<a href='http://code.google.com/p/iciql/issues/detail?id=7'>issue 7</a>)</li>
+	</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li> Support inheriting columns from super.super class, if super.super is annotated.<br/> This allows for an inheritance hierarchy like:<br/> @IQTable class MyTable -&gt; @IQView abstract class MyBaseView -&gt; @IQView class MyConstrainedView<br/> </li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li> Implemented readonly view support. (<a href='http://code.google.com/p/iciql/issues/detail?id=8'>issue 8</a>)<br/> View models may be specified using the IQView annotation or Iciql.define().  Views can either be created automatically as part of a query of the view OR views may be constructed from a fluent statement.<br/> </li>
+		<li>Support inheritance of IQVersion for DbUpgrader implementations (<a href='http://code.google.com/p/iciql/issues/detail?id=10'>issue 10</a>)</li>
+		<li>Added @IQConstraintForeignKey annotation (<a href='http://code.google.com/p/iciql/issues/detail?id=13'>issue 13</a>)</li>
+		<li>Added MS SQL Server dialect (<a href='http://code.google.com/p/iciql/issues/detail?id=14'>issue 14</a>)</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="1.1.0">
+			<td style="width:100px" id="1.1.0">
+				<b><a href="#1.1.0">1.1.0</a></b><br/>
+				2012-08-20
+			</td>
+			<td>		<p class="lead">Iciql 1.1.0 released</p>		
+	
+	
 
-<p><strong>0.7.10</strong> &nbsp; <em>released 2012-01-27</em></p>
 
-<ul>
-<li>Fixed default String value bug where a default empty string threw an IndexOutOfBounds exception</li>
-</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li>All bulk operations (insert all, update all, delete all) now use JDBC savepoints to ensure atomicity of the transaction</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="1.0.0">
+			<td style="width:100px" id="1.0.0">
+				<b><a href="#1.0.0">1.0.0</a></b><br/>
+				2012-07-14
+			</td>
+			<td>		<p class="lead">Iciql 1.0.0 released</p>		
+	
+	
 
-<p><strong>0.7.9</strong> &nbsp; <em>released 2012-01-24</em></p>
 
-<ul>
-<li>Added toParameter() option for SET commands and allow generating parameterized UPDATE statements<br/>
-String q = db.from(t).set(t.timestamp).toParameter().where(t.id).is(5).toSQL();<br/>
-db.executeUpdate(q, new Date());</li>
-</ul>
+   	<h4>fixes</h4>
+	<ul>
+		<li>Fixed bug in using 0L primitive values in where clauses.  These were confused with the COUNT(*) function. (Github/kc5nra,<a href='http://code.google.com/p/iciql/issues/detail?id=5'>issue 5</a>)</li>
+	</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li>Issue CREATE TABLE and CREATE INDEX statements once per-db instance/table-mapping</li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li> Added support for single column subquery<br/> select name, address from user_table where user_id in (select user_id from invoice table where paid = false)<br/> </li>
+		<li>Added support for left outer join (Github/backpaper0)</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.10">
+			<td style="width:100px" id="0.7.10">
+				<b><a href="#0.7.10">0.7.10</a></b><br/>
+				2012-01-27
+			</td>
+			<td>		<p class="lead">Iciql 0.7.10 released</p>		
+	
+	
 
-<p><strong>0.7.8</strong> &nbsp; <em>released 2012-01-11</em></p>
 
-<ul>
-<li>Replaced non-threadsafe counter used for assigning AS identifiers in JOIN statements with an AtomicInteger</li>
-<li>Prevent negative rollover of the AS counter</li>
-<li>Added optional alias parameter to <em>Query.toSQL</em> and <em>QueryWhere.toSQL</em> to force generated statement to prefix an AS identifier or, alternatively, the tablename.  <ul>
-<li>Query.toSQL(boolean distinct, K alias)</li>
-<li>QueryWhere.toSQL(boolean distinct, K alias)</li>
-</ul>
-</li>
-<li>Fixed bug in Query.select(Z z) which assumed that Z must always be an anonymous inner class which may not always be true.  This allows for specifying an existing alias to force table or identifier usage in the generated select list.  This is very useful for DISTINCT JOIN statements where only the columns of the primary table are of interest.</li>
-</ul>
+   	<h4>fixes</h4>
+	<ul>
+		<li>Fixed default String value bug where a default empty string threw an IndexOutOfBounds exception</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.9">
+			<td style="width:100px" id="0.7.9">
+				<b><a href="#0.7.9">0.7.9</a></b><br/>
+				2012-01-24
+			</td>
+			<td>		<p class="lead">Iciql 0.7.9 released</p>		
+	
+	
 
-<p><strong>0.7.7</strong> &nbsp; <em>released 2012-01-05</em></p>
 
-<ul>
-<li>added <em>Query.toSQL()</em> and <em>QueryWhere.toSQL()</em> methods which, when combined with the following new methods, allows for generation of a parameterized, static sql string to be reused with a dynamic query or a PreparedStatement.  <ul>
-<li>QueryCondition.isParameter()</li>
-<li>QueryCondition.atLeastParameter()</li>
-<li>QueryCondition.atMostParameter()</li>
-<li>QueryCondition.exceedsParameter()</li>
-<li>QueryCondition.lessThanParameter()</li>
-<li>QueryCondition.likeParameter()</li>
-<li>QueryCondition.isNotParameter()</li>
-</ul>
-</li>
-<li>Disallow <strong>declaring and explicitly referencing</strong> multiple instances of an enum type within a single model.<br/>A runtime exception will be thrown if an attempt to use where/set/on/and/or/groupBy/orderBy(enum) and your model has multiple fields of a single enum type.</li>
-</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li> Added toParameter() option for SET commands and allow generating parameterized UPDATE statements<br/><br/> String q = db.from(t).set(t.timestamp).toParameter().where(t.id).is(5).toSQL();<br/> db.executeUpdate(q, new Date());<br/> </li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.8">
+			<td style="width:100px" id="0.7.8">
+				<b><a href="#0.7.8">0.7.8</a></b><br/>
+				2012-01-11
+			</td>
+			<td>		<p class="lead">Iciql 0.7.8 released</p>		
+	
+	
 
-<p><strong>0.7.6</strong> &nbsp; <em>released 2011-12-21</em></p>
 
-<ul>
-<li>Iciql now tries to instantiate a default value from an annotated default value IFF the field object is null, it is specified <em>nullable = false</em>, and a defaultValue exists.  This only applies to <em>db.insert</em> or <em>db.update</em>.</li>
-</ul>
+   	<h4>fixes</h4>
+	<ul>
+		<li>Replaced non-threadsafe counter used for assigning AS identifiers in JOIN statements with an AtomicInteger</li>
+		<li>Prevent negative rollover of the AS counter</li>
+		<li>Fixed bug in Query.select(Z z) which assumed that Z must always be an anonymous inner class which may not always be true.  This allows for specifying an existing alias to force table or identifier usage in the generated select list.  This is very useful for DISTINCT JOIN statements where only the columns of the primary table are of interest.</li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li>Added optional alias parameter to Query.toSQL and QueryWhere.toSQL to force generated statement to prefix an AS identifier or, alternatively, the tablename.</li>
+		<li>Query.toSQL(boolean distinct, K alias)</li>
+		<li>QueryWhere.toSQL(boolean distinct, K alias)</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.7">
+			<td style="width:100px" id="0.7.7">
+				<b><a href="#0.7.7">0.7.7</a></b><br/>
+				2012-01-05
+			</td>
+			<td>		<p class="lead">Iciql 0.7.7 released</p>		
+	
+	
 
-<p><strong>0.7.5</strong> &nbsp; <em>released 2011-12-12</em></p>
 
-<ul>
-<li>Iciql now identifies wildcard queries and builds a dynamic column lookup.  Otherwise, the original field-position-based approach is used.  This corrects the performance regression released in 0.7.4 while still fixing the wildcard statement column mapping problem. </li>
-</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li> Disallow declaring and explicitly referencing multiple instances of an enum type within a single model.<br/><br/> A runtime exception will be thrown if an attempt to use where/set/on/and/or/groupBy/orderBy(enum) and your model has multiple fields of a single enum type.<br/> </li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li>added Query.toSQL() and QueryWhere.toSQL() methods which, when combined with the following new methods, allows for generation of a parameterized, static sql string to be reused with a dynamic query or a PreparedStatement.</li>
+		<li>QueryCondition.isParameter()</li>
+		<li>QueryCondition.atLeastParameter()</li>
+		<li>QueryCondition.atMostParameter()</li>
+		<li>QueryCondition.exceedsParameter()</li>
+		<li>QueryCondition.lessThanParameter()</li>
+		<li>QueryCondition.likeParameter()</li>
+		<li>QueryCondition.isNotParameter()</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.6">
+			<td style="width:100px" id="0.7.6">
+				<b><a href="#0.7.6">0.7.6</a></b><br/>
+				2011-12-21
+			</td>
+			<td>		<p class="lead">Iciql 0.7.6 released</p>		
+	
+	
 
-<p><strong>0.7.4</strong> &nbsp; <em>released 2011-12-06</em></p>
 
-<ul>
-<li>Disallow <strong>declaring and explicitly referencing</strong> multiple primitive booleans in a single model.<br/>A runtime exception will be thrown if an attempt to use where/set/on/and/or/groupBy/orderBy(boolean) and your model has multiple mapped primitive boolean fields.</li>
-<li>Added list alternatives to the varargs methods because it was too easy to forget list.toArray()<br/>
-<em>Db.executeQuery(Class&lt;? extends T&gt; modelClass, String sql, List&lt;?&gt; args)</em><br/>
-<em>Db.executeQuery(String sql, List&lt;?&gt; args)</em><br/>
-<em>Query.where(String fragment, List&lt;?&gt; args)</em><br/></li>
-<li>Fixed inherited JaQu bug related to model classes and wildcard queries (select *).<p/>
-Iciql maps resultset columns by the index of the model class field from a list.  This assumes that <em>all</em> columns in the resultset have a corresponding model field definition.  This works fine for most queries because iciql explicitly selects columns from the table (<em>select alpha, beta...</em>) when you execute <em>select()</em>.  The problem is when iciql issues a dynamic wildcard query and your model does not represent all columns in the resultset: columns and fields may fail to correctly line-up.<p/>
-Iciql now maps all fields by their column name, not by their position.</li>
-</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li>Iciql now tries to instantiate a default value from an annotated default value IFF the field object is null, it is specified nullable = false, and a defaultValue exists.  This only applies to db.insert or db.update.</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.5">
+			<td style="width:100px" id="0.7.5">
+				<b><a href="#0.7.5">0.7.5</a></b><br/>
+				2011-12-12
+			</td>
+			<td>		<p class="lead">Iciql 0.7.5 released</p>		
+	
+	
 
-<h3> Older Releases</h3>
 
-<p><strong>0.7.3</strong> &nbsp; <em>released 2011-12-06</em></p>
+   	<h4>fixes</h4>
+	<ul>
+		<li>Iciql now identifies wildcard queries and builds a dynamic column lookup.  Otherwise, the original field-position-based approach is used.  This corrects the performance regression released in 0.7.4 while still fixing the wildcard statement column mapping problem.</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.4">
+			<td style="width:100px" id="0.7.4">
+				<b><a href="#0.7.4">0.7.4</a></b><br/>
+				2011-12-06
+			</td>
+			<td>		<p class="lead">Iciql 0.7.4 released</p>		
+	
+	
 
-<ul>
-<li>api change release (API v8)</li>
-<li>Fixed JOIN ON primitives</li>
-<li>Fixed GROUP BY primitives</li>
-<li>Fixed primitive references when selecting into a custom type with primitives</li>
-<li>Improved fluent/type-safety of joins</li>
-</ul>
 
-<p><strong>0.7.2</strong> &nbsp; <em>released 2011-11-30</em></p>
+   	<h4>fixes</h4>
+	<ul>
+		<li>Fixed JOIN ON primitives</li>
+		<li>Fixed GROUP BY primitives</li>
+		<li>Fixed primitive references when selecting into a custom type with primitives</li>
+		<li> Fixed inherited JaQu bug related to model classes and wildcard queries (select *).<br/><br/> Iciql maps resultset columns by the index of the model class field from a list.  This assumes that all columns in the resultset have a corresponding model field definition.  This works fine for most queries because iciql explicitly selects columns from the table (select alpha, beta...) when you execute select().<br/> The problem is when iciql issues a dynamic wildcard query and your model does not represent all columns in the resultset: columns and fields may fail to correctly line-up.<br/><br/> Iciql now maps all fields by their column name, not by their position.<br/> </li>
+	</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li>Disallow declaring and explicitly referencing multiple primitive booleans in a single model.  A runtime exception will be thrown if an attempt to use where/set/on/and/or/groupBy/orderBy(boolean) and your model has multiple mapped primitive boolean fields.</li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li>Added list alternatives to the varargs methods because it was too easy to forget list.toArray()</li>
+		<li>Db.executeQuery(Class&lt;? extends T&gt; modelClass, String sql, List&lt;?&gt; args)</li>
+		<li>Db.executeQuery(String sql, List&lt;?&gt; args)</li>
+		<li>Query.where(String fragment, List&lt;?&gt; args)</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.3">
+			<td style="width:100px" id="0.7.3">
+				<b><a href="#0.7.3">0.7.3</a></b><br/>
+				2011-12-06
+			</td>
+			<td>		<p class="lead">Iciql 0.7.3 released</p>		
+	
+	
 
-<ul>
-<li>generated models are now serializable with a default serial version id of 1</li>
-<li>Updated to H2 1.3.162</li>
-<li>Updated to HSQL 2.2.6 (100% unit test pass now that <a href="https://sourceforge.net/tracker/?func=detail&amp;aid=3390047&amp;group_id=23316&amp;atid=378131">this bug</a> was fixed)</li>
-</ul>
 
-<p><strong>0.7.1</strong> &nbsp; <em>released 2011-08-31</em></p>
+   	<h4>fixes</h4>
+	<ul>
+		<li>Fixed JOIN ON primitives</li>
+		<li>Fixed GROUP BY primitives</li>
+		<li>Fixed primitive references when selecting into a custom type with primitives</li>
+	</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li>Improved fluent/type-safety of joins</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.2">
+			<td style="width:100px" id="0.7.2">
+				<b><a href="#0.7.2">0.7.2</a></b><br/>
+				2011-11-30
+			</td>
+			<td>		<p class="lead">Iciql 0.7.2 released</p>		
+	
+	
 
-<ul>
-<li>api change release (API v7)</li>
-<li>Undeprecated interface configuration</li>
-<li>Interface configuration now maps ALL fields, not just public fields</li>
-<li>Added @IQIgnore annotation to explicitly skip fields for interface configuration </li>
-<li>Created additional Define static methods to bring interface configuration to near-parity with annotation configuration</li>
-<li>Documented POJO configuration option (limited subset of interface configuration)</li>
-<li>Fix to PostgreSQL dialect when creating autoincrement columns</li>
-<li>Fix to default dialect when creating autoincrement columns</li>
-<li>Added Db.open(url) method</li>
-</ul>
 
-<p><strong>0.7.0</strong> &nbsp; <em>released 2011-08-17</em></p>
+   	<h4>changes</h4>
+	<ul>
+		<li>generated models are now serializable with a default serial version id of 1</li>
+	</ul>
+   	<h4>dependency changes</h4>
+	<ul>
+		<li>H2 1.3.162</li>
+		<li>HSQLDB 2.2.6 (100% of unit tests pass)</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.1">
+			<td style="width:100px" id="0.7.1">
+				<b><a href="#0.7.1">0.7.1</a></b><br/>
+				2011-08-31
+			</td>
+			<td>		<p class="lead">Iciql 0.7.1 released</p>		
+	
+	
 
-<ul>
-<li>api change release (API v6)</li>
-<li>Finished MySQL dialect implementation.  MySQL 5.0.51b passes 100% of tests.</li>
-<li>Added PostgreSQL dialect.  PostgreSQL 9.0 passes all but the boolean-as-int tests.</li>
-<li>Added Db.dropTable(T) method</li>
-<li>Overhauled test suite and included more database configurations.</li>
-<li>Renamed StatementLogger to IciqlLogger</li>
-<li>Added IciqlLogger.warn method</li>
-<li>Added IciqlLogger.drop method</li>
-</ul>
 
-<p><strong>0.6.6</strong> &nbsp; <em>released 2011-08-15</em></p>
+   	<h4>fixes</h4>
+	<ul>
+		<li>Fix to PostgreSQL dialect when creating autoincrement columns</li>
+		<li>Fix to default dialect when creating autoincrement columns</li>
+	</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li>Undeprecated interface configuration</li>
+		<li>Interface configuration now maps ALL fields, not just public fields</li>
+		<li>Overhauled test suite and included more database configurations</li>
+		<li>Documented POJO configuration option (limited subset of interface configuration)</li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li>Added @IQIgnore annotation to explicitly skip fields for interface configuration</li>
+		<li>Created additional Define static methods to bring interface configuration to near-parity with annotation configuration</li>
+		<li>Added Db.open(url) method</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.7.0">
+			<td style="width:100px" id="0.7.0">
+				<b><a href="#0.7.0">0.7.0</a></b><br/>
+				2011-08-17
+			</td>
+			<td>		<p class="lead">Iciql 0.7.0 released</p>		
+	
+	
 
-<ul>
-<li>api change release (API v5)</li>
-<li>Disabled two concurrency unit tests since I believe they are flawed and do not yield reproducible results</li>
-<li>Added Derby database dialect.  Derby 10.7.1.1 and 10.8.1.2 pass 100% of tests.</li>
-<li>Implemented HSQL MERGE syntax.  HSQL 2.2.4 fails 1 test which is a known <a href="https://sourceforge.net/tracker/?func=detail&amp;aid=3390047&amp;group_id=23316&amp;atid=378131">bug in HSQL</a></li>
-<li>Updated to H2 1.3.159</li>
-</ul>
 
-<p><strong>0.6.5</strong> &nbsp; <em>released 2011-08-12</em></p>
+   	<h4>changes</h4>
+	<ul>
+		<li>Finished MySQL dialect implementation.  MySQL 5.0.51b passes 100% of tests.</li>
+		<li>Renamed StatementLogger to IciqlLogger</li>
+		<li>Overhauled test suite and included more database configurations</li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li>Added PostgreSQL dialect.  PostgreSQL 9.0 passes all but the boolean-as-int tests.</li>
+		<li>Added Db.dropTable(T) method</li>
+		<li>Added IciqlLogger.warn method</li>
+		<li>Added IciqlLogger.drop method</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.6.6">
+			<td style="width:100px" id="0.6.6">
+				<b><a href="#0.6.6">0.6.6</a></b><br/>
+				2011-08-15
+			</td>
+			<td>		<p class="lead">Iciql 0.6.6 released</p>		
+	
+	
 
-<ul>
-<li>fixed failure of db.delete(PrimitiveModel) and db.update(PrimitiveModel)</li>
-</ul>
 
-<p><strong>0.6.4</strong> &nbsp; <em>released 2011-08-12</em></p>
+   	<h4>changes</h4>
+	<ul>
+		<li>Disabled two concurrency unit tests since I believe they are flawed and do not yield reproducible results</li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li>Implemented HSQLDB MERGE syntax.  HSQL 2.2.4 fails 1 test which is bug-3390047 in HSQLDB.</li>
+		<li>Added Derby database dialect.  Derby 10.7.1.1 and 10.8.1.2 pass 100% of tests.</li>
+	</ul>
+   	<h4>dependency changes</h4>
+	<ul>
+		<li>H2 1.3.159</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.6.5">
+			<td style="width:100px" id="0.6.5">
+				<b><a href="#0.6.5">0.6.5</a></b><br/>
+				2011-08-12
+			</td>
+			<td>		<p class="lead">Iciql 0.6.5 released</p>		
+	
+	
 
-<ul>
-<li>api change release (API v4)</li>
-<li>@IQTable.createIfRequired -&gt; @IQTable.create</li>
-<li>don't INSERT primitive autoIncrement fields, let database assign value</li>
-<li>full support for primitives in all clauses</li>
-<li>DECIMAL(length, scale) support</li>
-<li>unspecified length String fields are now CLOB instead of TEXT.  dialects can intercept this and convert to another type. e.g. MySQL dialect can change CLOB to TEXT.</li>
-<li>java.lang.Boolean now maps to BOOLEAN instead of BIT</li>
-<li>expressions on unmapped fields will throw an IciqlException</li>
-<li>expressions on unsupported types will throw an IciqlException</li>
-<li>improved exception reporting by including generated statement, if available </li>
-<li>moved dialects back to main package</li>
-<li>improved automatic dialect determination on pooled connections</li>
-<li>moved create table and create index statement generation into dialects</li>
-<li>added HSQL dialect.  HSQL fails 4 out of 50 unit tests.<ul>
-<li>2 failures are unimplemented merge</li>
-<li>1 has been filed and accepted as a <a href="https://sourceforge.net/tracker/?func=detail&amp;aid=3390047&amp;group_id=23316&amp;atid=378131">bug in HSQL</a></li>
-<li>1 is a concurrency issue, but the test may be flawed</li>
-</ul>
-</li>
-<li>added untested MySQL dialect</li>
-<li>renamed <b>_ iq_versions</b> table to <em>iq_versions</em> since leading _ character is troublesome for some databases.</li>
-<li>@IQColumn(allowNull=true) -&gt; @IQColumn(nullable=true)</li>
-<li>All <strong>Object</strong> columns are assumed NULLABLE unless explicitly set <em>@IQColumn(nullable = false)</em></li>
-<li>All <strong>Primitive</strong> columns are assumed NOT NULLABLE unless explicitly set <em>@IQColumn(nullable = true)</em></li>
-<li>allow using objects to assign default values<br/>
-<pre class='prettyprint lang-java'>
-// CREATE TABLE ... myDate DATETIME DEFAULT '2000-02-01 00:00:00'
-@IQColumn
-Date myDate = new Date(100, 1, 1);
-</pre></li>
-<li>changed @IQTable.primaryKey definition to use array of column names<br/>
-<pre class='prettyprint lang-java'>
-@IQTable( primaryKey = {"name", "nickname"})
-</pre></li>
-</ul>
 
-<p><strong>0.6.3</strong> &nbsp; <em>released 2011-08-08</em></p>
+   	<h4>fixes</h4>
+	<ul>
+		<li>fixed failure of db.delete(PrimitiveModel) and db.update(PrimitiveModel)</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.6.4">
+			<td style="width:100px" id="0.6.4">
+				<b><a href="#0.6.4">0.6.4</a></b><br/>
+				2011-08-12
+			</td>
+			<td>		<p class="lead">Iciql 0.6.4 released</p>		
+	
+	
 
-<ul>
-<li>api change release (API v3)</li>
-<li>finished enum support (<a href='http://code.google.com/p/iciql/issues/detail?id=4'>issue 4</a>)</li>
-<li>added UUID type support (H2 databases only)</li>
-<li>added partial primitives support <em>(primitives may not be used for compile-time condition clauses)</em></li>
-<li>added <em>between(A y).and(A z)</em> condition syntax</li>
-<li>moved dialects into separate package</li>
-</ul>
 
-<p><strong>0.6.2</strong> &nbsp; <em>released 2011-08-05</em></p>
+   	<h4>fixes</h4>
+	<ul>
+		<li>do not INSERT primitive autoIncrement fields, let database assign value</li>
+	</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li>@IQTable.createIfRequired -&gt; @IQTable.create</li>
+		<li>unspecified length String fields are now CLOB instead of TEXT.  dialects can intercept this and convert to another type. e.g. MySQL dialect can change CLOB to TEXT.</li>
+		<li>java.lang.Boolean now maps to BOOLEAN instead of BIT</li>
+		<li>expressions on unmapped fields will throw an IciqlException</li>
+		<li>expressions on unsupported types will throw an IciqlException</li>
+		<li>moved dialects back to main package</li>
+		<li>moved create table and create index statement generation into dialects</li>
+		<li>renamed _iq_versions table to iq_versions since leading _ character is troublesome for some databases</li>
+		<li>@IQColumn(allowNull=true) -&gt; @IQColumn(nullable=true)</li>
+		<li>All Object columns are assumed NULLABLE unless explicitly set @IQColumn(nullable = false)</li>
+		<li>All Primitive columns are assumed NOT NULLABLE unless explicitly set @IQColumn(nullable = true)</li>
+		<li>changed @IQTable.primaryKey definition to use array of column names (@IQTable( primaryKey = {&quot;name&quot;, &quot;nickname&quot;}) )</li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li>full support for primitives in all clauses</li>
+		<li>DECIMAL(length, scale) support</li>
+		<li>improved exception reporting by including generated statement, if available</li>
+		<li>improved automatic dialect determination on pooled connections</li>
+		<li>added HSQL dialect.  HSQL fails 4 out of 50 unit tests. (2 failures are unimplemented merge, 1 is a bug-3390047 in HSQLDB, 1 is a concurreny issue)</li>
+		<li>added untested MySQL dialect</li>
+		<li>allow defining table create DEFAULT values from default object values (Date myDate = new Date(100, 1, 1); =&gt; CREATE TABLE ... myDate DATETIME DEFAULT '2000-02-01 00:00:00')</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.6.3">
+			<td style="width:100px" id="0.6.3">
+				<b><a href="#0.6.3">0.6.3</a></b><br/>
+				2011-08-08
+			</td>
+			<td>		<p class="lead">Iciql 0.6.3 Released</p>		
+	
+	
 
-<ul>
-<li>api change release (API v2)</li>
-<li>fix to versioning to support H2 1.3.158+</li>
-<li>added BLOB support (<a href='http://code.google.com/p/iciql/issues/detail?id=1'>issue 1</a>)</li>
-<li>added java.lang.Enum support (<a href='http://code.google.com/p/iciql/issues/detail?id=2'>issue 2</a>)</li>
-<li>allow runtime flexible mapping of BOOL columns to Integer fields</li>
-<li>allow runtime flexible mapping of INT columns to Boolean fields</li>
-<li>annotations overhaul to reduce verbosity<ul>
-<li>@IQSchema(name=&quot;public&quot;) -&gt; @IQSchema(&quot;public&quot;)</li>
-<li>@IQDatabase(version=2) -&gt; @IQVersion(2)</li>
-<li>@IQTable(version=2) -&gt; @IQVersion(2)</li>
-<li>@IQIndex annotation simplified to be used for one index definition and expanded to specify index name</li>
-<li>added @IQIndexes annotation to specify multiple IQIndex annotations<br/>
-<pre class='prettyprint lang-java'>
-@IQIndexes({ @IQIndex("name"), @IQIndex(name="myindexname" value={"name", "nickname"}) })
-</pre></li>
-<li>@IQColumn(maxLength=20) -&gt; @IQColumn(length=20)</li>
-<li>@IQColumn(trimString=true) -&gt; @IQColumn(trim=true)</li>
-</ul>
-</li>
-</ul>
 
-<p><strong>0.5.0</strong> &nbsp; <em>released 2011-08-03</em></p>
+   	<h4>changes</h4>
+	<ul>
+		<li>Moved dialects into separate package</li>
+		<li>finished enum support (<a href='http://code.google.com/p/iciql/issues/detail?id=4'>issue 4</a>)</li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li>added UUID type support (H2 databases only)</li>
+		<li>added partial primitives support (primitives may not be used for compile-time condition clauses)</li>
+		<li>added between(A y).and(A z) condition syntax</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.6.2">
+			<td style="width:100px" id="0.6.2">
+				<b><a href="#0.6.2">0.6.2</a></b><br/>
+				2011-08-05
+			</td>
+			<td>		<p class="lead">Iciql 0.6.2 Released</p>		
+	
+	
 
-<ul>
-<li>initial release (API v1)</li>
-</ul>
 
-<p><em>API changes compared to JaQu from H2 1.3.157 sources</em></p>
+   	<h4>fixes</h4>
+	<ul>
+		<li>fix to versioning to support H2 1.3.158+</li>
+	</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li>@IQSchema(name=&quot;public&quot;) =&gt; @IQSchema(&quot;public&quot;)</li>
+		<li>@IQDatabase(version=2) =&gt; @IQVersion(2)</li>
+		<li>@IQTable(version=2) =&gt; @IQVersion(2)</li>
+		<li>@IQIndex annotation simplified to be used for one index definition and expanded to specify index name</li>
+		<li>@IQColumn(maxLength=20) =&gt; @IQColumn(length=20)</li>
+		<li>@IQColumn(trimString=true) =&gt; @IQColumn(trim=true)}</li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li>added BLOB support (<a href='http://code.google.com/p/iciql/issues/detail?id=1'>issue 1</a>)</li>
+		<li>added java.lang.Enum support (<a href='http://code.google.com/p/iciql/issues/detail?id=2'>issue 2</a>)</li>
+		<li>allow runtime flexible mapping of BOOL columns to Integer fields</li>
+		<li>allow runtime flexible mapping of INT columns to Boolean fields</li>
+		<li>added @IQIndexes annotation to specify multiple IQIndex annotations</li>
+	</ul>
+</td>
+		</tr>
+		<tr id="0.5.0">
+			<td style="width:100px" id="0.5.0">
+				<b><a href="#0.5.0">0.5.0</a></b><br/>
+				2011-08-03
+			</td>
+			<td>		<p class="lead">Iciql 0.5.0 Released</p>		
+	
+	
+		<blockquote><p>Initial release of blessed JaQu fork</p></blockquote>		
 
-<ul>
-<li>deprecated model class interface configuration</li>
-<li>added <em>Db.open(Connection conn)</em> method, changed constructor to default scope</li>
-<li>added <em>Db.registerDialect</em> static methods to register custom dialects</li>
-<li>added <em>Query.where(String fragment, Object... args)</em> method to build a runtime query fragment when compile-time queries are too strict</li>
-<li>added <em>Db.executeQuery(String query, Object... args)</em> to execute a complete sql query with optional arguments</li>
-<li>added <em>Db.executeQuery(Class modelClass, String query, Object... args)</em> to execute a complete sql query, with optional arguments, and build objects from the result</li>
-<li>added <em>Db.buildObjects(Class modelClass, ResultSet rs)</em> method to build objects from the ResultSet of a plain sql query</li>
-<li>added <em>ThreadLocal&lt;T&gt; com.iciql.Utils.newThreadLocal(final Class&lt;? extends T&gt; clazz)</em> method</li>
-<li>added optional console statement logger and SLF4J statement logger</li>
-<li>refactored dialect support</li>
-<li>throw <em>IciqlException</em> (which is a RuntimeException) instead of RuntimeException</li>
-<li>synchronized <em>Db.classMap</em> for concurrent sharing of a Db instance</li>
-<li>Database/table versioning uses the <b>_iq_versions </b> table, the <b>_ jq_versions</b> table, if present, is ignored</li>
-<li>Changed the following class names:<ul>
-<li>org.h2.jaqu.Table =&gt; com.iciql.Iciql</li>
-<li>org.h2.jaqu.JQSchema =&gt; com.iciql.IQSchema</li>
-<li>org.h2.jaqu.JQDatabase =&gt; com.iciql.IQDatabase</li>
-<li>org.h2.jaqu.JQIndex =&gt; com.iciql.IQIndex</li>
-<li>org.h2.jaqu.JQTable =&gt; com.iciql.IQTable</li>
-<li>org.h2.jaqu.JQColumn =&gt; com.iciql.IQColumn</li>
-</ul>
-</li>
-<li>Changed the following method names:<ul>
-<li>org.h2.jaqu.Table.define() =&gt; com.iciql.Iciql.defineIQ()</li>
-<li>QueryConditon.bigger =&gt; QueryCondition.exceeds</li>
-<li>QueryConditon.biggerEqual =&gt; QueryCondition.atLeast</li>
-<li>QueryConditon.smaller =&gt; QueryCondition.lessThan</li>
-<li>QueryConditon.smallEqual =&gt; QueryCondition.atMost</li>
-</ul>
-</li>
-</ul>	</div>
-	<div style="margin-top:10px" class="page_footer">
-		<div style="float:right;">generated 2012-08-20</div>
-	The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.
-	</div>
+
+   	<h4>changes</h4>
+	<ul>
+		<li>deprecated model class interface configuration</li>
+		<li>added Db.open(Connection conn) method, changed constructor to default scope</li>
+		<li>added Db.registerDialect static methods to register custom dialects</li>
+		<li>added Query.where(String fragment, Object... args) method to build a runtime query fragment when compile-time queries are too strict</li>
+		<li>added Db.executeQuery(String query, Object... args) to execute a complete sql query with optional arguments</li>
+		<li>added Db.executeQuery(Class modelClass, String query, Object... args) to execute a complete sql query, with optional arguments, and build objects from the result</li>
+		<li>added Db.buildObjects(Class modelClass, ResultSet rs) method to build objects from the ResultSet of a plain sql query</li>
+		<li>added ThreadLocal&lt;T&gt; com.iciql.Utils.newThreadLocal(final Class&lt;? extends T&gt; clazz) method</li>
+		<li>added optional console statement logger and SLF4J statement logger</li>
+		<li>refactored dialect support</li>
+		<li>throw IciqlException (which is a RuntimeException) instead of RuntimeException</li>
+		<li>synchronized Db.classMap for concurrent sharing of a Db instance</li>
+		<li>Database/table versioning uses the _iq_versions table, the _ jq_versions table, if present, is ignored</li>
+		<li> Changed the following class names:<br/> org.h2.jaqu.Table =&gt; com.iciql.Iciql<br/> org.h2.jaqu.JQSchema =&gt; com.iciql.IQSchema<br/> org.h2.jaqu.JQDatabase =&gt; com.iciql.IQDatabase<br/> org.h2.jaqu.JQIndex =&gt; com.iciql.IQIndex<br/> org.h2.jaqu.JQTable =&gt; com.iciql.IQTable<br/> org.h2.jaqu.JQColumn =&gt; com.iciql.IQColumn<br/> </li>
+		<li> Changed the following method names:<br/> org.h2.jaqu.Table.define() =&gt; com.iciql.Iciql.defineIQ()<br/> QueryConditon.bigger =&gt; QueryCondition.exceeds<br/> QueryConditon.biggerEqual =&gt; QueryCondition.atLeast<br/> QueryConditon.smaller =&gt; QueryCondition.lessThan<br/> QueryConditon.smallEqual =&gt; QueryCondition.atMost<br/> </li>
+	</ul>
+</td>
+		</tr>
+		</tbody>
+	</table>
+
+<!-- End Markdown -->
+<footer class="footer"><p class="pull-right">generated 2013-03-25</p>
+<p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
+</footer>
+</div>
 </body>
 </html>
