@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="iciql" default="build" xmlns:mx="antlib:org.moxie">
 
-	<!-- Google Code upload task -->
-	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" 
-		classpath="${basedir}/tools/ant-googlecode-0.0.3.jar" name="gcupload"/>
-
 	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Retrieve Moxie Toolkit
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<property name="moxie.version" value="0.7.0" />
+	<property name="moxie.version" value="0.7.1" />
 	<property name="moxie.url" value="http://gitblit.github.com/moxie/maven" />
 	<property name="moxie.jar" value="moxie-toolkit-${moxie.version}.jar" />
 	<property name="moxie.dir" value="${user.home}/.moxie" />
@@ -104,7 +100,7 @@
 	-->
 	<target name="uploadArtifacts" depends="build">
 			
-		<gcupload 
+		<mx:gcupload 
 				 username="${googlecode.user}" 
 				 password="${googlecode.password}" 
 				 projectname="iciql" 
