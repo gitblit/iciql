@@ -283,6 +283,7 @@
 				<filter token="project.tag" value="${project.tag}" />
 			</filterset>
 		</copy>
+		<chmod file="${recipe}" perm="ugo+rx" />
 
 		<!-- next cycle -->
 		<mx:version stage="snapshot" incrementNumber="minor" dryrun="${dryrun}" />
