@@ -251,10 +251,11 @@
 		<!-- release -->
 		<property name="dryrun" value="false" />
 		<mx:version stage="release" dryrun="${dryrun}" />		
-		<!-- commit build.moxie & releases.moxie (automatic) and maven artifacts -->
+		<property name="project.tag" value="v${project.version}" />
+		<!-- commit build.moxie & releases.moxie (automatic) -->
 		<mx:commit showtitle="no">
 		    <message>Prepare ${project.version} release</message>
-			<tag name="v${project.version}">
+			<tag name="${project.tag}">
 				<message>${project.name} ${project.version} release</message>
 			</tag>
 		</mx:commit>
@@ -279,6 +280,7 @@
 			<filterset begintoken="${dollar}{" endtoken="}">
 				<filter token="project.version" value="${project.version}" />
 				<filter token="project.commitId" value="${project.commitId}" />
+				<filter token="project.tag" value="${project.tag}" />
 			</filterset>
 		</copy>
 
