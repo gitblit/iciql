@@ -21,7 +21,7 @@ releaseDate: 2013-03-25
 # Project urls
 url: 'http://iciql.com'
 issuesUrl: 'http://code.google.com/p/iciql/issues'
-mavenUrl: 'http://gitblit.github.com/iciql/maven'
+mavenUrl: 'http://gitblit.github.io/iciql/maven'
 
 licenses:
 - {
