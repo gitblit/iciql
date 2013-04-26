@@ -58,6 +58,7 @@ echo "Updating gh-pages for Maven submodule ${project.version} RELEASE artifacts
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
 git checkout gh-pages
+git pull
 git add maven
 git commit -m "updated Maven submodule repository to ${project.version}"
 
