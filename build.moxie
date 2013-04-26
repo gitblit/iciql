@@ -3,7 +3,7 @@
 #
 
 # Specify minimum Moxie version required to build
-requires: 0.7.1
+requires: 0.7.3
 
 # Project Metadata
 name: Iciql
@@ -87,7 +87,7 @@ properties: {
 	derby.version : 10.9.1.0
 	mysql.version : 5.0.51b
 	postgresql.version : 9.0
-	postgresqldriver.version : 9.0-801.jdbc4	
+	postgresqldriver.version : 9.0-801.jdbc4
 }
 
 dependencies:

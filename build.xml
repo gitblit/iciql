@@ -4,34 +4,34 @@
 	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Retrieve Moxie Toolkit
-		
+
 		documentation @ http://gitblit.github.io/moxie
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<property name="moxie.version" value="0.7.2" />
+	<property name="moxie.version" value="0.7.3" />
 	<property name="moxie.url" value="http://gitblit.github.io/moxie/maven" />
 	<property name="moxie.jar" value="moxie-toolkit-${moxie.version}.jar" />
 	<property name="moxie.dir" value="${user.home}/.moxie" />
-	
+
 	<!-- Download Moxie from it's Maven repository to user.home -->
 	<mkdir dir="${moxie.dir}" />
 	<get src="${moxie.url}/org/moxie/moxie-toolkit/${moxie.version}/${moxie.jar}"
 		dest="${moxie.dir}" skipexisting="true" verbose="true" />
-	
+
 	<!-- Register Moxie tasks -->
 	<taskdef uri="antlib:org.moxie">
 		<classpath location="${moxie.dir}/${moxie.jar}" />
 	</taskdef>
 
-	
+
 	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Initialize Moxie and setup build properties
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
 	<target name="prepare"  description="Retrieves dependencies and sets up build properties">
-		
-		<mx:init />
+
+		<mx:init mxroot="${moxie.dir}" />
 
 	</target>
 
@@ -47,7 +47,7 @@
 
 	</target>
 
-	
+
 	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Compile
@@ -73,13 +73,13 @@
 		<mx:run scope="test" classname="com.iciql.test.IciqlSuite">
 			<arg value="--dbFile" />
 			<arg value="${project.outputDirectory}/performance_db.txt" />
-							
+
 			<arg value="--sqlFile" />
 			<arg value="${project.outputDirectory}/performance_sql.txt" />
 		</mx:run>
 	</target>
 
-	
+
 	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Build
@@ -89,12 +89,12 @@
 
 		<!-- Package the jar, javadoc, sources, and zip distribution -->
 		<mx:package />
-		
-		<!-- Deploy the artifacts into the version-controlled repository -->		
+
+		<!-- Deploy the artifacts into the version-controlled repository -->
 		<mx:deploy basedir="${basedir}/maven" allowSnapshots="false" />
 
 	</target>
-	
+
 
 	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,16 +102,16 @@
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
 	<target name="uploadArtifacts" depends="build">
-			
-		<mx:gcupload 
-				 username="${googlecode.user}" 
-				 password="${googlecode.password}" 
-				 projectname="iciql" 
-				 filename="${project.targetDirectory}/${project.artifactId}-${project.version}.zip" 
+
+		<mx:gcupload
+				 username="${googlecode.user}"
+				 password="${googlecode.password}"
+				 projectname="iciql"
+				 filename="${project.targetDirectory}/${project.artifactId}-${project.version}.zip"
 				 targetfilename="${project.artifactId}-${project.version}.zip"
 				 summary="Version ${project.version} -- library, sources, and javadoc"
 				 labels="Featured, Type-Package, OpSys-All" />
-						 	
+
 		<mx:ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}"
 			remotedir="${ftp.maven.dir}" verbose="yes" depends="yes" timediffauto="true"
 			preservelastmodified="true">
@@ -122,9 +122,9 @@
 			</fileset>
 		</mx:ftp>
 	</target>
-	
-				
-	<!-- 
+
+
+	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Build the iciql website
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -139,12 +139,12 @@
 				<fail message="Please run the &quot;testsuite&quot; target!"/>
 			</then>
 		</mx:if>
-					
+
 		<!-- Download links -->
 		<property name="gc.url" value="http://code.google.com/p/iciql/downloads/detail?name=" />
 		<property name="releaselog" value="${basedir}/releases.moxie" />
-			
-		<mx:doc googleplusone="true" prettifyTheme="googlecode" minify="true" 
+
+		<mx:doc googleplusone="true" prettifyTheme="googlecode" minify="true"
 			templateDir="${project.siteSourceDirectory}/templates"
 			customless="custom.less" rssFeed="rss.xml" atomFeed="atom.xml">
 
@@ -156,13 +156,13 @@
 				replacePattern="&lt;a href='${project.issuesUrl}/detail?id=$3'&gt;issue $3&lt;/a&gt;" />
 
 			<structure>
-	
+
 				<menu name="about" pager="true" pagerPlacement="bottom" pagerLayout="justified">
 					<page name="overview" src="index.mkd" out="index.html" />
 					<page name="performance" src="performance.mkd" out="performance.html" />
 					<page name="jaqu comparison" src="jaqu_comparison.mkd" out="jaqu_comparison.html" />
 				</menu>
-	
+
 				<menu name="getting started" pager="true" pagerPlacement="bottom" pagerLayout="justified">
 					<page name="models" src="model_classes.mkd" out="model_classes.html" headerLinks="true" />
 					<page name="versioning" src="table_versioning.mkd" out="table_versioning.html" headerLinks="true" />
@@ -170,7 +170,7 @@
 					<page name="examples" src="examples.mkd" out="examples.html" headerLinks="true" />
 					<page name="tools" src="tools.mkd" out="tools.html" headerLinks="true" />
 				</menu>
-	
+
 				<page name="building" src="building.mkd" out="building.html" />
 				<page name="javadoc" src="javadoc.mkd" out="javadoc.html" />
 
@@ -180,14 +180,14 @@
 				<page out="releases.html" navbarlink="false">
 					<template src="releasehistory.ftl" data="${releaselog}" />
 				</page>
-					
+
 				<menu name="downloads">
 					<link name="${project.artifactId}-${project.releaseVersion}"
 						src="${gc.url}${project.artifactId}-${project.releaseVersion}.zip" />
 					<divider />
 					<link name="Maven Repository" src="${project.mavenUrl}" />
 				</menu>
-						
+
 				<menu name="links">
 					<link name="Github" src="${project.scmUrl}" />
 					<link name="Issues" src="${project.issuesUrl}" />
@@ -195,7 +195,7 @@
 				</menu>
 				<divider />
 			</structure>
-						
+
 			<!-- Generate RSS and Atom feeds from the release history -->
 			<page as="atom.xml">
 				<template src="atom.ftl" data="${releaselog}" />
@@ -203,9 +203,9 @@
 			<page as="rss.xml">
 				<template src="rss.ftl" data="${releaselog}" />
 			</page>
-						
+
 		</mx:doc>
-						
+
 		<!-- Copy standard javadoc -->
 		<mkdir dir="${project.siteTargetDirectory}/javadoc" />
 		<copy todir="${project.siteTargetDirectory}/javadoc">
@@ -215,17 +215,17 @@
 
 
 	<!--
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Copy the built site to the gh-pages branch
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
 	<target name="updateGhpages" depends="buildSite">
 		<mx:ghpages obliterate="false" />
 	</target>
 
-		
+
 	<!--
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Publish site to hosting service
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
@@ -243,16 +243,16 @@
 		</mx:ftp>
 	</target>
 
-	
+
 	<!--
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Tag a new version and prepare for the next development cycle.
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
 	<target name="tagRelease" depends="prepare">
 		<!-- release -->
 		<property name="dryrun" value="false" />
-		<mx:version stage="release" dryrun="${dryrun}" />		
+		<mx:version stage="release" dryrun="${dryrun}" />
 		<property name="project.tag" value="v${project.version}" />
 		<!-- commit build.moxie & releases.moxie (automatic) -->
 		<mx:commit showtitle="no">
@@ -293,6 +293,6 @@
 		    <message>Reset build identifiers for next development cycle</message>
 		</mx:commit>
 	</target>
-	
+
 
 </project>
