@@ -1,7 +1,10 @@
 ## Model Generation
 If you do not have or do not want to annotate your existing model classes, you can use the included model generation tool to create iciql model classes.
 
-    java -jar iciql.jar <parameters>
+---FIXED---
+ win: java -cp iciql.jar;your_db_driver.jar <parameters>
+*nix: java -cp iciql.jar:your_db_driver.jar <parameters>
+---FIXED---
 
 ### Parameters
 <table class="table">
