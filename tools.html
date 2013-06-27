@@ -58,14 +58,14 @@
 <ul class='dropdown-menu'>
 <li><a href='http://code.google.com/p/iciql/downloads/detail?name=iciql-1.2.0.zip'>iciql-1.2.0</a></li>
 <li class='divider'></li>
-<li><a href='http://gitblit.github.com/iciql/maven'>Maven Repository</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>links<b class='caret'></b></a>
 <ul class='dropdown-menu'>
 <li><a href='https://github.com/gitblit/iciql'>Github</a></li>
 <li><a href='http://code.google.com/p/iciql/issues'>Issues</a></li>
-<li><a href='http://gitblit.github.com/iciql/maven'>Maven Repository</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
 <li class='divider-vertical'></li>
 <li><div class='gplusone'><g:plusone size='small' href='http://iciql.com'></g:plusone></div></li>
@@ -79,8 +79,9 @@
 <h2 class="section" id="H1"><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Model Generation</h2>
 <p>If you do not have or do not want to annotate your existing model classes, you can use the included model generation tool to create iciql model classes.</p>
 
-<pre><code>java -jar iciql.jar &lt;parameters&gt;
-</code></pre>
+<p><pre> win: java -cp iciql.jar;your_db_driver.jar &lt;parameters&gt;
+*nix: java -cp iciql.jar:your_db_driver.jar &lt;parameters&gt;
+</pre></p>
 
 <h3 class="section" id="H2"><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>Parameters</h3>
 <table class="table">
@@ -172,7 +173,7 @@ public class ValidateModels {
 }
 </pre>
 <!-- End Markdown -->
-<div ><ul class="pager"><li class="previous"><a href="examples.html">&larr; examples</a></li> </ul></div><footer class="footer"><p class="pull-right">generated 2013-03-25</p>
+<div ><ul class="pager"><li class="previous"><a href="examples.html">&larr; examples</a></li> </ul></div><footer class="footer"><p class="pull-right">generated 2013-06-27</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>
