@@ -95,7 +95,8 @@ public class Query<T> {
 	}
 
 	public T selectFirst() {
-		return select(false).get(0);
+		List<T> list = limit(1).select(false);
+		return list.isEmpty() ? null : list.get(0);
 	}
 
 	public List<T> selectDistinct() {
@@ -104,7 +105,7 @@ public class Query<T> {
 
 	@SuppressWarnings("unchecked")
 	public <X, Z> X selectFirst(Z x) {
-		List<X> list = (List<X>) select(x);
+		List<X> list = limit(1).select(x);
 		return list.isEmpty() ? null : list.get(0);
 	}
 	
