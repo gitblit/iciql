@@ -46,6 +46,7 @@ public class Query<T> {
 	private Db db;
 	private SelectTable<T> from;
 	private ArrayList<Token> conditions = Utils.newArrayList();
+	private int conditionDepth = 0;
 	private ArrayList<UpdateColumn> updateColumnDeclarations = Utils.newArrayList();
 	private ArrayList<SelectTable<T>> joins = Utils.newArrayList();
 	private final IdentityHashMap<Object, SelectColumn<T>> aliasMap = Utils.newIdentityHashMap();
@@ -583,6 +584,14 @@ public class Query<T> {
 		return new QueryWhere<T>(this);
 	}
 
+	public QueryWhere<T> whereTrue() {
+		return whereTrue(true);
+	}
+
+	public QueryWhere<T> whereFalse() {
+		return whereTrue(false);
+	}
+
 	public QueryWhere<T> whereTrue(Boolean condition) {
 		Token token = new Function("", condition);
 		addConditionToken(token);
@@ -792,6 +801,22 @@ public class Query<T> {
 		addParameter(stat, alias, valueRight);
 	}
 
+	public void appendSQL(SQLStatement stat, Object alias, Iterable<Object> values,
+			CompareType compareType) {
+		boolean first = true;
+		stat.appendSQL("(");
+		for (Object value : values) {
+			if (first) {
+				first = false;
+			} else {
+				stat.appendSQL(", ");
+			}
+			stat.appendSQL("?");
+			addParameter(stat, alias, value);
+		}
+		stat.appendSQL(")");
+	}
+
 	private void addParameter(SQLStatement stat, Object alias, Object value) {
 		if (alias != null && value.getClass().isEnum()) {
 			SelectColumn<T> col = getColumnByReference(alias);
@@ -805,6 +830,14 @@ public class Query<T> {
 	}
 
 	void addConditionToken(Token condition) {
+		if (condition == ConditionOpenClose.OPEN) {
+			conditionDepth ++;
+		} else if (condition == ConditionOpenClose.CLOSE) {
+			conditionDepth --;
+			if (conditionDepth < 0) {
+				throw new IciqlException("unmatch condition open-close count");
+			}
+		}
 		conditions.add(condition);
 	}
 
@@ -813,6 +846,9 @@ public class Query<T> {
 	}
 
 	void appendWhere(SQLStatement stat) {
+		if (conditionDepth != 0) {
+			throw new IciqlException("unmatch condition open-close count");
+		}
 		if (!conditions.isEmpty()) {
 			stat.appendSQL(" WHERE ");
 			for (Token token : conditions) {

@@ -24,7 +24,7 @@ package com.iciql;
 enum CompareType {
 	EQUAL("=", true), EXCEEDS(">", true), AT_LEAST(">=", true), LESS_THAN("<", true), AT_MOST("<=", true), NOT_EQUAL(
 			"<>", true), IS_NOT_NULL("IS NOT NULL", false), IS_NULL("IS NULL", false), LIKE("LIKE", true), BETWEEN(
-			"BETWEEN", true);
+			"BETWEEN", true), IN("IN", true);
 
 	private String text;
 	private boolean hasRightExpression;
