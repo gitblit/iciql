@@ -77,7 +77,7 @@ import com.iciql.util.Utils;
 
 /**
  * JUnit 4 iciql test suite.
- * 
+ *
  * By default this test suite will run against the H2 database. You can change
  * this by switching the DEFAULT_TEST_DB value.
  * <p>
@@ -87,11 +87,11 @@ import com.iciql.util.Utils;
  * NOTE: If you want to test against MySQL or PostgreSQL you must create an
  * "iciql" database and allow user "sa" password "sa" complete control of that
  * database.
- * 
+ *
  */
 @RunWith(Suite.class)
 @SuiteClasses({ AliasMapTest.class, AnnotationsTest.class, BooleanModelTest.class, ClobTest.class,
-		ConcurrencyTest.class, EnumsTest.class, ModelsTest.class, PrimitivesTest.class,
+		ConcurrencyTest.class, EnumsTest.class, ModelsTest.class, PrimitivesTest.class, OneOfTest.class,
 		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UpgradesTest.class, JoinTest.class,
 		UUIDTest.class, ViewsTest.class, ForeignKeyTest.class, TransactionTest.class })
 public class IciqlSuite {
@@ -140,7 +140,7 @@ public class IciqlSuite {
 	/**
 	 * Open a new Db object. All connections are cached and re-used to eliminate
 	 * embedded database startup costs.
-	 * 
+	 *
 	 * @return a fresh Db object
 	 */
 	public static Db openNewDb() {
@@ -196,7 +196,7 @@ public class IciqlSuite {
 
 	/**
 	 * Open the current database.
-	 * 
+	 *
 	 * @return the current database
 	 */
 	public static Db openCurrentDb() {
@@ -208,7 +208,7 @@ public class IciqlSuite {
 
 	/**
 	 * Returns the name of the underlying database engine for the Db object.
-	 * 
+	 *
 	 * @param db
 	 * @return the database engine name
 	 */
@@ -223,7 +223,7 @@ public class IciqlSuite {
 
 	/**
 	 * Returns true if the underlying database engine is Derby.
-	 * 
+	 *
 	 * @param db
 	 * @return true if underlying database engine is Derby
 	 */
@@ -233,7 +233,7 @@ public class IciqlSuite {
 
 	/**
 	 * Returns true if the underlying database engine is H2.
-	 * 
+	 *
 	 * @param db
 	 * @return true if underlying database engine is H2
 	 */
@@ -243,7 +243,7 @@ public class IciqlSuite {
 
 	/**
 	 * Returns true if the underlying database engine is MySQL.
-	 * 
+	 *
 	 * @param db
 	 * @return true if underlying database engine is MySQL
 	 */
@@ -253,7 +253,7 @@ public class IciqlSuite {
 
 	/**
 	 * Gets the default schema of the underlying database engine.
-	 * 
+	 *
 	 * @param db
 	 * @return the default schema
 	 */
@@ -272,7 +272,7 @@ public class IciqlSuite {
 	/**
 	 * Main entry point for the test suite. Executing this method will run the
 	 * test suite on all registered databases.
-	 * 
+	 *
 	 * @param args
 	 * @throws Exception
 	 */
@@ -491,7 +491,7 @@ public class IciqlSuite {
 
 	/**
 	 * Start an HSQL tcp server.
-	 * 
+	 *
 	 * @return an HSQL server instance
 	 * @throws Exception
 	 */
@@ -503,7 +503,7 @@ public class IciqlSuite {
 		// set up the rest of properties
 
 		// alternative to the above is
-		org.hsqldb.Server server = new org.hsqldb.Server();		
+		org.hsqldb.Server server = new org.hsqldb.Server();
 		server.setProperties(p);
 		server.setLogWriter(null);
 		server.setErrWriter(null);
@@ -513,7 +513,7 @@ public class IciqlSuite {
 
 	/**
 	 * Start the H2 tcp server.
-	 * 
+	 *
 	 * @return an H2 server instance
 	 * @throws Exception
 	 */
@@ -555,7 +555,7 @@ public class IciqlSuite {
 		}
 
 		int getStatementRate() {
-			return Double.valueOf(((double) statements) / (runtime / 1000d)).intValue();
+			return Double.valueOf((statements) / (runtime / 1000d)).intValue();
 		}
 
 		String describeDatabase() {
