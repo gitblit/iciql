@@ -17,10 +17,6 @@
 
 package com.iciql;
 
-/**
- * An OR or an AND condition.
- */
-
 enum ConditionOpenClose implements Token {
 	OPEN("("), CLOSE(")");
 
