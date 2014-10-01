@@ -47,6 +47,7 @@ public class Query<T> {
 	private SelectTable<T> from;
 	private ArrayList<Token> conditions = Utils.newArrayList();
 	private ArrayList<UpdateColumn> updateColumnDeclarations = Utils.newArrayList();
+	private int conditionDepth = 0;
 	private ArrayList<SelectTable<T>> joins = Utils.newArrayList();
 	private final IdentityHashMap<Object, SelectColumn<T>> aliasMap = Utils.newIdentityHashMap();
 	private ArrayList<OrderExpression<T>> orderByList = Utils.newArrayList();
@@ -583,6 +584,14 @@ public class Query<T> {
 		return new QueryWhere<T>(this);
 	}
 
+	public QueryWhere<T> whereTrue() {
+		return whereTrue(true);
+	}
+
+	public QueryWhere<T> whereFalse() {
+		return whereTrue(false);
+	}
+
 	public QueryWhere<T> whereTrue(Boolean condition) {
 		Token token = new Function("", condition);
 		addConditionToken(token);
@@ -805,6 +814,14 @@ public class Query<T> {
 	}
 
 	void addConditionToken(Token condition) {
+		if (condition == ConditionOpenClose.OPEN) {
+			conditionDepth ++;
+		} else if (condition == ConditionOpenClose.CLOSE) {
+			conditionDepth --;
+			if (conditionDepth < 0) {
+				throw new IciqlException("unmatch condition open-close count");
+			}
+		}
 		conditions.add(condition);
 	}
 
@@ -813,6 +830,9 @@ public class Query<T> {
 	}
 
 	void appendWhere(SQLStatement stat) {
+		if (conditionDepth != 0) {
+			throw new IciqlException("unmatch condition open-close count");
+		}
 		if (!conditions.isEmpty()) {
 			stat.appendSQL(" WHERE ");
 			for (Token token : conditions) {
