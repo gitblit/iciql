@@ -1131,11 +1131,16 @@ public class TableDefinition<T> {
 		}
 	}
 
-	void initSelectObject(SelectTable<T> table, Object obj, Map<Object, SelectColumn<T>> map) {
+	void initSelectObject(SelectTable<T> table, Object obj, Map<Object, SelectColumn<T>> map, boolean reuse) {
 		for (FieldDefinition def : fields) {
-			Object newValue = def.initWithNewObject(obj);
+			Object value;
+			if (!reuse) {
+				value = def.initWithNewObject(obj);
+			} else {
+				value = def.getValue(obj);
+			}
 			SelectColumn<T> column = new SelectColumn<T>(table, def);
-			map.put(newValue, column);
+			map.put(value, column);
 		}
 	}
 
