@@ -17,6 +17,8 @@
 
 package com.iciql;
 
+import com.iciql.util.Utils;
+
 /**
  * This class represents a query with an incomplete condition.
  * 
@@ -41,9 +43,17 @@ public class QueryCondition<T, A> {
 		return new QueryWhere<T>(query);
 	}
 
+	public QueryWhere<T> oneOf(A... a) {
+		return oneOf(Utils.newArrayIterable(a));
+	}
+
 	public QueryWhere<T> oneOf(Iterable<A> i) {
 		query.addConditionToken(new Condition<A>(x, i, CompareType.IN));
 		return new QueryWhere<T>(query);
+	}
+
+	public QueryWhere<T> noneOf(A... a) {
+		return noneOf(Utils.newArrayIterable(a));
 	}
 
 	public QueryWhere<T> noneOf(Iterable<A> i) {

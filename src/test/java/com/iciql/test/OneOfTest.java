@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import com.iciql.Db;
 import com.iciql.test.models.Customer;
+import com.iciql.test.models.PrimitivesModel;
 
 public class OneOfTest {
 
@@ -42,9 +43,18 @@ public class OneOfTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void oneOfTest() {
-		Customer c;
-
-		c = new Customer();
+		PrimitivesModel p = new PrimitivesModel();
+		assertEquals(
+				db.from(p)
+						.where(p.myInteger).oneOf(0)
+						.toSQL(),
+				"SELECT * FROM PrimitivesTest WHERE myInteger IN(0)");
+		assertEquals(
+				db.from(p)
+						.where(p.myInteger).oneOf(0, 1)
+						.toSQL(),
+				"SELECT * FROM PrimitivesTest WHERE myInteger IN(0, 1)");
+		Customer c = new Customer();
 		assertEquals(
 				db.from(c)
 						.where(c.customerId).oneOf(new ArrayList<String>() {{
@@ -65,9 +75,18 @@ public class OneOfTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void noneOfTest() {
-		Customer c;
-
-		c = new Customer();
+		PrimitivesModel p = new PrimitivesModel();
+		assertEquals(
+				db.from(p)
+						.where(p.myInteger).noneOf(0)
+						.toSQL(),
+				"SELECT * FROM PrimitivesTest WHERE myInteger NOT IN(0)");
+		assertEquals(
+				db.from(p)
+						.where(p.myInteger).noneOf(0, 1)
+						.toSQL(),
+				"SELECT * FROM PrimitivesTest WHERE myInteger NOT IN(0, 1)");
+		Customer c = new Customer();
 		assertEquals(
 				db.from(c)
 						.where(c.customerId).noneOf(new ArrayList<String>() {{
