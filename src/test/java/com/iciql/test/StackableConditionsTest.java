@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import com.iciql.Conditions.And;
+import com.iciql.Conditions.Or;
 import com.iciql.Db;
 import com.iciql.QueryWhere;
 import com.iciql.IciqlException;
@@ -161,6 +163,39 @@ public class StackableConditionsTest {
 		catch (IciqlException error) {
 			assertTrue(true);
 		}
+	}
+
+	@Test
+	public void fluentTest() {
+		final Customer model = new Customer();
+		assertEquals(
+				db.from(model).where(new And<Customer>(db, model) {{
+					and(model.customerId).is("0001");
+					and(new Or<Customer>(db, model) {{
+						or(model.region).is("CA");
+						or(model.region).is("LA");
+					}});
+				}}).toSQL(),
+				"SELECT * FROM Customer WHERE (true) AND customerId = '0001' AND ( (false) OR region = 'CA' OR region = 'LA' )");
+		assertEquals(
+				db.from(model).where(new Or<Customer>(db, model) {{
+					or(model.customerId).is("0001");
+					or(new And<Customer>(db, model) {{
+						and(model.customerId).is("0002");
+						and(model.region).is("LA");
+					}});
+				}}).toSQL(),
+				"SELECT * FROM Customer WHERE (false) OR customerId = '0001' OR ( (true) AND customerId = '0002' AND region = 'LA' )");
+		assertEquals(
+				db.from(model)
+						.where(model.customerId).isNotNull()
+						.and(new Or<Customer>(db, model) {{
+							or(model.region).is("LA");
+							or(model.region).is("CA");
+						}})
+						.and(model.region).isNotNull()
+						.toSQL(),
+				"SELECT * FROM Customer WHERE customerId IS NOT NULL AND ( (false) OR region = 'LA' OR region = 'CA' ) AND region IS NOT NULL");
 	}
 
 }

@@ -27,7 +27,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
-
+import com.iciql.Conditions.And;
+import com.iciql.Conditions.Or;
 import com.iciql.Iciql.EnumType;
 import com.iciql.bytecode.ClassReader;
 import com.iciql.util.JdbcUtils;
@@ -71,7 +72,16 @@ public class Query<T> {
 		Query<T> query = new Query<T>(db);
 		TableDefinition<T> def = (TableDefinition<T>) db.define(alias.getClass());
 		query.from = new SelectTable<T>(db, query, alias, false);
-		def.initSelectObject(query.from, alias, query.aliasMap);
+		def.initSelectObject(query.from, alias, query.aliasMap, false);
+		return query;
+	}
+
+	@SuppressWarnings("unchecked")
+	static <T> Query<T> rebuild(Db db, T alias) {
+		Query<T> query = new Query<T>(db);
+		TableDefinition<T> def = (TableDefinition<T>) db.define(alias.getClass());
+		query.from = new SelectTable<T>(db, query, alias, false);
+		def.initSelectObject(query.from, alias, query.aliasMap, true);
 		return query;
 	}
 
@@ -584,6 +594,18 @@ public class Query<T> {
 		return new QueryWhere<T>(this);
 	}
 
+	public Query<T> where(And<T> conditions) {
+		whereTrue();
+		addConditionToken(conditions.where.query);
+		return this;
+	}
+
+	public Query<T> where(Or<T> conditions) {
+		whereFalse();
+		addConditionToken(conditions.where.query);
+		return this;
+	}
+
 	public QueryWhere<T> whereTrue() {
 		return whereTrue(true);
 	}
@@ -825,6 +847,12 @@ public class Query<T> {
 		conditions.add(condition);
 	}
 
+	void addConditionToken(Query<T> other) {
+		for (Token condition : other.conditions) {
+			addConditionToken(condition);
+		}
+	}
+
 	void addUpdateColumnDeclaration(UpdateColumn declaration) {
 		updateColumnDeclarations.add(declaration);
 	}
@@ -901,7 +929,7 @@ public class Query<T> {
     private <A> QueryJoin<T> join(A alias, boolean outerJoin) {
         TableDefinition<T> def = (TableDefinition<T>) db.define(alias.getClass());
         SelectTable<T> join = new SelectTable(db, this, alias, outerJoin);
-        def.initSelectObject(join, alias, aliasMap);
+        def.initSelectObject(join, alias, aliasMap, false);
         joins.add(join);
         return new QueryJoin(this, join);
     }

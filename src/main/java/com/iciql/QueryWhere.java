@@ -19,6 +19,9 @@ package com.iciql;
 
 import java.util.List;
 
+import com.iciql.Conditions.And;
+import com.iciql.Conditions.Or;
+
 /**
  * This class represents a query with a condition.
  * 
@@ -135,6 +138,18 @@ public class QueryWhere<T> {
 		return new QueryCondition<T, A>(query, x);
 	}
 
+	public QueryWhere<T> and(And<T> conditions) {
+		andOpenTrue();
+		query.addConditionToken(conditions.where.query);
+		return close();
+	}
+
+	public QueryWhere<T> and(Or<T> conditions) {
+		andOpenFalse();
+		query.addConditionToken(conditions.where.query);
+		return close();
+	}
+
 	public QueryWhere<T> andOpenTrue() {
 		return open(ConditionAndOr.AND, true);
 	}
@@ -232,6 +247,18 @@ public class QueryWhere<T> {
 		query.getFrom().getAliasDefinition().checkMultipleEnums(x);
 		query.addConditionToken(ConditionAndOr.OR);
 		return new QueryCondition<T, A>(query, x);
+	}
+
+	public QueryWhere<T> or(And<T> conditions) {
+		orOpenTrue();
+		query.addConditionToken(conditions.where.query);
+		return close();
+	}
+
+	public QueryWhere<T> or(Or<T> conditions) {
+		orOpenFalse();
+		query.addConditionToken(conditions.where.query);
+		return close();
 	}
 
 	public QueryWhere<T> orOpenTrue() {
