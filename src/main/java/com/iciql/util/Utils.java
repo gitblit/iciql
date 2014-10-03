@@ -28,12 +28,12 @@ import java.math.BigInteger;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,26 +80,7 @@ public class Utils {
 	}
 
 	public static <T> Iterable<T> newArrayIterable(final T[] a) {
-		return new Iterable<T>() {
-			@Override
-			public Iterator<T> iterator() {
-				return new Iterator<T>() {
-					private int i = 0;
-					@Override
-					public boolean hasNext() {
-						return i < a.length;
-					}
-					@Override
-					public T next() {
-						return a[i++];
-					}
-					@Override
-					public void remove() {
-						throw new UnsupportedOperationException();
-					}
-				};
-			}
-		};
+		return Arrays.asList(a);
 	}
 
 	public static <T> ArrayList<T> newArrayList() {
