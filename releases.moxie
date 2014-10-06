@@ -12,12 +12,14 @@ r21: {
     fixes:
     - Return null NPE in selectFirst() if list is empty (pr-5)
     - Fix Moxie toolkit download URL (pr-6)
+    - Be more careful with primitive numeric type rollovers
     changes: ~
     additions:
     - Add syntax for IN and NOT IN (pr-7)
     - Add support for nested AND/OR conditions (pr-8)
     dependencyChanges: ~
     contributors:
+    - James Moger
     - Kazunobu Raita
     - Sotaro Suzuki
 }

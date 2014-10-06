@@ -49,19 +49,19 @@ import com.iciql.IciqlException;
 public class Utils {
 
 	public static final AtomicLong COUNTER = new AtomicLong(0);
-	
+
 	public static final AtomicInteger AS_COUNTER = new AtomicInteger(0);
 
 	private static final boolean MAKE_ACCESSIBLE = true;
 
 	private static final int BUFFER_BLOCK_SIZE = 4 * 1024;
-	
+
 	public static synchronized int nextAsCount() {
 		// prevent negative values and use a threadsafe counter
 		int count = AS_COUNTER.incrementAndGet();
 		if (count == Integer.MAX_VALUE) {
 			count = 0;
-			AS_COUNTER.set(count);			
+			AS_COUNTER.set(count);
 		}
 		return count;
 	}
@@ -146,15 +146,15 @@ public class Utils {
 	public static <T> T newObject(Class<T> clazz) {
 		// must create new instances
 		if (clazz == int.class || clazz == Integer.class) {
-			return (T) new Integer((int) COUNTER.getAndIncrement());
+			return (T) new Integer((int) (COUNTER.getAndIncrement() % Integer.MAX_VALUE));
 		} else if (clazz == String.class) {
 			return (T) ("" + COUNTER.getAndIncrement());
 		} else if (clazz == long.class || clazz == Long.class) {
 			return (T) new Long(COUNTER.getAndIncrement());
 		} else if (clazz == short.class || clazz == Short.class) {
-			return (T) new Short((short) COUNTER.getAndIncrement());
+			return (T) new Short((short) (COUNTER.getAndIncrement() % Short.MAX_VALUE));
 		} else if (clazz == byte.class || clazz == Byte.class) {
-			return (T) new Byte((byte) COUNTER.getAndIncrement());
+			return (T) new Byte((byte) (COUNTER.getAndIncrement() % Byte.MAX_VALUE));
 		} else if (clazz == float.class || clazz == Float.class) {
 			return (T) new Float(COUNTER.getAndIncrement());
 		} else if (clazz == double.class || clazz == Double.class) {
@@ -397,7 +397,7 @@ public class Utils {
 
 	/**
 	 * Read a number of characters from a reader and close it.
-	 * 
+	 *
 	 * @param in
 	 *            the reader
 	 * @param length
@@ -430,7 +430,7 @@ public class Utils {
 
 	/**
 	 * Read a number of bytes from a stream and close it.
-	 * 
+	 *
 	 * @param in
 	 *            the stream
 	 * @param length
