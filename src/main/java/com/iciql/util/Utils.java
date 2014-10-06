@@ -28,6 +28,7 @@ import java.math.BigInteger;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -76,6 +77,10 @@ public class Utils {
 		} catch (Exception e) {
 			throw new IciqlException(e);
 		}
+	}
+
+	public static <T> Iterable<T> newArrayIterable(final T[] a) {
+		return Arrays.asList(a);
 	}
 
 	public static <T> ArrayList<T> newArrayList() {

@@ -17,6 +17,8 @@
 
 package com.iciql;
 
+import com.iciql.util.Utils;
+
 /**
  * This class represents a query with an incomplete condition.
  * 
@@ -41,6 +43,24 @@ public class QueryCondition<T, A> {
 		return new QueryWhere<T>(query);
 	}
 
+	public QueryWhere<T> oneOf(A... a) {
+		return oneOf(Utils.newArrayIterable(a));
+	}
+
+	public QueryWhere<T> oneOf(Iterable<A> i) {
+		query.addConditionToken(new Condition<A>(x, i, CompareType.IN));
+		return new QueryWhere<T>(query);
+	}
+
+	public QueryWhere<T> noneOf(A... a) {
+		return noneOf(Utils.newArrayIterable(a));
+	}
+
+	public QueryWhere<T> noneOf(Iterable<A> i) {
+		query.addConditionToken(new Condition<A>(x, i, CompareType.NOT_IN));
+		return new QueryWhere<T>(query);
+	}
+
 	public QueryWhere<T> is(A y) {
 		query.addConditionToken(new Condition<A>(x, y, CompareType.EQUAL));
 		return new QueryWhere<T>(query);
@@ -52,12 +72,12 @@ public class QueryCondition<T, A> {
 	}
 
 	public QueryWhere<T> isNull() {
-		query.addConditionToken(new Condition<A>(x, null, CompareType.IS_NULL));
+		query.addConditionToken(new Condition<A>(x, CompareType.IS_NULL));
 		return new QueryWhere<T>(query);
 	}
 
 	public QueryWhere<T> isNotNull() {
-		query.addConditionToken(new Condition<A>(x, null, CompareType.IS_NOT_NULL));
+		query.addConditionToken(new Condition<A>(x, CompareType.IS_NOT_NULL));
 		return new QueryWhere<T>(query);
 	}
 

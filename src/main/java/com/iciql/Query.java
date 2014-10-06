@@ -792,6 +792,22 @@ public class Query<T> {
 		addParameter(stat, alias, valueRight);
 	}
 
+	public void appendSQL(SQLStatement stat, Object alias, Iterable<Object> values,
+			CompareType compareType) {
+		boolean first = true;
+		stat.appendSQL("(");
+		for (Object value : values) {
+			if (first) {
+				first = false;
+			} else {
+				stat.appendSQL(", ");
+			}
+			stat.appendSQL("?");
+			addParameter(stat, alias, value);
+		}
+		stat.appendSQL(")");
+	}
+
 	private void addParameter(SQLStatement stat, Object alias, Object value) {
 		if (alias != null && value.getClass().isEnum()) {
 			SelectColumn<T> col = getColumnByReference(alias);
