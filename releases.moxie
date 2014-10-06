@@ -9,11 +9,17 @@ r21: {
     html: ~
     text: ~
     security: ~
-    fixes: ~
+    fixes:
+    - Return null NPE in selectFirst() if list is empty (pr-5)
+    - Fix Moxie toolkit download URL (pr-6)
     changes: ~
-    additions: ~
+    additions:
+    - Add syntax for IN and NOT IN (pr-7)
+    - Add support for nested AND/OR conditions (pr-8)
     dependencyChanges: ~
-    contributors: ~
+    contributors:
+    - Kazunobu Raita
+    - Sotaro Suzuki
 }
 
 #
