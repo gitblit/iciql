@@ -47,7 +47,7 @@ public class BooleanModel {
 	}
 
 	/**
-	 * Test boolean as int
+	 * Test boolean as Integer
 	 */
 	@IQTable(name = "BooleanTest")
 	public static class BooleanAsIntModel {
@@ -68,6 +68,31 @@ public class BooleanModel {
 		public static List<BooleanAsIntModel> getList() {
 			return Arrays.asList(new BooleanAsIntModel(1, true), new BooleanAsIntModel(2, false),
 					new BooleanAsIntModel(3, true), new BooleanAsIntModel(4, false));
+		}
+	}
+
+	/**
+	 * Test boolean as primitive short
+	 */
+	@IQTable(name = "BooleanTest")
+	public static class BooleanAsPrimitiveShortModel {
+		@IQColumn(primaryKey = true)
+		public Integer id;
+
+		@IQColumn
+		public short mybool;
+
+		public BooleanAsPrimitiveShortModel() {
+		}
+
+		BooleanAsPrimitiveShortModel(int id, boolean val) {
+			this.id = id;
+			this.mybool = (short) (val ? 1 : 0);
+		}
+
+		public static List<BooleanAsPrimitiveShortModel> getList() {
+			return Arrays.asList(new BooleanAsPrimitiveShortModel(1, true), new BooleanAsPrimitiveShortModel(2, false),
+					new BooleanAsPrimitiveShortModel(3, true), new BooleanAsPrimitiveShortModel(4, false));
 		}
 	}
 }

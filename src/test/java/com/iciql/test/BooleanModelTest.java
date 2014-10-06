@@ -26,6 +26,7 @@ import org.junit.Test;
 import com.iciql.Db;
 import com.iciql.test.models.BooleanModel;
 import com.iciql.test.models.BooleanModel.BooleanAsIntModel;
+import com.iciql.test.models.BooleanModel.BooleanAsPrimitiveShortModel;
 
 /**
  * Tests interchangeable mapping of INT columns with Booleans and BOOL columns
@@ -33,6 +34,7 @@ import com.iciql.test.models.BooleanModel.BooleanAsIntModel;
  * <ul>
  * <li>mapping a BIT/BOOLEAN column as an Integer
  * <li>mapping a INT column as a Boolean.
+ * <li>mapping a BIT/BOOLEAN column as a primitive short
  * </ul>
  */
 public class BooleanModelTest {
@@ -121,6 +123,49 @@ public class BooleanModelTest {
 			} else {
 				// assert that even ids are true
 				assertTrue(model.mybool);
+			}
+		}
+		db.close();
+	}
+
+	@Test
+	public void testPrimitiveShortBooleanColumn() {
+		Db db = IciqlSuite.openNewDb();
+		db.insertAll(BooleanModel.getList());
+		BooleanAsPrimitiveShortModel b = new BooleanAsPrimitiveShortModel();
+		List<BooleanAsPrimitiveShortModel> models = db.from(b).select();
+		int count = 0;
+		for (BooleanAsPrimitiveShortModel model : models) {
+			if ((model.id % 2) == 1) {
+				// assert that odd ids are true
+				assertTrue(model.mybool > 0);
+			} else {
+				// assert that even ids are false
+				assertTrue(model.mybool == 0);
+			}
+
+			// count true values
+			if (model.mybool > 0) {
+				count++;
+			}
+		}
+		assertEquals(2, count);
+
+		// invert boolean values and update
+		for (BooleanAsPrimitiveShortModel model : models) {
+			model.mybool = (short) (model.mybool > 0 ? 0 : 1);
+		}
+		db.updateAll(models);
+
+		// check even ids are true
+		models = db.from(b).select();
+		for (BooleanAsPrimitiveShortModel model : models) {
+			if ((model.id % 2) == 1) {
+				// assert that odd ids are false
+				assertTrue(model.mybool == 0);
+			} else {
+				// assert that even ids are true
+				assertTrue(model.mybool > 0);
 			}
 		}
 		db.close();

@@ -17,6 +17,7 @@ r21: {
     additions:
     - Add syntax for IN and NOT IN (pr-7)
     - Add support for nested AND/OR conditions (pr-8)
+    - Add support for mapping SQL BOOLEAN to primitive numeric types, not just object numeric types
     dependencyChanges: ~
     contributors:
     - James Moger

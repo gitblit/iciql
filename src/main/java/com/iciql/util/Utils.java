@@ -273,10 +273,22 @@ public class Utils {
 		// convert from boolean to number
 		if (Boolean.class.isAssignableFrom(currentType)) {
 			Boolean b = (Boolean) o;
+			Integer n = b ? 1 : 0;
 			if (Number.class.isAssignableFrom(targetType)) {
-				return b ? 1 : 0;
-			}
-			if (boolean.class.isAssignableFrom(targetType)) {
+				return n.intValue();
+			} else if (byte.class.isAssignableFrom(targetType)) {
+				return n.byteValue();
+			} else if (short.class.isAssignableFrom(targetType)) {
+				return n.shortValue();
+			} else if (int.class.isAssignableFrom(targetType)) {
+				return n.intValue();
+			} else if (long.class.isAssignableFrom(targetType)) {
+				return n.longValue();
+			} else if (float.class.isAssignableFrom(targetType)) {
+				return n.floatValue();
+			} else if (double.class.isAssignableFrom(targetType)) {
+				return n.doubleValue();
+			} else if (boolean.class.isAssignableFrom(targetType)) {
 				return b.booleanValue();
 			}
 		}
