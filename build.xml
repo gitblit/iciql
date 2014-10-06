@@ -15,7 +15,7 @@
 
 	<!-- Download Moxie from it's Maven repository to user.home -->
 	<mkdir dir="${moxie.dir}" />
-	<get src="${moxie.url}/org/moxie/moxie-toolkit/${moxie.version}/${moxie.jar}"
+	<get src="${moxie.url}/com/gitblit/moxie/moxie-toolkit/${moxie.version}/${moxie.jar}"
 		dest="${moxie.dir}" skipexisting="true" verbose="true" />
 
 	<!-- Register Moxie tasks -->
