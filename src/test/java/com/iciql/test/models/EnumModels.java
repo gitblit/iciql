@@ -34,14 +34,14 @@ public abstract class EnumModels {
 	/**
 	 * Test of @IQEnum annotated enumeration. This strategy is the default
 	 * strategy for all fields of the Tree enum.
-	 * 
+	 *
 	 * Individual Tree field declarations can override this strategy by
 	 * specifying a different @IQEnum annotation.
-	 * 
+	 *
 	 * Here ORDINAL specifies that this enum will be mapped to an INT column.
 	 */
 	@IQEnum(EnumType.ENUMID)
-	public enum Tree implements EnumId {
+	public enum Tree implements EnumId<Integer> {
 		PINE(10), OAK(20), BIRCH(30), WALNUT(40), MAPLE(50);
 
 		private int enumid;
@@ -51,8 +51,38 @@ public abstract class EnumModels {
 		}
 
 		@Override
-		public int enumId() {
+		public Integer enumId() {
 			return enumid;
+		}
+
+		@Override
+		public Class<Integer> enumIdClass() {
+			return Integer.class;
+		}
+
+	}
+
+	/**
+	 * Enum for testing custom ENUMID mapping.
+	 */
+	@IQEnum(EnumType.ENUMID)
+	public enum Genus implements EnumId<String> {
+		PINUS("pinaceae"), QUERCUS("fagaceae"), BETULA("betulaceae"), JUGLANS("juglandaceae"), ACER("aceraceae");
+
+		private String family;
+
+		Genus(String id) {
+			this.family = id;
+		}
+
+		@Override
+		public String enumId() {
+			return family;
+		}
+
+		@Override
+		public Class<String> enumIdClass() {
+			return String.class;
 		}
 	}
 
@@ -60,6 +90,8 @@ public abstract class EnumModels {
 	public Integer id;
 
 	public abstract Tree tree();
+
+	public abstract Genus genus();
 
 	/**
 	 * Test model for enum-as-enumid.
@@ -72,12 +104,18 @@ public abstract class EnumModels {
 		@IQColumn
 		private Tree tree;
 
+		// no need to specify ENUMID type as the enumeration definition
+		// specifies it.
+		@IQColumn
+		private Genus genus;
+
 		public EnumIdModel() {
 		}
 
-		public EnumIdModel(int id, Tree tree) {
+		public EnumIdModel(int id, Tree tree, Genus genus) {
 			this.id = id;
 			this.tree = tree;
+			this.genus = genus;
 		}
 
 		@Override
@@ -85,10 +123,17 @@ public abstract class EnumModels {
 			return tree;
 		}
 
+		@Override
+		public Genus genus() {
+			return genus;
+		}
+
 		public static List<EnumIdModel> createList() {
-			return Arrays.asList(new EnumIdModel(400, Tree.WALNUT), new EnumIdModel(200, Tree.OAK),
-					new EnumIdModel(500, Tree.MAPLE), new EnumIdModel(300, Tree.BIRCH), new EnumIdModel(100,
-							Tree.PINE));
+			return Arrays.asList(new EnumIdModel(400, Tree.WALNUT, Genus.JUGLANS),
+					new EnumIdModel(200, Tree.OAK, Genus.QUERCUS),
+					new EnumIdModel(500, Tree.MAPLE, Genus.ACER),
+					new EnumIdModel(300, Tree.BIRCH, Genus.BETULA),
+					new EnumIdModel(100, Tree.PINE, Genus.PINUS));
 		}
 	}
 
@@ -103,10 +148,13 @@ public abstract class EnumModels {
 		@IQColumn
 		private Tree tree;
 
+		@IQColumn
+		private Genus genus;
+
 		public EnumOrdinalModel() {
 		}
 
-		public EnumOrdinalModel(int id, Tree tree) {
+		public EnumOrdinalModel(int id, Tree tree, Genus genus) {
 			this.id = id;
 			this.tree = tree;
 		}
@@ -116,10 +164,17 @@ public abstract class EnumModels {
 			return tree;
 		}
 
+		@Override
+		public Genus genus() {
+			return genus;
+		}
+
 		public static List<EnumOrdinalModel> createList() {
-			return Arrays.asList(new EnumOrdinalModel(400, Tree.WALNUT), new EnumOrdinalModel(200, Tree.OAK),
-					new EnumOrdinalModel(500, Tree.MAPLE), new EnumOrdinalModel(300, Tree.BIRCH),
-					new EnumOrdinalModel(100, Tree.PINE));
+			return Arrays.asList(new EnumOrdinalModel(400, Tree.WALNUT, Genus.JUGLANS),
+					new EnumOrdinalModel(200, Tree.OAK, Genus.QUERCUS),
+					new EnumOrdinalModel(500, Tree.MAPLE, Genus.ACER),
+					new EnumOrdinalModel(300, Tree.BIRCH, Genus.BETULA),
+					new EnumOrdinalModel(100, Tree.PINE, Genus.PINUS));
 		}
 	}
 
@@ -135,12 +190,16 @@ public abstract class EnumModels {
 		@IQColumn(length = 25)
 		private Tree tree;
 
+		@IQColumn(trim = true, length = 25)
+		private Genus genus;
+
 		public EnumStringModel() {
 		}
 
-		public EnumStringModel(int id, Tree tree) {
+		public EnumStringModel(int id, Tree tree, Genus genus) {
 			this.id = id;
 			this.tree = tree;
+			this.genus = genus;
 		}
 
 		@Override
@@ -148,10 +207,17 @@ public abstract class EnumModels {
 			return tree;
 		}
 
+		@Override
+		public Genus genus() {
+			return genus;
+		}
+
 		public static List<EnumStringModel> createList() {
-			return Arrays.asList(new EnumStringModel(400, Tree.WALNUT), new EnumStringModel(200, Tree.OAK),
-					new EnumStringModel(500, Tree.MAPLE), new EnumStringModel(300, Tree.BIRCH),
-					new EnumStringModel(100, Tree.PINE));
+			return Arrays.asList(new EnumStringModel(400, Tree.WALNUT, Genus.JUGLANS),
+					new EnumStringModel(200, Tree.OAK, Genus.QUERCUS),
+					new EnumStringModel(500, Tree.MAPLE, Genus.ACER),
+					new EnumStringModel(300, Tree.BIRCH, Genus.BETULA),
+					new EnumStringModel(100, Tree.PINE, Genus.PINUS));
 		}
 	}
 }

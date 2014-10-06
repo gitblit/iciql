@@ -171,7 +171,7 @@ import java.lang.annotation.Target;
  * <p>
  * Automatic model generation: you may automatically generate model classes as
  * strings with the Db and DbInspector objects:
- * 
+ *
  * <pre>
  * Db db = Db.open(&quot;jdbc:h2:mem:&quot;, &quot;sa&quot;, &quot;sa&quot;);
  * DbInspector inspector = new DbInspector(db);
@@ -179,10 +179,10 @@ import java.lang.annotation.Target;
  *         inspector.generateModel(schema, table, packageName,
  *         annotateSchema, trimStrings)
  * </pre>
- * 
+ *
  * Or you may use the GenerateModels tool to generate and save your classes to
  * the file system:
- * 
+ *
  * <pre>
  * java -jar iciql.jar
  *      -url &quot;jdbc:h2:mem:&quot;
@@ -190,10 +190,10 @@ import java.lang.annotation.Target;
  *      -package packageName -folder destination
  *      -annotateSchema false -trimStrings true
  * </pre>
- * 
+ *
  * Model validation: you may validate your model class with DbInspector object.
  * The DbInspector will report errors, warnings, and suggestions:
- * 
+ *
  * <pre>
  * Db db = Db.open(&quot;jdbc:h2:mem:&quot;, &quot;sa&quot;, &quot;sa&quot;);
  * DbInspector inspector = new DbInspector(db);
@@ -208,7 +208,7 @@ public interface Iciql {
 	/**
 	 * An annotation for an iciql version.
 	 * <p>
-	 * 
+	 *
 	 * @IQVersion(1)
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
@@ -229,7 +229,7 @@ public interface Iciql {
 	/**
 	 * An annotation for a schema.
 	 * <p>
-	 * 
+	 *
 	 * @IQSchema("PUBLIC")
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
@@ -278,9 +278,9 @@ public interface Iciql {
 		 * <li>com.iciql.iciql.IndexType.HASH
 		 * <li>com.iciql.iciql.IndexType.UNIQUE_HASH
 		 * </ul>
-		 * 
+		 *
 		 * HASH indexes may only be valid for single column indexes.
-		 * 
+		 *
 		 */
 		IndexType type() default IndexType.STANDARD;
 
@@ -307,21 +307,21 @@ public interface Iciql {
 	public static enum ConstraintUpdateType {
 		UNSET, CASCADE, RESTRICT, SET_NULL, NO_ACTION, SET_DEFAULT;
 	}
-	
+
 	/**
 	 * Enumeration defining the deferrability.
 	 */
 	public static enum ConstraintDeferrabilityType {
 		UNSET, DEFERRABLE_INITIALLY_DEFERRED, DEFERRABLE_INITIALLY_IMMEDIATE, NOT_DEFERRABLE;
 	}
-	
+
 	/**
 	 * A foreign key constraint annotation.
 	 * <p>
 	 * <ul>
 	 * <li>@IQContraintForeignKey(
-	 *    foreignColumns = { "idaccount"}, 
-	 *    referenceName = "account", 
+	 *    foreignColumns = { "idaccount"},
+	 *    referenceName = "account",
 	 *    referenceColumns = { "id" },
 	 *    deleteType = ConstrainDeleteType.CASCADE,
 	 *    updateType = ConstraintUpdateType.NO_ACTION )
@@ -372,7 +372,7 @@ public interface Iciql {
 		 * </ul>
 		 */
 		ConstraintDeferrabilityType deferrabilityType() default ConstraintDeferrabilityType.UNSET;
-		
+
 		/**
 		 * The source table for the columns defined as foreign.
 		 */
@@ -391,7 +391,7 @@ public interface Iciql {
 		 * The reference table for the columns defined as references.
 		 */
 		String referenceName() default "";
-		
+
 		/**
 		 * Columns defined as 'references'.
 		 * <ul>
@@ -410,7 +410,7 @@ public interface Iciql {
 	public @interface IQContraintsForeignKey {
 		IQContraintForeignKey[] value() default {};
 	}
-	
+
 	/**
 	 * A unique constraint annotation.
 	 * <p>
@@ -447,7 +447,7 @@ public interface Iciql {
 	public @interface IQContraintsUnique {
 		IQContraintUnique[] value() default {};
 	}
-	
+
 	/**
 	 * Annotation to define a view.
 	 */
@@ -463,7 +463,7 @@ public interface Iciql {
 		 * model class is not annotated with IQView. Default: unspecified.
 		 */
 		String name() default "";
-		
+
 		/**
 		 * The source table for the view.
 		 * <p>
@@ -491,7 +491,7 @@ public interface Iciql {
 		 */
 		boolean annotationsOnly() default true;
 	}
-	
+
 	/**
 	 * String snippet defining SQL constraints for a field. Use "this" as
 	 * a placeholder for the column name.  "this" will be substituted at
@@ -507,8 +507,8 @@ public interface Iciql {
 	public @interface IQConstraint {
 
 		String value() default "";
-	}	
-	
+	}
+
 	/**
 	 * Annotation to specify multiple indexes.
 	 */
@@ -657,7 +657,7 @@ public interface Iciql {
 		 */
 		String defaultValue() default "";
 
-	}	
+	}
 
 	/**
 	 * Interface for using the EnumType.ENUMID enumeration mapping strategy.
@@ -665,9 +665,12 @@ public interface Iciql {
 	 * Enumerations wishing to use EnumType.ENUMID must implement this
 	 * interface.
 	 */
-	public interface EnumId {
-		int enumId();
+	public interface EnumId<X> {
+		X enumId();
+		Class<X> enumIdClass();
 	}
+
+
 
 	/**
 	 * Enumeration representing how to map a java.lang.Enum to a column.
@@ -675,9 +678,9 @@ public interface Iciql {
 	 * <ul>
 	 * <li>NAME - name() : string
 	 * <li>ORDINAL - ordinal() : int
-	 * <li>ENUMID - enumId() : int
+	 * <li>ENUMID - enumId() : X
 	 * </ul>
-	 * 
+	 *
 	 * @see com.iciql.Iciql.EnumId interface
 	 */
 	public enum EnumType {
@@ -700,14 +703,14 @@ public interface Iciql {
 	 * annotation.
 	 * <p>
 	 * The default mapping is by NAME.
-	 * 
+	 *
 	 * <pre>
 	 * IQEnum(EnumType.NAME)
 	 * </pre>
-	 * 
+	 *
 	 * A string mapping will generate either a VARCHAR, if IQColumn.length > 0
 	 * or a TEXT column if IQColumn.length == 0
-	 * 
+	 *
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.FIELD, ElementType.TYPE })
@@ -720,9 +723,9 @@ public interface Iciql {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
-	public @interface IQIgnore{	
+	public @interface IQIgnore{
 	}
-	
+
 	/**
 	 * This method is called to let the table define the primary key, indexes,
 	 * and the table name.

@@ -37,11 +37,11 @@ import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQConstraint;
+import com.iciql.Iciql.IQContraintForeignKey;
 import com.iciql.Iciql.IQContraintUnique;
+import com.iciql.Iciql.IQContraintsForeignKey;
 import com.iciql.Iciql.IQContraintsUnique;
 import com.iciql.Iciql.IQEnum;
-import com.iciql.Iciql.IQContraintForeignKey;
-import com.iciql.Iciql.IQContraintsForeignKey;
 import com.iciql.Iciql.IQIgnore;
 import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQIndexes;
@@ -58,7 +58,7 @@ import com.iciql.util.Utils;
 /**
  * A table definition contains the index definitions of a table, the field
  * definitions, the table name, and other meta data.
- * 
+ *
  * @param <T>
  *            the table type
  */
@@ -79,7 +79,7 @@ public class TableDefinition<T> {
 	/**
 	 * The meta data of a constraint on foreign key.
 	 */
-	
+
 	public static class ConstraintForeignKeyDefinition {
 
 		public String constraintName;
@@ -90,18 +90,18 @@ public class TableDefinition<T> {
 		public ConstraintUpdateType updateType = ConstraintUpdateType.UNSET;
 		public ConstraintDeferrabilityType deferrabilityType = ConstraintDeferrabilityType.UNSET;
 	}
-	
+
 	/**
 	 * The meta data of a unique constraint.
 	 */
-	
+
 	public static class ConstraintUniqueDefinition {
 
 		public String constraintName;
 		public List<String> uniqueColumns;
 	}
-	
-	
+
+
 	/**
 	 * The meta data of a field.
 	 */
@@ -118,6 +118,7 @@ public class TableDefinition<T> {
 		boolean nullable;
 		String defaultValue;
 		EnumType enumType;
+		Class<?> enumTypeClass;
 		boolean isPrimitive;
 		String constraint;
 
@@ -161,12 +162,12 @@ public class TableDefinition<T> {
 				throw new IciqlException(e);
 			}
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return columnName.hashCode();
 		}
-		
+
 		@Override
 		public boolean equals(Object o) {
 			if (o instanceof FieldDefinition) {
@@ -228,7 +229,7 @@ public class TableDefinition<T> {
 
 	/**
 	 * Define a primary key by the specified model fields.
-	 * 
+	 *
 	 * @param modelFields
 	 *            the ordered list of model fields
 	 */
@@ -239,7 +240,7 @@ public class TableDefinition<T> {
 
 	/**
 	 * Define a primary key by the specified column names.
-	 * 
+	 *
 	 * @param columnNames
 	 *            the ordered list of column names
 	 */
@@ -270,7 +271,7 @@ public class TableDefinition<T> {
 
 	/**
 	 * Defines an index with the specified model fields.
-	 * 
+	 *
 	 * @param name
 	 *            the index name (optional)
 	 * @param type
@@ -285,7 +286,7 @@ public class TableDefinition<T> {
 
 	/**
 	 * Defines an index with the specified column names.
-	 * 
+	 *
 	 * @param type
 	 *            the index type (STANDARD, HASH, UNIQUE, UNIQUE_HASH)
 	 * @param columnNames
@@ -305,7 +306,7 @@ public class TableDefinition<T> {
 
 	/**
 	 * Defines an unique constraint with the specified model fields.
-	 * 
+	 *
 	 * @param name
 	 *            the constraint name (optional)
 	 * @param modelFields
@@ -318,7 +319,7 @@ public class TableDefinition<T> {
 
 	/**
 	 * Defines an unique constraint.
-	 * 
+	 *
 	 * @param name
 	 * @param columnNames
 	 */
@@ -335,7 +336,7 @@ public class TableDefinition<T> {
 
 	/**
 	 * Defines a foreign key constraint with the specified model fields.
-	 * 
+	 *
 	 * @param name
 	 *            the constraint name (optional)
 	 * @param modelFields
@@ -426,7 +427,7 @@ public class TableDefinition<T> {
 		if (inheritColumns) {
 			Class<?> superClass = clazz.getSuperclass();
 			classFields.addAll(Arrays.asList(superClass.getDeclaredFields()));
-			
+
 			if (superClass.isAnnotationPresent(IQView.class)) {
 				IQView superView = superClass.getAnnotation(IQView.class);
 				if (superView.inheritColumns()) {
@@ -461,6 +462,7 @@ public class TableDefinition<T> {
 			boolean trim = false;
 			boolean nullable = !f.getType().isPrimitive();
 			EnumType enumType = null;
+			Class<?> enumTypeClass = null;
 			String defaultValue = "";
 			String constraint = "";
 			// configure Java -> SQL enum mapping
@@ -475,6 +477,11 @@ public class TableDefinition<T> {
 					// this instance of the enum is annotated
 					IQEnum iqenum = f.getAnnotation(IQEnum.class);
 					enumType = iqenum.value();
+				}
+
+				if (EnumId.class.isAssignableFrom(f.getType())) {
+					// custom enumid mapping
+					enumTypeClass = ((EnumId<?>) f.getType().getEnumConstants()[0]).enumIdClass();
 				}
 			}
 
@@ -515,7 +522,7 @@ public class TableDefinition<T> {
 					defaultValue = col.defaultValue();
 				}
 			}
-			
+
 			boolean hasConstraint = f.isAnnotationPresent(IQConstraint.class);
 			if (hasConstraint) {
 				IQConstraint con = f.getAnnotation(IQConstraint.class);
@@ -539,13 +546,14 @@ public class TableDefinition<T> {
 				fieldDef.nullable = nullable;
 				fieldDef.defaultValue = defaultValue;
 				fieldDef.enumType = enumType;
+				fieldDef.enumTypeClass = enumTypeClass;
 				fieldDef.dataType = ModelUtils.getDataType(fieldDef);
 				fieldDef.constraint = constraint;
 				uniqueFields.add(fieldDef);
 			}
 		}
 		fields.addAll(uniqueFields);
-		
+
 		List<String> primaryKey = Utils.newArrayList();
 		int primitiveBoolean = 0;
 		for (FieldDefinition fieldDef : fields) {
@@ -623,7 +631,7 @@ public class TableDefinition<T> {
 				if (!EnumId.class.isAssignableFrom(value.getClass())) {
 					throw new IciqlException(field.field.getName() + " does not implement EnumId!");
 				}
-				EnumId enumid = (EnumId) value;
+				EnumId<?> enumid = (EnumId<?>) value;
 				return enumid.enumId();
 			}
 		}
@@ -643,7 +651,7 @@ public class TableDefinition<T> {
 		// return the value unchanged
 		return value;
 	}
-	
+
 	PreparedStatement createInsertStatement(Db db, Object obj, boolean returnKey) {
 		SQLStatement stat = new SQLStatement(db);
 		StatementBuilder buff = new StatementBuilder("INSERT INTO ");
@@ -896,7 +904,7 @@ public class TableDefinition<T> {
 				}
 			}
 		}
-		
+
 		// create foreign keys constraints
 		for (ConstraintForeignKeyDefinition constraint : constraintsForeignKey) {
 			stat = new SQLStatement(db);
@@ -1004,17 +1012,17 @@ public class TableDefinition<T> {
 						viewTableName = parentView.tableName();
 					}
 				}
-				
+
 				if (StringUtils.isNullOrEmpty(viewTableName)) {
 					// still missing view table name
 					throw new IciqlException("View model class \"{0}\" is missing a table name!", tableName);
 				}
 			}
-			
+
 			// allow control over createTableIfRequired()
 			createIfRequired = viewAnnotation.create();
 		}
-		
+
 		if (clazz.isAnnotationPresent(IQIndex.class)) {
 			// single table index
 			IQIndex index = clazz.getAnnotation(IQIndex.class);
@@ -1028,7 +1036,7 @@ public class TableDefinition<T> {
 				addIndex(index);
 			}
 		}
-		
+
 		if (clazz.isAnnotationPresent(IQContraintUnique.class)) {
 			// single table unique constraint
 			IQContraintUnique constraint = clazz.getAnnotation(IQContraintUnique.class);
@@ -1042,7 +1050,7 @@ public class TableDefinition<T> {
 				addConstraintUnique(constraint);
 			}
 		}
-		
+
 		if (clazz.isAnnotationPresent(IQContraintForeignKey.class)) {
 			// single table constraint
 			IQContraintForeignKey constraint = clazz.getAnnotation(IQContraintForeignKey.class);
@@ -1056,7 +1064,7 @@ public class TableDefinition<T> {
 				addConstraintForeignKey(constraint);
 			}
 		}
-		
+
 	}
 
 	private void addConstraintForeignKey(IQContraintForeignKey constraint) {
@@ -1064,15 +1072,15 @@ public class TableDefinition<T> {
 		List<String> referenceColumns = Arrays.asList(constraint.referenceColumns());
 		addConstraintForeignKey(constraint.name(), foreignColumns, constraint.referenceName(), referenceColumns, constraint.deleteType(), constraint.updateType(), constraint.deferrabilityType());
 	}
-	
+
 	private void addConstraintUnique(IQContraintUnique constraint) {
 		List<String> uniqueColumns = Arrays.asList(constraint.uniqueColumns());
 		addConstraintUnique(constraint.name(), uniqueColumns);
 	}
-	
+
 	/**
 	 * Defines a foreign key constraint with the specified parameters.
-	 * 
+	 *
 	 * @param name
 	 *            name of the constraint
 	 * @param foreignColumns
@@ -1119,11 +1127,11 @@ public class TableDefinition<T> {
 	List<ConstraintUniqueDefinition> getContraintsUnique() {
 		return constraintsUnique;
 	}
-	
+
 	List<ConstraintForeignKeyDefinition> getContraintsForeignKey() {
 		return constraintsForeignKey;
 	}
-	
+
 	private void initObject(Object obj, Map<Object, FieldDefinition> map) {
 		for (FieldDefinition def : fields) {
 			Object newValue = def.initWithNewObject(obj);
@@ -1152,13 +1160,13 @@ public class TableDefinition<T> {
 	 * JaQu assumed that you can always use the integer index of the
 	 * reflectively mapped field definition to determine position in the result
 	 * set.
-	 * 
+	 *
 	 * This is not always true.
-	 * 
+	 *
 	 * iciql identifies when a select * query is executed and maps column names
 	 * to a column index from the result set. If the select statement is
 	 * explicit, then the standard assumed column index is used instead.
-	 * 
+	 *
 	 * @param rs
 	 * @return
 	 */

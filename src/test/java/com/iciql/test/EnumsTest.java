@@ -31,6 +31,7 @@ import com.iciql.test.models.EnumModels;
 import com.iciql.test.models.EnumModels.EnumIdModel;
 import com.iciql.test.models.EnumModels.EnumOrdinalModel;
 import com.iciql.test.models.EnumModels.EnumStringModel;
+import com.iciql.test.models.EnumModels.Genus;
 import com.iciql.test.models.EnumModels.Tree;
 
 /**
@@ -58,6 +59,7 @@ public class EnumsTest {
 		testIntEnums(new EnumIdModel());
 		testIntEnums(new EnumOrdinalModel());
 		testStringEnums(new EnumStringModel());
+		testStringEnumIds(new EnumStringModel());
 	}
 
 	private void testIntEnums(EnumModels e) {
@@ -110,7 +112,31 @@ public class EnumsTest {
 		list = db.from(e).where(e.tree()).between(Tree.MAPLE).and(Tree.PINE).select();
 		assertEquals(3, list.size());
 	}
-	
+
+	private void testStringEnumIds(EnumModels e) {
+		// ensure all records inserted
+		long count = db.from(e).selectCount();
+		assertEquals(5, count);
+
+		// special case:
+		// value is first enum constant which is also the alias object.
+		// the first enum constant is used as the alias because we can not
+		// instantiate an enum reflectively.
+		EnumModels firstEnumValue = db.from(e).where(e.genus()).is(Genus.PINUS).selectFirst();
+		assertEquals(Tree.PINE, firstEnumValue.tree());
+		assertEquals(Genus.PINUS, firstEnumValue.genus());
+
+		EnumModels model = db.from(e).where(e.genus()).is(Genus.JUGLANS).selectFirst();
+
+		assertEquals(400, model.id.intValue());
+		assertEquals(Tree.WALNUT, model.tree());
+		assertEquals(Genus.JUGLANS, model.genus());
+
+		List<EnumModels> list = db.from(e).where(e.genus()).isNot(Genus.BETULA).select();
+		assertEquals(count - 1, list.size());
+
+	}
+
 	@Test
 	public void testMultipleEnumInstances() {
 		BadEnums b = new BadEnums();
@@ -121,7 +147,7 @@ public class EnumsTest {
 			assertTrue(e.getMessage(), e.getMessage().startsWith("Can not explicitly reference Tree"));
 		}
 	}
-	
+
 	public static class BadEnums {
 		Tree tree1 = Tree.BIRCH;
 		Tree tree2 = Tree.MAPLE;

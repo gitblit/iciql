@@ -135,8 +135,8 @@ public class Utils {
 						}
 					}
 					throw new IciqlException(e,
-							"Missing default constructor?  Exception trying to instantiate {0}: {1}",
-							clazz.getName(), e.getMessage());
+							"Missing default constructor?  Exception trying to instantiate {0}: {1}", clazz.getName(),
+							e.getMessage());
 				}
 			}
 		};
@@ -214,8 +214,7 @@ public class Utils {
 					}
 				}
 			}
-			throw new IciqlException(e,
-					"Missing default constructor?! Exception trying to instantiate {0}: {1}",
+			throw new IciqlException(e, "Missing default constructor?! Exception trying to instantiate {0}: {1}",
 					clazz.getName(), e.getMessage());
 		}
 	}
@@ -337,7 +336,7 @@ public class Utils {
 			if (!EnumId.class.isAssignableFrom(o.getClass())) {
 				throw new IciqlException("Can not convert the enum {0} using ENUMID", o);
 			}
-			EnumId enumid = (EnumId) o;
+			EnumId<?> enumid = (EnumId<?>) o;
 			return enumid.enumId();
 		case NAME:
 		default:
@@ -367,17 +366,39 @@ public class Utils {
 			}
 
 			// find name match
-			for (Enum<?> value : values) {
-				if (value.name().equalsIgnoreCase(name)) {
-					return value;
+			if (type.equals(EnumType.ENUMID)) {
+				// ENUMID mapping
+				for (Enum<?> value : values) {
+					EnumId<?> enumid = (EnumId<?>) value;
+					if (enumid.enumId().equals(name)) {
+						return value;
+					}
+				}
+			} else if (type.equals(EnumType.NAME)) {
+				// standard Enum.name() mapping
+				for (Enum<?> value : values) {
+					if (value.name().equalsIgnoreCase(name)) {
+						return value;
+					}
 				}
 			}
 		} else if (String.class.isAssignableFrom(currentType)) {
 			// VARCHAR field
 			String name = (String) o;
-			for (Enum<?> value : values) {
-				if (value.name().equalsIgnoreCase(name)) {
-					return value;
+			if (type.equals(EnumType.ENUMID)) {
+				// ENUMID mapping
+				for (Enum<?> value : values) {
+					EnumId<?> enumid = (EnumId<?>) value;
+					if (enumid.enumId().equals(name)) {
+						return value;
+					}
+				}
+			} else if (type.equals(EnumType.NAME)) {
+				// standard Enum.name() mapping
+				for (Enum<?> value : values) {
+					if (value.name().equalsIgnoreCase(name)) {
+						return value;
+					}
 				}
 			}
 		} else if (Number.class.isAssignableFrom(currentType)) {
@@ -397,8 +418,23 @@ public class Utils {
 				}
 				// ENUMID mapping
 				for (Enum<?> value : values) {
-					EnumId enumid = (EnumId) value;
-					if (enumid.enumId() == n) {
+					EnumId<?> enumid = (EnumId<?>) value;
+					if (enumid.enumId().equals(n)) {
+						return value;
+					}
+				}
+			}
+		} else {
+			// custom object mapping
+			if (type.equals(EnumType.ENUMID)) {
+				if (!EnumId.class.isAssignableFrom(targetType)) {
+					throw new IciqlException("Can not convert the value {0} from {1} to {2} using ENUMID", o,
+							currentType, targetType);
+				}
+				// ENUMID mapping
+				for (Enum<?> value : values) {
+					EnumId<?> enumid = (EnumId<?>) value;
+					if (enumid.enumId().equals(o)) {
 						return value;
 					}
 				}
@@ -456,8 +492,7 @@ public class Utils {
 				length = Integer.MAX_VALUE;
 			}
 			int block = Math.min(BUFFER_BLOCK_SIZE, length);
-			ByteArrayOutputStream out = new ByteArrayOutputStream(length == Integer.MAX_VALUE ? block
-					: length);
+			ByteArrayOutputStream out = new ByteArrayOutputStream(length == Integer.MAX_VALUE ? block : length);
 			byte[] buff = new byte[block];
 			while (length > 0) {
 				int len = Math.min(block, length);

@@ -147,7 +147,7 @@ class ModelUtils {
 
 	/**
 	 * Returns a SQL type mapping for a Java class.
-	 * 
+	 *
 	 * @param fieldDef
 	 *            the field to map
 	 * @return
@@ -157,8 +157,14 @@ class ModelUtils {
 		if (fieldClass.isEnum()) {
 			switch (fieldDef.enumType) {
 			case ORDINAL:
-			case ENUMID:
 				return "INT";
+			case ENUMID:
+				String sqlType = SUPPORTED_TYPES.get(fieldDef.enumTypeClass);
+				if (sqlType == null) {
+					throw new IciqlException("Unsupported enum mapping type {0} for {1}",
+							fieldDef.enumTypeClass, fieldDef.columnName);
+				}
+				return sqlType;
 			case NAME:
 			default:
 				return "VARCHAR";
@@ -172,7 +178,7 @@ class ModelUtils {
 
 	/**
 	 * Returns the Java class for a given SQL type.
-	 * 
+	 *
 	 * @param sqlType
 	 * @param dateTimeClass
 	 *            the preferred date class (java.util.Date or
@@ -211,7 +217,7 @@ class ModelUtils {
 
 	/**
 	 * Tries to create a convert a SQL table name to a camel case class name.
-	 * 
+	 *
 	 * @param tableName
 	 *            the SQL table name
 	 * @return the class name
@@ -239,7 +245,7 @@ class ModelUtils {
 
 	/**
 	 * Ensures that SQL column names don't collide with Java keywords.
-	 * 
+	 *
 	 * @param columnName
 	 *            the column name
 	 * @return the Java field name
@@ -254,7 +260,7 @@ class ModelUtils {
 
 	/**
 	 * Converts a DEFAULT clause value into an object.
-	 * 
+	 *
 	 * @param field
 	 *            definition
 	 * @return object
@@ -360,7 +366,7 @@ class ModelUtils {
 
 	/**
 	 * Converts the object into a DEFAULT clause value.
-	 * 
+	 *
 	 * @param o
 	 *            the default object
 	 * @return the value formatted for a DEFAULT clause
@@ -395,7 +401,7 @@ class ModelUtils {
 
 	/**
 	 * Checks the formatting of IQColumn.defaultValue().
-	 * 
+	 *
 	 * @param defaultValue
 	 *            the default value
 	 * @return true if it is
@@ -412,7 +418,7 @@ class ModelUtils {
 
 	/**
 	 * Checks to see if the default value matches the class.
-	 * 
+	 *
 	 * @param modelClass
 	 *            the class
 	 * @param defaultValue
