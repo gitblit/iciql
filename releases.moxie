@@ -18,7 +18,12 @@ r21: {
     - Add syntax for IN and NOT IN (pr-7)
     - Add support for nested AND/OR conditions (pr-8)
     - Add support for mapping SQL BOOLEAN to primitive numeric types, not just object numeric types
-    dependencyChanges: ~
+    dependencyChanges: 
+    - H2 1.4
+    - HSQLDB 2.3
+    - Derby 10.11
+    - MySQL 5.6
+    - PostgreSQL 9.3
     contributors:
     - James Moger
     - Kazunobu Raita
