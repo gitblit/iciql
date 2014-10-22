@@ -98,7 +98,8 @@ public class IciqlSuite {
 
 	private static final TestDb[] TEST_DBS = {
 			new TestDb("H2", true, true, "jdbc:h2:mem:iciql"),
-			new TestDb("H2", true, false, "jdbc:h2:file:testdbs/h2/iciql"),
+			new TestDb("H2", true, false, "jdbc:h2:file:"
+					+ new File(System.getProperty("user.dir")).getAbsolutePath() + "testdbs/h2/iciql"),
 			new TestDb("H2", false, false, "jdbc:h2:tcp://localhost/"
 					+ new File(System.getProperty("user.dir")).getAbsolutePath() + "/testdbs/h2tcp/iciql"),
 			new TestDb("HSQL", true, true, "jdbc:hsqldb:mem:iciql"),
@@ -106,7 +107,7 @@ public class IciqlSuite {
 			new TestDb("HSQL", false, false, "jdbc:hsqldb:hsql://localhost/iciql"),
 			new TestDb("Derby", true, true, "jdbc:derby:memory:iciql;create=true"),
 			new TestDb("Derby", true, false, "jdbc:derby:directory:testdbs/derby/iciql;create=true"),
-			new TestDb("MySQL", false, false, "jdbc:mysql://localhost:7000/iciql", "sa", "sa"),
+			new TestDb("MySQL", false, false, "jdbc:mysql://localhost:3306/iciql", "sa", "sa"),
 			new TestDb("PostgreSQL", false, false, "jdbc:postgresql://localhost:5432/iciql", "sa", "sa") };
 
 	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[0];

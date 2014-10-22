@@ -40,7 +40,7 @@ public class SQLDialectDerby extends SQLDialectDefault {
 	@Override
 	public void appendLimitOffset(SQLStatement stat, long limit, long offset) {
 		// FETCH/OFFSET added in 10.5
-		if (databaseVersion >= 10.5f) {
+		if (databaseMajorVersion >= 10 && databaseMinorVersion >= 5) {
 			if (offset > 0) {
 				stat.appendSQL(" OFFSET " + offset + (offset == 1 ? " ROW" : " ROWS"));
 			}

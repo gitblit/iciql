@@ -37,10 +37,12 @@ import com.iciql.util.StringUtils;
  * Default implementation of an SQL dialect.
  */
 public class SQLDialectDefault implements SQLDialect {
-	
+
 	final String LITERAL = "'";
 
 	float databaseVersion;
+	int databaseMajorVersion;
+	int databaseMinorVersion;
 	String databaseName;
 	String productVersion;
 
@@ -53,8 +55,10 @@ public class SQLDialectDefault implements SQLDialect {
 	public void configureDialect(String databaseName, DatabaseMetaData data) {
 		this.databaseName = databaseName;
 		try {
-			databaseVersion = Float.parseFloat(data.getDatabaseMajorVersion() + "."
-					+ data.getDatabaseMinorVersion());
+			databaseMajorVersion = data.getDatabaseMajorVersion();
+			databaseMinorVersion = data.getDatabaseMinorVersion();
+			databaseVersion = Float.parseFloat(databaseMajorVersion + "."
+					+ databaseMinorVersion);
 			productVersion = data.getDatabaseProductVersion();
 		} catch (SQLException e) {
 			throw new IciqlException(e);
@@ -63,7 +67,7 @@ public class SQLDialectDefault implements SQLDialect {
 
 	/**
 	 * Allows subclasses to change the type of a column for a CREATE statement.
-	 * 
+	 *
 	 * @param sqlType
 	 * @return the SQL type or a preferred alternative
 	 */
@@ -202,10 +206,10 @@ public class SQLDialectDefault implements SQLDialect {
 			buff.append(" WHERE ");
 			buff.append(where.toString());
 		}
-		
+
 		prepareCreateView(stat, def, buff.toString());
 	}
-	
+
 	@Override
 	public <T> void prepareCreateView(SQLStatement stat, TableDefinition<T> def, String fromWhere) {
 		StatementBuilder buff = new StatementBuilder();
@@ -221,7 +225,7 @@ public class SQLDialectDefault implements SQLDialect {
 		buff.append(fromWhere);
 		stat.setSQL(buff.toString());
 	}
-	
+
 	protected boolean isIntegerType(String dataType) {
 		if ("INT".equals(dataType)) {
 			return true;
@@ -328,7 +332,7 @@ public class SQLDialectDefault implements SQLDialect {
 			stat.appendSQL(" OFFSET " + offset);
 		}
 	}
-	
+
 	@Override
 	public String prepareParameter(Object o) {
 		if (o instanceof String) {
