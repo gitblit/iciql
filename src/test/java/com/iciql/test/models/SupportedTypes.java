@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -32,6 +33,7 @@ import com.iciql.Iciql.IQIndexes;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.Iciql.IndexType;
+import com.iciql.IciqlException;
 import com.iciql.test.IciqlSuite;
 import com.iciql.test.models.EnumModels.Tree;
 import com.iciql.util.Utils;
@@ -48,7 +50,7 @@ public class SupportedTypes {
 
 	/**
 	 * Test of plain enumeration.
-	 * 
+	 *
 	 * Each field declaraton of this enum must specify a mapping strategy.
 	 */
 	public enum Flower {
@@ -125,7 +127,11 @@ public class SupportedTypes {
 
 	public static List<SupportedTypes> createList() {
 		List<SupportedTypes> list = Utils.newArrayList();
-		long now = System.currentTimeMillis();
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(System.currentTimeMillis());
+		c.set(Calendar.MILLISECOND, 0);
+		long now = c.getTimeInMillis();
+
 		long oneday = 24 * 60 * 60 * 1000L;
 		for (int i = 0; i < 10; i++) {
 			list.add(randomValue(now - (i * oneday)));
@@ -162,26 +168,34 @@ public class SupportedTypes {
 
 	public boolean equivalentTo(SupportedTypes s) {
 		boolean same = true;
-		same &= myBool.equals(s.myBool);
-		same &= myByte.equals(s.myByte);
-		same &= myShort.equals(s.myShort);
-		same &= myInteger.equals(s.myInteger);
-		same &= myLong.equals(s.myLong);
-		same &= IciqlSuite.equivalentTo(myFloat, s.myFloat);
-		same &= IciqlSuite.equivalentTo(myDouble, s.myDouble);
-		same &= myBigDecimal.compareTo(s.myBigDecimal) == 0;
+		same &= same("myBool", myBool.equals(s.myBool));
+		same &= same("myByte", myByte.equals(s.myByte));
+		same &= same("myShort", myShort.equals(s.myShort));
+		same &= same("myInteger", myInteger.equals(s.myInteger));
+		same &= same("myLong", myLong.equals(s.myLong));
+		same &= same("myFloat", IciqlSuite.equivalentTo(myFloat, s.myFloat));
+		same &= same("myDouble", IciqlSuite.equivalentTo(myDouble, s.myDouble));
+		same &= same("myBigDecimal", myBigDecimal.compareTo(s.myBigDecimal) == 0);
+
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		same &= df.format(myUtilDate).equals(df.format(s.myUtilDate));
-		same &= df.format(mySqlTimestamp).equals(df.format(s.mySqlTimestamp));
-		same &= mySqlDate.toString().equals(s.mySqlDate.toString());
-		same &= mySqlTime.toString().equals(s.mySqlTime.toString());
-		same &= myString.equals(s.myString);
-		same &= Arrays.equals(myBlob, s.myBlob);
-		same &= myDefaultFlower.equals(s.myDefaultFlower);
-		same &= myFavoriteFlower.equals(s.myFavoriteFlower);
-		same &= myOtherFavoriteFlower.equals(s.myOtherFavoriteFlower);
-		same &= myFavoriteTree.equals(s.myFavoriteTree);
-		same &= myOtherFavoriteTree.equals(s.myOtherFavoriteTree);
+		same &= same("myUtilDate", df.format(myUtilDate).equals(df.format(s.myUtilDate)));
+		same &= same("mySqlTimestamp", df.format(mySqlTimestamp).equals(df.format(s.mySqlTimestamp)));
+		same &= same("mySqlDate", mySqlDate.toString().equals(s.mySqlDate.toString()));
+		same &= same("mySqlTime", mySqlTime.toString().equals(s.mySqlTime.toString()));
+		same &= same("myString", myString.equals(s.myString));
+		same &= same("myBlob", Arrays.equals(myBlob, s.myBlob));
+		same &= same("myDefaultFlower", myDefaultFlower.equals(s.myDefaultFlower));
+		same &= same("myFavoriteFlower", myFavoriteFlower.equals(s.myFavoriteFlower));
+		same &= same("myOtherFavoriteFlower", myOtherFavoriteFlower.equals(s.myOtherFavoriteFlower));
+		same &= same("myFavoriteTree", myFavoriteTree.equals(s.myFavoriteTree));
+		same &= same("myOtherFavoriteTree", myOtherFavoriteTree.equals(s.myOtherFavoriteTree));
+		return same;
+	}
+
+	private boolean same(String field, boolean same) {
+		if (!same) {
+			throw new IciqlException("{0} is not the same",  field);
+		}
 		return same;
 	}
 
