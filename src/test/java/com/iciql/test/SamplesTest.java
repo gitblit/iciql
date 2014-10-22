@@ -40,6 +40,7 @@ import org.junit.Test;
 import com.iciql.Db;
 import com.iciql.Filter;
 import com.iciql.Iciql.IQColumn;
+import com.iciql.IciqlException;
 import com.iciql.test.models.ComplexObject;
 import com.iciql.test.models.Customer;
 import com.iciql.test.models.Order;
@@ -84,6 +85,10 @@ public class SamplesTest {
 
 	@Test
 	public void testReverseColumns() {
+		try {
+			db.executeUpdate("DROP TABLE TestReverse");
+		} catch (IciqlException e) {
+		}
 		db.executeUpdate("create table TestReverse(id int, name varchar(10), additional varchar(10))");
 		TestReverse t = new TestReverse();
 		t.id = 10;
@@ -92,7 +97,7 @@ public class SamplesTest {
 		TestReverse check = db.from(new TestReverse()).selectFirst();
 		assertEquals(t.name, check.name);
 		assertEquals(t.id, check.id);
-		db.executeUpdate("DROP TABLE testreverse");
+		db.executeUpdate("DROP TABLE TestReverse");
 	}
 
 	@Test
@@ -207,6 +212,7 @@ public class SamplesTest {
 		public Integer orderId;
 		public BigDecimal total;
 
+		@Override
 		public String toString() {
 			return customerId + ":" + orderId + ":" + total;
 		}
@@ -360,6 +366,7 @@ public class SamplesTest {
 		final ComplexObject co = new ComplexObject();
 
 		String sql = db.from(co).where(new Filter() {
+			@Override
 			public boolean where() {
 				return co.id == x && co.name.equals(name) && co.name.equals("hello");
 			}
@@ -374,6 +381,7 @@ public class SamplesTest {
 		assertEquals(sb.toString(), sql);
 
 		long count = db.from(co).where(new Filter() {
+			@Override
 			public boolean where() {
 				return co.id == x && co.name.equals(name) && co.name.equals("hello");
 			}
@@ -412,6 +420,7 @@ public class SamplesTest {
 		public String category;
 		public Long productCount;
 
+		@Override
 		public String toString() {
 			return category + ":" + productCount;
 		}

@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2009-2014, Architector Inc., Japan
  * All rights reserved.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -18,10 +18,13 @@
 package com.iciql.test;
 
 import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import com.iciql.Db;
 import com.iciql.test.models.Customer;
 import com.iciql.test.models.PrimitivesModel;
@@ -43,65 +46,75 @@ public class OneOfTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void oneOfTest() {
+		String PrimitivesTest = db.getDialect().prepareTableName(null, "PrimitivesTest");
+		String Customer = db.getDialect().prepareTableName(null, "Customer");
+		String myInteger = db.getDialect().prepareColumnName("myInteger");
+		String customerId = db.getDialect().prepareColumnName("customerId");
+
 		PrimitivesModel p = new PrimitivesModel();
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE %s IN(0)", PrimitivesTest, myInteger),
 				db.from(p)
 						.where(p.myInteger).oneOf(0)
-						.toSQL(),
-				"SELECT * FROM PrimitivesTest WHERE myInteger IN(0)");
+						.toSQL());
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE %s IN(0, 1)", PrimitivesTest, myInteger),
 				db.from(p)
 						.where(p.myInteger).oneOf(0, 1)
-						.toSQL(),
-				"SELECT * FROM PrimitivesTest WHERE myInteger IN(0, 1)");
+						.toSQL());
 		Customer c = new Customer();
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE %s IN('a')", Customer, customerId),
 				db.from(c)
 						.where(c.customerId).oneOf(new ArrayList<String>() {{
 							this.add("a");
 						}})
-						.toSQL(),
-				"SELECT * FROM Customer WHERE customerId IN('a')");
+						.toSQL());
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE %s IN('a', 'b')", Customer, customerId),
 				db.from(c)
 						.where(c.customerId).oneOf(new ArrayList<String>() {{
 							this.add("a");
 							this.add("b");
 						}})
-						.toSQL(),
-				"SELECT * FROM Customer WHERE customerId IN('a', 'b')");
+						.toSQL());
 	}
 
 	@SuppressWarnings("serial")
 	@Test
 	public void noneOfTest() {
+		String PrimitivesTest = db.getDialect().prepareTableName(null, "PrimitivesTest");
+		String Customer = db.getDialect().prepareTableName(null, "Customer");
+		String myInteger = db.getDialect().prepareColumnName("myInteger");
+		String customerId = db.getDialect().prepareColumnName("customerId");
+
 		PrimitivesModel p = new PrimitivesModel();
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE %s NOT IN(0)", PrimitivesTest, myInteger),
 				db.from(p)
 						.where(p.myInteger).noneOf(0)
-						.toSQL(),
-				"SELECT * FROM PrimitivesTest WHERE myInteger NOT IN(0)");
+						.toSQL());
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE %s NOT IN(0, 1)", PrimitivesTest, myInteger),
 				db.from(p)
 						.where(p.myInteger).noneOf(0, 1)
-						.toSQL(),
-				"SELECT * FROM PrimitivesTest WHERE myInteger NOT IN(0, 1)");
+						.toSQL());
 		Customer c = new Customer();
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE %s NOT IN('a')", Customer, customerId),
 				db.from(c)
 						.where(c.customerId).noneOf(new ArrayList<String>() {{
 							this.add("a");
 						}})
-						.toSQL(),
-				"SELECT * FROM Customer WHERE customerId NOT IN('a')");
+						.toSQL());
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE %s NOT IN('a', 'b')", Customer, customerId),
 				db.from(c)
 						.where(c.customerId).noneOf(new ArrayList<String>() {{
 							this.add("a");
 							this.add("b");
 						}})
-						.toSQL(),
-				"SELECT * FROM Customer WHERE customerId NOT IN('a', 'b')");
+						.toSQL());
 	}
 
 }

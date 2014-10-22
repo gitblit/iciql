@@ -71,30 +71,42 @@ public class StackableConditionsTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void andOrTest() {
+		String Customer = db.getDialect().prepareTableName(null,  "Customer");
+		String customerId = db.getDialect().prepareColumnName("customerId");
+		String region = db.getDialect().prepareColumnName("region");
+
 		assertEquals(
 				search(null, (String[]) null),
-				"SELECT * FROM Customer WHERE (true)");
+				String.format("SELECT * FROM %s WHERE (true)",
+						Customer));
 		assertEquals(
 				search(null, new String[0]),
-				"SELECT * FROM Customer WHERE (true) AND ( (false) )");
+				String.format("SELECT * FROM %s WHERE (true) AND ( (false) )",
+						Customer));
 		assertEquals(
 				search(null, "0001"),
-				"SELECT * FROM Customer WHERE (true) AND ( (false) OR customerId = '0001' )");
+				String.format("SELECT * FROM %s WHERE (true) AND ( (false) OR %s = '0001' )",
+						Customer, customerId));
 		assertEquals(
 				search(null, "0001", "0002"),
-				"SELECT * FROM Customer WHERE (true) AND ( (false) OR customerId = '0001' OR customerId = '0002' )");
+				String.format("SELECT * FROM %s WHERE (true) AND ( (false) OR %s = '0001' OR %s = '0002' )",
+						Customer, customerId, customerId));
 		assertEquals(
 				search(Region.JP, (String[]) null),
-				"SELECT * FROM Customer WHERE (true) AND region = 'JP'");
+				String.format("SELECT * FROM %s WHERE (true) AND %s = 'JP'",
+						Customer, region));
 		assertEquals(
 				search(Region.JP, new String[0]),
-				"SELECT * FROM Customer WHERE (true) AND ( (false) ) AND region = 'JP'");
+				String.format("SELECT * FROM %s WHERE (true) AND ( (false) ) AND %s = 'JP'",
+						Customer, region));
 		assertEquals(
 				search(Region.JP, "0001"),
-				"SELECT * FROM Customer WHERE (true) AND ( (false) OR customerId = '0001' ) AND region = 'JP'");
+				String.format("SELECT * FROM %s WHERE (true) AND ( (false) OR %s = '0001' ) AND %s = 'JP'",
+						Customer, customerId, region));
 		assertEquals(
 				search(Region.JP, "0001", "0002"),
-				"SELECT * FROM Customer WHERE (true) AND ( (false) OR customerId = '0001' OR customerId = '0002' ) AND region = 'JP'");
+				String.format("SELECT * FROM %s WHERE (true) AND ( (false) OR %s = '0001' OR %s = '0002' ) AND %s = 'JP'",
+						Customer, customerId, customerId, region));
 	}
 
 	@Test
@@ -144,6 +156,10 @@ public class StackableConditionsTest {
 
 	@Test
 	public void fluentTest() {
+		String Customer = db.getDialect().prepareTableName(null,  "Customer");
+		String customerId = db.getDialect().prepareColumnName("customerId");
+		String region = db.getDialect().prepareColumnName("region");
+
 		final Customer model = new Customer();
 		assertEquals(
 				db.from(model).where(new And<Customer>(db, model) {{
@@ -153,7 +169,8 @@ public class StackableConditionsTest {
 						or(model.region).is("LA");
 					}});
 				}}).toSQL(),
-				"SELECT * FROM Customer WHERE (true) AND customerId = '0001' AND ( (false) OR region = 'CA' OR region = 'LA' )");
+				String.format("SELECT * FROM %s WHERE (true) AND %s = '0001' AND ( (false) OR %s = 'CA' OR %s = 'LA' )",
+						Customer, customerId, region, region));
 		assertEquals(
 				db.from(model).where(new Or<Customer>(db, model) {{
 					or(model.customerId).is("0001");
@@ -162,7 +179,8 @@ public class StackableConditionsTest {
 						and(model.region).is("LA");
 					}});
 				}}).toSQL(),
-				"SELECT * FROM Customer WHERE (false) OR customerId = '0001' OR ( (true) AND customerId = '0002' AND region = 'LA' )");
+				String.format("SELECT * FROM %s WHERE (false) OR %s = '0001' OR ( (true) AND %s = '0002' AND %s = 'LA' )",
+						Customer, customerId, customerId, region));
 		assertEquals(
 				db.from(model)
 						.where(model.customerId).isNotNull()
@@ -172,7 +190,8 @@ public class StackableConditionsTest {
 						}})
 						.and(model.region).isNotNull()
 						.toSQL(),
-				"SELECT * FROM Customer WHERE customerId IS NOT NULL AND ( (false) OR region = 'LA' OR region = 'CA' ) AND region IS NOT NULL");
+				String.format("SELECT * FROM %s WHERE %s IS NOT NULL AND ( (false) OR %s = 'LA' OR %s = 'CA' ) AND %s IS NOT NULL",
+						Customer, customerId, region, region, region));
 	}
 
 }
