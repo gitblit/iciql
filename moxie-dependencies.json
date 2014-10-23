@@ -1,6 +1,6 @@
 {
     "ring" : "0",
-    "name" : "iciql 1.2.0",
+    "name" : "iciql 1.3.0-SNAPSHOT",
     "children" : [
     {
         "ring" : "1",
