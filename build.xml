@@ -141,7 +141,7 @@
 		</mx:if>
 
 		<!-- Download links -->
-		<property name="gc.url" value="http://code.google.com/p/iciql/downloads/detail?name=" />
+		<property name="gc.url" value="http://gitblit.github.io/iciql/maven/com/iciql/${project.artifactId}/${project.releaseVersion}/" />
 		<property name="releaselog" value="${basedir}/releases.moxie" />
 
 		<mx:doc googleplusone="true" prettifyTheme="googlecode" minify="true"
@@ -183,7 +183,7 @@
 
 				<menu name="downloads">
 					<link name="${project.artifactId}-${project.releaseVersion}"
-						src="${gc.url}${project.artifactId}-${project.releaseVersion}.zip" />
+						src="${gc.url}${project.artifactId}-${project.releaseVersion}.jar" />
 					<divider />
 					<link name="Maven Repository" src="${project.mavenUrl}" />
 				</menu>
@@ -249,7 +249,7 @@
 		Tag a new version and prepare for the next development cycle.
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<target name="tagRelease" depends="prepare">
+	<target name="tagRelease" depends="prepare" description="Tags a release">
 		<!-- release -->
 		<property name="dryrun" value="false" />
 		<mx:version stage="release" dryrun="${dryrun}" />
