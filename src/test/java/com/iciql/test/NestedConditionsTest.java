@@ -28,10 +28,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.iciql.Conditions.And;
-import com.iciql.Conditions.Or;
 import com.iciql.Db;
 import com.iciql.IciqlException;
+import com.iciql.NestedConditions.And;
+import com.iciql.NestedConditions.Or;
 import com.iciql.QueryWhere;
 import com.iciql.test.models.Customer;
 
@@ -60,13 +60,15 @@ public class NestedConditionsTest {
 
 		model = new Customer();
 		query = db.from(model).whereTrue();
-		if (customerIds != null) {
-			query.andOpenFalse();
+
+		if (customerIds != null && customerIds.length > 0) {
+			query.andOpen();
 			for (String value : customerIds) {
 				query.or(model.customerId).is(value);
 			}
 			query.close();
 		}
+
 		if (region != null) {
 			query.and(model.region).is(region.name());
 		}
@@ -80,37 +82,35 @@ public class NestedConditionsTest {
 		String region = db.getDialect().prepareColumnName("region");
 
 		assertEquals(
-				search(null, (String[]) null),
-				String.format("SELECT * FROM %s WHERE (true)",
-						Customer));
+				String.format("SELECT * FROM %s WHERE (true)", Customer),
+				search(null, (String[]) null));
 		assertEquals(
-				search(null, new String[0]),
-				String.format("SELECT * FROM %s WHERE (true) AND ( (false) )",
-						Customer));
+				String.format("SELECT * FROM %s WHERE (true)", Customer),
+				search(null, new String[0]));
 		assertEquals(
-				search(null, "0001"),
-				String.format("SELECT * FROM %s WHERE (true) AND ( (false) OR %s = '0001' )",
-						Customer, customerId));
+				String.format("SELECT * FROM %s WHERE (true) AND ( %s = '0001' )",
+						Customer, customerId),
+				search(null, "0001"));
 		assertEquals(
-				search(null, "0001", "0002"),
-				String.format("SELECT * FROM %s WHERE (true) AND ( (false) OR %s = '0001' OR %s = '0002' )",
-						Customer, customerId, customerId));
+				String.format("SELECT * FROM %s WHERE (true) AND ( %s = '0001' OR %s = '0002' )",
+						Customer, customerId, customerId),
+				search(null, "0001", "0002"));
 		assertEquals(
-				search(Region.JP, (String[]) null),
 				String.format("SELECT * FROM %s WHERE (true) AND %s = 'JP'",
-						Customer, region));
+						Customer, region),
+				search(Region.JP, (String[]) null));
 		assertEquals(
-				search(Region.JP, new String[0]),
-				String.format("SELECT * FROM %s WHERE (true) AND ( (false) ) AND %s = 'JP'",
-						Customer, region));
+				String.format("SELECT * FROM %s WHERE (true) AND %s = 'JP'",
+						Customer, region),
+				search(Region.JP, new String[0]));
 		assertEquals(
-				search(Region.JP, "0001"),
-				String.format("SELECT * FROM %s WHERE (true) AND ( (false) OR %s = '0001' ) AND %s = 'JP'",
-						Customer, customerId, region));
+				String.format("SELECT * FROM %s WHERE (true) AND ( %s = '0001' ) AND %s = 'JP'",
+						Customer, customerId, region),
+				search(Region.JP, "0001"));
 		assertEquals(
-				search(Region.JP, "0001", "0002"),
-				String.format("SELECT * FROM %s WHERE (true) AND ( (false) OR %s = '0001' OR %s = '0002' ) AND %s = 'JP'",
-						Customer, customerId, customerId, region));
+				String.format("SELECT * FROM %s WHERE (true) AND ( %s = '0001' OR %s = '0002' ) AND %s = 'JP'",
+						Customer, customerId, customerId, region),
+				search(Region.JP, "0001", "0002"));
 	}
 
 	@Test
@@ -121,7 +121,7 @@ public class NestedConditionsTest {
 		try {
 			db.from(model)
 					.where(model.customerId).is("0001")
-					.andOpenFalse()
+					.andOpen()
 							.or(model.region).is("FR")
 							.or(model.region).is("JP")
 					.close()
@@ -131,10 +131,11 @@ public class NestedConditionsTest {
 		catch (IciqlException error) {
 			assertTrue(false);
 		}
+
 		try {
 			db.from(model)
 					.where(model.customerId).is("0001")
-					.andOpenFalse()
+					.andOpen()
 							.or(model.region).is("FR")
 							.or(model.region).is("JP")
 							.toSQL();
@@ -143,10 +144,11 @@ public class NestedConditionsTest {
 		catch (IciqlException error) {
 			assertTrue(true);
 		}
+
 		try {
 			db.from(model)
 					.where(model.customerId).is("0001")
-					.andOpenFalse()
+					.andOpen()
 							.or(model.region).is("FR")
 							.or(model.region).is("JP")
 					.close()
@@ -165,37 +167,87 @@ public class NestedConditionsTest {
 		String region = db.getDialect().prepareColumnName("region");
 
 		final Customer model = new Customer();
+
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE (true) AND %s = '0001' AND ( %s = 'CA' OR %s = 'LA' )",
+						Customer, customerId, region, region),
+
 				db.from(model).where(new And<Customer>(db, model) {{
+
 					and(model.customerId).is("0001");
 					and(new Or<Customer>(db, model) {{
 						or(model.region).is("CA");
 						or(model.region).is("LA");
 					}});
-				}}).toSQL(),
-				String.format("SELECT * FROM %s WHERE (true) AND %s = '0001' AND ( (false) OR %s = 'CA' OR %s = 'LA' )",
-						Customer, customerId, region, region));
+
+				}})
+
+				.toSQL());
+
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE (false) OR %s = '0001' OR ( %s = '0002' AND %s = 'LA' )",
+						Customer, customerId, customerId, region),
+
 				db.from(model).where(new Or<Customer>(db, model) {{
+
 					or(model.customerId).is("0001");
+
 					or(new And<Customer>(db, model) {{
 						and(model.customerId).is("0002");
 						and(model.region).is("LA");
 					}});
-				}}).toSQL(),
-				String.format("SELECT * FROM %s WHERE (false) OR %s = '0001' OR ( (true) AND %s = '0002' AND %s = 'LA' )",
-						Customer, customerId, customerId, region));
+
+				}})
+
+				.toSQL());
+
 		assertEquals(
+				String.format("SELECT * FROM %s WHERE (false) OR ( %s = '0001' AND %s = 'WA' ) OR ( %s = '0002' AND %s = 'LA' )",
+						Customer, customerId, region, customerId, region),
+
+				db.from(model).where(new Or<Customer>(db, model) {{
+
+					or(new And<Customer>(db, model) {{
+						and(model.customerId).is("0001");
+						and(model.region).is("WA");
+					}});
+
+					or(new And<Customer>(db, model) {{
+						and(model.customerId).is("0002");
+						and(model.region).is("LA");
+					}});
+
+				}})
+
+				.toSQL());
+
+		assertEquals(
+				String.format("SELECT * FROM %s WHERE %s = '0001' OR ( %s = '0002' AND %s = 'LA' )",
+						Customer, customerId, customerId, region),
+
+				db.from(model).where(model.customerId).is("0001")
+
+					.or(new And<Customer>(db, model) {{
+						and(model.customerId).is("0002");
+						and(model.region).is("LA");
+					}})
+
+					.toSQL());
+
+
+		assertEquals(
+				String.format("SELECT * FROM %s WHERE %s IS NOT NULL AND ( %s = 'LA' OR %s = 'CA' OR %s = 'WA' )",
+						Customer, customerId, region, region, region),
 				db.from(model)
 						.where(model.customerId).isNotNull()
+
 						.and(new Or<Customer>(db, model) {{
 							or(model.region).is("LA");
 							or(model.region).is("CA");
+							or(model.region).is("WA");
 						}})
-						.and(model.region).isNotNull()
-						.toSQL(),
-				String.format("SELECT * FROM %s WHERE %s IS NOT NULL AND ( (false) OR %s = 'LA' OR %s = 'CA' ) AND %s IS NOT NULL",
-						Customer, customerId, region, region, region));
+
+						.toSQL());
 	}
 
 	@Test

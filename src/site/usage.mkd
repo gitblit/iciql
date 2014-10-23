@@ -69,28 +69,36 @@ List<Product> allProducts = db.buildObjects(Product.class, rs);
 JdbcUtils.closeSilently(rs, true);
 ---JAVA---
 
-### Compound Conditions
+### Compound Nested Conditions
 
-It is possible to specify type-safe compound where clauses using nested `And` and `Or` statements.
+It is possible to specify type-safe compound nested conditions in your WHERE clauses using `And` and `Or` statements.
 
 ---JAVA---
 final Customer model = new Customer();
 
+// SELECT * FROM CUSTOMERS
+//    WHERE customerId IS NOT NULL
+//    AND region IS NOT NULL
+//    AND (
+//      region = 'LA' OR region = 'CA'
+//    )
 List<Customer> regionals =
-    db.from(model).where(model.customerId).isNotNull()
-        .and(model.region).isNotNull()
-        .and(new Or<Customer>(db, model) {{
-		    or(model.region).is("LA");
-            or(model.region).is("CA");
-        }});
+  db.from(model)
+    .where(model.customerId).isNotNull()
+    .and(model.region).isNotNull()
+    .and(new Or<Customer>(db, model) {{
+	  or(model.region).is("LA");
+      or(model.region).is("CA");
+    }});
 
 List<Customer> regionalType1s =
-    db.from(model).where(new And<Customer>(db, model) {{
-        and(model.type).is(1);
-        and(new Or<Customer>(db, model) {{
-            or(model.region).is("CA");
-            or(model.region).is("LA");
-        }});
+  db.from(model)
+    .where(new And<Customer>(db, model) {{
+      and(model.type).is(1);
+      and(new Or<Customer>(db, model) {{
+        or(model.region).is("CA");
+        or(model.region).is("LA");
+      }});
     }});
 
 ---JAVA---

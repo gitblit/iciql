@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2009-2014, Architector Inc., Japan
  * All rights reserved.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -17,9 +17,9 @@
 
 package com.iciql;
 
-public abstract class Conditions<T> {
+public abstract class NestedConditions<T> {
 
-	public static class And<T> extends Conditions<T> {
+	public static class And<T> extends NestedConditions<T> {
 
 		public And(Db db, T alias) {
 			super(db, alias);
@@ -58,20 +58,20 @@ public abstract class Conditions<T> {
 		}
 
 		protected QueryWhere<T> and(And<T> conditions) {
-			where.andOpenTrue();
+			where.andOpen();
 			where.query.addConditionToken(conditions.where.query);
 			return where.close();
 		}
 
 		protected QueryWhere<T> and(Or<T> conditions) {
-			where.andOpenFalse();
+			where.andOpen();
 			where.query.addConditionToken(conditions.where.query);
 			return where.close();
 		}
 
 	}
 
-	public static class Or<T> extends Conditions<T> {
+	public static class Or<T> extends NestedConditions<T> {
 
 		public Or(Db db, T alias) {
 			super(db, alias);
@@ -110,13 +110,13 @@ public abstract class Conditions<T> {
 		}
 
 		protected QueryWhere<T> or(And<T> conditions) {
-			where.orOpenTrue();
+			where.orOpen();
 			where.query.addConditionToken(conditions.where.query);
 			return where.close();
 		}
 
 		protected QueryWhere<T> or(Or<T> conditions) {
-			where.orOpenFalse();
+			where.orOpen();
 			where.query.addConditionToken(conditions.where.query);
 			return where.close();
 		}
@@ -125,7 +125,7 @@ public abstract class Conditions<T> {
 
 	QueryWhere<T> where;
 
-	private Conditions(Db db, T alias) {
+	private NestedConditions(Db db, T alias) {
 		where = new QueryWhere<T>(Query.rebuild(db, alias));
 	}
 

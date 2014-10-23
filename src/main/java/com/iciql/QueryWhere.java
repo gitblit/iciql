@@ -19,12 +19,12 @@ package com.iciql;
 
 import java.util.List;
 
-import com.iciql.Conditions.And;
-import com.iciql.Conditions.Or;
+import com.iciql.NestedConditions.And;
+import com.iciql.NestedConditions.Or;
 
 /**
  * This class represents a query with a condition.
- * 
+ *
  * @param <T>
  *            the return type
  */
@@ -39,7 +39,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an AND condition with a mapped primitive boolean.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive boolean field to query
 	 * @return a query condition to continue building the condition
@@ -51,7 +51,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an AND condition with a mapped primitive byte.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive byte field to query
 	 * @return a query condition to continue building the condition
@@ -62,7 +62,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an AND condition with a mapped primitive short.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive short field to query
 	 * @return a query condition to continue building the condition
@@ -73,7 +73,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an AND condition with a mapped primitive int.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive int field to query
 	 * @return a query condition to continue building the condition
@@ -84,7 +84,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an AND condition with a mapped primitive long.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive long field to query
 	 * @return a query condition to continue building the condition
@@ -95,7 +95,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an AND condition with a mapped primitive float.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive float field to query
 	 * @return a query condition to continue building the condition
@@ -106,7 +106,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an AND condition with a mapped primitive double.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive double field to query
 	 * @return a query condition to continue building the condition
@@ -127,7 +127,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an AND condition with a mapped Object field.
-	 * 
+	 *
 	 * @param x
 	 *            the Object field to query
 	 * @return a query condition to continue building the condition
@@ -139,28 +139,24 @@ public class QueryWhere<T> {
 	}
 
 	public QueryWhere<T> and(And<T> conditions) {
-		andOpenTrue();
+		andOpen();
 		query.addConditionToken(conditions.where.query);
 		return close();
 	}
 
 	public QueryWhere<T> and(Or<T> conditions) {
-		andOpenFalse();
+		andOpen();
 		query.addConditionToken(conditions.where.query);
 		return close();
 	}
 
-	public QueryWhere<T> andOpenTrue() {
-		return open(ConditionAndOr.AND, true);
-	}
-
-	public QueryWhere<T> andOpenFalse() {
-		return open(ConditionAndOr.AND, false);
+	public QueryWhere<T> andOpen() {
+		return open(ConditionAndOr.AND);
 	}
 
 	/**
 	 * Specify an OR condition with a mapped primitive boolean.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive boolean field to query
 	 * @return a query condition to continue building the condition
@@ -172,7 +168,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an OR condition with a mapped primitive byte.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive byte field to query
 	 * @return a query condition to continue building the condition
@@ -183,7 +179,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an OR condition with a mapped primitive short.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive short field to query
 	 * @return a query condition to continue building the condition
@@ -194,7 +190,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an OR condition with a mapped primitive int.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive int field to query
 	 * @return a query condition to continue building the condition
@@ -205,7 +201,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an OR condition with a mapped primitive long.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive long field to query
 	 * @return a query condition to continue building the condition
@@ -216,7 +212,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an OR condition with a mapped primitive float.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive float field to query
 	 * @return a query condition to continue building the condition
@@ -227,7 +223,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an OR condition with a mapped primitive double.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive double field to query
 	 * @return a query condition to continue building the condition
@@ -238,7 +234,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Specify an OR condition with a mapped Object field.
-	 * 
+	 *
 	 * @param x
 	 *            the Object field to query
 	 * @return a query condition to continue building the condition
@@ -250,29 +246,24 @@ public class QueryWhere<T> {
 	}
 
 	public QueryWhere<T> or(And<T> conditions) {
-		orOpenTrue();
+		orOpen();
 		query.addConditionToken(conditions.where.query);
 		return close();
 	}
 
 	public QueryWhere<T> or(Or<T> conditions) {
-		orOpenFalse();
+		orOpen();
 		query.addConditionToken(conditions.where.query);
 		return close();
 	}
 
-	public QueryWhere<T> orOpenTrue() {
-		return open(ConditionAndOr.OR, true);
+	public QueryWhere<T> orOpen() {
+		return open(ConditionAndOr.OR);
 	}
 
-	public QueryWhere<T> orOpenFalse() {
-		return open(ConditionAndOr.OR, false);
-	}
-
-	private QueryWhere<T> open(ConditionAndOr andOr, Boolean condition) {
+	private QueryWhere<T> open(ConditionAndOr andOr) {
 		query.addConditionToken(andOr);
 		query.addConditionToken(ConditionOpenClose.OPEN);
-		query.addConditionToken(new Function("", condition));
 		return this;
 	}
 
@@ -303,7 +294,7 @@ public class QueryWhere<T> {
 	 * properly encoded. This method is also useful when combined with the where
 	 * clause methods like isParameter() or atLeastParameter() which allows
 	 * iciql to generate re-usable parameterized string statements.
-	 * 
+	 *
 	 * @return the sql query as plain text
 	 */
 	public String toSQL() {
@@ -315,7 +306,7 @@ public class QueryWhere<T> {
 	 * properly encoded. This method is also useful when combined with the where
 	 * clause methods like isParameter() or atLeastParameter() which allows
 	 * iciql to generate re-usable parameterized string statements.
-	 * 
+	 *
 	 * @param distinct
 	 *            if true SELECT DISTINCT is used for the query
 	 * @return the sql query as plain text
@@ -329,7 +320,7 @@ public class QueryWhere<T> {
 	 * properly encoded. This method is also useful when combined with the where
 	 * clause methods like isParameter() or atLeastParameter() which allows
 	 * iciql to generate re-usable parameterized string statements.
-	 * 
+	 *
 	 * @param distinct
 	 *            if true SELECT DISTINCT is used for the query
 	 * @param k
@@ -344,12 +335,12 @@ public class QueryWhere<T> {
 	public <K> String toSQL(boolean distinct, K k) {
 		return query.toSQL(distinct, k);
 	}
-	
+
 	public <Z> SubQuery<T, Z> subQuery(Z x) {
 		return new SubQuery<T, Z>(query, x);
 	}
 
-	public SubQuery<T, Boolean> subQuery(boolean x) {		
+	public SubQuery<T, Boolean> subQuery(boolean x) {
 		return subQuery(query.getPrimitiveAliasByValue(x));
 	}
 
@@ -376,7 +367,7 @@ public class QueryWhere<T> {
 	public SubQuery<T, Double> subQuery(double x) {
 		return subQuery(query.getPrimitiveAliasByValue(x));
 	}
-	
+
 	public <X, Z> List<X> select(Z x) {
 		return query.select(x);
 	}
@@ -402,7 +393,7 @@ public class QueryWhere<T> {
 	public List<T> selectDistinct() {
 		return query.selectDistinct();
 	}
-	
+
 	public void createView(Class<?> viewClass) {
 		query.createView(viewClass);
 	}
@@ -413,7 +404,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Order by primitive boolean field
-	 * 
+	 *
 	 * @param field
 	 *            a primitive boolean field
 	 * @return the query
@@ -425,7 +416,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Order by primitive byte field
-	 * 
+	 *
 	 * @param field
 	 *            a primitive byte field
 	 * @return the query
@@ -436,7 +427,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Order by primitive short field
-	 * 
+	 *
 	 * @param field
 	 *            a primitive short field
 	 * @return the query
@@ -451,7 +442,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Order by primitive long field
-	 * 
+	 *
 	 * @param field
 	 *            a primitive long field
 	 * @return the query
@@ -462,7 +453,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Order by primitive float field
-	 * 
+	 *
 	 * @param field
 	 *            a primitive float field
 	 * @return the query
@@ -473,7 +464,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Order by primitive double field
-	 * 
+	 *
 	 * @param field
 	 *            a primitive double field
 	 * @return the query
@@ -495,7 +486,7 @@ public class QueryWhere<T> {
 
 	/**
 	 * Order by a number of Object columns.
-	 * 
+	 *
 	 * @param expressions
 	 *            the order by expressions
 	 * @return the query

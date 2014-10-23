@@ -27,17 +27,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
-import com.iciql.Conditions.And;
-import com.iciql.Conditions.Or;
+
+import com.iciql.NestedConditions.And;
+import com.iciql.NestedConditions.Or;
 import com.iciql.Iciql.EnumType;
 import com.iciql.bytecode.ClassReader;
-import com.iciql.util.JdbcUtils;
 import com.iciql.util.IciqlLogger;
+import com.iciql.util.JdbcUtils;
 import com.iciql.util.Utils;
 
 /**
  * This class represents a query.
- * 
+ *
  * @param <T>
  *            the return type
  */
@@ -62,7 +63,7 @@ public class Query<T> {
 
 	/**
 	 * from() is a static factory method to build a Query object.
-	 * 
+	 *
 	 * @param db
 	 * @param alias
 	 * @return a query object
@@ -119,13 +120,13 @@ public class Query<T> {
 		List<X> list = limit(1).select(x);
 		return list.isEmpty() ? null : list.get(0);
 	}
-	
+
 	public <X> void createView(Class<X> viewClass) {
 		TableDefinition<X> viewDef = db.define(viewClass);
-		
+
 		SQLStatement fromWhere = new SQLStatement(db);
 		appendFromWhere(fromWhere, false);
-		
+
 		SQLStatement stat = new SQLStatement(db);
 		db.getDialect().prepareCreateView(stat, viewDef, fromWhere.toSQL());
 		IciqlLogger.create(stat.toSQL());
@@ -149,7 +150,7 @@ public class Query<T> {
 	 * properly encoded. This method is also useful when combined with the where
 	 * clause methods like isParameter() or atLeastParameter() which allows
 	 * iciql to generate re-usable parameterized string statements.
-	 * 
+	 *
 	 * @return the sql query as plain text
 	 */
 	public String toSQL() {
@@ -161,7 +162,7 @@ public class Query<T> {
 	 * properly encoded. This method is also useful when combined with the where
 	 * clause methods like isParameter() or atLeastParameter() which allows
 	 * iciql to generate re-usable parameterized string statements.
-	 * 
+	 *
 	 * @param distinct
 	 *            if true SELECT DISTINCT is used for the query
 	 * @return the sql query as plain text
@@ -175,7 +176,7 @@ public class Query<T> {
 	 * properly encoded. This method is also useful when combined with the where
 	 * clause methods like isParameter() or atLeastParameter() which allows
 	 * iciql to generate re-usable parameterized string statements.
-	 * 
+	 *
 	 * @param distinct
 	 *            if true SELECT DISTINCT is used for the query
 	 * @param k
@@ -228,7 +229,7 @@ public class Query<T> {
 				stat.appendSQL("*");
 			}
 			appendFromWhere(stat);
-		}		
+		}
 		return stat.toSQL().trim();
 	}
 
@@ -239,7 +240,7 @@ public class Query<T> {
 		stat.appendColumn(columnName);
 		appendFromWhere(stat);
 		return stat.toSQL();
-	}	
+	}
 
 	private List<T> select(boolean distinct) {
 		List<T> result = Utils.newArrayList();
@@ -456,7 +457,7 @@ public class Query<T> {
 
 	/**
 	 * Begin a primitive boolean field condition clause.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive boolean field to query
 	 * @return a query condition to continue building the condition
@@ -468,7 +469,7 @@ public class Query<T> {
 
 	/**
 	 * Begin a primitive short field condition clause.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive short field to query
 	 * @return a query condition to continue building the condition
@@ -479,7 +480,7 @@ public class Query<T> {
 
 	/**
 	 * Begin a primitive short field condition clause.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive short field to query
 	 * @return a query condition to continue building the condition
@@ -490,7 +491,7 @@ public class Query<T> {
 
 	/**
 	 * Begin a primitive int field condition clause.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive int field to query
 	 * @return a query condition to continue building the condition
@@ -501,7 +502,7 @@ public class Query<T> {
 
 	/**
 	 * Begin a primitive long field condition clause.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive long field to query
 	 * @return a query condition to continue building the condition
@@ -512,7 +513,7 @@ public class Query<T> {
 
 	/**
 	 * Begin a primitive float field condition clause.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive float field to query
 	 * @return a query condition to continue building the condition
@@ -523,7 +524,7 @@ public class Query<T> {
 
 	/**
 	 * Begin a primitive double field condition clause.
-	 * 
+	 *
 	 * @param x
 	 *            the primitive double field to query
 	 * @return a query condition to continue building the condition
@@ -534,7 +535,7 @@ public class Query<T> {
 
 	/**
 	 * Begins a primitive field condition clause.
-	 * 
+	 *
 	 * @param value
 	 * @return a query condition to continue building the condition
 	 */
@@ -549,7 +550,7 @@ public class Query<T> {
 
 	/**
 	 * Begin an Object field condition clause.
-	 * 
+	 *
 	 * @param x
 	 *            the mapped object to query
 	 * @return a query condition to continue building the condition
@@ -622,7 +623,7 @@ public class Query<T> {
 
 	/**
 	 * Sets the Limit and Offset of a query.
-	 * 
+	 *
 	 * @return the query
 	 */
 
@@ -682,7 +683,7 @@ public class Query<T> {
 
 	/**
 	 * Order by a number of columns.
-	 * 
+	 *
 	 * @param expressions
 	 *            the columns
 	 * @return the query
@@ -753,7 +754,7 @@ public class Query<T> {
 
 	/**
 	 * INTERNAL
-	 * 
+	 *
 	 * @param stat
 	 *            the statement
 	 * @param alias
@@ -796,7 +797,7 @@ public class Query<T> {
 
 	/**
 	 * INTERNAL
-	 * 
+	 *
 	 * @param stat
 	 *            the statement
 	 * @param alias
@@ -879,17 +880,30 @@ public class Query<T> {
 		}
 		if (!conditions.isEmpty()) {
 			stat.appendSQL(" WHERE ");
+
+			boolean skipNextConjunction = false;
+
 			for (Token token : conditions) {
+
+				if (skipNextConjunction && token instanceof ConditionAndOr) {
+					skipNextConjunction = false;
+					continue;
+				}
+
 				token.appendSQL(stat, this);
 				stat.appendSQL(" ");
+
+				if (ConditionOpenClose.OPEN == token) {
+					skipNextConjunction = true;
+				}
 			}
 		}
 	}
-	
+
 	void appendFromWhere(SQLStatement stat) {
 		appendFromWhere(stat, true);
 	}
-	
+
 	void appendFromWhere(SQLStatement stat, boolean log) {
 		stat.appendSQL(" FROM ");
 		from.appendSQL(stat);
@@ -927,7 +941,7 @@ public class Query<T> {
 
 	/**
 	 * Join another table.
-	 * 
+	 *
 	 * @param alias
 	 *            an alias for the table to join
 	 * @return the joined query
@@ -977,7 +991,7 @@ public class Query<T> {
 
 	/**
 	 * This method returns a mapped Object field by its reference.
-	 * 
+	 *
 	 * @param obj
 	 * @return
 	 */
@@ -988,7 +1002,7 @@ public class Query<T> {
 
 	/**
 	 * This method returns the alias of a mapped primitive field by its value.
-	 * 
+	 *
 	 * @param obj
 	 * @return
 	 */
