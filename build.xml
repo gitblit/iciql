@@ -98,34 +98,6 @@
 
 	<!--
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		Upload artifacts to GoogleCode and the remote Maven repository
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	-->
-	<target name="uploadArtifacts" depends="build">
-
-		<mx:gcupload
-				 username="${googlecode.user}"
-				 password="${googlecode.password}"
-				 projectname="iciql"
-				 filename="${project.targetDirectory}/${project.artifactId}-${project.version}.zip"
-				 targetfilename="${project.artifactId}-${project.version}.zip"
-				 summary="Version ${project.version} -- library, sources, and javadoc"
-				 labels="Featured, Type-Package, OpSys-All" />
-
-		<mx:ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}"
-			remotedir="${ftp.maven.dir}" verbose="yes" depends="yes" timediffauto="true"
-			preservelastmodified="true">
-			<fileset dir="${basedir}/maven">
-				<!-- exclude root files -->
-				<exclude name="*.md" />
-				<exclude name=".git*" />
-			</fileset>
-		</mx:ftp>
-	</target>
-
-
-	<!--
-		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Build the iciql website
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
@@ -183,7 +155,7 @@
 
 				<menu name="downloads">
 					<link name="${project.artifactId}-${project.releaseVersion}"
-						src="${gc.url}${project.artifactId}-${project.releaseVersion}.jar" />
+						src="${gc.url}${project.artifactId}-${project.releaseVersion}.zip" />
 					<divider />
 					<link name="Maven Repository" src="${project.mavenUrl}" />
 				</menu>

@@ -58,7 +58,6 @@ echo "Updating gh-pages for Maven submodule ${project.version} RELEASE artifacts
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
 git checkout gh-pages
-git pull
 git add maven
 git commit -m "updated Maven submodule repository to ${project.version}"
 
@@ -107,10 +106,17 @@ cd ..
 # push project branches
 echo ""
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-echo "Pushing master, gh-pages, and tag ${project.tag}"
+echo "Pushing gh-pages"
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
-git push origin master gh-pages tag ${project.tag}
+git push -f origin gh-pages
+
+echo ""
+echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+echo "Pushing master and tag ${project.tag}"
+echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+echo ""
+git push origin master tag ${project.tag}
 
 # update the Maven submodule reference
 git submodule update
