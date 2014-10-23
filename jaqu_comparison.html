@@ -56,7 +56,7 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='http://code.google.com/p/iciql/downloads/detail?name=iciql-1.2.0.zip'>iciql-1.2.0</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.3.0/iciql-1.3.0.jar'>iciql-1.3.0</a></li>
 <li class='divider'></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
@@ -64,7 +64,7 @@
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>links<b class='caret'></b></a>
 <ul class='dropdown-menu'>
 <li><a href='https://github.com/gitblit/iciql'>Github</a></li>
-<li><a href='http://code.google.com/p/iciql/issues'>Issues</a></li>
+<li><a href='https://github.com/gitblit/iciql/issues'>Issues</a></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
 <li class='divider-vertical'></li>
@@ -76,11 +76,9 @@
 		</div><!-- end Navigation Bar -->
 <div class='container'>
 <!-- Begin Markdown -->
-<h2 class="section" id="H1"><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Comparison to JaQu</h2>
-<p>This is an overview of the fundamental differences between the original JaQu project and the current featureset of iciql.</p>
-
+<h2 class="section" id='H1'><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Comparison to JaQu</h2><p>This is an overview of the fundamental differences between the original JaQu project and the current featureset of iciql. </p>
 <table class="table">
-<tr><th/><th>Iciql</th><th>JaQu</th></tr>
+<tr><th></th><th>Iciql</th><th>JaQu</th></tr>
 <tr><th colspan="3">core</th></tr>
 <tr><td>deployment</td><td>small, discrete library</td><td>depends on H2 database jar file</td></tr>
 <tr><td>databases</td><td>H2, HSQL, Derby, MySQL, and PostreSQL</td><td>H2 only</td></tr>
@@ -92,8 +90,10 @@
 <tr><td>VIEWs</td><td>create readonly views either from a class definition or from a fluent statement</td><td>--</td></tr>
 <tr><td>Foreign Key Constraints</td><td>model classes may be annotated with foreign key constraints</td><td>--</td></tr>
 <tr><td>dynamic queries</td><td>methods and where clauses for dynamic queries that build iciql objects</td><td>--</td></tr>
-<tr><td>DROP</td><td>syntax to drop a table or view</td><td/></tr>
+<tr><td>DROP</td><td>syntax to drop a table or view</td><td></td></tr>
 <tr><td>BETWEEN</td><td>syntax for specifying a BETWEEN x AND y clause</td><td>--</td></tr>
+<tr><td>(NOT) IN</td><td>syntax (oneOf, noneOf) for specifying a (NOT) IN clause</td><td>--</td></tr>
+<tr><td>compound nested conditions</td><td>WHERE (x = y OR x = z) AND (y = a OR y = b)</td><td>--</td></tr>
 <tr><th colspan="3">types</th></tr>
 <tr><td>primitives</td><td>fully supported</td><td>--</td></tr>
 <tr><td>enums</td><td>fully supported</td><td>--</td></tr>
@@ -107,7 +107,7 @@
 <tr><td>Index names</td><td>can be set</td><td>--</td></tr>
 </table>
 <!-- End Markdown -->
-<div ><ul class="pager"><li class="previous"><a href="performance.html">&larr; performance</a></li> </ul></div><footer class="footer"><p class="pull-right">generated 2013-06-27</p>
+<div ><ul class="pager"><li class="previous"><a href="performance.html">&larr; performance</a></li> </ul></div><footer class="footer"><p class="pull-right">generated 2014-10-22</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>

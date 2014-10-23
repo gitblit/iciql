@@ -56,7 +56,7 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='http://code.google.com/p/iciql/downloads/detail?name=iciql-1.2.0.zip'>iciql-1.2.0</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.3.0/iciql-1.3.0.jar'>iciql-1.3.0</a></li>
 <li class='divider'></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
@@ -64,7 +64,7 @@
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>links<b class='caret'></b></a>
 <ul class='dropdown-menu'>
 <li><a href='https://github.com/gitblit/iciql'>Github</a></li>
-<li><a href='http://code.google.com/p/iciql/issues'>Issues</a></li>
+<li><a href='https://github.com/gitblit/iciql/issues'>Issues</a></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
 <li class='divider-vertical'></li>
@@ -78,35 +78,49 @@
 <!-- Begin Markdown -->
 
 <!-- CURRENT RELEASE -->
-	<h3 id="1.2.0" class="section"><a href="#1.2.0" class="sectionlink"><i class="icon-share-alt"> </i></a>Current Release (1.2.0) <small>this is the current stable release</small></h3>
+	<h3 id="1.3.0" class="section"><a href="#1.3.0" class="sectionlink"><i class="icon-share-alt"> </i></a>Current Release (1.3.0) <small>this is the current stable release</small></h3>
 	<table class="table">
 		<tbody>
 			<tr>
-				<td style="background-color:inherit;width:100px">2013-03-25</td>
+				<td style="background-color:inherit;width:100px">2014-10-22</td>
 				<td style="background-color:inherit;">	
-		<p><span class="alert alert-success">
-Iciql artifacts may now be retrieved by your favorite Maven 2-compatible build tool from <a href="http://gitblit.github.com/iciql/maven">here</a>.
-</span>
-	</p>
 	
 
+		<div class="alert alert-info">
+			<h4>Note</h4>
+			If you are upgrading and using EnumId mapping you will have to update your enums to define the target class for the EnumId interface since it is now generified.<p />  <p />Switching to using generic types with the EnumId interface allows you to implement alternative enum-type mappings which may make more sense for your business logic.<p />
+		</div>
 
    	<h4>fixes</h4>
 	<ul>
-		<li>Fixed case-sensitivity bug on setting a compound primary key from an annotation (<a href='http://code.google.com/p/iciql/issues/detail?id=12'>issue 12</a>)</li>
-		<li>Fixed order of DEFAULT value in create table statement (<a href='http://code.google.com/p/iciql/issues/detail?id=11'>issue 11</a>)</li>
-		<li>Fixed password bug in model generator (<a href='http://code.google.com/p/iciql/issues/detail?id=7'>issue 7</a>)</li>
+		<li>Return null NPE in selectFirst() if list is empty (pr-5)</li>
+		<li>Fix Moxie toolkit download URL (pr-6)</li>
+		<li>Be more careful with primitive numeric type rollovers (pr-6)</li>
 	</ul>
    	<h4>changes</h4>
 	<ul>
-		<li> Support inheriting columns from super.super class, if super.super is annotated.<br/> This allows for an inheritance hierarchy like:<br/> @IQTable class MyTable -&gt; @IQView abstract class MyBaseView -&gt; @IQView class MyConstrainedView<br/> </li>
+		<li>Revised EnumId interface to support generic types (pr-6)</li>
 	</ul>
    	<h4>additions</h4>
 	<ul>
-		<li> Implemented readonly view support. (<a href='http://code.google.com/p/iciql/issues/detail?id=8'>issue 8</a>)<br/> View models may be specified using the IQView annotation or Iciql.define().  Views can either be created automatically as part of a query of the view OR views may be constructed from a fluent statement.<br/> </li>
-		<li>Support inheritance of IQVersion for DbUpgrader implementations (<a href='http://code.google.com/p/iciql/issues/detail?id=10'>issue 10</a>)</li>
-		<li>Added @IQConstraintForeignKey annotation (<a href='http://code.google.com/p/iciql/issues/detail?id=13'>issue 13</a>)</li>
-		<li>Added MS SQL Server dialect (<a href='http://code.google.com/p/iciql/issues/detail?id=14'>issue 14</a>)</li>
+		<li>Add syntax oneOf/noneOf for IN and NOT IN (pr-7)</li>
+		<li>Add support for compound nested AND/OR conditions (pr-8)</li>
+		<li>Add support for mapping SQL BOOLEAN to primitive numeric types, not just object numeric types</li>
+		<li>Add support for customizing EnumId mapping, you can now map enum constants to values of your choice as long as they are a standard type</li>
+	</ul>
+   	<h4>dependency changes</h4>
+	<ul>
+		<li>H2 1.4</li>
+		<li>HSQLDB 2.3</li>
+		<li>Derby 10.11</li>
+		<li>MySQL 5.6</li>
+		<li>PostgreSQL 9.3</li>
+	</ul>
+   	<h4>contributors</h4>
+	<ul>
+		<li>James Moger</li>
+		<li>Kazunobu Raita</li>
+		<li>Sotaro Suzuki</li>
 	</ul>
 </td>
 			</tr>
@@ -114,19 +128,6 @@ Iciql artifacts may now be retrieved by your favorite Maven 2-compatible build t
 	</table>
 
 <!-- NEXT RELEASE -->
-	<h3 id="1.3.0-SNAPSHOT" class="section"><a href="#1.3.0-SNAPSHOT" class="sectionlink"><i class="icon-share-alt"> </i></a>Next Release (1.3.0-SNAPSHOT) <small>these changes are queued for an upcoming release</small></h3>
-	<table class="table">
-		<tbody>
-			<tr>
-				<td style="background-color:inherit;width:100px">PENDING</td>
-				<td style="background-color:inherit;">	
-	
-
-
-</td>
-			</tr>
-		</tbody>
-	</table>
 
 <div>
 	<ul class="pager">
@@ -135,7 +136,7 @@ Iciql artifacts may now be retrieved by your favorite Maven 2-compatible build t
 </div>
 
 <!-- End Markdown -->
-<footer class="footer"><p class="pull-right">generated 2013-06-27</p>
+<footer class="footer"><p class="pull-right">generated 2014-10-22</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>

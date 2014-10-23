@@ -56,7 +56,7 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='http://code.google.com/p/iciql/downloads/detail?name=iciql-1.2.0.zip'>iciql-1.2.0</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.3.0/iciql-1.3.0.jar'>iciql-1.3.0</a></li>
 <li class='divider'></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
@@ -64,7 +64,7 @@
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>links<b class='caret'></b></a>
 <ul class='dropdown-menu'>
 <li><a href='https://github.com/gitblit/iciql'>Github</a></li>
-<li><a href='http://code.google.com/p/iciql/issues'>Issues</a></li>
+<li><a href='https://github.com/gitblit/iciql/issues'>Issues</a></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
 <li class='divider-vertical'></li>
@@ -76,22 +76,14 @@
 		</div><!-- end Navigation Bar -->
 <div class='container'>
 <!-- Begin Markdown -->
-<h2 class="section" id="H1"><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Usage</h2>
-<p>Aside from this brief usage guide, please consult the <a href="examples.html">examples</a>, the <a href="javadoc.html">javadoc</a> and the <a href="https://github.com/gitblit/iciql">source code</a>.</p>
-
-<h3 class="section" id="H2"><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>Instantiating a Db</h3>
-<p>Use one of the static utility methods to instantiate a Db instance:</p>
-
+<h2 class="section" id='H1'><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Usage</h2><p>Aside from this brief usage guide, please consult the <a href="examples.html">examples</a>, the <a href="javadoc.html">javadoc</a> and the <a href="https://github.com/gitblit/iciql">source code</a>.</p>
+<h3 class="section" id='H2'><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>Instantiating a Db</h3><p>Use one of the static utility methods to instantiate a Db instance:</p>
 <pre><code>Db.open(String url, String user, String password);
 Db.open(String url, String user, char[] password);
 Db.open(Connection conn);
 Db.open(DataSource dataSource);
 </code></pre>
-
-<h3 class="section" id="H3"><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>Compile-Time Statements</h3>
-<p>You compose your statements using the builder pattern where each method call returns an object that is used to specify the next part of the statement.  Through clever usage of generics, pioneered by the original JaQu project, compile-time safety flows through the statement.</p>
-
-<p><pre class='prettyprint lang-java'>
+<h3 class="section" id='H3'><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>Compile-Time Statements</h3><p>You compose your statements using the builder pattern where each method call returns an object that is used to specify the next part of the statement. Through clever usage of generics, pioneered by the original JaQu project, compile-time safety flows through the statement.</p><p><pre class='prettyprint lang-java'>
 Db db = Db.open(&quot;jdbc:h2:mem:&quot;, &quot;sa&quot;, &quot;sa&quot;);
 db.insertAll(Product.getList());
 db.insertAll(Customer.getList());
@@ -107,49 +99,54 @@ for (Product product : restock) {
 	where(p.productId).is(product.productId).update();
 }
 db.close();
-</pre></p>
-
-<p>Please see the <a href="examples.html">examples</a> page for more code samples. </p>
-
-<h3 class="section" id="H4"><a href="#H4" class="sectionlink"><i class="icon-share-alt"> </i></a>Dynamic Runtime Queries</h3>
-<p>Iciql gives you compile-time type-safety, but it becomes inconvenient if your design requires more dynamic statement generation.  For these scenarios iciql offers some runtime query support through a hybrid approach or a pure JDBC approach.</p>
-
-<h4 class="section" id="H5"><a href="#H5" class="sectionlink"><i class="icon-share-alt"> </i></a>Where String Fragment Approach</h4>
-<p>This approach is a mixture of iciql and jdbc.  It uses the traditional prepared statement <em>field=?</em> tokens with iciql compile-time model class type checking.  There is no field token type-safety checking.
-<pre class='prettyprint lang-java'>
+</pre></p><p>Please see the <a href="examples.html">examples</a> page for more code samples. </p>
+<h3 class="section" id='H4'><a href="#H4" class="sectionlink"><i class="icon-share-alt"> </i></a>Dynamic Runtime Queries</h3><p>Iciql gives you compile-time type-safety, but it becomes inconvenient if your design requires more dynamic statement generation. For these scenarios iciql offers some runtime query support through a hybrid approach or a pure JDBC approach.</p>
+<h4 class="section" id='H5'><a href="#H5" class="sectionlink"><i class="icon-share-alt"> </i></a>Where String Fragment Approach</h4><p>This approach is a mixture of iciql and jdbc. It uses the traditional prepared statement <em>field=?</em> tokens with iciql compile-time model class type checking. There is no field token type-safety checking.<br/><pre class='prettyprint lang-java'>
 List&lt;Product&gt; restock = db.from(p).where(&quot;unitsInStock=? and productName like ? order by productId&quot;, 0, &quot;Chef%&quot;).select();
 </pre></p>
-
-<h4 class="section" id="H6"><a href="#H6" class="sectionlink"><i class="icon-share-alt"> </i></a>Db.executeQuery Approaches</h4>
-<p>There may be times when the hybrid approach is still too restrictive and you'd prefer to write straight SQL.  You can do that too and use iciql to build objects from your ResultSet, but be careful:</p>
-
+<h4 class="section" id='H6'><a href="#H6" class="sectionlink"><i class="icon-share-alt"> </i></a>Db.executeQuery Approaches</h4><p>There may be times when the hybrid approach is still too restrictive and you'd prefer to write straight SQL. You can do that too and use iciql to build objects from your ResultSet, but be careful:</p>
 <ol>
-<li>Make sure to <em>select *</em> in your query otherwise db.buildObjects() will throw a RuntimeException</li>
-<li>There is no model class type checking nor field type checking. </li>
-</ol>
-
-<p><pre class='prettyprint lang-java'>
+  <li>Make sure to _select *_ in your query otherwise db.buildObjects() will throw a RuntimeException
+</li>
+  <li>There is no model class type checking nor field type checking.</li>
+</ol><p><pre class='prettyprint lang-java'>
 List&lt;Product&gt; allProducts = db.executeQuery(Product.class, &quot;select * from products&quot;);
 List&lt;Product&gt; restock = db.executeQuery(Product.class, &quot;select * from products where unitsInStock=?&quot;, 0);
 
 // parameterized query which can be cached and re-used later
 String q = db.from(p).where(p.unitsInStock).isParameter().toSQL();
 List&lt;Product&gt; restock = db.executeQuery(Product.class, q, 0);
-</pre></p>
-
-<p>Or if you want access to the raw <em>ResultSet</em> before building your model object instances...</p>
-
-<p><pre class='prettyprint lang-java'>
+</pre></p><p>Or if you want access to the raw <em>ResultSet</em> before building your model object instances...</p><p><pre class='prettyprint lang-java'>
 ResultSet rs = db.executeQuery(&quot;select * from products&quot;);
 List&lt;Product&gt; allProducts = db.buildObjects(Product.class, rs);
 // This method ensures the creating statement is closed
 JdbcUtils.closeSilently(rs, true);
 </pre></p>
+<h3 class="section" id='H7'><a href="#H7" class="sectionlink"><i class="icon-share-alt"> </i></a>Compound Nested Conditions</h3><p>It is possible to specify type-safe compound nested conditions in your WHERE clauses using <code>And</code> and <code>Or</code> statements.</p><p><pre class='prettyprint lang-java'>
+final Customer model = new Customer();
 
-<h3 class="section" id="H7"><a href="#H7" class="sectionlink"><i class="icon-share-alt"> </i></a>Read-only Views</h3>
-<p>View model classes can inherit their field definitions from a parent table model class.</p>
+// SELECT * FROM CUSTOMERS
+//    WHERE customerId IS NOT NULL
+//    AND region IS NOT NULL
+//    AND (
+//      region = 'LA' OR region = 'CA'
+//    )
+List&lt;Customer&gt; regionals = db.from(model)
+      .where(model.customerId).isNotNull()
+      .and(model.region).isNotNull()
+      .and(new Or&lt;Customer&gt;(db, model) {{
+            or(model.region).is(&quot;LA&quot;);
+            or(model.region).is(&quot;CA&quot;);
+      }});
+</pre></p>
+<h3 class="section" id='H8'><a href="#H8" class="sectionlink"><i class="icon-share-alt"> </i></a>Finding Matches for a List of Values</h3><p>You can use SQL's <em>IN</em> WHERE clause with the <code>oneOf</code> or <code>noneOf</code> conditions.</p><p><pre class='prettyprint lang-java'>
+final Customer model = new Customer();
 
-<p><pre class='prettyprint lang-java'>
+List&lt;Customer&gt; regionals = db.from(model).where(model.region).oneOf(&quot;CA&quot;, &quot;LA&quot;);
+List&lt;Customer&gt; others = db.from(model).where(model.region).noneOf(&quot;CA&quot;, &quot;LA&quot;);
+
+</pre></p>
+<h3 class="section" id='H9'><a href="#H9" class="sectionlink"><i class="icon-share-alt"> </i></a>Read-only Views</h3><p>View model classes can inherit their field definitions from a parent table model class.</p><p><pre class='prettyprint lang-java'>
 @IQView(name = &quot;AnnotatedProductViewInherited&quot;, inheritColumns = true)
 public class ProductViewFromQuery extends ProductAnnotationOnly {
 
@@ -162,11 +159,7 @@ public class ProductViewFromQuery extends ProductAnnotationOnly {
         return productName + &quot; (&quot; + productId + &quot;)&quot;;
     }
 }
-</pre></p>
-
-<p>You can then create or replace the VIEW in the database using a fluent syntax.</p>
-
-<p><pre class='prettyprint lang-java'>
+</pre></p><p>You can then create or replace the VIEW in the database using a fluent syntax.</p><p><pre class='prettyprint lang-java'>
 // create view from query
 ProductAnnotationOnly product = new ProductAnnotationOnly();
 db.from(product).where(product.productId).exceeds(2L)
@@ -183,16 +176,7 @@ db.from(product).where(product.productId).exceeds(3L)
 // select from the replaced view
 products = db.from(view).select();
 </pre></p>
-
-<h3 class="section" id="H8"><a href="#H8" class="sectionlink"><i class="icon-share-alt"> </i></a>Natural Syntax</h3>
-<span class="warning">work-in-progress</span>
-<p>The original JaQu source offers partial support for Java expressions in <em>where</em> clauses.</p>
-
-<p>This works by decompiling a Java expression, at runtime, to an SQL condition.  The expression is written as an anonymous inner class implementation of the <code>com.iciql.Filter</code> interface.
-A proof-of-concept decompiler is included, but is incomplete.</p>
-
-<p>The proposed syntax is:
-<pre class='prettyprint lang-java'>
+<h3 class="section" id='H10'><a href="#H10" class="sectionlink"><i class="icon-share-alt"> </i></a>Natural Syntax</h3><p><span class="warning">work-in-progress</span></p><p>The original JaQu source offers partial support for Java expressions in <em>where</em> clauses.</p><p>This works by decompiling a Java expression, at runtime, to an SQL condition. The expression is written as an anonymous inner class implementation of the <code>com.iciql.Filter</code> interface.<br/>A proof-of-concept decompiler is included, but is incomplete.</p><p>The proposed syntax is:<br/><pre class='prettyprint lang-java'>
 long count = db.from(co).
     where(new Filter() { public boolean where() {
         return co.id == x
@@ -205,23 +189,13 @@ long count = db.from(co).
         }
     }).selectCount();
 </pre></p>
-
-<h3 class="section" id="H9"><a href="#H9" class="sectionlink"><i class="icon-share-alt"> </i></a>JDBC Statements, ResultSets, and Exception Handling</h3>
-<p>Iciql opens and closes all JDBC objects automatically.  SQLExceptions thrown during execution of a statement (except for <em>close()</em> calls), will be caught, wrapped, and rethrown as an <code>IciqlException</code>, which is a RuntimeException.</p>
-
-<p>Iciql does not throw any <a href="http://en.wikipedia.org/wiki/Exception_handling#Checked_exceptions">checked exceptions</a>.</p>
-
-<h3 class="section" id="H10"><a href="#H10" class="sectionlink"><i class="icon-share-alt"> </i></a>Statement Logging</h3>
-<p>Iciql provides a mechanism to log generated statements and warnings to the console, to SLF4J, or to your own logging framework.  Exceptions are not logged using this mechanism; exceptions are wrapped and rethrown as <code>IciqlException</code>, which is a RuntimeException.</p>
-
-<h4 class="section" id="H11"><a href="#H11" class="sectionlink"><i class="icon-share-alt"> </i></a>Console Logging</h4>
-<p><pre class='prettyprint lang-java'>
+<h3 class="section" id='H11'><a href="#H11" class="sectionlink"><i class="icon-share-alt"> </i></a>JDBC Statements, ResultSets, and Exception Handling</h3><p>Iciql opens and closes all JDBC objects automatically. SQLExceptions thrown during execution of a statement (except for <em>close()</em> calls), will be caught, wrapped, and rethrown as an <code>IciqlException</code>, which is a RuntimeException.</p><p>Iciql does not throw any <a href="http://en.wikipedia.org/wiki/Exception_handling#Checked_exceptions">checked exceptions</a>.</p>
+<h3 class="section" id='H12'><a href="#H12" class="sectionlink"><i class="icon-share-alt"> </i></a>Statement Logging</h3><p>Iciql provides a mechanism to log generated statements and warnings to the console, to SLF4J, or to your own logging framework. Exceptions are not logged using this mechanism; exceptions are wrapped and rethrown as <code>IciqlException</code>, which is a RuntimeException.</p>
+<h4 class="section" id='H13'><a href="#H13" class="sectionlink"><i class="icon-share-alt"> </i></a>Console Logging</h4><p><pre class='prettyprint lang-java'>
 IciqlLogger.activeConsoleLogger();
 IciqlLogger.deactiveConsoleLogger();
 </pre></p>
-
-<h4 class="section" id="H12"><a href="#H12" class="sectionlink"><i class="icon-share-alt"> </i></a>SLF4J Logging</h4>
-<p><pre class='prettyprint lang-java'>
+<h4 class="section" id='H14'><a href="#H14" class="sectionlink"><i class="icon-share-alt"> </i></a>SLF4J Logging</h4><p><pre class='prettyprint lang-java'>
 Slf4jIciqlListener slf4j = new Slf4jIciqlListener();
 slf4j.setLevel(StatementType.CREATE, Level.WARN);
 slf4j.setLevel(StatementType.DELETE, Level.WARN);
@@ -229,9 +203,7 @@ slf4j.setLevel(StatementType.MERGE, Level.OFF);
 IciqlLogger.registerListener(slf4j);
 IciqlLogger.unregisterListener(slf4j);
 </pre></p>
-
-<h4 class="section" id="H13"><a href="#H13" class="sectionlink"><i class="icon-share-alt"> </i></a>Custom Logging</h4>
-<p><pre class='prettyprint lang-java'>
+<h4 class="section" id='H15'><a href="#H15" class="sectionlink"><i class="icon-share-alt"> </i></a>Custom Logging</h4><p><pre class='prettyprint lang-java'>
 IciqlListener custom = new IciqlListener() {
     public void logIciql(StatementType type, String statement) {
         // do log
@@ -240,40 +212,24 @@ IciqlListener custom = new IciqlListener() {
 IciqlLogger.registerListener(custom);
 IciqlLogger.unregisterListener(custom);
 </pre></p>
-
-<h2 class="section" id="H14"><a href="#H14" class="sectionlink"><i class="icon-share-alt"> </i></a>Understanding Aliases and Model Classes</h2>
-<p>Consider the following example:
-<pre class='prettyprint lang-java'>
+<h2 class="section" id='H16'><a href="#H16" class="sectionlink"><i class="icon-share-alt"> </i></a>Understanding Aliases and Model Classes</h2><p>Consider the following example:<br/><pre class='prettyprint lang-java'>
 Product p = new Product();
 List&lt;Product&gt; restock = db.from(p).where(p.unitsInStock).is(0).select();
-</pre></p>
-
-<p>The Product model class instance named <strong>p</strong> is an <em>alias</em> object.  An <em>alias</em> is simply an instance of your model class that is only used to build the compile-time/runtime representation of your table.</p>
-
+</pre></p><p>The Product model class instance named <strong>p</strong> is an <em>alias</em> object. An <em>alias</em> is simply an instance of your model class that is only used to build the compile-time/runtime representation of your table.</p>
 <ol>
-<li><em>Alias</em> instances are <strong>NOT</strong> thread-safe and must not be used concurrently.</li>
-<li><em>Alias</em> instances have no other purpose than to provide a compile-time/runtime map of your table.</li>
-<li>If you inspected an <em>alias</em> instance after using one you would find that it's fields have been assigned numeric values.<br/>These values are assigned from a static counter in <code>com.iciql.Utils.newObject()</code> during execution of the <em>db.from()</em> method.<p/>For <em>Object</em> fields, these values are meaningless since objects are mapped by reference.<br/>For <em>Primitive</em> fields these values do matter because primitives are mapped by value.  The proper alias is selected as long as the primitive variant methods are used.  e.g. db.from(p).where(int).is(Integer).select()</li>
-</ol>
-
-<p>If your statement is a query, like in the above example, iciql will generate new instances of your <em>alias</em> model class and return them as a list where each entry of the list represents a row from the JDBC <code>ResultSet</code>.</p>
-
-<h3 class="section" id="H15"><a href="#H15" class="sectionlink"><i class="icon-share-alt"> </i></a>Why are Aliases not thread-safe?</h3>
-<p>The <em>db.from(p)</em> call reinstantiates each member field of p.  Those reinstantiated fields are then subsequently used in clauses like <em>where(p.unitsInStock)</em>.  If your <em>alias</em> instance is shared concurrently then its highly probable that when <em>queryA</em> executes, <em>queryC</em> has reinstantiated all the <em>alias</em> fields and broken <em>queryA's</em> runtime field mapping.</p>
-
-<p>Depending on your design, you might consider using a <a href="http://download.oracle.com/javase/6/docs/api/java/lang/ThreadLocal.html">ThreadLocal</a> variable if you do not want to keep instantiating <em>alias</em> instances.  A utility function is included for easily creating ThreadLocal variables.</p>
-
-<p><pre class='prettyprint lang-java'>
+  <li><em>Alias</em> instances are <strong>NOT</strong> thread-safe and must not be used concurrently.</li>
+  <li><em>Alias</em> instances have no other purpose than to provide a compile-time/runtime map of your table.</li>
+  <li>If you inspected an <em>alias</em> instance after using one you would find that it's fields have been assigned numeric values.<br/>These values are assigned from a static counter in <code>com.iciql.Utils.newObject()</code> during execution of the <em>db.from()</em> method.<p/>For <em>Object</em> fields, these values are meaningless since objects are mapped by reference.<br/>For <em>Primitive</em> fields these values do matter because primitives are mapped by value. The proper alias is selected as long as the primitive variant methods are used. e.g. db.from(p).where(int).is(Integer).select()</li>
+</ol><p>If your statement is a query, like in the above example, iciql will generate new instances of your <em>alias</em> model class and return them as a list where each entry of the list represents a row from the JDBC <code>ResultSet</code>.</p>
+<h3 class="section" id='H17'><a href="#H17" class="sectionlink"><i class="icon-share-alt"> </i></a>Why are Aliases not thread-safe?</h3><p>The <em>db.from(p)</em> call reinstantiates each member field of p. Those reinstantiated fields are then subsequently used in clauses like <em>where(p.unitsInStock)</em>. If your <em>alias</em> instance is shared concurrently then its highly probable that when <em>queryA</em> executes, <em>queryC</em> has reinstantiated all the <em>alias</em> fields and broken <em>queryA's</em> runtime field mapping.</p><p>Depending on your design, you might consider using a <a href="http://download.oracle.com/javase/6/docs/api/java/lang/ThreadLocal.html">ThreadLocal</a> variable if you do not want to keep instantiating <em>alias</em> instances. A utility function is included for easily creating ThreadLocal variables.</p><p><pre class='prettyprint lang-java'>
 final ThreadLocal&lt;Product&gt; p = Utils.newThreadLocal(Product.class);
 db.from(p.get()).select();
 </pre></p>
-
-<h2 class="section" id="H16"><a href="#H16" class="sectionlink"><i class="icon-share-alt"> </i></a>Best Practices</h2>
+<h2 class="section" id='H18'><a href="#H18" class="sectionlink"><i class="icon-share-alt"> </i></a>Best Practices</h2>
 <ol>
-<li>Close your <em>Db</em> instances when you are done with them, this closes the underlying connection or directs the pool to &quot;close&quot; the connection.</li>
-<li>Aliases instances are not thread-safe so DO NOT SHARE an alias!<br/>Consider using a <em>ThreadLocal</em> alias instance with the <code>com.iciql.Utils.newThreadLocal()</code> utility method.</li>
+  <li>Close your <em>Db</em> instances when you are done with them, this closes the underlying connection or directs the pool to "close" the connection.</li>
+  <li>Aliases instances are not thread-safe so DO NOT SHARE an alias!<br/>Consider using a <em>ThreadLocal</em> alias instance with the <code>com.iciql.Utils.newThreadLocal()</code> utility method.</li>
 </ol>
-
 <p/>
 <table class="table">
 <tr><th>Not Thread-Safe</th><th>Thread-Safe</th></tr>
@@ -308,7 +264,7 @@ for (int i = 0; i &lt; 5; i++) {
 </td></tr>
 </table>
 <!-- End Markdown -->
-<div ><ul class="pager"><li class="previous"><a href="table_versioning.html">&larr; versioning</a></li> <li class="next"><a href="examples.html">examples &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2013-06-27</p>
+<div ><ul class="pager"><li class="previous"><a href="table_versioning.html">&larr; versioning</a></li> <li class="next"><a href="examples.html">examples &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-10-22</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>
