@@ -67,7 +67,7 @@ can be used for all iciql expressions
 <td>INT<br/><em>EnumType.ORDINAL</em><br/><i>can only <b>declare and explicitly reference</b> one instance of <u>each enum type</u> per model<br/>multiple instances of an enum type within a model is allowed if not using where/set/on/and/or/groupBy/orderBy(enum)</i></td></tr>
 
 <tr><td>java.lang.Enum implements<br/><em>com.iciql.Iciql.EnumId.enumId()</em></td><td> </td>
-<td>INT<br/><em>EnumType.ENUMID</em><br/><i>can only <b>declare and explicitly reference</b> one instance of <u>each enum type</u> per model<br/>multiple instances of an enum type within a model is allowed if not using where/set/on/and/or/groupBy/orderBy(enum)</i></td></tr>
+<td><i>variable</i><br/><em>EnumType.ENUMID</em><br/><i>can only <b>declare and explicitly reference</b> one instance of <u>each enum type</u> per model<br/>multiple instances of an enum type within a model is allowed if not using where/set/on/and/or/groupBy/orderBy(enum)</i></td></tr>
 
 <tr><td colspan="3"><b>Partially Supported Types</b><br/>
 can not be directly referenced in an expression</td></tr>

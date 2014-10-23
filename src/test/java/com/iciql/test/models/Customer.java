@@ -44,14 +44,20 @@ public class Customer {
 		this.region = region;
 	}
 
+	@Override
 	public String toString() {
 		return customerId;
 	}
 
 	public static List<Customer> getList() {
-		Customer[] list = { new Customer("ALFKI", "WA"), new Customer("ANATR", "WA"),
-				new Customer("ANTON", "CA") };
-		return Arrays.asList(list);
+		return Arrays.asList(
+				new Customer("ALFKI", "WA"),
+				new Customer("ANATR", "WA"),
+				new Customer("ASLAN", "CA"),
+				new Customer("ANTON", "CA"),
+				new Customer("BROWN", "LA"),
+				new Customer("SMITH", "NY"),
+				new Customer("JONES", "ME"));
 	}
 
 }

@@ -12,9 +12,9 @@ r21: {
     fixes:
     - Return null NPE in selectFirst() if list is empty (pr-5)
     - Fix Moxie toolkit download URL (pr-6)
-    - Be more careful with primitive numeric type rollovers
+    - Be more careful with primitive numeric type rollovers (pr-6)
     changes:
-    - Revised EnumId interface to support generic types
+    - Revised EnumId interface to support generic types (pr-6)
     additions:
     - Add syntax for IN and NOT IN (pr-7)
     - Add support for nested AND/OR conditions (pr-8)

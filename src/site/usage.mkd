@@ -69,6 +69,44 @@ List<Product> allProducts = db.buildObjects(Product.class, rs);
 JdbcUtils.closeSilently(rs, true);
 ---JAVA---
 
+### Compound Conditions
+
+It is possible to specify type-safe compound where clauses using nested `And` and `Or` statements.
+
+---JAVA---
+final Customer model = new Customer();
+
+List<Customer> regionals =
+    db.from(model).where(model.customerId).isNotNull()
+        .and(model.region).isNotNull()
+        .and(new Or<Customer>(db, model) {{
+		    or(model.region).is("LA");
+            or(model.region).is("CA");
+        }});
+
+List<Customer> regionalType1s =
+    db.from(model).where(new And<Customer>(db, model) {{
+        and(model.type).is(1);
+        and(new Or<Customer>(db, model) {{
+            or(model.region).is("CA");
+            or(model.region).is("LA");
+        }});
+    }});
+
+---JAVA---
+
+### Finding Matches for a List of Values
+
+You can use SQL's *IN* WHERE clause with the `oneOf` or `noneOf` conditions.
+
+---JAVA---
+final Customer model = new Customer();
+
+List<Customer> regionals = db.from(model).where(model.region).oneOf("CA", "LA");
+List<Customer> others = db.from(model).where(model.region).noneOf("CA", "LA");
+
+---JAVA---
+
 ### Read-only Views
 
 View model classes can inherit their field definitions from a parent table model class.

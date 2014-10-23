@@ -20,6 +20,10 @@ package com.iciql.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +35,7 @@ import com.iciql.IciqlException;
 import com.iciql.QueryWhere;
 import com.iciql.test.models.Customer;
 
-public class StackableConditionsTest {
+public class NestedConditionsTest {
 
 	enum Region {
 		JP, FR
@@ -42,6 +46,7 @@ public class StackableConditionsTest {
 	@Before
 	public void setUp() {
 		db = IciqlSuite.openNewDb();
+		db.insertAll(Customer.getList());
 	}
 
 	@After
@@ -68,9 +73,8 @@ public class StackableConditionsTest {
 		return query.toSQL();
 	}
 
-	@SuppressWarnings("serial")
 	@Test
-	public void andOrTest() {
+	public void andOrSyntaxTest() {
 		String Customer = db.getDialect().prepareTableName(null,  "Customer");
 		String customerId = db.getDialect().prepareColumnName("customerId");
 		String region = db.getDialect().prepareColumnName("region");
@@ -155,7 +159,7 @@ public class StackableConditionsTest {
 	}
 
 	@Test
-	public void fluentTest() {
+	public void fluentSyntaxTest() {
 		String Customer = db.getDialect().prepareTableName(null,  "Customer");
 		String customerId = db.getDialect().prepareColumnName("customerId");
 		String region = db.getDialect().prepareColumnName("region");
@@ -192,6 +196,27 @@ public class StackableConditionsTest {
 						.toSQL(),
 				String.format("SELECT * FROM %s WHERE %s IS NOT NULL AND ( (false) OR %s = 'LA' OR %s = 'CA' ) AND %s IS NOT NULL",
 						Customer, customerId, region, region, region));
+	}
+
+	@Test
+	public void compoundConditionsTest() {
+		final Customer c = new Customer();
+		List<Customer> matches = db.from(c)
+				.where(c.customerId).like("A%")
+				.and(c.region).isNotNull()
+				.and(new Or<Customer>(db, c) {{
+					or(c.region).is("LA");
+					or(c.region).is("CA");
+				}}).select();
+
+		assertEquals(2, matches.size());
+
+		Set<String> ids = new TreeSet<String>();
+		for (Customer customer : matches) {
+			ids.add(customer.customerId);
+		}
+		assertEquals("[ANTON, ASLAN]", ids.toString());
+
 	}
 
 }

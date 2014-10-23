@@ -20,6 +20,9 @@ package com.iciql.test;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.junit.After;
 import org.junit.Before;
@@ -36,6 +39,7 @@ public class OneOfTest {
 	@Before
 	public void setUp() {
 		db = IciqlSuite.openNewDb();
+		db.insertAll(Customer.getList());
 	}
 
 	@After
@@ -45,7 +49,7 @@ public class OneOfTest {
 
 	@SuppressWarnings("serial")
 	@Test
-	public void oneOfTest() {
+	public void oneOfSyntaxTest() {
 		String PrimitivesTest = db.getDialect().prepareTableName(null, "PrimitivesTest");
 		String Customer = db.getDialect().prepareTableName(null, "Customer");
 		String myInteger = db.getDialect().prepareColumnName("myInteger");
@@ -82,7 +86,7 @@ public class OneOfTest {
 
 	@SuppressWarnings("serial")
 	@Test
-	public void noneOfTest() {
+	public void noneOfSyntaxTest() {
 		String PrimitivesTest = db.getDialect().prepareTableName(null, "PrimitivesTest");
 		String Customer = db.getDialect().prepareTableName(null, "Customer");
 		String myInteger = db.getDialect().prepareColumnName("myInteger");
@@ -115,6 +119,30 @@ public class OneOfTest {
 							this.add("b");
 						}})
 						.toSQL());
+	}
+
+	public void noneOfTest() {
+		Customer c = new Customer();
+		List<Customer> meAndny = db.from(c).where(c.region).noneOf("WA", "CA", "LA").select();
+		assertEquals(2, meAndny.size());
+
+		Set<String> regions = new TreeSet<String>();
+		for (Customer customer : meAndny) {
+			regions.add(customer.region);
+		}
+		assertEquals("[ME, NY]", regions.toString());
+	}
+
+	public void oneOfTest() {
+		Customer c = new Customer();
+		List<Customer> meAndny = db.from(c).where(c.region).oneOf("ME", "NY").select();
+		assertEquals(2, meAndny.size());
+
+		Set<String> regions = new TreeSet<String>();
+		for (Customer customer : meAndny) {
+			regions.add(customer.region);
+		}
+		assertEquals("[ME, NY]", regions.toString());
 	}
 
 }
