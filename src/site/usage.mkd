@@ -82,25 +82,13 @@ final Customer model = new Customer();
 //    AND (
 //      region = 'LA' OR region = 'CA'
 //    )
-List<Customer> regionals =
-  db.from(model)
-    .where(model.customerId).isNotNull()
-    .and(model.region).isNotNull()
-    .and(new Or<Customer>(db, model) {{
-	  or(model.region).is("LA");
-      or(model.region).is("CA");
-    }});
-
-List<Customer> regionalType1s =
-  db.from(model)
-    .where(new And<Customer>(db, model) {{
-      and(model.type).is(1);
-      and(new Or<Customer>(db, model) {{
-        or(model.region).is("CA");
-        or(model.region).is("LA");
+List<Customer> regionals = db.from(model)
+      .where(model.customerId).isNotNull()
+      .and(model.region).isNotNull()
+      .and(new Or<Customer>(db, model) {{
+            or(model.region).is("LA");
+            or(model.region).is("CA");
       }});
-    }});
-
 ---JAVA---
 
 ### Finding Matches for a List of Values

@@ -5,7 +5,11 @@ r21: {
     title: ${project.name} ${project.version} released
     id: ${project.version}
     date: ${project.buildDate}
-    note: "If you are upgrading and using EnumId mapping you will have to update your models to define the target class for the enumid mapping."
+    note: ''
+          If you are upgrading and using EnumId mapping you will have to update your enums to define the target class for the EnumId interface since it is now generified.
+            
+          Switching to using generic types with the EnumId interface allows you to implement alternative enum-type mappings which may make more sense for your business logic.
+          ''
     html: ~
     text: ~
     security: ~
@@ -16,8 +20,8 @@ r21: {
     changes:
     - Revised EnumId interface to support generic types (pr-6)
     additions:
-    - Add syntax for IN and NOT IN (pr-7)
-    - Add support for nested AND/OR conditions (pr-8)
+    - Add syntax oneOf/noneOf for IN and NOT IN (pr-7)
+    - Add support for compound nested AND/OR conditions (pr-8)
     - Add support for mapping SQL BOOLEAN to primitive numeric types, not just object numeric types
     - Add support for customizing EnumId mapping, you can now map enum constants to values of your choice as long as they are a standard type
     dependencyChanges: 
