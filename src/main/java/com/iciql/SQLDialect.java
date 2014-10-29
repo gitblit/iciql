@@ -20,6 +20,7 @@ package com.iciql;
 
 import java.sql.DatabaseMetaData;
 
+import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.TableDefinition.ConstraintForeignKeyDefinition;
 import com.iciql.TableDefinition.ConstraintUniqueDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
@@ -31,8 +32,34 @@ import com.iciql.TableDefinition.IndexDefinition;
 public interface SQLDialect {
 
 	/**
+	 * Returns the registered instance of the type adapter.
+	 *
+	 * @param typeAdapter
+	 * @return the type adapter instance
+	 */
+	DataTypeAdapter<?> getTypeAdapter(Class<? extends DataTypeAdapter<?>> typeAdapter);
+
+	/**
+	 * Serialize the Java object into a type or format that the database will accept.
+	 *
+	 * @param value
+	 * @param typeAdapter
+	 * @return the serialized object
+	 */
+	<T> Object serialize(T value, Class<? extends DataTypeAdapter<?>> typeAdapter);
+
+	/**
+	 * Deserialize the object received from the database into a Java type.
+	 *
+	 * @param value
+	 * @param typeAdapter
+	 * @return the deserialized object
+	 */
+	Object deserialize(Object value, Class<? extends DataTypeAdapter<?>> typeAdapter);
+
+	/**
 	 * Configure the dialect from the database metadata.
-	 * 
+	 *
 	 * @param databaseName
 	 * @param data
 	 */
@@ -40,7 +67,7 @@ public interface SQLDialect {
 
 	/**
 	 * Allows a dialect to substitute an SQL type.
-	 * 
+	 *
 	 * @param sqlType
 	 * @return the dialect-safe type
 	 */
@@ -48,7 +75,7 @@ public interface SQLDialect {
 
 	/**
 	 * Returns a properly formatted table name for the dialect.
-	 * 
+	 *
 	 * @param schemaName
 	 *            the schema name, or null for no schema
 	 * @param tableName
@@ -59,7 +86,7 @@ public interface SQLDialect {
 
 	/**
 	 * Returns a properly formatted column name for the dialect.
-	 * 
+	 *
 	 * @param name
 	 *            the column name
 	 * @return the properly formatted column name
@@ -68,7 +95,7 @@ public interface SQLDialect {
 
 	/**
 	 * Get the CREATE TABLE statement.
-	 * 
+	 *
 	 * @param stat
 	 * @param def
 	 */
@@ -76,16 +103,16 @@ public interface SQLDialect {
 
 	/**
 	 * Get the DROP TABLE statement.
-	 * 
+	 *
 	 * @param stat
 	 * @param def
 	 */
 	<T> void prepareDropTable(SQLStatement stat, TableDefinition<T> def);
 
-	
+
 	/**
 	 * Get the CREATE VIEW statement.
-	 * 
+	 *
 	 * @param stat
 	 *            return the SQL statement
 	 * @param def
@@ -95,7 +122,7 @@ public interface SQLDialect {
 
 	/**
 	 * Get the CREATE VIEW statement.
-	 * 
+	 *
 	 * @param stat
 	 *            return the SQL statement
 	 * @param def
@@ -106,17 +133,17 @@ public interface SQLDialect {
 
 	/**
 	 * Get the DROP VIEW statement.
-	 * 
+	 *
 	 * @param stat
 	 *            return the SQL statement
 	 * @param def
 	 *            table definition
 	 */
 	<T> void prepareDropView(SQLStatement stat, TableDefinition<T> def);
-	
+
 	/**
 	 * Get the CREATE INDEX statement.
-	 * 
+	 *
 	 * @param stat
 	 *            return the SQL statement
 	 * @param schemaName
@@ -130,7 +157,7 @@ public interface SQLDialect {
 
 	/**
 	 * Get the ALTER statement.
-	 * 
+	 *
 	 * @param stat
 	 *            return the SQL statement
 	 * @param schemaName
@@ -144,7 +171,7 @@ public interface SQLDialect {
 
 	/**
 	 * Get the ALTER statement.
-	 * 
+	 *
 	 * @param stat
 	 *            return the SQL statement
 	 * @param schemaName
@@ -159,7 +186,7 @@ public interface SQLDialect {
 
 	/**
 	 * Get a MERGE or REPLACE INTO statement.
-	 * 
+	 *
 	 * @param stat
 	 *            return the SQL statement
 	 * @param schemaName
@@ -176,7 +203,7 @@ public interface SQLDialect {
 
 	/**
 	 * Append "LIMIT limit OFFSET offset" to the SQL statement.
-	 * 
+	 *
 	 * @param stat
 	 *            the statement
 	 * @param limit
@@ -190,7 +217,7 @@ public interface SQLDialect {
 	 * Returns the preferred DATETIME class for the database.
 	 * <p>
 	 * Either java.util.Date or java.sql.Timestamp
-	 * 
+	 *
 	 * @return preferred DATETIME class
 	 */
 	Class<? extends java.util.Date> getDateTimeClass();
@@ -198,9 +225,10 @@ public interface SQLDialect {
 	/**
 	 * When building static string statements this method flattens an object to
 	 * a string representation suitable for a static string statement.
-	 * 
+	 *
 	 * @param o
 	 * @return the string equivalent of this object
 	 */
-	String prepareParameter(Object o);
+	String prepareStringParameter(Object o);
+
 }

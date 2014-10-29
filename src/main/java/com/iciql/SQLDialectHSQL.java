@@ -38,7 +38,7 @@ public class SQLDialectHSQL extends SQLDialectDefault {
 			return "CREATE CACHED TABLE IF NOT EXISTS";
 		}
 	}
-	
+
 	@Override
 	public <T> void prepareDropView(SQLStatement stat, TableDefinition<T> def) {
 		StatementBuilder buff = new StatementBuilder("DROP VIEW IF EXISTS "
@@ -91,7 +91,8 @@ public class SQLDialectHSQL extends SQLDialectDefault {
 			}
 			buff.append(')');
 			Object value = def.getValue(obj, field);
-			stat.addParameter(value);
+			Object parameter = serialize(value, field.typeAdapter);
+			stat.addParameter(parameter);
 		}
 
 		// map to temporary table

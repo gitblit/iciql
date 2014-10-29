@@ -26,6 +26,7 @@ This is an overview of the fundamental differences between the original JaQu pro
 <tr><td>DECIMAL(length,scale)</td><td>can specify length/precision and scale</td><td>--</td></tr>
 <tr><td>BOOLEAN</td><td>flexible mapping of boolean as bool, varchar, or int</td><td>--</td></tr>
 <tr><td>BLOB</td><td>partially supported <em>(can not be used in a WHERE clause)</em></td><td>--</td></tr>
+<tr><td>Custom</td><td>partially supported <em>uses custom-defined data type adapter (can not be used in a WHERE clause)</em></td><td>--</td></tr>
 <tr><td>UUID</td><td>fully supported <em>(H2 only)</em> </td><td>--</td></tr>
 <tr><th colspan="3">configuration</th></tr>
 <tr><td>DEFAULT values</td><td>set from annotation, <em>default object values</em>, or Define.defaultValue()</td><td>set from annotations</td></tr>

@@ -37,7 +37,7 @@ public class SQLDialectH2 extends SQLDialectDefault {
 			return "CREATE CACHED TABLE IF NOT EXISTS";
 		}
 	}
-	
+
 	@Override
 	protected <T> String prepareCreateView(TableDefinition<T> def) {
 		return "CREATE VIEW IF NOT EXISTS";
@@ -127,7 +127,8 @@ public class SQLDialectH2 extends SQLDialectDefault {
 			buff.appendExceptFirst(", ");
 			buff.append('?');
 			Object value = def.getValue(obj, field);
-			stat.addParameter(value);
+			Object parameter = serialize(value, field.typeAdapter);
+			stat.addParameter(parameter);
 		}
 		buff.append(')');
 		stat.setSQL(buff.toString());

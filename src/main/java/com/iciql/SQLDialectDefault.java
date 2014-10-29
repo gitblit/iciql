@@ -22,9 +22,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.iciql.Iciql.ConstraintDeleteType;
 import com.iciql.Iciql.ConstraintUpdateType;
+import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.TableDefinition.ConstraintForeignKeyDefinition;
 import com.iciql.TableDefinition.ConstraintUniqueDefinition;
 import com.iciql.TableDefinition.FieldDefinition;
@@ -32,6 +35,7 @@ import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.IciqlLogger;
 import com.iciql.util.StatementBuilder;
 import com.iciql.util.StringUtils;
+import com.iciql.util.Utils;
 
 /**
  * Default implementation of an SQL dialect.
@@ -45,6 +49,11 @@ public class SQLDialectDefault implements SQLDialect {
 	int databaseMinorVersion;
 	String databaseName;
 	String productVersion;
+	Map<Class<? extends DataTypeAdapter<?>>, DataTypeAdapter<?>> typeAdapters;
+
+	public SQLDialectDefault() {
+		typeAdapters = new ConcurrentHashMap<Class<? extends DataTypeAdapter<?>>, DataTypeAdapter<?>>();
+	}
 
 	@Override
 	public String toString() {
@@ -305,7 +314,8 @@ public class SQLDialectDefault implements SQLDialect {
 			buff.appendExceptFirst(", ");
 			buff.append('?');
 			Object value = def.getValue(obj, field);
-			stat.addParameter(value);
+			Object parameter = serialize(value, field.typeAdapter);
+			stat.addParameter(parameter);
 		}
 		buff.append(" FROM ");
 		buff.append(prepareTableName(schemaName, tableName));
@@ -316,7 +326,8 @@ public class SQLDialectDefault implements SQLDialect {
 				buff.appendExceptFirst(" AND ");
 				buff.append(MessageFormat.format("{0} = ?", prepareColumnName(field.columnName)));
 				Object value = def.getValue(obj, field);
-				stat.addParameter(value);
+				Object parameter = serialize(value, field.typeAdapter);
+				stat.addParameter(parameter);
 			}
 		}
 		buff.append(" HAVING count(*)=0)");
@@ -334,7 +345,40 @@ public class SQLDialectDefault implements SQLDialect {
 	}
 
 	@Override
-	public String prepareParameter(Object o) {
+	public DataTypeAdapter<?> getTypeAdapter(Class<? extends DataTypeAdapter<?>> typeAdapter) {
+		DataTypeAdapter<?> dtt = typeAdapters.get(typeAdapter);
+		if (dtt == null) {
+			dtt = Utils.newObject(typeAdapter);
+			typeAdapters.put(typeAdapter, dtt);
+		}
+		return dtt;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> Object serialize(T value, Class<? extends DataTypeAdapter<?>> typeAdapter) {
+		if (typeAdapter == null) {
+			// pass-through
+			return value;
+		}
+
+		DataTypeAdapter<T> dtt = (DataTypeAdapter<T>) getTypeAdapter(typeAdapter);
+		return dtt.serialize(value);
+	}
+
+	@Override
+	public Object deserialize(Object value, Class<? extends DataTypeAdapter<?>> typeAdapter) {
+		DataTypeAdapter<?> dtt = typeAdapters.get(typeAdapter);
+		if (dtt == null) {
+			dtt = Utils.newObject(typeAdapter);
+			typeAdapters.put(typeAdapter, dtt);
+		}
+
+		return dtt.deserialize(value);
+	}
+
+	@Override
+	public String prepareStringParameter(Object o) {
 		if (o instanceof String) {
 			return LITERAL + o.toString().replace(LITERAL, "''") + LITERAL;
 		} else if (o instanceof Character) {

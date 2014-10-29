@@ -657,6 +657,14 @@ public interface Iciql {
 		 */
 		String defaultValue() default "";
 
+		/**
+		 * Allows specifying a custom data type adapter.
+		 * <p>
+		 * For example, you might use this option to map a Postgres JSON column.
+		 * </p>
+		 */
+		Class<? extends DataTypeAdapter<?>> typeAdapter() default StandardJDBCTypeAdapter.class;
+
 	}
 
 	/**
@@ -731,4 +739,74 @@ public interface Iciql {
 	 * and the table name.
 	 */
 	void defineIQ();
+
+	/**
+	 * Interface to allow implementations of custom data type adapters for supporting
+	 * database-specific data types, like the Postgres 'json' or 'xml' types,
+	 * or for supporting other object serialization schemes.
+	 * <p><b>NOTE:</b> Data type adapters are not thread-safe!</p>
+	 *
+	 * @param <T>
+	 */
+	public interface DataTypeAdapter<T> {
+
+		/**
+		 * The SQL data type for this adapter.
+		 *
+		 * @return the SQL data type
+		 */
+		String getDataType();
+
+		/**
+		 * The Java domain type for this adapter.
+		 *
+		 * @return the Java domain type
+		 */
+		Class<T> getJavaType();
+
+		/**
+		 * Serializes your Java object into a JDBC object.
+		 *
+		 * @param value
+		 * @return a JDBC object
+		 */
+		Object serialize(T value);
+
+		/**
+		 * Deserializes a JDBC object into your Java object.
+		 *
+		 * @param value
+		 * @return the Java object
+		 */
+		T deserialize(Object value);
+
+	}
+
+	/**
+	 * The standard type adapter allows iciql to use it's internal utility convert functions
+	 * to handle the standard JDBC types.
+	 */
+	public final static class StandardJDBCTypeAdapter implements DataTypeAdapter<Object> {
+
+		@Override
+		public String getDataType() {
+			throw new RuntimeException("This adapter is for all standard JDBC types.");
+		}
+
+		@Override
+		public Class<Object> getJavaType() {
+			throw new RuntimeException("This adapter is for all standard JDBC types.");
+		}
+
+		@Override
+		public Object serialize(Object value) {
+			return value;
+		}
+
+		@Override
+		public Object deserialize(Object value) {
+			return value;
+		}
+
+	}
 }

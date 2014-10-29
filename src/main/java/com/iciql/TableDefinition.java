@@ -33,6 +33,7 @@ import java.util.Set;
 import com.iciql.Iciql.ConstraintDeferrabilityType;
 import com.iciql.Iciql.ConstraintDeleteType;
 import com.iciql.Iciql.ConstraintUpdateType;
+import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
@@ -50,6 +51,7 @@ import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.Iciql.IQView;
 import com.iciql.Iciql.IndexType;
+import com.iciql.Iciql.StandardJDBCTypeAdapter;
 import com.iciql.util.IciqlLogger;
 import com.iciql.util.StatementBuilder;
 import com.iciql.util.StringUtils;
@@ -121,6 +123,7 @@ public class TableDefinition<T> {
 		Class<?> enumTypeClass;
 		boolean isPrimitive;
 		String constraint;
+		Class<? extends DataTypeAdapter<?>> typeAdapter;
 
 		Object getValue(Object obj) {
 			try {
@@ -132,11 +135,11 @@ public class TableDefinition<T> {
 
 		private Object initWithNewObject(Object obj) {
 			Object o = Utils.newObject(field.getType());
-			setValue(obj, o);
+			setValue(null, obj, o);
 			return o;
 		}
 
-		private void setValue(Object obj, Object o) {
+		private void setValue(SQLDialect dialect, Object obj, Object o) {
 			try {
 				if (!field.isAccessible()) {
 					field.setAccessible(true);
@@ -144,6 +147,8 @@ public class TableDefinition<T> {
 				Class<?> targetType = field.getType();
 				if (targetType.isEnum()) {
 					o = Utils.convertEnum(o, targetType, enumType);
+				} else if (dialect != null && typeAdapter != null) {
+					o = dialect.deserialize(o, typeAdapter);
 				} else {
 					o = Utils.convert(o, targetType);
 				}
@@ -407,7 +412,14 @@ public class TableDefinition<T> {
 		}
 	}
 
-	void mapFields() {
+	void defineTypeAdapter(Object column, Class<? extends DataTypeAdapter<?>> typeAdapter) {
+		FieldDefinition def = fieldMap.get(column);
+		if (def != null) {
+			def.typeAdapter = typeAdapter;
+		}
+	}
+
+	void mapFields(Db db) {
 		boolean byAnnotationsOnly = false;
 		boolean inheritColumns = false;
 		if (clazz.isAnnotationPresent(IQTable.class)) {
@@ -465,6 +477,9 @@ public class TableDefinition<T> {
 			Class<?> enumTypeClass = null;
 			String defaultValue = "";
 			String constraint = "";
+			String dataType = null;
+			Class<? extends DataTypeAdapter<?>> typeAdapter = null;
+
 			// configure Java -> SQL enum mapping
 			if (f.getType().isEnum()) {
 				enumType = EnumType.DEFAULT_TYPE;
@@ -517,6 +532,12 @@ public class TableDefinition<T> {
 				trim = col.trim();
 				nullable = col.nullable();
 
+				if (col.typeAdapter() != null && col.typeAdapter() != StandardJDBCTypeAdapter.class) {
+					typeAdapter = col.typeAdapter();
+					DataTypeAdapter<?> dtt = db.getDialect().getTypeAdapter(col.typeAdapter());
+					dataType = dtt.getDataType();
+				}
+
 				// annotation overrides
 				if (!StringUtils.isNullOrEmpty(col.defaultValue())) {
 					defaultValue = col.defaultValue();
@@ -547,7 +568,8 @@ public class TableDefinition<T> {
 				fieldDef.defaultValue = defaultValue;
 				fieldDef.enumType = enumType;
 				fieldDef.enumTypeClass = enumTypeClass;
-				fieldDef.dataType = ModelUtils.getDataType(fieldDef);
+				fieldDef.dataType = StringUtils.isNullOrEmpty(dataType) ? ModelUtils.getDataType(fieldDef) : dataType;
+				fieldDef.typeAdapter = typeAdapter;
 				fieldDef.constraint = constraint;
 				uniqueFields.add(fieldDef);
 			}
@@ -676,7 +698,8 @@ public class TableDefinition<T> {
 				// try to interpret and instantiate a default value
 				value = ModelUtils.getDefaultValue(field, db.getDialect().getDateTimeClass());
 			}
-			stat.addParameter(value);
+			Object parameter = db.getDialect().serialize(value, field.typeAdapter);
+			stat.addParameter(parameter);
 		}
 		buff.append(')');
 		stat.setSQL(buff.toString());
@@ -711,7 +734,8 @@ public class TableDefinition<T> {
 				// try to interpret and instantiate a default value
 				value = ModelUtils.getDefaultValue(field, db.getDialect().getDateTimeClass());
 			}
-			stat.addParameter(value);
+			Object parameter = db.getDialect().serialize(value, field.typeAdapter);
+			stat.addParameter(parameter);
 		}
 		buff.append(')');
 		stat.setSQL(buff.toString());
@@ -785,7 +809,8 @@ public class TableDefinition<T> {
 				buff.appendExceptFirst(", ");
 				buff.append(db.getDialect().prepareColumnName(field.columnName));
 				buff.append(" = ?");
-				stat.addParameter(value);
+				Object parameter = db.getDialect().serialize(value, field.typeAdapter);
+				stat.addParameter(parameter);
 			}
 		}
 		Object alias = Utils.newObject(obj.getClass());
@@ -1193,12 +1218,12 @@ public class TableDefinition<T> {
 		return columns;
 	}
 
-	void readRow(Object item, ResultSet rs, int[] columns) {
+	void readRow(SQLDialect dialect, Object item, ResultSet rs, int[] columns) {
 		for (int i = 0; i < fields.size(); i++) {
 			FieldDefinition def = fields.get(i);
 			int index = columns[i];
 			Object o = def.read(rs, index);
-			def.setValue(item, o);
+			def.setValue(dialect, item, o);
 		}
 	}
 

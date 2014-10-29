@@ -48,6 +48,7 @@ import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 import com.iciql.Constants;
 import com.iciql.Db;
+import com.iciql.test.DataTypeAdapterTest.SerializedObjectTypeAdapterTest;
 import com.iciql.test.models.BooleanModel;
 import com.iciql.test.models.CategoryAnnotationOnly;
 import com.iciql.test.models.ComplexObject;
@@ -93,7 +94,8 @@ import com.iciql.util.Utils;
 @SuiteClasses({ AliasMapTest.class, AnnotationsTest.class, BooleanModelTest.class, ClobTest.class,
 		ConcurrencyTest.class, EnumsTest.class, ModelsTest.class, PrimitivesTest.class, OneOfTest.class,
 		RuntimeQueryTest.class, SamplesTest.class, UpdateTest.class, UpgradesTest.class, JoinTest.class,
-		UUIDTest.class, ViewsTest.class, ForeignKeyTest.class, TransactionTest.class, NestedConditionsTest.class })
+		UUIDTest.class, ViewsTest.class, ForeignKeyTest.class, TransactionTest.class, NestedConditionsTest.class,
+		DataTypeAdapterTest.class })
 public class IciqlSuite {
 
 	private static final TestDb[] TEST_DBS = {
@@ -191,6 +193,7 @@ public class IciqlSuite {
 		db.dropTable(MultipleBoolsModel.class);
 		db.dropTable(ProductAnnotationOnlyWithForeignKey.class);
 		db.dropTable(CategoryAnnotationOnly.class);
+		db.dropTable(SerializedObjectTypeAdapterTest.class);
 
 		return db;
 	}

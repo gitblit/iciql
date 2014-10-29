@@ -18,6 +18,7 @@
 
 package com.iciql;
 
+import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.Iciql.IndexType;
 
 /**
@@ -49,7 +50,7 @@ public class Define {
 		checkInDefine();
 		currentTableDefinition.defineConstraintUnique(name, columns);
 	}
-	
+
 	/*
 	 * The variable argument type Object can't be used twice :-)
 	 */
@@ -59,12 +60,12 @@ public class Define {
 //		checkInDefine();
 //		currentTableDefinition.defineForeignKey(name, columns, refTableName, Columns, deleteType, updateType, deferrabilityType);
 //	}
-	
+
 	public static void primaryKey(Object... columns) {
 		checkInDefine();
 		currentTableDefinition.definePrimaryKey(columns);
 	}
-	
+
 	public static void schemaName(String schemaName) {
 		checkInDefine();
 		currentTableDefinition.defineSchemaName(schemaName);
@@ -79,7 +80,7 @@ public class Define {
 		checkInDefine();
 		currentTableDefinition.defineViewTableName(viewTableName);
 	}
-	
+
 	public static void memoryTable() {
 		checkInDefine();
 		currentTableDefinition.defineMemoryTable();
@@ -104,17 +105,17 @@ public class Define {
 		checkInDefine();
 		currentTableDefinition.defineScale(column, scale);
 	}
-	
+
 	public static void trim(Object column) {
 		checkInDefine();
 		currentTableDefinition.defineTrim(column);
 	}
-	
+
 	public static void nullable(Object column, boolean isNullable) {
 		checkInDefine();
 		currentTableDefinition.defineNullable(column, isNullable);
 	}
-	
+
 	public static void defaultValue(Object column, String defaultValue) {
 		checkInDefine();
 		currentTableDefinition.defineDefaultValue(column, defaultValue);
@@ -123,6 +124,11 @@ public class Define {
 	public static void constraint(Object column, String constraint) {
 		checkInDefine();
 		currentTableDefinition.defineConstraint(column, constraint);
+	}
+
+	public static void typeAdapter(Object column, Class<? extends DataTypeAdapter<?>> typeAdapter) {
+		checkInDefine();
+		currentTableDefinition.defineTypeAdapter(column, typeAdapter);
 	}
 
 	static synchronized <T> void define(TableDefinition<T> tableDefinition, Iciql table) {

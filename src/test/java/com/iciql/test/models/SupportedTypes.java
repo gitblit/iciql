@@ -17,6 +17,7 @@
 
 package com.iciql.test.models;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -44,7 +45,9 @@ import com.iciql.util.Utils;
 @IQTable
 @IQIndexes({ @IQIndex({ "myLong", "myInteger" }), @IQIndex(type = IndexType.HASH, value = "myString") })
 @IQVersion(1)
-public class SupportedTypes {
+public class SupportedTypes implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public static final SupportedTypes SAMPLE = new SupportedTypes();
 

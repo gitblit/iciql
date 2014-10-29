@@ -36,7 +36,7 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 	protected <T> String prepareCreateTable(TableDefinition<T> def) {
 		return "CREATE TABLE IF NOT EXISTS";
 	}
-	
+
 	@Override
 	public <T> void prepareDropView(SQLStatement stat, TableDefinition<T> def) {
 		StatementBuilder buff = new StatementBuilder("DROP VIEW IF EXISTS "
@@ -44,7 +44,7 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 		stat.setSQL(buff.toString());
 		return;
 	}
-	
+
 	@Override
 	public String prepareColumnName(String name) {
 		return "`" + name + "`";
@@ -77,7 +77,8 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 			buff.appendExceptFirst(", ");
 			buff.append('?');
 			Object value = def.getValue(obj, field);
-			stat.addParameter(value);
+			Object parameter = serialize(value, field.typeAdapter);
+			stat.addParameter(parameter);
 		}
 		buff.append(") ON DUPLICATE KEY UPDATE ");
 		buff.resetCount();

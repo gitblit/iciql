@@ -62,7 +62,7 @@ public class Db {
 	private static final Map<Object, Token> TOKENS;
 
 	private static final Map<String, Class<? extends SQLDialect>> DIALECTS;
-	
+
 	private final Connection conn;
 	private final Map<Class<?>, TableDefinition<?>> classMap = Collections
 			.synchronizedMap(new HashMap<Class<?>, TableDefinition<?>>());
@@ -72,7 +72,7 @@ public class Db {
 
 	private boolean skipCreate;
 	private boolean autoSavePoint = true;
-	
+
 	static {
 		TOKENS = Collections.synchronizedMap(new WeakIdentityHashMap<Object, Token>());
 		DIALECTS = Collections.synchronizedMap(new HashMap<String, Class<? extends SQLDialect>>());
@@ -104,7 +104,7 @@ public class Db {
 	/**
 	 * Register a new/custom dialect class. You can use this method to replace
 	 * any existing dialect or to add a new one.
-	 * 
+	 *
 	 * @param token
 	 *            the fully qualified name of the connection class or the
 	 *            expected result of DatabaseMetaData.getDatabaseProductName()
@@ -146,7 +146,7 @@ public class Db {
 			throw new IciqlException(e);
 		}
 	}
-	
+
 	public static Db open(String url) {
 		try {
 			Connection conn = JdbcUtils.getConnection(null, url, null, null);
@@ -164,7 +164,7 @@ public class Db {
 			throw new IciqlException(e);
 		}
 	}
-	
+
 	public static Db open(String url, String user, char[] password) {
 		try {
 			Connection conn = JdbcUtils.getConnection(null, url, user, password == null ? null : new String(password));
@@ -177,7 +177,7 @@ public class Db {
 	/**
 	 * Create a new database instance using a data source. This method is fast,
 	 * so that you can always call open() / close() on usage.
-	 * 
+	 *
 	 * @param ds
 	 *            the data source
 	 * @return the database instance.
@@ -194,8 +194,8 @@ public class Db {
 		return new Db(conn);
 	}
 
-	
-	
+
+
 	/**
 	 * Convenience function to avoid import statements in application code.
 	 */
@@ -227,7 +227,7 @@ public class Db {
 	 * Merge INSERTS if the record does not exist or UPDATES the record if it
 	 * does exist. Not all databases support MERGE and the syntax varies with
 	 * the database.
-	 * 
+	 *
 	 * If the database does not support a MERGE syntax the dialect can try to
 	 * simulate a merge by implementing:
 	 * <p>
@@ -239,7 +239,7 @@ public class Db {
 	 * See the Derby dialect for an implementation of this technique.
 	 * <p>
 	 * If the dialect does not support merge an IciqlException will be thrown.
-	 * 
+	 *
 	 * @param t
 	 */
 	public <T> void merge(T t) {
@@ -324,7 +324,7 @@ public class Db {
 			int[] columns = def.mapColumns(wildcardSelect, rs);
 			while (rs.next()) {
 				T item = Utils.newObject(modelClass);
-				def.readRow(item, rs, columns);
+				def.readRow(dialect, item, rs, columns);
 				result.add(item);
 			}
 		} catch (SQLException e) {
@@ -417,7 +417,7 @@ public class Db {
 		if (def == null) {
 			upgradeDb();
 			def = new TableDefinition<T>(clazz);
-			def.mapFields();
+			def.mapFields(this);
 			classMap.put(clazz, def);
 			if (Iciql.class.isAssignableFrom(clazz)) {
 				T t = instance(clazz);
@@ -437,7 +437,7 @@ public class Db {
 		}
 		return def;
 	}
-	
+
 	<T> boolean hasCreated(Class<T> clazz) {
 		return upgradeChecked.contains(clazz);
 	}
@@ -567,7 +567,7 @@ public class Db {
 			throw IciqlException.fromSQL(sql, e);
 		}
 	}
-	
+
 	Savepoint prepareSavepoint() {
 		// don't change auto-commit mode.
 		// don't create save point.
@@ -580,13 +580,13 @@ public class Db {
 			conn.setAutoCommit(false);
 			savepoint = conn.setSavepoint();
 		} catch (SQLFeatureNotSupportedException e) {
-			// jdbc driver does not support save points			
+			// jdbc driver does not support save points
 		} catch (SQLException e) {
 			throw new IciqlException(e, "Could not create save point");
 		}
 		return savepoint;
 	}
-	
+
 	void commit(Savepoint savepoint) {
 		if (savepoint != null) {
 			try {
@@ -597,7 +597,7 @@ public class Db {
 			}
 		}
 	}
-	
+
 	void rollback(Savepoint savepoint) {
 		if (savepoint != null) {
 			try {
@@ -616,13 +616,13 @@ public class Db {
 
 	/**
 	 * Run a SQL query directly against the database.
-	 * 
+	 *
 	 * Be sure to close the ResultSet with
-	 * 
+	 *
 	 * <pre>
 	 * JdbcUtils.closeSilently(rs, true);
 	 * </pre>
-	 * 
+	 *
 	 * @param sql
 	 *            the SQL statement
 	 * @param args
@@ -635,13 +635,13 @@ public class Db {
 
 	/**
 	 * Run a SQL query directly against the database.
-	 * 
+	 *
 	 * Be sure to close the ResultSet with
-	 * 
+	 *
 	 * <pre>
 	 * JdbcUtils.closeSilently(rs, true);
 	 * </pre>
-	 * 
+	 *
 	 * @param sql
 	 *            the SQL statement
 	 * @param args
@@ -668,7 +668,7 @@ public class Db {
 	/**
 	 * Run a SQL query directly against the database and map the results to the
 	 * model class.
-	 * 
+	 *
 	 * @param modelClass
 	 *            the model class to bind the query ResultSet rows into.
 	 * @param sql
@@ -682,7 +682,7 @@ public class Db {
 	/**
 	 * Run a SQL query directly against the database and map the results to the
 	 * model class.
-	 * 
+	 *
 	 * @param modelClass
 	 *            the model class to bind the query ResultSet rows into.
 	 * @param sql
@@ -714,7 +714,7 @@ public class Db {
 
 	/**
 	 * Run a SQL statement directly against the database.
-	 * 
+	 *
 	 * @param sql
 	 *            the SQL statement
 	 * @return the update count
@@ -727,14 +727,14 @@ public class Db {
 				stat = conn.createStatement();
 				updateCount = stat.executeUpdate(sql);
 			} else {
-				PreparedStatement ps = conn.prepareStatement(sql);				
+				PreparedStatement ps = conn.prepareStatement(sql);
 				int i = 1;
 				for (Object arg : args) {
 					ps.setObject(i++, arg);
 				}
 				updateCount = ps.executeUpdate();
 				stat = ps;
-			}			
+			}
 			return updateCount;
 		} catch (SQLException e) {
 			throw new IciqlException(e);
@@ -756,7 +756,7 @@ public class Db {
 	public boolean getSkipCreate() {
 		return this.skipCreate;
 	}
-	
+
 	/**
 	 * Allow to enable/disable usage of save point.
 	 * For advanced user wanting to gain full control of transactions.
@@ -770,5 +770,5 @@ public class Db {
 	public boolean getAutoSavePoint() {
 		return this.autoSavePoint;
 	}
-	
+
 }

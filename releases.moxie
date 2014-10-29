@@ -11,9 +11,14 @@ r22: {
     security: ~
     fixes: ~
     changes: ~
-    additions: ~
+    additions:
+    - Support for specifying custom data type adapters in @IQColumn and Define.typeAdapter()
+    - Added com.iciql.SQLDialectPostgreSQL.JsonStringAdapter
+    - Added com.iciql.SQLDialectPostgreSQL.XmlStringAdapter
+    - Added com.iciql.JavaSerializationTypeAdapter to (de)serialize objects into a BLOB column
     dependencyChanges: ~
-    contributors: ~
+    contributors:
+    - James Moger
 }
 
 #

@@ -28,9 +28,9 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 
+import com.iciql.Iciql.EnumType;
 import com.iciql.NestedConditions.And;
 import com.iciql.NestedConditions.Or;
-import com.iciql.Iciql.EnumType;
 import com.iciql.bytecode.ClassReader;
 import com.iciql.util.IciqlLogger;
 import com.iciql.util.JdbcUtils;
@@ -253,7 +253,7 @@ public class Query<T> {
 			int[] columns = def.mapColumns(false, rs);
 			while (rs.next()) {
 				T item = from.newObject();
-				def.readRow(item, rs, columns);
+				def.readRow(db.getDialect(), item, rs, columns);
 				result.add(item);
 			}
 		} catch (SQLException e) {
@@ -406,7 +406,7 @@ public class Query<T> {
 			int[] columns = def.mapColumns(false, rs);
 			while (rs.next()) {
 				X row = Utils.newObject(clazz);
-				def.readRow(row, rs, columns);
+				def.readRow(db.getDialect(), row, rs, columns);
 				result.add(row);
 			}
 		} catch (SQLException e) {
@@ -841,13 +841,19 @@ public class Query<T> {
 	}
 
 	private void addParameter(SQLStatement stat, Object alias, Object value) {
-		if (alias != null && value.getClass().isEnum()) {
-			SelectColumn<T> col = getColumnByReference(alias);
+		SelectColumn<T> col = getColumnByReference(alias);
+		if (col != null && value.getClass().isEnum()) {
+			// enum
 			EnumType type = col.getFieldDefinition().enumType;
 			Enum<?> anEnum = (Enum<?>) value;
 			Object y = Utils.convertEnum(anEnum, type);
 			stat.addParameter(y);
+		} else if (col != null) {
+			// object
+			Object parameter = db.getDialect().serialize(value, col.getFieldDefinition().typeAdapter);
+			stat.addParameter(parameter);
 		} else {
+			// primitive
 			stat.addParameter(value);
 		}
 	}

@@ -97,7 +97,7 @@ public class SQLStatement {
 					sb.append('?');
 				} else {
 					// static parameter
-					sb.append(db.getDialect().prepareParameter(o));
+					sb.append(db.getDialect().prepareStringParameter(o));
 				}
 				i++;
 			}

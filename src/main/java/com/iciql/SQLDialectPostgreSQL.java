@@ -16,6 +16,11 @@
 
 package com.iciql;
 
+import java.sql.SQLException;
+
+import org.postgresql.util.PGobject;
+
+import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.StatementBuilder;
 
@@ -46,7 +51,7 @@ public class SQLDialectPostgreSQL extends SQLDialectDefault {
 
 	@Override
 	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType,
-			boolean isAutoIncrement, boolean isPrimaryKey) {		
+			boolean isAutoIncrement, boolean isPrimaryKey) {
 		String convertedType = convertSqlType(dataType);
 		if (isIntegerType(dataType)) {
 			if (isAutoIncrement) {
@@ -63,7 +68,7 @@ public class SQLDialectPostgreSQL extends SQLDialectDefault {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void prepareCreateIndex(SQLStatement stat, String schemaName, String tableName,
 			IndexDefinition index) {
@@ -99,5 +104,71 @@ public class SQLDialectPostgreSQL extends SQLDialectDefault {
 		buff.append(") ");
 
 		stat.setSQL(buff.toString().trim());
+	}
+
+	/**
+	 * Handles transforming raw strings to/from the Postgres JSON data type.
+	 */
+	public class JsonStringAdapter implements DataTypeAdapter<String> {
+
+		@Override
+		public String getDataType() {
+			return "json";
+		}
+
+		@Override
+		public Class<String> getJavaType() {
+			return String.class;
+		}
+
+		@Override
+		public Object serialize(String value) {
+			PGobject pg = new PGobject();
+			pg.setType(getDataType());
+			try {
+				pg.setValue(value);
+			} catch (SQLException e) {
+				// not thrown on base PGobject
+			}
+			return pg;
+		}
+
+		@Override
+		public String deserialize(Object value) {
+			return value.toString();
+		}
+	}
+
+	/**
+	 * Handles transforming raw strings to/from the Postgres XML data type.
+	 */
+	public class XmlStringAdapter implements DataTypeAdapter<String> {
+
+		@Override
+		public String getDataType() {
+			return "xml";
+		}
+
+		@Override
+		public Class<String> getJavaType() {
+			return String.class;
+		}
+
+		@Override
+		public Object serialize(String value) {
+			PGobject pg = new PGobject();
+			pg.setType(getDataType());
+			try {
+				pg.setValue(value);
+			} catch (SQLException e) {
+				// not thrown on base PGobject
+			}
+			return pg;
+		}
+
+		@Override
+		public String deserialize(Object value) {
+			return value.toString();
+		}
 	}
 }
