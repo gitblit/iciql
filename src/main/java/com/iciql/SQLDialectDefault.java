@@ -345,7 +345,12 @@ public class SQLDialectDefault implements SQLDialect {
 	}
 
 	@Override
-	public DataTypeAdapter<?> getTypeAdapter(Class<? extends DataTypeAdapter<?>> typeAdapter) {
+	public void registerAdapter(DataTypeAdapter<?> typeAdapter) {
+		typeAdapters.put((Class<? extends DataTypeAdapter<?>>) typeAdapter.getClass(), typeAdapter);
+	}
+
+	@Override
+	public DataTypeAdapter<?> getAdapter(Class<? extends DataTypeAdapter<?>> typeAdapter) {
 		DataTypeAdapter<?> dtt = typeAdapters.get(typeAdapter);
 		if (dtt == null) {
 			dtt = Utils.newObject(typeAdapter);
@@ -362,7 +367,7 @@ public class SQLDialectDefault implements SQLDialect {
 			return value;
 		}
 
-		DataTypeAdapter<T> dtt = (DataTypeAdapter<T>) getTypeAdapter(typeAdapter);
+		DataTypeAdapter<T> dtt = (DataTypeAdapter<T>) getAdapter(typeAdapter);
 		return dtt.serialize(value);
 	}
 

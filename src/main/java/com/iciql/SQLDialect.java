@@ -32,12 +32,19 @@ import com.iciql.TableDefinition.IndexDefinition;
 public interface SQLDialect {
 
 	/**
+	 * Registers the type adapter instance.
+	 *
+	 * @param typeAdapter
+	 */
+	void registerAdapter(DataTypeAdapter<?> typeAdapter);
+
+	/**
 	 * Returns the registered instance of the type adapter.
 	 *
 	 * @param typeAdapter
 	 * @return the type adapter instance
 	 */
-	DataTypeAdapter<?> getTypeAdapter(Class<? extends DataTypeAdapter<?>> typeAdapter);
+	DataTypeAdapter<?> getAdapter(Class<? extends DataTypeAdapter<?>> typeAdapter);
 
 	/**
 	 * Serialize the Java object into a type or format that the database will accept.

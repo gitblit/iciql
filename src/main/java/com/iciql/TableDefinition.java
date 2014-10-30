@@ -534,7 +534,7 @@ public class TableDefinition<T> {
 
 				if (col.typeAdapter() != null && col.typeAdapter() != StandardJDBCTypeAdapter.class) {
 					typeAdapter = col.typeAdapter();
-					DataTypeAdapter<?> dtt = db.getDialect().getTypeAdapter(col.typeAdapter());
+					DataTypeAdapter<?> dtt = db.getDialect().getAdapter(col.typeAdapter());
 					dataType = dtt.getDataType();
 				}
 
