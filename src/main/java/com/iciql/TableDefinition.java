@@ -152,6 +152,12 @@ public class TableDefinition<T> {
 				} else {
 					o = Utils.convert(o, targetType);
 				}
+
+				if (targetType.isPrimitive() && o == null) {
+					// do not attempt to set a primitive to null
+					return;
+				}
+
 				field.set(obj, o);
 			} catch (IciqlException e) {
 				throw e;
