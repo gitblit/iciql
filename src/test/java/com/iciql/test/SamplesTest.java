@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -214,7 +215,7 @@ public class SamplesTest {
 
 		@Override
 		public String toString() {
-			return customerId + ":" + orderId + ":" + total;
+			return customerId + ":" + orderId + ":" + new DecimalFormat("##.00").format(total);
 		}
 	}
 

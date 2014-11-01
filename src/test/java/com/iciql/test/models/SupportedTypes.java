@@ -19,6 +19,7 @@ package com.iciql.test.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -178,7 +179,10 @@ public class SupportedTypes implements Serializable {
 		same &= same("myLong", myLong.equals(s.myLong));
 		same &= same("myFloat", IciqlSuite.equivalentTo(myFloat, s.myFloat));
 		same &= same("myDouble", IciqlSuite.equivalentTo(myDouble, s.myDouble));
-		same &= same("myBigDecimal", myBigDecimal.compareTo(s.myBigDecimal) == 0);
+
+		BigDecimal bda = myBigDecimal.round(MathContext.DECIMAL32);
+		BigDecimal bdb = s.myBigDecimal.round(MathContext.DECIMAL32);
+		same &= same("myBigDecimal", bda.compareTo(bdb) == 0);
 
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		same &= same("myUtilDate", df.format(myUtilDate).equals(df.format(s.myUtilDate)));
