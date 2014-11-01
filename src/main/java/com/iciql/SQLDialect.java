@@ -73,6 +73,13 @@ public interface SQLDialect {
 	void configureDialect(String databaseName, DatabaseMetaData data);
 
 	/**
+	 * Returns true if savepoints are supported.
+	 *
+	 * @return true if savepoints may be used.
+	 */
+	boolean supportsSavePoints();
+
+	/**
 	 * Allows a dialect to substitute an SQL type.
 	 *
 	 * @param sqlType

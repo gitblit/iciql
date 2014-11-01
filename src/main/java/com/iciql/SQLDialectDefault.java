@@ -74,6 +74,11 @@ public class SQLDialectDefault implements SQLDialect {
 		}
 	}
 
+	@Override
+	public boolean supportsSavePoints() {
+		return true;
+	}
+
 	/**
 	 * Allows subclasses to change the type of a column for a CREATE statement.
 	 *
@@ -396,103 +401,6 @@ public class SQLDialectDefault implements SQLDialect {
 			return LITERAL + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(o) + LITERAL;
 		}
 		return o.toString();
-	}
-
-	@SuppressWarnings("incomplete-switch")
-	@Override
-	public void prepareCreateConstraintForeignKey(SQLStatement stat, String schemaName, String tableName, ConstraintForeignKeyDefinition constraint) {
-		StatementBuilder buff = new StatementBuilder();
-		buff.append("ALTER TABLE ");
-		buff.append(prepareTableName(schemaName, tableName));
-		buff.append(" ADD CONSTRAINT ");
-		buff.append(constraint.constraintName);
-		buff.append(" FOREIGN KEY ");
-		buff.append(" (");
-		for (String col : constraint.foreignColumns) {
-			buff.appendExceptFirst(", ");
-			buff.append(prepareColumnName(col));
-		}
-		buff.append(") ");
-		buff.append(" REFERENCES ");
-		buff.append(constraint.referenceTable);
-		buff.append(" (");
-		buff.resetCount();
-		for (String col : constraint.referenceColumns) {
-			buff.appendExceptFirst(", ");
-			buff.append(prepareColumnName(col));
-		}
-		buff.append(") ");
-		if (constraint.deleteType != ConstraintDeleteType.UNSET) {
-			buff.append(" ON DELETE ");
-			switch (constraint.deleteType) {
-			case CASCADE:
-				buff.append("CASCADE ");
-				break;
-			case RESTRICT:
-				buff.append("RESTRICT ");
-				break;
-			case SET_NULL:
-				buff.append("SET NULL ");
-				break;
-			case NO_ACTION:
-				buff.append("NO ACTION ");
-				break;
-			case SET_DEFAULT:
-				buff.append("SET DEFAULT ");
-				break;
-			}
-		}
-		if (constraint.updateType != ConstraintUpdateType.UNSET) {
-			buff.append(" ON UPDATE ");
-			switch (constraint.updateType) {
-			case CASCADE:
-				buff.append("CASCADE ");
-				break;
-			case RESTRICT:
-				buff.append("RESTRICT ");
-				break;
-			case SET_NULL:
-				buff.append("SET NULL ");
-				break;
-			case NO_ACTION:
-				buff.append("NO ACTION ");
-				break;
-			case SET_DEFAULT:
-				buff.append("SET DEFAULT ");
-				break;
-			}
-		}
-		switch (constraint.deferrabilityType) {
-		case DEFERRABLE_INITIALLY_DEFERRED:
-			buff.append("DEFERRABLE INITIALLY DEFERRED ");
-			break;
-		case DEFERRABLE_INITIALLY_IMMEDIATE:
-			buff.append("DEFERRABLE INITIALLY IMMEDIATE ");
-			break;
-		case NOT_DEFERRABLE:
-			buff.append("NOT DEFERRABLE ");
-			break;
-		case UNSET:
-			break;
-		}
-		stat.setSQL(buff.toString().trim());
-	}
-
-	@Override
-	public void prepareCreateConstraintUnique(SQLStatement stat, String schemaName, String tableName, ConstraintUniqueDefinition constraint) {
-		StatementBuilder buff = new StatementBuilder();
-		buff.append("ALTER TABLE ");
-		buff.append(prepareTableName(schemaName, tableName));
-		buff.append(" ADD CONSTRAINT ");
-		buff.append(constraint.constraintName);
-		buff.append(" UNIQUE ");
-		buff.append(" (");
-		for (String col : constraint.uniqueColumns) {
-			buff.appendExceptFirst(", ");
-			buff.append(prepareColumnName(col));
-		}
-		buff.append(") ");
-		stat.setSQL(buff.toString().trim());
 	}
 
 }

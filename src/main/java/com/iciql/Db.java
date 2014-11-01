@@ -572,7 +572,7 @@ public class Db implements AutoCloseable {
 	Savepoint prepareSavepoint() {
 		// don't change auto-commit mode.
 		// don't create save point.
-		if (!autoSavePoint) {
+		if (!autoSavePoint || !dialect.supportsSavePoints()) {
 			return null;
 		}
 		// create a savepoint
