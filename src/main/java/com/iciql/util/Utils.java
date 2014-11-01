@@ -307,6 +307,16 @@ public class Utils {
 				return n.doubleValue();
 			} else if (targetType == float.class || targetType == Float.class) {
 				return n.floatValue();
+			} else if (targetType == BigDecimal.class) {
+				return new BigDecimal(n.doubleValue());
+			} else if (targetType == java.util.Date.class) {
+				return new java.util.Date(n.longValue());
+			} else if (targetType == java.sql.Date.class) {
+				return new java.sql.Date(n.longValue());
+			} else if (targetType == java.sql.Time.class) {
+				return new java.sql.Time(n.longValue());
+			} else if (targetType == java.sql.Timestamp.class) {
+				return new java.sql.Timestamp(n.longValue());
 			}
 		}
 
