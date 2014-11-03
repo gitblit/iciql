@@ -101,7 +101,7 @@ public class IciqlException extends RuntimeException {
 				// MySQL duplicate primary key on insert
 				iciqlCode = CODE_DUPLICATE_KEY;
 				if (s.getErrorCode() == 1217) {
-					iciqlCode = CODE_CONSTRAINT_VIOLATION;	
+					iciqlCode = CODE_CONSTRAINT_VIOLATION;
 				}
 			} else if ("23505".equals(state)) {
 				// Derby duplicate primary key on insert
@@ -154,6 +154,24 @@ public class IciqlException extends RuntimeException {
 			} else if ("X0Y25".equals(state)) {
 				// Derby constraint violation
 				iciqlCode = CODE_CONSTRAINT_VIOLATION;
+			} else if (s.getMessage().startsWith("[SQLITE")) {
+				// SQLite error codes
+				final String msg = s.getMessage();
+				switch (s.getErrorCode()) {
+				case 1:
+					iciqlCode = CODE_OBJECT_NOT_FOUND;
+					break;
+				case 19:
+					if (msg.contains("UNIQUE")) {
+						iciqlCode = CODE_DUPLICATE_KEY;
+					} else {
+						iciqlCode = CODE_CONSTRAINT_VIOLATION;
+					}
+					break;
+				default:
+					iciqlCode = s.getErrorCode();
+					break;
+				}
 			} else {
 				// uncharacterized SQL code, we can always rely on iciqlCode != 0 in IciqlException
 				iciqlCode = s.getErrorCode() == 0 ? CODE_UNCHARACTERIZED : s.getErrorCode();

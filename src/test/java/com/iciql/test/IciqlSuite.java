@@ -110,7 +110,11 @@ public class IciqlSuite {
 			new TestDb("Derby", true, true, "jdbc:derby:memory:iciql;create=true"),
 			new TestDb("Derby", true, false, "jdbc:derby:directory:testdbs/derby/iciql;create=true"),
 			new TestDb("MySQL", false, false, "jdbc:mysql://localhost:3306/iciql", "sa", "sa"),
-			new TestDb("PostgreSQL", false, false, "jdbc:postgresql://localhost:5432/iciql", "sa", "sa") };
+			new TestDb("PostgreSQL", false, false, "jdbc:postgresql://localhost:5432/iciql", "sa", "sa"),
+			new TestDb("SQLite", true, true, "jdbc:sqlite:file:iciql?mode=memory&cache=shared"),
+			new TestDb("SQLite", true, false, "jdbc:sqlite:"
+					+ new File(baseFolder, "/sqlite/iciql.db").getAbsolutePath())
+			};
 
 	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[0];
 
@@ -256,6 +260,16 @@ public class IciqlSuite {
 	}
 
 	/**
+	 * Returns true if the underlying database engine is SQLite.
+	 *
+	 * @param db
+	 * @return true if underlying database engine is SQLite
+	 */
+	public static boolean isSQLite(Db db) {
+		return IciqlSuite.getDatabaseEngineName(db).equals("SQLite");
+	}
+
+	/**
 	 * Gets the default schema of the underlying database engine.
 	 *
 	 * @param db
@@ -296,6 +310,7 @@ public class IciqlSuite {
 		}
 
 		deleteRecursively(baseFolder);
+		new File(baseFolder, "/sqlite").mkdirs();
 
 		// Start the HSQL and H2 servers in-process
 		org.hsqldb.Server hsql = startHSQL();
@@ -412,6 +427,20 @@ public class IciqlSuite {
 		out.println(dividerMajor);
 		out.println(MessageFormat.format("{0} {1} ({2}) test suite performance results", Constants.NAME,
 				Constants.VERSION, Constants.VERSION_DATE));
+
+		StringBuilder compressedSystem = new StringBuilder();
+		compressedSystem.append("      on ");
+		compressedSystem.append(System.getProperty("java.vendor"));
+		compressedSystem.append(' ');
+		compressedSystem.append(System.getProperty("java.runtime.version"));
+		compressedSystem.append(", ");
+		compressedSystem.append(System.getProperty("os.name"));
+		compressedSystem.append(' ');
+		compressedSystem.append(System.getProperty("os.version"));
+		compressedSystem.append(", ");
+		compressedSystem.append(System.getProperty("os.arch"));
+		out.println(compressedSystem.toString());
+
 		out.println(dividerMajor);
 		List<TestDb> dbs = Arrays.asList(TEST_DBS);
 		Collections.sort(dbs);

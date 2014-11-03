@@ -85,6 +85,7 @@ public class Db implements AutoCloseable {
 		DIALECTS.put("MySQL", SQLDialectMySQL.class);
 		DIALECTS.put("PostgreSQL", SQLDialectPostgreSQL.class);
 	    DIALECTS.put("Microsoft SQL Server", SQLDialectMSSQL.class);
+	    DIALECTS.put("SQLite", SQLDialectSQLite.class);
 	}
 
 	private Db(Connection conn) {

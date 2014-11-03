@@ -12,7 +12,7 @@ iciql **is**...
 iciql **is not**...
 
 - a complete alternative to JDBC
-- designed to compete with more powerful database query tools like [jOOQ](http://jooq.sourceforge.net) or [Querydsl](http://source.mysema.com/display/querydsl/Querydsl)
+- designed to compete with more powerful database query tools like [jOOQ](http://jooq.sourceforge.net) or [QueryDSL](http://source.mysema.com/display/querydsl/Querydsl)
 - designed to compete with enterprise ORM tools like [Hibernate](http://www.hibernate.org) or [mybatis](http://www.mybatis.org)
 
 Supported Databases (Unit-Tested)
@@ -22,6 +22,7 @@ Supported Databases (Unit-Tested)
 - [Derby](http://db.apache.org/derby) 10.11
 - [MySQL](http://mysql.com) 5.6
 - [PostgreSQL](http://postgresql.org) 9.3
+- [SQLite](http://www.sqlite.org) 3.8
 
 Support for others is possible and may only require creating a simple "dialect" class.
 
@@ -37,7 +38,8 @@ iciql requires a Java 6 Runtime Environment (JRE) or a Java 6 Development Kit (J
 Getting help
 -------
 Read the online documentation available at the [iciql website](http://iciql.com)<br/>
-Issues, binaries, & sources @ [Google Code](http://code.google.com/p/iciql)
+Issues & sources @ [GitHub](http://github.com/gitblit/iciql)
+Binaries @ [Iciql Maven Repository](http://gitblit.github.io/iciql/maven/)
 
 Building iciql
 ----------------

@@ -32,7 +32,7 @@ import com.iciql.test.models.SupportedTypes.SupportedTypes2;
 
 /**
  * Tests the database and table upgrade functions.
- * 
+ *
  */
 public class UpgradesTest {
 
@@ -54,7 +54,7 @@ public class UpgradesTest {
 
 		// open a second connection to the database
 		// and then apply the v2 upgrade.
-		// For H2 its important to keep the first connection
+		// For an in-memory db its important to keep the first connection
 		// alive so that the database is not destroyed.
 		Db db2 = IciqlSuite.openCurrentDb();
 
@@ -72,7 +72,7 @@ public class UpgradesTest {
 		db.close();
 		db2.close();
 	}
-	
+
 	@Test
 	public void testDatabaseInheritedUpgrade() {
 		Db db = IciqlSuite.openNewDb();
@@ -91,7 +91,7 @@ public class UpgradesTest {
 
 		// open a second connection to the database
 		// and then apply the v2 upgrade.
-		// For H2 its important to keep the first connection
+		// For an in-memory db its important to keep the first connection
 		// alive so that the database is not destroyed.
 		Db db2 = IciqlSuite.openCurrentDb();
 
@@ -139,6 +139,7 @@ public class UpgradesTest {
 		final AtomicInteger oldVersion = new AtomicInteger(0);
 		final AtomicInteger newVersion = new AtomicInteger(0);
 
+		@Override
 		public boolean upgradeTable(Db db, String schema, String table, int fromVersion, int toVersion) {
 			// just claims success on upgrade request
 			oldVersion.set(fromVersion);
@@ -146,6 +147,7 @@ public class UpgradesTest {
 			return true;
 		}
 
+		@Override
 		public boolean upgradeDatabase(Db db, int fromVersion, int toVersion) {
 			// just claims success on upgrade request
 			oldVersion.set(fromVersion);
@@ -168,7 +170,7 @@ public class UpgradesTest {
 	class V2DbUpgrader extends BaseDbUpgrader {
 	}
 
-	
+
 	/**
 	 * A sample V2 database upgrader class which inherits its
 	 * version from the parent class.

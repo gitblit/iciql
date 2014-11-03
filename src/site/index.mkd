@@ -12,7 +12,7 @@ iciql **is**...
 iciql **is not**...
 
 - a complete alternative to JDBC
-- designed to compete with more powerful database query tools like [jOOQ][jooq] or [Querydsl][querydsl]
+- designed to compete with more powerful database query tools like [jOOQ][jooq] or [QueryDSL][querydsl]
 - designed to compete with enterprise [ORM][orm] tools like [Hibernate][hibernate] or [mybatis][mybatis]
 
 ### Example Usage
@@ -42,6 +42,7 @@ select * from products
 - [Derby](http://db.apache.org/derby) ${derby.version}
 - [MySQL](http://mysql.com) ${mysql.version}
 - [PostgreSQL](http://postgresql.org) ${postgresql.version}
+- [SQLite](http://www.sqlite.org) ${sqlite.version}
 
 Support for others is possible and may only require creating a simple "dialect" class.
 
@@ -59,5 +60,4 @@ iciql is distributed under the terms of the [Apache Software Foundation license,
 [hibernate]: http://www.hibernate.org "Hibernate"
 [mybatis]: http://www.mybatis.org "mybatis"
 [github]: http://github.com/gitblit/iciql "iciql git repository"
-[googlecode]: http://code.google.com/p/iciql "iciql project management"
 [apachelicense]: http://www.apache.org/licenses/LICENSE-2.0 "Apache License, Version 2.0"
