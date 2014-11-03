@@ -97,13 +97,13 @@ import com.iciql.util.Utils;
 		UUIDTest.class, ViewsTest.class, ForeignKeyTest.class, TransactionTest.class, NestedConditionsTest.class,
 		DataTypeAdapterTest.class })
 public class IciqlSuite {
-
+	private final static File baseFolder = new File(System.getProperty("user.dir"), "/testdbs");
 	private static final TestDb[] TEST_DBS = {
 			new TestDb("H2", true, true, "jdbc:h2:mem:iciql"),
 			new TestDb("H2", true, false, "jdbc:h2:file:"
-					+ new File(System.getProperty("user.dir")).getAbsolutePath() + "testdbs/h2/iciql"),
+					+ new File(baseFolder, "/h2/iciql").getAbsolutePath()),
 			new TestDb("H2", false, false, "jdbc:h2:tcp://localhost/"
-					+ new File(System.getProperty("user.dir")).getAbsolutePath() + "/testdbs/h2tcp/iciql"),
+					+ new File(baseFolder, "/h2tcp/iciql").getAbsolutePath()),
 			new TestDb("HSQL", true, true, "jdbc:hsqldb:mem:iciql"),
 			new TestDb("HSQL", true, false, "jdbc:hsqldb:file:testdbs/hsql/iciql"),
 			new TestDb("HSQL", false, false, "jdbc:hsqldb:hsql://localhost/iciql"),
@@ -295,7 +295,7 @@ public class IciqlSuite {
 			System.setErr(out);
 		}
 
-		deleteRecursively(new File("testdbs"));
+		deleteRecursively(baseFolder);
 
 		// Start the HSQL and H2 servers in-process
 		org.hsqldb.Server hsql = startHSQL();
