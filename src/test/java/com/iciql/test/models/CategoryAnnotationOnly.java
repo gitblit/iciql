@@ -22,14 +22,16 @@ import java.util.List;
 
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQContraintUnique;
+import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQTable;
+import com.iciql.Iciql.IndexType;
 
 /**
  * A table containing category data.
  */
 
 @IQTable(name = "AnnotatedCategory", primaryKey = "id")
-// @IQIndex(value = "categ", type=IndexType.UNIQUE)
+@IQIndex(value = "categ", type=IndexType.UNIQUE)
 @IQContraintUnique(uniqueColumns = { "categ" })
 public class CategoryAnnotationOnly {
 
@@ -53,7 +55,7 @@ public class CategoryAnnotationOnly {
 	}
 
 	public static List<CategoryAnnotationOnly> getList() {
-		CategoryAnnotationOnly[] list = { 
+		CategoryAnnotationOnly[] list = {
 				create(1, "Beverages"),
 				create(2, "Condiments"),
 				create(3, "Produce"),
@@ -63,6 +65,7 @@ public class CategoryAnnotationOnly {
 		return Arrays.asList(list);
 	}
 
+	@Override
 	public String toString() {
 		return category;
 	}
