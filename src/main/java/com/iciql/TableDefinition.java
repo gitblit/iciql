@@ -201,8 +201,8 @@ public class TableDefinition<T> {
 	private Class<T> clazz;
 	private IdentityHashMap<Object, FieldDefinition> fieldMap = Utils.newIdentityHashMap();
 	private ArrayList<IndexDefinition> indexes = Utils.newArrayList();
-	private ArrayList<ConstraintForeignKeyDefinition> constraintsForeignKey = Utils.newArrayList();
-	private ArrayList<ConstraintUniqueDefinition> constraintsUnique = Utils.newArrayList();
+	ArrayList<ConstraintForeignKeyDefinition> constraintsForeignKey = Utils.newArrayList();
+	ArrayList<ConstraintUniqueDefinition> constraintsUnique = Utils.newArrayList();
 
 	TableDefinition(Class<T> clazz) {
 		this.clazz = clazz;
@@ -910,36 +910,6 @@ public class TableDefinition<T> {
 		for (IndexDefinition index : indexes) {
 			stat = new SQLStatement(db);
 			db.getDialect().prepareCreateIndex(stat, schemaName, tableName, index);
-			IciqlLogger.create(stat.getSQL());
-			try {
-				stat.executeUpdate();
-			} catch (IciqlException e) {
-				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS
-						&& e.getIciqlCode() != IciqlException.CODE_DUPLICATE_KEY) {
-					throw e;
-				}
-			}
-		}
-
-		// create unique constraints
-		for (ConstraintUniqueDefinition constraint : constraintsUnique) {
-			stat = new SQLStatement(db);
-			db.getDialect().prepareCreateConstraintUnique(stat, schemaName, tableName, constraint);
-			IciqlLogger.create(stat.getSQL());
-			try {
-				stat.executeUpdate();
-			} catch (IciqlException e) {
-				if (e.getIciqlCode() != IciqlException.CODE_OBJECT_ALREADY_EXISTS
-						&& e.getIciqlCode() != IciqlException.CODE_DUPLICATE_KEY) {
-					throw e;
-				}
-			}
-		}
-
-		// create foreign keys constraints
-		for (ConstraintForeignKeyDefinition constraint : constraintsForeignKey) {
-			stat = new SQLStatement(db);
-			db.getDialect().prepareCreateConstraintForeignKey(stat, schemaName, tableName, constraint);
 			IciqlLogger.create(stat.getSQL());
 			try {
 				stat.executeUpdate();

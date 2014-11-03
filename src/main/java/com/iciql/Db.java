@@ -90,15 +90,14 @@ public class Db implements AutoCloseable {
 	private Db(Connection conn) {
 		this.conn = conn;
 		String databaseName = null;
-		DatabaseMetaData data = null;
 		try {
-			data = conn.getMetaData();
+			DatabaseMetaData data = conn.getMetaData();
 			databaseName = data.getDatabaseProductName();
 		} catch (SQLException s) {
 			throw new IciqlException(s, "failed to retrieve database metadata!");
 		}
 		dialect = getDialect(databaseName, conn.getClass().getName());
-		dialect.configureDialect(databaseName, data);
+		dialect.configureDialect(this);
 	}
 
 	/**

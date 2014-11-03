@@ -18,6 +18,7 @@
 
 package com.iciql;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -61,16 +62,19 @@ public class SQLDialectDefault implements SQLDialect {
 	}
 
 	@Override
-	public void configureDialect(String databaseName, DatabaseMetaData data) {
-		this.databaseName = databaseName;
+	public void configureDialect(Db db) {
+		Connection conn = db.getConnection();
+		DatabaseMetaData data = null;
 		try {
+			data = conn.getMetaData();
+			databaseName = data.getDatabaseProductName();
 			databaseMajorVersion = data.getDatabaseMajorVersion();
 			databaseMinorVersion = data.getDatabaseMinorVersion();
 			databaseVersion = Float.parseFloat(databaseMajorVersion + "."
 					+ databaseMinorVersion);
 			productVersion = data.getDatabaseProductVersion();
 		} catch (SQLException e) {
-			throw new IciqlException(e);
+			throw new IciqlException(e, "failed to retrieve database metadata!");
 		}
 	}
 
@@ -185,6 +189,92 @@ public class SQLDialectDefault implements SQLDialect {
 				buff.append(')');
 			}
 		}
+
+		// create unique constraints
+		if (def.constraintsUnique.size() > 0) {
+			buff.append(", ");
+			buff.resetCount();
+			for (ConstraintUniqueDefinition constraint : def.constraintsUnique) {
+				buff.append("CONSTRAINT ");
+				buff.append(constraint.constraintName);
+				buff.append(" UNIQUE ");
+				buff.append(" (");
+				for (String col : constraint.uniqueColumns) {
+					buff.appendExceptFirst(", ");
+					buff.append(prepareColumnName(col));
+				}
+				buff.append(") ");
+			}
+		}
+
+		// create foreign key constraints
+		if (def.constraintsForeignKey.size() > 0) {
+			buff.append(", ");
+			buff.resetCount();
+			for (ConstraintForeignKeyDefinition constraint : def.constraintsForeignKey) {
+				buff.appendExceptFirst(", ");
+				buff.append(String.format("CONSTRAINT %s FOREIGN KEY(%s) REFERENCES %s(%s)",
+						constraint.constraintName,
+						constraint.foreignColumns.get(0),
+						constraint.referenceTable,
+						constraint.referenceColumns.get(0)));
+
+				if (constraint.deleteType != ConstraintDeleteType.UNSET) {
+					buff.append(" ON DELETE ");
+					switch (constraint.deleteType) {
+					case CASCADE:
+						buff.append("CASCADE ");
+						break;
+					case RESTRICT:
+						buff.append("RESTRICT ");
+						break;
+					case SET_NULL:
+						buff.append("SET NULL ");
+						break;
+					case NO_ACTION:
+						buff.append("NO ACTION ");
+						break;
+					case SET_DEFAULT:
+						buff.append("SET DEFAULT ");
+						break;
+					}
+				}
+				if (constraint.updateType != ConstraintUpdateType.UNSET) {
+					buff.append(" ON UPDATE ");
+					switch (constraint.updateType) {
+					case CASCADE:
+						buff.append("CASCADE ");
+						break;
+					case RESTRICT:
+						buff.append("RESTRICT ");
+						break;
+					case SET_NULL:
+						buff.append("SET NULL ");
+						break;
+					case NO_ACTION:
+						buff.append("NO ACTION ");
+						break;
+					case SET_DEFAULT:
+						buff.append("SET DEFAULT ");
+						break;
+					}
+				}
+				switch (constraint.deferrabilityType) {
+				case DEFERRABLE_INITIALLY_DEFERRED:
+					buff.append("DEFERRABLE INITIALLY DEFERRED ");
+					break;
+				case DEFERRABLE_INITIALLY_IMMEDIATE:
+					buff.append("DEFERRABLE INITIALLY IMMEDIATE ");
+					break;
+				case NOT_DEFERRABLE:
+					buff.append("NOT DEFERRABLE ");
+					break;
+				case UNSET:
+					break;
+				}
+			}
+		}
+
 		buff.append(')');
 		stat.setSQL(buff.toString());
 	}

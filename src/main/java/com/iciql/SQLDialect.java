@@ -18,11 +18,7 @@
 
 package com.iciql;
 
-import java.sql.DatabaseMetaData;
-
 import com.iciql.Iciql.DataTypeAdapter;
-import com.iciql.TableDefinition.ConstraintForeignKeyDefinition;
-import com.iciql.TableDefinition.ConstraintUniqueDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 
 /**
@@ -65,12 +61,11 @@ public interface SQLDialect {
 	Object deserialize(Object value, Class<? extends DataTypeAdapter<?>> typeAdapter);
 
 	/**
-	 * Configure the dialect from the database metadata.
+	 * Configure the dialect.
 	 *
-	 * @param databaseName
-	 * @param data
+	 * @param db
 	 */
-	void configureDialect(String databaseName, DatabaseMetaData data);
+	void configureDialect(Db db);
 
 	/**
 	 * Returns true if savepoints are supported.
@@ -168,35 +163,6 @@ public interface SQLDialect {
 	 *            the index definition
 	 */
 	void prepareCreateIndex(SQLStatement stat, String schemaName, String tableName, IndexDefinition index);
-
-	/**
-	 * Get the ALTER statement.
-	 *
-	 * @param stat
-	 *            return the SQL statement
-	 * @param schemaName
-	 *            the schema name
-	 * @param tableName
-	 *            the table name
-	 * @param constraint
-	 *            the constraint definition
-	 */
-	void prepareCreateConstraintForeignKey(SQLStatement stat, String schemaName, String tableName, ConstraintForeignKeyDefinition constraint);
-
-	/**
-	 * Get the ALTER statement.
-	 *
-	 * @param stat
-	 *            return the SQL statement
-	 * @param schemaName
-	 *            the schema name
-	 * @param tableName
-	 *            the table name
-	 * @param constraint
-	 *            the constraint definition
-	 * return the SQL statement
-	 */
-	void prepareCreateConstraintUnique(SQLStatement stat, String schemaName, String tableName, ConstraintUniqueDefinition constraint);
 
 	/**
 	 * Get a MERGE or REPLACE INTO statement.
