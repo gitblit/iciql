@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone='yes'?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-	<generator uri="http://iciql.com" version="1.4.0">Iciql</generator>
+	<generator uri="http://iciql.com" version="1.5.0-SNAPSHOT">Iciql</generator>
 	<title><![CDATA[Iciql]]></title>
 	<updated>2014-11-05</updated>
 	<entry>
