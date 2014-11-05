@@ -1,10 +1,10 @@
 #
-# ${project.version} release
+# 1.4.0 release
 #
 r22: {
-    title: ${project.name} ${project.version} released
-    id: ${project.version}
-    date: ${project.buildDate}
+    title: Iciql 1.4.0 released
+    id: 1.4.0
+    date: 2014-11-05
     note: ~
     html: ~
     text: ~
@@ -475,6 +475,6 @@ r1: {
 #
 # Release log data
 #
-release: &r21
-snapshot: &r22
-releases: &r[1..21]
+release: &r22
+snapshot: ~
+releases: &r[1..22]
