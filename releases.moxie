@@ -10,13 +10,16 @@ r22: {
     text: ~
     security: ~
     fixes: ~
-    changes: ~
+    changes:
+    - Table constraints are now defined as part of CREATE TABLE instead of afterwards with indivudual ALTER TABLE statements. This is more portable across database backends.
     additions:
     - Support for specifying custom data type adapters in @IQColumn and Define.typeAdapter()
     - Added com.iciql.SQLDialectPostgreSQL.JsonStringAdapter
     - Added com.iciql.SQLDialectPostgreSQL.XmlStringAdapter
     - Added com.iciql.JavaSerializationTypeAdapter to (de)serialize objects into a BLOB column
-    dependencyChanges: ~
+    - Added an SQLite dialect
+    dependencyChanges:
+    - SQLite 3.8.7
     contributors:
     - James Moger
 }
