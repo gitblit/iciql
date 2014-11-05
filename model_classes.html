@@ -56,7 +56,7 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.3.0/iciql-1.3.0.zip'>iciql-1.3.0</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.4.0/iciql-1.4.0.zip'>iciql-1.4.0</a></li>
 <li class='divider'></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
@@ -142,6 +142,8 @@ can be used for all iciql expressions
 can not be directly referenced in an expression</td></tr>
 <tr><td>byte []</td> <td></td>
 <td>BLOB</td><tr/>
+<tr><td>Custom</td> <td>create a DataTypeAdapter&lt;Custom&gt;</td>
+<td>Custom</td><tr/>
 
 <tr><td colspan="3"><b>H2 Database Types</b><br/>
 fully supported when paired with an H2 database 
@@ -227,6 +229,9 @@ public class Product {
 	
 	@IQColumn
 	private Availability availability;
+    
+    @IQColumn(typeAdapter = MyCustomClassAdapter.class)
+    private MyCustomClass;
 	
 	// ignored because it is not annotated AND the class is @IQTable annotated
 	private Integer ignoredField;
@@ -397,7 +402,7 @@ public class Product {
 }
 </pre>
 <!-- End Markdown -->
-<div ><ul class="pager"> <li class="next"><a href="table_versioning.html">versioning &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-10-22</p>
+<div ><ul class="pager"> <li class="next"><a href="table_versioning.html">versioning &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-11-05</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>
