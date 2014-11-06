@@ -20,6 +20,7 @@ This is an overview of the fundamental differences between the original JaQu pro
 <tr><td>BETWEEN</td><td>syntax for specifying a BETWEEN x AND y clause</td><td>--</td></tr>
 <tr><td>(NOT) IN</td><td>syntax (oneOf, noneOf) for specifying a (NOT) IN clause</td><td>--</td></tr>
 <tr><td>compound nested conditions</td><td>WHERE (x = y OR x = z) AND (y = a OR y = b)</td><td>--</td></tr>
+<tr><td>dynamic DAOs</td><td>DAO interfaces with annotated statements may be declared and dynamically generated</td><td>--</td></tr>
 <tr><th colspan="3">types</th></tr>
 <tr><td>primitives</td><td>fully supported</td><td>--</td></tr>
 <tr><td>enums</td><td>fully supported</td><td>--</td></tr>

@@ -10,10 +10,14 @@ r23: {
     text: ~
     security: ~
     fixes: ~
-    changes: ~
-    additions: ~
+    changes:
+    - Improved automatic date conversions
+    - Revised data type adapters to be specified separately with the @TypeAdapter annotation
+    additions:
+    - Add a Dao feature similar to JDBI
     dependencyChanges: ~
-    contributors: ~
+    contributors:
+    - James Moger
 }
 
 #

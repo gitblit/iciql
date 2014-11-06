@@ -194,7 +194,17 @@ public class Db implements AutoCloseable {
 		return new Db(conn);
 	}
 
-
+	/**
+	 * Returns a new DAO instance for the specified class.
+	 *
+	 * @param daoClass
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("resource")
+	public <X extends Dao> X open(Class<X> daoClass) {
+		return new DaoProxy<X>(this, daoClass).buildProxy();
+	}
 
 	/**
 	 * Convenience function to avoid import statements in application code.
@@ -675,7 +685,7 @@ public class Db implements AutoCloseable {
 	 */
 	public ResultSet executeQuery(String sql, Object... args) {
 		try {
-			if (args.length == 0) {
+			if (args == null || args.length == 0) {
 				return conn.createStatement().executeQuery(sql);
 			} else {
 				PreparedStatement stat = conn.prepareStatement(sql);
@@ -717,7 +727,7 @@ public class Db implements AutoCloseable {
 	public <T> List<T> executeQuery(Class<? extends T> modelClass, String sql, Object... args) {
 		ResultSet rs = null;
 		try {
-			if (args.length == 0) {
+			if (args == null || args.length == 0) {
 				rs = conn.createStatement().executeQuery(sql);
 			} else {
 				PreparedStatement stat = conn.prepareStatement(sql);
@@ -748,7 +758,7 @@ public class Db implements AutoCloseable {
 		Statement stat = null;
 		try {
 			int updateCount;
-			if (args.length == 0) {
+			if (args == null || args.length == 0) {
 				stat = conn.createStatement();
 				updateCount = stat.executeUpdate(sql);
 			} else {

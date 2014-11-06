@@ -1,4 +1,8 @@
-## Select Statements
+## SQL DSL Examples
+
+Here are some examples of using the Iciql SQL DSL.
+
+### Select Statements
 
 ---JAVA---
 // select * from products
@@ -25,7 +29,7 @@ List<ProductPrice> productPrices =
     }});
 ---JAVA---
 
-## Insert Statements
+### Insert Statements
 
 ---JAVA---
 // single record insertion
@@ -41,7 +45,7 @@ db.insertAll(myProducts);
 List<Long> myKeys = db.insertAllAndGetKeys(list);
 ---JAVA---
 
-## Update Statements
+### Update Statements
 
 ---JAVA---
 // single record update
@@ -61,8 +65,9 @@ String q = db.from(p).set(p.productName).toParameter().where(p.productId).is(1).
 db.executeUpdate(q, "Lettuce");
 ---JAVA---
 
-## Merge Statements
-Merge statements currently generate the [H2 merge syntax](http://h2database.com/html/grammar.html#merge).
+### Upsert/Merge Statements
+
+The Upsert or Merge methods will insert a new object if the primary key does not already exist or will update the record for the primary key.
  
 ---JAVA---
 Product pChang = db.from(p).where(p.productName).is("Chang").selectFirst();
@@ -71,7 +76,7 @@ pChang.unitsInStock = 16;
 db.merge(pChang);
 ---JAVA---
 
-## Delete Statements
+### Delete Statements
 
 ---JAVA---
 // single record deletion
@@ -84,7 +89,7 @@ db.deleteAll(myProducts);
 db.from(p).where(p.productId).atLeast(10).delete();
 ---JAVA---
 
-## Inner Join Statements
+### Inner Join Statements
 
 ---JAVA---
 final Customer c = new Customer();
@@ -108,7 +113,7 @@ List<CustOrder> orders =
     }});
 ---JAVA---
 
-## View Statements
+### View Statements
 
 ---JAVA---
 // the view named "ProductView" is created from the "Products" table
@@ -162,7 +167,7 @@ db.from(p).where(p.id).atLeast(250L).and(p.id).lessThan(350L).replaceView(Produc
 db.dropView(ProductViewInherited.class);
 ---JAVA---
 
-## Dynamic Queries
+### Dynamic Queries
 
 Dynamic queries skip all field type checking and, depending on which approach you use, may skip model class/table name checking too.
 

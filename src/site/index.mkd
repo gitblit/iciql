@@ -5,9 +5,9 @@ iciql **is**...
 - a model-based, database access wrapper for JDBC
 - for modest database schemas and basic statement generation
 - for those who want to write code, instead of SQL, using IDE completion and compile-time type-safety
-- small (200KB) with debug symbols and no runtime dependencies
+- small (225KB) with debug symbols and no runtime dependencies
 - pronounced *icicle* (although it could be French: *ici ql* - here query language)
-- a friendly fork of the H2 [JaQu][jaqu] project
+- a friendly fork of the H2 [JaQu][jaqu] subproject
 
 iciql **is not**...
 
@@ -15,26 +15,73 @@ iciql **is not**...
 - designed to compete with more powerful database query tools like [jOOQ][jooq] or [QueryDSL][querydsl]
 - designed to compete with enterprise [ORM][orm] tools like [Hibernate][hibernate] or [mybatis][mybatis]
 
-### Example Usage
-<table class="table">
-<tr>
-<th>iciql</th><th>sql</th>
-</tr>
-<tr>
-<td>
+### fluent, type-safe SQL DSL with rich object mapping
+
+Born from the unfinished [JaQu][jaqu] subproject of H2 in August 2011, Iciql has advanced the codebase & DSL greatly.  It supports more SQL syntax, more SQL data types, and all standard JDBC object types.
+
 ---JAVA---
-Product p = new Product();
-List<Product> restock = db.from(p).where(p.unitsInStock).is(0).select();
-List<Product> all = db.executeQuery(Product.class, "select * from products");
+try (Db db = Db.open("jdbc:h2:mem:iciql")) {
+
+    db.insertAll(Product.getList());
+    Product p = new Product();
+    List<Product> restock = db.from(p).where(p.unitsInStock).is(0).select();
+    List<Product> all = db.executeQuery(Product.class, "select * from products");
+    
+}
 ---JAVA---
 
-</td><td>
-<br/>
-select * from products p where p.unitsInStock = 0<br/>
-select * from products
-</td>
-</tr>
-</table>
+### dynamic, annotated DAO with standard crud operations
+
+Inspired by [JDBI](http://jdbi.org), Iciql offers a similar Dao feature.  There are some clear benefits to using SQL directly rather than SQL-through-a-DSL so use them both where it makes the most sense for your need.
+
+---JAVA---
+// Define your DAO with SQL annotations and optional type adapters
+public interface MyDao extends Dao {
+
+    @SqlQuery("select * from Product where unitsInStock = 0")
+    Product[] getProductsOutOfStock();
+
+    @SqlQuery("select * from Product where productId = :id")
+    Product getProduct(@Bind("id") long id);
+ 
+    // retrieve a custom type from the matched row in the Invoices table
+    @SqlQuery("select invoice from Invoices where id = :arg0")
+    @InvoiceAdapter
+    Invoice getInvoice(long id);
+
+    // retrieve a custom type from the matched row in the Invoices table
+    @SqlQuery("select invoice from Invoices where id = :p.invoiceId")
+    @InvoiceAdapter
+    Invoice getInvoice(@BindBean("p") Product product);
+
+    // update a custom type for the matched row in the Invoices table
+    @SqlStatement("update Invoices set invoice = :2 where id = :1")
+    boolean updateInvoice(long id, @InvoiceAdapter Invoice invoice);
+
+}
+
+// Define a type adapter annotation for the Invoice object
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@TypeAdapter(InvoiceAdapterImpl.class)
+public @interface InvoiceAdapter { }
+
+// Crate a DAO instance with your Db and work more clearly
+try (Db db = Db.open("jdbc:h2:mem:iciql")) {
+
+    MyDao dao = db.open(MyDao.class);
+    dao.insertAll(Product.getList());
+    Product[] outofstock = dao.getProductsOutOfStock();
+    Product p = dao.getProduct(1);
+    Invoice i123 = dao.getInvoice(123);
+    i123.approved = true;
+    dao.updateInvoice(123, i123);
+    
+    // use the underlying Db instance for full-power
+    dao.db().dropTable(Product.class);
+
+}
+---JAVA---
 
 ### Supported Databases (Unit-Tested)
 - [H2](http://h2database.com) ${h2.version}

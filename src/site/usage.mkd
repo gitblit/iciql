@@ -1,15 +1,17 @@
-## Usage
+## SQL DSL Usage
 
-Aside from this brief usage guide, please consult the [examples](examples.html), the [javadoc](javadoc.html) and the [source code](${project.scmUrl}).
+Aside from this brief usage guide, please consult the [DSL examples](examples.html), the [javadoc](javadoc.html) and the [source code](${project.scmUrl}).
 
 ### Instantiating a Db
 
 Use one of the static utility methods to instantiate a Db instance:
 
-    Db.open(String url, String user, String password);
-    Db.open(String url, String user, char[] password);
-    Db.open(Connection conn);
-    Db.open(DataSource dataSource);
+---JAVA---
+Db.open(String url, String user, String password);
+Db.open(String url, String user, char[] password);
+Db.open(Connection conn);
+Db.open(DataSource dataSource);
+---JAVA---
  
 ### Compile-Time Statements
 
@@ -144,11 +146,12 @@ products = db.from(view).select();
 
 ### Natural Syntax
 
-<span class="warning">work-in-progress</span>
+<span class="alert alert-warning">Not Actively Developed</span>
 
 The original JaQu source offers partial support for Java expressions in *where* clauses.
 
 This works by decompiling a Java expression, at runtime, to an SQL condition.  The expression is written as an anonymous inner class implementation of the `com.iciql.Filter` interface.
+
 A proof-of-concept decompiler is included, but is incomplete.
 
 The proposed syntax is:

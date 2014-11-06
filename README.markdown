@@ -5,7 +5,7 @@ iciql **is**...
 - a model-based, database access wrapper for JDBC
 - for modest database schemas and basic statement generation
 - for those who want to write code, instead of SQL, using IDE completion and compile-time type-safety
-- small (200KB with debug symbols) with no runtime dependencies
+- small (225KB with debug symbols) with no runtime dependencies
 - pronounced *icicle* (although it could be French: *ici ql* - here query language)
 - a friendly fork of the H2 [JaQu](http://h2database.com/html/jaqu.html) project
 

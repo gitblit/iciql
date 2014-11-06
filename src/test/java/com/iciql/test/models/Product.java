@@ -51,6 +51,15 @@ public class Product implements Iciql {
 		this.unitsInStock = unitsInStock;
 	}
 
+	public String getName() {
+		return productName;
+	}
+
+	public int getId() {
+		return productId;
+	}
+
+	@Override
 	public void defineIQ() {
 		tableName("Product");
 		primaryKey(productId);
@@ -78,6 +87,7 @@ public class Product implements Iciql {
 		return Arrays.asList(list);
 	}
 
+	@Override
 	public String toString() {
 		return productName + ": " + unitsInStock;
 	}

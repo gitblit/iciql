@@ -90,7 +90,7 @@ public class SupportedTypes implements Serializable {
 	private BigDecimal myBigDecimal;
 
 	@IQColumn(length = 40)
-	private String myString;
+	public String myString;
 
 	@IQColumn
 	private java.util.Date myUtilDate;
