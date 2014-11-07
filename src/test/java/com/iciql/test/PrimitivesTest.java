@@ -79,17 +79,17 @@ public class PrimitivesTest {
 
 		// test model update
 		retrievedModel.myInteger = 1337;
-		assertEquals(1, db.update(retrievedModel));
-		assertEquals(1, db.delete(retrievedModel));
+		assertTrue(db.update(retrievedModel));
+		assertTrue(db.delete(retrievedModel));
 
 		db.close();
 	}
-	
+
 	@Test
 	public void testMultipleBooleans() {
 		Db db = IciqlSuite.openNewDb();
 		db.insertAll(MultipleBoolsModel.getList());
-		
+
 		MultipleBoolsModel m = new MultipleBoolsModel();
 		try {
 			db.from(m).where(m.a).is(true).select();

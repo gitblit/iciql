@@ -210,12 +210,13 @@ public class Db implements AutoCloseable {
 		IciqlLogger.deactivateConsoleLogger();
 	}
 
-	public <T> void insert(T t) {
+	public <T> boolean insert(T t) {
 		Class<?> clazz = t.getClass();
 		long rc = define(clazz).createIfRequired(this).insert(this, t, false);
 		if (rc == 0) {
 			throw new IciqlException("Failed to insert {0}.  Affected rowcount == 0.", t);
 		}
+		return rc == 1;
 	}
 
 	public <T> long insertAndGetKey(T t) {
@@ -224,12 +225,43 @@ public class Db implements AutoCloseable {
 	}
 
 	/**
+	 * Upsert INSERTS if the record does not exist or UPDATES the record if it
+	 * does exist. Not all databases support MERGE and the syntax varies with
+	 * the database.
+	 *
+	 * If the database does not support a MERGE or INSERT OR REPLACE INTO syntax
+	 * the dialect can try to simulate a merge by implementing:
+	 * <p>
+	 * INSERT INTO foo... (SELECT ?,... FROM foo WHERE pk=? HAVING count(*)=0)
+	 * <p>
+	 * iciql will check the affected row count returned by the internal merge
+	 * method and if the affected row count = 0, it will issue an update.
+	 * <p>
+	 * See the Derby dialect for an implementation of this technique.
+	 * <p>
+	 * If the dialect does not support merge an IciqlException will be thrown.
+	 *
+	 * @param t
+	 */
+	public <T> void upsert(T t) {
+		Class<?> clazz = t.getClass();
+		TableDefinition<?> def = define(clazz).createIfRequired(this);
+		int rc = def.merge(this, t);
+		if (rc == 0) {
+			rc = def.update(this, t);
+		}
+		if (rc == 0) {
+			throw new IciqlException("upsert failed");
+		}
+	}
+
+	/**
 	 * Merge INSERTS if the record does not exist or UPDATES the record if it
 	 * does exist. Not all databases support MERGE and the syntax varies with
 	 * the database.
 	 *
-	 * If the database does not support a MERGE syntax the dialect can try to
-	 * simulate a merge by implementing:
+	 * If the database does not support a MERGE or INSERT OR REPLACE INTO syntax
+	 * the dialect can try to simulate a merge by implementing:
 	 * <p>
 	 * INSERT INTO foo... (SELECT ?,... FROM foo WHERE pk=? HAVING count(*)=0)
 	 * <p>
@@ -243,25 +275,17 @@ public class Db implements AutoCloseable {
 	 * @param t
 	 */
 	public <T> void merge(T t) {
-		Class<?> clazz = t.getClass();
-		TableDefinition<?> def = define(clazz).createIfRequired(this);
-		int rc = def.merge(this, t);
-		if (rc == 0) {
-			rc = def.update(this, t);
-		}
-		if (rc == 0) {
-			throw new IciqlException("merge failed");
-		}
+		upsert(t);
 	}
 
-	public <T> int update(T t) {
+	public <T> boolean update(T t) {
 		Class<?> clazz = t.getClass();
-		return define(clazz).createIfRequired(this).update(this, t);
+		return define(clazz).createIfRequired(this).update(this, t) == 1;
 	}
 
-	public <T> int delete(T t) {
+	public <T> boolean delete(T t) {
 		Class<?> clazz = t.getClass();
-		return define(clazz).createIfRequired(this).delete(this, t);
+		return define(clazz).createIfRequired(this).delete(this, t) == 1;
 	}
 
 	public <T extends Object> Query<T> from(T alias) {
@@ -271,7 +295,7 @@ public class Db implements AutoCloseable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> int dropTable(Class<? extends T> modelClass) {
+	public <T> boolean dropTable(Class<? extends T> modelClass) {
 		TableDefinition<T> def = (TableDefinition<T>) define(modelClass);
 		SQLStatement stat = new SQLStatement(this);
 		getDialect().prepareDropTable(stat, def);
@@ -288,11 +312,11 @@ public class Db implements AutoCloseable {
 		classMap.remove(modelClass);
 		// remove this model class from the upgrade checked cache
 		upgradeChecked.remove(modelClass);
-		return rc;
+		return rc == 1;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> int dropView(Class<? extends T> modelClass) {
+	public <T> boolean dropView(Class<? extends T> modelClass) {
 		TableDefinition<T> def = (TableDefinition<T>) define(modelClass);
 		SQLStatement stat = new SQLStatement(this);
 		getDialect().prepareDropView(stat, def);
@@ -309,7 +333,7 @@ public class Db implements AutoCloseable {
 		classMap.remove(modelClass);
 		// remove this model class from the upgrade checked cache
 		upgradeChecked.remove(modelClass);
-		return rc;
+		return rc == 1;
 	}
 
 	public <T> List<T> buildObjects(Class<? extends T> modelClass, ResultSet rs) {
