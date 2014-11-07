@@ -140,6 +140,39 @@ public class SQLDialectPostgreSQL extends SQLDialectDefault {
 	}
 
 	/**
+	 * Handles transforming raw strings to/from the Postgres JSONB data type.
+	 */
+	public class JsonbStringAdapter implements DataTypeAdapter<String> {
+
+		@Override
+		public String getDataType() {
+			return "jsonb";
+		}
+
+		@Override
+		public Class<String> getJavaType() {
+			return String.class;
+		}
+
+		@Override
+		public Object serialize(String value) {
+			PGobject pg = new PGobject();
+			pg.setType(getDataType());
+			try {
+				pg.setValue(value);
+			} catch (SQLException e) {
+				// not thrown on base PGobject
+			}
+			return pg;
+		}
+
+		@Override
+		public String deserialize(Object value) {
+			return value.toString();
+		}
+	}
+
+	/**
 	 * Handles transforming raw strings to/from the Postgres XML data type.
 	 */
 	public class XmlStringAdapter implements DataTypeAdapter<String> {

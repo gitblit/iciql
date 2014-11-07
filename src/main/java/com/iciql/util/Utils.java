@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -40,8 +41,10 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
+import com.iciql.Iciql.TypeAdapter;
 import com.iciql.IciqlException;
 
 /**
@@ -531,5 +534,25 @@ public class Utils {
 		} finally {
 			in.close();
 		}
+	}
+
+	/**
+	 * Identify the data type adapter class in the annotations.
+	 *
+	 * @param annotations
+	 * @return null or the dtaa type adapter class
+	 */
+	public static Class<? extends DataTypeAdapter<?>> getDataTypeAdapter(Annotation [] annotations) {
+		Class<? extends DataTypeAdapter<?>> typeAdapter = null;
+		if (annotations != null) {
+			for (Annotation annotation : annotations) {
+				if (annotation instanceof TypeAdapter) {
+					typeAdapter = ((TypeAdapter) annotation).value();
+				} else if (annotation.annotationType().isAnnotationPresent(TypeAdapter.class)) {
+					typeAdapter = annotation.annotationType().getAnnotation(TypeAdapter.class).value();
+				}
+			}
+		}
+		return typeAdapter;
 	}
 }

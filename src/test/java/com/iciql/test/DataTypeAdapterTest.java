@@ -16,6 +16,10 @@
 
 package com.iciql.test;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Date;
 
 import org.junit.After;
@@ -26,6 +30,7 @@ import org.junit.Test;
 import com.iciql.Db;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
+import com.iciql.Iciql.TypeAdapter;
 import com.iciql.JavaSerializationTypeAdapter;
 import com.iciql.test.models.SupportedTypes;
 
@@ -64,17 +69,18 @@ public class DataTypeAdapterTest extends Assert {
 
 	}
 
-	@IQTable
+	@IQTable(name="dataTypeAdapters")
 	public static class SerializedObjectTypeAdapterTest {
 
 		@IQColumn(autoIncrement = true, primaryKey = true)
 		private long id;
 
 		@IQColumn
-		private java.util.Date received;
+		public java.util.Date received;
 
-		@IQColumn(typeAdapter = SupportedTypesAdapter.class)
-		private SupportedTypes obj;
+		@IQColumn
+		@SupportedTypesAdapter
+		public SupportedTypes obj;
 
 	}
 
@@ -82,7 +88,7 @@ public class DataTypeAdapterTest extends Assert {
 	 * Maps a SupportedType instance to a BLOB using Java Object serialization.
 	 *
 	 */
-	public static class SupportedTypesAdapter extends JavaSerializationTypeAdapter<SupportedTypes> {
+	public static class SupportedTypesAdapterImpl extends JavaSerializationTypeAdapter<SupportedTypes> {
 
 		@Override
 		public Class<SupportedTypes> getJavaType() {
@@ -90,5 +96,10 @@ public class DataTypeAdapterTest extends Assert {
 		}
 
 	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+	@TypeAdapter(SupportedTypesAdapterImpl.class)
+	public @interface SupportedTypesAdapter { }
 
 }

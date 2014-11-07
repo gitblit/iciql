@@ -138,6 +138,7 @@
 				<menu name="getting started" pager="true" pagerPlacement="bottom" pagerLayout="justified">
 					<page name="models" src="model_classes.mkd" out="model_classes.html" headerLinks="true" />
 					<page name="versioning" src="table_versioning.mkd" out="table_versioning.html" headerLinks="true" />
+					<page name="data type adapters" src="dta.mkd" out="dta.html"  headerLinks="true" />
 					<page name="usage" src="usage.mkd" out="usage.html" headerLinks="true" />
 					<page name="examples" src="examples.mkd" out="examples.html" headerLinks="true" />
 					<page name="tools" src="tools.mkd" out="tools.html" headerLinks="true" />

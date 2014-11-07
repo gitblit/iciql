@@ -1,0 +1,104 @@
+## Data Type Adapters
+
+Data type adapters allow you to extend Iciql's support for field data types.
+
+For example, you might want to take advantage of the [Postgres JSON/JSONB support](http://www.postgresql.org/docs/9.4/static/datatype-json.html) in 9.3/9.4 but instead of directly handling JSON text documents you might want to represent that JSON as a domain object and serialize/deserialize to JSON only when executing an SQL operation.
+
+Data type adapters give you this flexibility.
+
+**NOTE:** Data type adapters are reused within a Db instance and are not inherently thread-safe. You must handle thread-safety on your own, if it is an issue.
+
+### An example
+
+Consider the following model class.
+
+---JAVA---
+@IQTable
+public class Invoices {
+    
+    @IQColumn(primaryKey = true, autoIncrement = true)
+    public long _id;
+    
+    @IQColumn
+    Date received;
+    
+    @IQColumn
+    @TypeAdapter(InvoiceAdapterImpl.class)
+    Invoice invoice;
+}
+---JAVA---
+
+This is a really simple table with three columns, but the third column uses a type adapter to map our *invoice* object field to an SQL type.  You can use the `@TypeAdapter` annotation either on the field definition or on the class definition of your domain model.
+
+Let's take a look at *InvoiceAdapterImpl*.
+
+---JAVA---
+public class InvoiceAdapterImpl implements DataTypeAdapter<Invoice> {
+
+    @Override
+    public String getDataType() {
+        return "jsonb";
+    }
+
+    @Override
+    public Class<Invoice> getJavaType() {
+        return Invoice.class;
+    }
+
+    Gson gson() {
+        return new GsonBuilder().create();
+    }
+
+    @Override
+    public Object serialize(DcKey value) {
+        String json = gson().toJson(value);
+        PGobject pg = new PGobject();
+        pg.setType(getDataType());
+        try {
+            pg.setValue(json);
+        } catch (SQLException e) {
+            // ignore, never thrown
+        }
+        return pg;
+    }
+
+    @Override
+    public Invoice deserialize(Object value) {
+
+        // the incoming object is always represented as a string
+        final String json = value.toString();
+        final Invoice invoice = gson().fromJson(json, getJavaType());
+
+        return invoice;
+  }
+---JAVA---
+
+Here you can see how the *InvoiceTypeAdapter* defines a [Postgres JSONB data type](http://www.postgresql.org/docs/9.4/static/datatype-json.html) and automatically handles JSON (de)serialization with [Google Gson](https://code.google.com/p/google-gson) so that the database gets the content in a form that it requires but we can continue to work with objects in Java.
+
+### Custom annotations
+
+It is a little verbose to repeat `@TypeAdapter(InvoiceAdapterImpl.class)` everywhere you want to use your adapter.
+
+To simplify this, you can implement your own annotation which specifies your type adapter.
+
+---JAVA---
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@TypeAdapter(InvoiceAdapterImpl.class)
+public @interface InvoiceAdapter { }
+---JAVA---
+
+### Included DataTypeAdapters
+
+Not every DataTypeAdapter has to be a custom implementation.
+The following adapters are included in Iciql for general purpose use.
+
+- `com.iciql.JavaSerializationTypeAdapter`
+Uses Java serialization to store/retrieve your objects as BLOBs.
+- `com.iciql.SQLDialectPostgreSQL.JsonStringAdapter`
+Allows you to use the Postgres JSON data type with a standard String.
+- `com.iciql.SQLDialectPostgreSQL.JsonbStringAdapter`
+Allows you to use the Postgres JSONB data type with a standard String.
+- `com.iciql.SQLDialectPostgreSQL.XmlStringAdapter`
+Allows you to use the Postgres XML data type with a standard String.
+

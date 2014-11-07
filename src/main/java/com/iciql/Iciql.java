@@ -657,14 +657,6 @@ public interface Iciql {
 		 */
 		String defaultValue() default "";
 
-		/**
-		 * Allows specifying a custom data type adapter.
-		 * <p>
-		 * For example, you might use this option to map a Postgres JSON column.
-		 * </p>
-		 */
-		Class<? extends DataTypeAdapter<?>> typeAdapter() default StandardJDBCTypeAdapter.class;
-
 	}
 
 	/**
@@ -741,6 +733,17 @@ public interface Iciql {
 	void defineIQ();
 
 	/**
+	 * Specify a custom type adapter for a method return type, a class field, or a method
+	 * parameter.  Type adapters allow you to transform content received from or inserted into
+	 * a database field.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+	public @interface TypeAdapter {
+		Class<? extends DataTypeAdapter<?>> value();
+	}
+
+	/**
 	 * Interface to allow implementations of custom data type adapters for supporting
 	 * database-specific data types, like the Postgres 'json' or 'xml' types,
 	 * or for supporting other object serialization schemes.
@@ -782,31 +785,4 @@ public interface Iciql {
 
 	}
 
-	/**
-	 * The standard type adapter allows iciql to use it's internal utility convert functions
-	 * to handle the standard JDBC types.
-	 */
-	public final static class StandardJDBCTypeAdapter implements DataTypeAdapter<Object> {
-
-		@Override
-		public String getDataType() {
-			throw new RuntimeException("This adapter is for all standard JDBC types.");
-		}
-
-		@Override
-		public Class<Object> getJavaType() {
-			throw new RuntimeException("This adapter is for all standard JDBC types.");
-		}
-
-		@Override
-		public Object serialize(Object value) {
-			return value;
-		}
-
-		@Override
-		public Object deserialize(Object value) {
-			return value;
-		}
-
-	}
 }

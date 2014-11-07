@@ -51,7 +51,6 @@ import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.Iciql.IQView;
 import com.iciql.Iciql.IndexType;
-import com.iciql.Iciql.StandardJDBCTypeAdapter;
 import com.iciql.util.IciqlLogger;
 import com.iciql.util.StatementBuilder;
 import com.iciql.util.StringUtils;
@@ -525,6 +524,17 @@ public class TableDefinition<T> {
 				throw new IciqlException(e, "failed to get default object for {0}", columnName);
 			}
 
+			// identify the type adapter
+			typeAdapter = Utils.getDataTypeAdapter(f.getAnnotations());
+			if (typeAdapter == null) {
+				typeAdapter = Utils.getDataTypeAdapter(f.getType().getAnnotations());
+			}
+
+			if (typeAdapter != null) {
+				DataTypeAdapter<?> dtt = db.getDialect().getAdapter(typeAdapter);
+				dataType = dtt.getDataType();
+			}
+
 			boolean hasAnnotation = f.isAnnotationPresent(IQColumn.class);
 			if (hasAnnotation) {
 				IQColumn col = f.getAnnotation(IQColumn.class);
@@ -537,12 +547,6 @@ public class TableDefinition<T> {
 				scale = col.scale();
 				trim = col.trim();
 				nullable = col.nullable();
-
-				if (col.typeAdapter() != null && col.typeAdapter() != StandardJDBCTypeAdapter.class) {
-					typeAdapter = col.typeAdapter();
-					DataTypeAdapter<?> dtt = db.getDialect().getAdapter(col.typeAdapter());
-					dataType = dtt.getDataType();
-				}
 
 				// annotation overrides
 				if (!StringUtils.isNullOrEmpty(col.defaultValue())) {
