@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -317,6 +318,19 @@ public class Utils {
 				return new java.sql.Time(n.longValue());
 			} else if (targetType == java.sql.Timestamp.class) {
 				return new java.sql.Timestamp(n.longValue());
+			}
+		}
+
+		if (Date.class.isAssignableFrom(currentType)) {
+			Date d = (Date) o;
+			if (targetType == Date.class) {
+				return o;
+			} else if (targetType == java.sql.Date.class) {
+				return new java.sql.Date(d.getTime());
+			} else if (targetType == java.sql.Time.class) {
+				return new java.sql.Time(d.getTime());
+			} else if (targetType == java.sql.Timestamp.class) {
+				return new java.sql.Timestamp(d.getTime());
 			}
 		}
 
