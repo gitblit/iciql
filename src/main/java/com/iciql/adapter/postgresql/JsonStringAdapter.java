@@ -13,39 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.iciql.adapter.postgres;
+package com.iciql.adapter.postgresql;
 
 import java.sql.SQLException;
 
 import org.postgresql.util.PGobject;
 
-import com.iciql.adapter.GsonTypeAdapter;
+import com.iciql.Iciql.DataTypeAdapter;
 
 /**
- * Postgres JSONB data type adapter maps a JSONB column to a domain object using Google GSON.
- *
- * @author James Moger
- *
- * @param <T>
+ * Handles transforming raw strings to/from the Postgres JSON data type.
  */
-public abstract class GsonBTypeAdapter<T> extends GsonTypeAdapter<T> {
+public class JsonStringAdapter implements DataTypeAdapter<String> {
 
 	@Override
 	public String getDataType() {
-		return "jsonb";
+		return "json";
 	}
 
 	@Override
-	public Object serialize(T value) {
+	public Class<String> getJavaType() {
+		return String.class;
+	}
 
-		String json = gson().toJson(value);
+	@Override
+	public Object serialize(String value) {
 		PGobject pg = new PGobject();
 		pg.setType(getDataType());
 		try {
-			pg.setValue(json);
+			pg.setValue(value);
 		} catch (SQLException e) {
 			// not thrown on base PGobject
 		}
 		return pg;
+	}
+
+	@Override
+	public String deserialize(Object value) {
+		return value.toString();
 	}
 }

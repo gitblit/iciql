@@ -13,23 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.iciql.adapter.postgresql;
 
-package com.iciql.adapter.postgres;
+import java.sql.SQLException;
 
+import org.postgresql.util.PGobject;
 
+import com.iciql.adapter.GsonTypeAdapter;
 
 /**
- * Postgres XML data type adapter maps an XML column to a domain object using XStream.
+ * Postgres JSONB data type adapter maps a JSONB column to a domain object using
+ * Google GSON.
  *
  * @author James Moger
  *
  * @param <T>
  */
-public abstract class XStreamTypeAdapter<T> extends com.iciql.adapter.XStreamTypeAdapter<T> {
+public abstract class JsonbObjectAdapter<T> extends GsonTypeAdapter<T> {
 
 	@Override
 	public String getDataType() {
-		return "xml";
+		return "jsonb";
 	}
 
+	@Override
+	public Object serialize(T value) {
+
+		String json = gson().toJson(value);
+		PGobject pg = new PGobject();
+		pg.setType(getDataType());
+		try {
+			pg.setValue(json);
+		} catch (SQLException e) {
+			// not thrown on base PGobject
+		}
+		return pg;
+	}
 }

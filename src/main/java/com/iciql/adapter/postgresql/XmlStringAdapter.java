@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.iciql.adapter.postgres;
+package com.iciql.adapter.postgresql;
 
 import java.sql.SQLException;
 
@@ -22,34 +22,34 @@ import org.postgresql.util.PGobject;
 import com.iciql.Iciql.DataTypeAdapter;
 
 /**
-	 * Handles transforming raw strings to/from the Postgres JSON data type.
-	 */
-	public class JsonStringAdapter implements DataTypeAdapter<String> {
+ * Handles transforming raw strings to/from the Postgres XML data type.
+ */
+public class XmlStringAdapter implements DataTypeAdapter<String> {
 
-		@Override
-		public String getDataType() {
-			return "json";
-		}
-
-		@Override
-		public Class<String> getJavaType() {
-			return String.class;
-		}
-
-		@Override
-		public Object serialize(String value) {
-			PGobject pg = new PGobject();
-			pg.setType(getDataType());
-			try {
-				pg.setValue(value);
-			} catch (SQLException e) {
-				// not thrown on base PGobject
-			}
-			return pg;
-		}
-
-		@Override
-		public String deserialize(Object value) {
-			return value.toString();
-		}
+	@Override
+	public String getDataType() {
+		return "xml";
 	}
+
+	@Override
+	public Class<String> getJavaType() {
+		return String.class;
+	}
+
+	@Override
+	public Object serialize(String value) {
+		PGobject pg = new PGobject();
+		pg.setType(getDataType());
+		try {
+			pg.setValue(value);
+		} catch (SQLException e) {
+			// not thrown on base PGobject
+		}
+		return pg;
+	}
+
+	@Override
+	public String deserialize(Object value) {
+		return value.toString();
+	}
+}

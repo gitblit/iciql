@@ -20,16 +20,21 @@ import com.google.gson.GsonBuilder;
 import com.iciql.Iciql.DataTypeAdapter;
 
 /**
- * Base class for inserting/retrieving a Java Object (de)serialized as JSON using Google GSON.
- * <p>You use this by creating a subclass which defines your object class.</p>
+ * Base class for inserting/retrieving a Java Object (de)serialized as JSON
+ * using Google GSON.
+ * <p>
+ * You use this by creating a subclass which defines your object class.
+ * </p>
+ *
  * <pre>
  * public class CustomObjectAdapter extends GsonTypeAdapter&lt;CustomObject&gt; {
  *
- *    public Class&lt;CustomObject&gt; getJavaType() {
- *        return CustomObject.class;
- *    }
+ * 	public Class&lt;CustomObject&gt; getJavaType() {
+ * 		return CustomObject.class;
+ * 	}
  * }
  * </pre>
+ *
  * @param <T>
  */
 public abstract class GsonTypeAdapter<T> implements DataTypeAdapter<T> {

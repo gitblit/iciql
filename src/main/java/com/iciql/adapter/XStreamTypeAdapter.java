@@ -21,18 +21,8 @@ import com.thoughtworks.xstream.XStream;
 
 /**
  * Base class for inserting/retrieving a Java Object (de)serialized as XML using XStream.
- * <p>You use this by creating a subclass which defines your object class.</p>
- * <pre>
- * public class CustomObjectAdapter extends XStreamTypeAdapter&lt;CustomObject&gt; {
- *
- *    public Class&lt;CustomObject&gt; getJavaType() {
- *        return CustomObject.class;
- *    }
- * }
- * </pre>
- * @param <T>
  */
-public abstract class XStreamTypeAdapter<T> implements DataTypeAdapter<T> {
+public class XStreamTypeAdapter implements DataTypeAdapter<Object> {
 
 	protected XStream xstream() {
 		return new XStream();
@@ -44,15 +34,21 @@ public abstract class XStreamTypeAdapter<T> implements DataTypeAdapter<T> {
 	}
 
 	@Override
-	public Object serialize(T value) {
+	public Class<Object> getJavaType() {
+		return Object.class;
+	}
+
+	@Override
+	public Object serialize(Object value) {
 		return xstream().toXML(value);
 	}
 
 	@Override
-	public T deserialize(Object value) {
+	public Object deserialize(Object value) {
 		String xml = value.toString();
 		XStream xstream = xstream();
-		T t = (T) xstream.fromXML(xml);
+		Object t = xstream.fromXML(xml);
 		return t;
 	}
+
 }

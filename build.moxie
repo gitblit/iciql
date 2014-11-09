@@ -103,5 +103,6 @@ dependencies:
 - provided 'commons-dbcp:commons-dbcp:1.4'
 - provided 'com.google.code.gson:gson:2.3'
 - provided 'com.thoughtworks.xstream:xstream:1.4.7'
+- provided 'org.yaml:snakeyaml:1.14'
 - test 'junit'
 - build 'jacoco'

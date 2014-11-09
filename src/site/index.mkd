@@ -17,7 +17,7 @@ iciql **is not**...
 
 ### fluent, type-safe SQL DSL with rich object mapping
 
-Born from the unfinished [JaQu][jaqu] subproject of H2 in August 2011, Iciql has advanced the codebase & DSL greatly.  It supports more SQL syntax, more SQL data types, and all standard JDBC object types.
+Born from the unfinished [JaQu][jaqu] subproject of H2 in August 2011, Iciql has [advanced the codebase](jaqu_comparison.html) & DSL greatly.  It supports more SQL syntax, more SQL data types, and all standard JDBC object types.
 
 ---JAVA---
 try (Db db = Db.open("jdbc:h2:mem:iciql")) {
@@ -32,7 +32,7 @@ try (Db db = Db.open("jdbc:h2:mem:iciql")) {
 
 ### dynamic, annotated DAO with standard crud operations
 
-Inspired by [JDBI](http://jdbi.org), Iciql offers a similar Dao feature.  There are some clear benefits to using SQL directly rather than SQL-through-a-DSL so use them both where it makes the most sense for your need.
+Inspired by JDBI, Iciql offers a similar [DAO feature](dao.html).  There are some clear benefits to using SQL directly rather than SQL-through-a-DSL so use each one where it makes the mose sense.
 
 ---JAVA---
 // Define your DAO with SQL annotations and optional type adapters
@@ -83,6 +83,14 @@ try (Db db = Db.open("jdbc:h2:mem:iciql")) {
 }
 ---JAVA---
 
+### flexible field data types
+
+The [Data Type Adapter feature](dta.html) allows you to customize how your SQL column data types map to/from Java objects.
+
+This is very useful for mapping your field domain models to SQL without having to flatten them out to additional columns within your table.  In other words, you can use your database as an object store at the column level by implementing a `@TypeAdapter` (de)serialization step.
+
+You might use this to take advantage of the underlying database's type system.  For example, PostgreSQL ships with the compelling JSON/JSONB/XML data types.  Iciql provides String and Object adapters to facilitate use of those data types.
+
 ### Supported Databases (Unit-Tested)
 - [H2](http://h2database.com) ${h2.version}
 - [HSQLDB](http://hsqldb.org) ${hsqldb.version}
@@ -103,7 +111,7 @@ iciql is distributed under the terms of the [Apache Software Foundation license,
 [jaqu]: http://h2database.com/html/jaqu.html "H2 JaQu project"
 [orm]: http://en.wikipedia.org/wiki/Object-relational_mapping "Object Relational Mapping"
 [jooq]: http://jooq.sourceforge.net "jOOQ"
-[querydsl]: http://source.mysema.com/display/querydsl/Querydsl "Querydsl"
+[querydsl]: http://source.mysema.com/display/querydsl/Querydsl "QueryDSL"
 [hibernate]: http://www.hibernate.org "Hibernate"
 [mybatis]: http://www.mybatis.org "mybatis"
 [github]: http://github.com/gitblit/iciql "iciql git repository"

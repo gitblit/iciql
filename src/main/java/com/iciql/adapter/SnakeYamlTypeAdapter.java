@@ -13,43 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.iciql.adapter.postgres;
 
-import java.sql.SQLException;
+package com.iciql.adapter;
 
-import org.postgresql.util.PGobject;
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import com.iciql.Iciql.DataTypeAdapter;
 
 /**
- * Handles transforming raw strings to/from the Postgres XML data type.
+ * Base class for inserting/retrieving a Java Object (de)serialized as YAML using SnakeYaml.
  */
-public class XmlStringAdapter implements DataTypeAdapter<String> {
+public abstract class SnakeYamlTypeAdapter<T> implements DataTypeAdapter<T> {
+
+	protected Yaml yaml() {
+		return new Yaml();
+	}
 
 	@Override
 	public String getDataType() {
-		return "xml";
+		return "TEXT";
 	}
 
 	@Override
-	public Class<String> getJavaType() {
-		return String.class;
+	public abstract Class<T> getJavaType();
+
+	@Override
+	public Object serialize(Object value) {
+		return yaml().dumpAs(value, Tag.MAP, FlowStyle.BLOCK);
 	}
 
 	@Override
-	public Object serialize(String value) {
-		PGobject pg = new PGobject();
-		pg.setType(getDataType());
-		try {
-			pg.setValue(value);
-		} catch (SQLException e) {
-			// not thrown on base PGobject
-		}
-		return pg;
+	public T deserialize(Object value) {
+		String yaml = value.toString();
+		Yaml processor = yaml();
+		T t = processor.loadAs(yaml, getJavaType());
+		return t;
 	}
 
-	@Override
-	public String deserialize(Object value) {
-		return value.toString();
-	}
 }

@@ -50,7 +50,7 @@ public class InvoiceAdapterImpl implements DataTypeAdapter<Invoice> {
     }
 
     @Override
-    public Object serialize(DcKey value) {
+    public Object serialize(Invoice value) {
         String json = gson().toJson(value);
         PGobject pg = new PGobject();
         pg.setType(getDataType());
@@ -70,7 +70,8 @@ public class InvoiceAdapterImpl implements DataTypeAdapter<Invoice> {
         final Invoice invoice = gson().fromJson(json, getJavaType());
 
         return invoice;
-  }
+    }
+}
 ---JAVA---
 
 Here you can see how the *InvoiceTypeAdapter* defines a [Postgres JSONB data type](http://www.postgresql.org/docs/9.4/static/datatype-json.html) and automatically handles JSON (de)serialization with [Google Gson](https://code.google.com/p/google-gson) so that the database gets the content in a form that it requires but we can continue to work with objects in Java.
@@ -88,27 +89,46 @@ To simplify this, you can implement your own annotation which specifies your typ
 public @interface InvoiceAdapter { }
 ---JAVA---
 
-### Included DataTypeAdapters
+### Included Data Type Adapters
 
-Not every DataTypeAdapter has to be a custom implementation.
-The following adapters are included in Iciql for general purpose use.
+The following adapters are included in Iciql.  They may require an optional dependency such as Gson, XStream, or SnakeYaml.
 
-- `com.iciql.adapter.JavaSerializationTypeAdapter`
-Uses Java serialization to store/retrieve your objects as BLOBs.
-- `com.iciql.adapter.GsonTypeAdapter`
-Uses Google Gson to store/retrieve your objects as TEXT.
-- `com.iciql.adapter.XmlTypeAdapter`
-Uses XStream to store/retrieve your objects as TEXT.
-- `com.iciql.adapter.postgres.GsonTypeAdapter`
-Uses Google Gson to store/retrieve your objects as JSON for Postgres.
-- `com.iciql.adapter.postgres.GsonBTypeAdapter`
-Uses Google Gson to store/retrieve your objects as JSONB for Postgres.
-- `com.iciql.adapter.postgres.XStreamTypeAdapter`
-Uses XStream to store/retrieve your objects as XML for Postgres.
-- `com.iciql.adapter.postgres.JsonStringAdapter`
-Allows you to use the Postgres JSON data type with a standard String.
-- `com.iciql.adapter.postgres.JsonbStringAdapter`
-Allows you to use the Postgres JSONB data type with a standard String.
-- `com.iciql.adapter.postgres.XmlStringAdapter`
-Allows you to use the Postgres XML data type with a standard String.
+<table class="table">
+<tr><td colspan="4"><b>Common Type Adapters</b></tr>
+<tr><td><i>Adapter</i></td><td><i>Java</i></td><td><i>SQL</i></td><td><i>Description</i></td></tr>
 
+<tr><td>com.iciql.adapter.JavaSerializationTypeAdapter</td><td>Object</td><td>BLOB</td><td>Uses Java serialization to (de)serialize your object</td></tr>
+
+<tr><td>com.iciql.adapter.GsonTypeAdapter&lt;T&gt;</td><td>&lt;T&gt;</td><td>TEXT</td><td>
+Uses Google Gson to (de)serialize your object as JSON</td></tr>
+
+<tr><td>com.iciql.adapter.XStreamTypeAdapter</td><td>Object</td><td>TEXT</td><td>
+Uses XStream to (de)serialize your object as XML</td></tr>
+
+<tr><td>com.iciql.adapter.SnakeYamlTypeAdapter&lt;T&gt;</td><td>&lt;T&gt;</td><td>TEXT</td><td>
+Uses SnakeYaml to (de)serialize your object as YAML</td></tr>
+
+<tr><td colspan="4"><b>PostgreSQL Type Adapters</b></tr>
+<tr><td><i>Object Adapters</i></td><td><i>Java</i></td><td><i>SQL</i></td><td><i>Description</i></td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.JsonObjectAdapter&lt;T&gt;</td><td>&lt;T&gt;</td><td>JSON</td><td>
+Uses Google Gson to (de)serialize your object as JSON</td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.JsonbObjectAdapter&lt;T&gt;</td><td>&lt;T&gt;</td><td>JSONB</td><td>
+Uses Google Gson to (de)serialize your object as JSONB</td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.XmlObjectAdapter</td><td>Object</td><td>XML</td><td>
+Uses XStream to (de)serialize your object as XML</td></tr>
+
+<tr><td colspan="4"><i>String Adapters</i></td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.JsonStringAdapter</td><td>String</td><td>JSON</td><td>
+Maps the JSON data type to a java.lang.String</td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.JsonbStringAdapter</td><td>String</td><td>JSONB</td><td>
+Maps the JSONB data type to a java.lang.String</td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.XmlStringAdapter</td><td>String</td><td>XML</td><td>
+Maps the XML data type to a java.lang.String</td></tr>
+
+</table>
