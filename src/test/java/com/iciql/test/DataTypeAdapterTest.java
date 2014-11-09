@@ -31,7 +31,7 @@ import com.iciql.Db;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.TypeAdapter;
-import com.iciql.JavaSerializationTypeAdapter;
+import com.iciql.adapter.JavaSerializationTypeAdapter;
 import com.iciql.test.models.SupportedTypes;
 
 /**

@@ -101,5 +101,7 @@ dependencies:
 - provided 'org.slf4j:slf4j-api:1.6.1'
 - provided 'commons-pool:commons-pool:1.5.6'
 - provided 'commons-dbcp:commons-dbcp:1.4'
+- provided 'com.google.code.gson:gson:2.3'
+- provided 'com.thoughtworks.xstream:xstream:1.4.7'
 - test 'junit'
 - build 'jacoco'

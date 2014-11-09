@@ -93,12 +93,22 @@ public @interface InvoiceAdapter { }
 Not every DataTypeAdapter has to be a custom implementation.
 The following adapters are included in Iciql for general purpose use.
 
-- `com.iciql.JavaSerializationTypeAdapter`
+- `com.iciql.adapter.JavaSerializationTypeAdapter`
 Uses Java serialization to store/retrieve your objects as BLOBs.
-- `com.iciql.SQLDialectPostgreSQL.JsonStringAdapter`
+- `com.iciql.adapter.GsonTypeAdapter`
+Uses Google Gson to store/retrieve your objects as TEXT.
+- `com.iciql.adapter.XmlTypeAdapter`
+Uses XStream to store/retrieve your objects as TEXT.
+- `com.iciql.adapter.postgres.GsonTypeAdapter`
+Uses Google Gson to store/retrieve your objects as JSON for Postgres.
+- `com.iciql.adapter.postgres.GsonBTypeAdapter`
+Uses Google Gson to store/retrieve your objects as JSONB for Postgres.
+- `com.iciql.adapter.postgres.XStreamTypeAdapter`
+Uses XStream to store/retrieve your objects as XML for Postgres.
+- `com.iciql.adapter.postgres.JsonStringAdapter`
 Allows you to use the Postgres JSON data type with a standard String.
-- `com.iciql.SQLDialectPostgreSQL.JsonbStringAdapter`
+- `com.iciql.adapter.postgres.JsonbStringAdapter`
 Allows you to use the Postgres JSONB data type with a standard String.
-- `com.iciql.SQLDialectPostgreSQL.XmlStringAdapter`
+- `com.iciql.adapter.postgres.XmlStringAdapter`
 Allows you to use the Postgres XML data type with a standard String.
 

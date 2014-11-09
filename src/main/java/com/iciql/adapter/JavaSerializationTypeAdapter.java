@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.iciql;
+package com.iciql.adapter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,6 +25,8 @@ import java.io.ObjectOutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
 
+import com.iciql.Iciql;
+import com.iciql.IciqlException;
 import com.iciql.Iciql.DataTypeAdapter;
 
 /**
