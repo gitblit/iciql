@@ -48,6 +48,7 @@ import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 import com.iciql.Constants;
 import com.iciql.Db;
+import com.iciql.Iciql.Mode;
 import com.iciql.test.DataTypeAdapterTest.SerializedObjectTypeAdapterTest;
 import com.iciql.test.models.BooleanModel;
 import com.iciql.test.models.CategoryAnnotationOnly;
@@ -144,13 +145,18 @@ public class IciqlSuite {
 		return Math.abs(expected - actual) <= 0.000001d;
 	}
 
+	public static Db openNewDb() {
+		return openNewDb(Mode.PROD);
+	}
+
 	/**
 	 * Open a new Db object. All connections are cached and re-used to eliminate
 	 * embedded database startup costs.
 	 *
+	 * @param mode
 	 * @return a fresh Db object
 	 */
-	public static Db openNewDb() {
+	public static Db openNewDb(Mode mode) {
 		String testUrl = System.getProperty("iciql.url", DEFAULT_TEST_DB.url);
 		String testUser = System.getProperty("iciql.user", DEFAULT_TEST_DB.username);
 		String testPassword = System.getProperty("iciql.password", DEFAULT_TEST_DB.password);
@@ -168,7 +174,7 @@ public class IciqlSuite {
 			dataSources.put(testUrl, dataSource);
 			connectionFactories.put(testUrl, factory);
 		}
-		db = Db.open(dataSource);
+		db = Db.open(dataSource, mode);
 
 		// drop views
 		db.dropView(ProductView.class);

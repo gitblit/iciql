@@ -72,7 +72,7 @@ final class DaoProxy<X extends Dao> implements InvocationHandler, Dao {
 	 * @return a proxy object
 	 */
 	@SuppressWarnings("unchecked")
-	X buildProxy() {
+	X build() {
 
 		if (!daoInterface.isInterface()) {
 			throw new IciqlException("Dao {0} must be an interface!", daoInterface.getName());
@@ -115,12 +115,14 @@ final class DaoProxy<X extends Dao> implements InvocationHandler, Dao {
 			} else if (method.isAnnotationPresent(SqlQuery.class)) {
 
 				String sql = method.getAnnotation(SqlQuery.class).value();
-				return executeQuery(method, args, sql);
+				String statement = db.getDaoStatementProvider().getStatement(sql, db.getMode());
+				return executeQuery(method, args, statement);
 
 			} else if (method.isAnnotationPresent(SqlStatement.class)) {
 
 				String sql = method.getAnnotation(SqlStatement.class).value();
-				return executeStatement(method, args, sql);
+				String statement = db.getDaoStatementProvider().getStatement(sql, db.getMode());
+				return executeStatement(method, args, statement);
 
 			} else {
 
@@ -220,6 +222,11 @@ final class DaoProxy<X extends Dao> implements InvocationHandler, Dao {
 
 					objects.add(value);
 
+					if (!isArray) {
+						// we are not returning an array so we break
+						// the loop and return the first result
+						break;
+					}
 				}
 
 			} catch (SQLException e) {

@@ -74,6 +74,7 @@ public class Db implements AutoCloseable {
 
 	private boolean skipCreate;
 	private boolean autoSavePoint = true;
+	private DaoStatementProvider daoStatementProvider;
 
 	static {
 		TOKENS = Collections.synchronizedMap(new WeakIdentityHashMap<Object, Token>());
@@ -102,6 +103,7 @@ public class Db implements AutoCloseable {
 		}
 		dialect = getDialect(databaseName, conn.getClass().getName());
 		dialect.configureDialect(this);
+		daoStatementProvider = new NoExternalDaoStatements();
 	}
 
 	/**
@@ -237,7 +239,30 @@ public class Db implements AutoCloseable {
 	 */
 	@SuppressWarnings("resource")
 	public <X extends Dao> X open(Class<X> daoClass) {
-		return new DaoProxy<X>(this, daoClass).buildProxy();
+		return new DaoProxy<X>(this, daoClass).build();
+	}
+
+	/**
+	 * Returns the DAO statement provider.
+	 *
+	 * @return the DAO statement provider
+	 */
+	public DaoStatementProvider getDaoStatementProvider() {
+		return daoStatementProvider;
+	}
+
+	/**
+	 * Sets the DAO statement provider.
+	 *
+	 * @param statementProvider
+	 */
+	public void setDaoStatementProvider(DaoStatementProvider statementProvider) {
+		if (statementProvider == null) {
+			throw new IciqlException("You must provide a valid {0} instance!",
+					DaoStatementProvider.class.getSimpleName());
+		}
+
+		this.daoStatementProvider = statementProvider;
 	}
 
 	/**
@@ -841,14 +866,12 @@ public class Db implements AutoCloseable {
 	}
 
 	/**
-	 *
-	 * @author James Moger
-	 *
+	 * Default DAO statement provider.
 	 */
 	class NoExternalDaoStatements implements DaoStatementProvider {
 
 		@Override
-		public String getStatement(String idOrStatement) {
+		public String getStatement(String idOrStatement, Mode mode) {
 			return idOrStatement;
 		}
 

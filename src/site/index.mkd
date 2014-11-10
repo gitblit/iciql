@@ -5,7 +5,7 @@ iciql **is**...
 - a model-based, database access wrapper for JDBC
 - for modest database schemas and basic statement generation
 - for those who want to write code, instead of SQL, using IDE completion and compile-time type-safety
-- small (225KB) with debug symbols and no runtime dependencies
+- small (<250KB) with debug symbols and no runtime dependencies
 - pronounced *icicle* (although it could be French: *ici ql* - here query language)
 - a friendly fork of the H2 [JaQu][jaqu] subproject
 
@@ -66,7 +66,7 @@ public interface MyDao extends Dao {
 @TypeAdapter(InvoiceAdapterImpl.class)
 public @interface InvoiceAdapter { }
 
-// Crate a DAO instance with your Db and work more clearly
+// Create a DAO instance with your Db and work more clearly
 try (Db db = Db.open("jdbc:h2:mem:iciql")) {
 
     MyDao dao = db.open(MyDao.class);
@@ -90,6 +90,10 @@ The [Data Type Adapter feature](dta.html) allows you to customize how your SQL c
 This is very useful for mapping your field domain models to SQL without having to flatten them out to additional columns within your table.  In other words, you can use your database as an object store at the column level by implementing a `@TypeAdapter` (de)serialization step.
 
 You might use this to take advantage of the underlying database's type system.  For example, PostgreSQL ships with the compelling JSON/JSONB/XML data types.  Iciql provides String and Object adapters to facilitate use of those data types.
+
+### runtime mode support
+
+Mode support allows you to tweak the behavior of your `@TypeAdapter` and `DAO` implementations to adapt to runtime conditions such as developing on a different database than you deploy on.
 
 ### Supported Databases (Unit-Tested)
 - [H2](http://h2database.com) ${h2.version}

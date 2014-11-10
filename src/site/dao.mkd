@@ -135,3 +135,46 @@ public interface MyDao extends Dao {
 }
 ---JAVA---
 
+### Runtime Mode & External Statements
+
+Sometimes you may need to specify a slightly different SQL statement for a database engine you might be using in development but not in production.  For example, you might develop with H2 and deploy with PostgreSQL.
+
+Being able to switch the DAO statements executed based on the runtime mode would be helpful for some scenarios.  Iciql supports this use-case with a `DaoStatementProvider` and provides three mode options: `DEV`, `TEST`, and `PROD`.
+
+#### External Statement DAO Example
+---JAVA---
+public interface MyDao extends Dao {
+    @SqlQuery("some.query")
+    Product [] getProductsWithRuntimeModeDependentQuery();
+}
+
+Db db = Db.open("jdbc:h2:mem:iciql");
+// set a classpath statement resource provider
+db.setDaoStatementProvider(new DaoClasspathStatementProvider());
+
+// open the dao and retrieve the products
+MyDao dao = db.open(MyDao.class);
+Product [] products = dao.getProductsWithRuntimeModeDependentQuery();
+---JAVA---
+
+#### External Statement Resource Example
+
+---FIXED---
+some.query = select * from Products                                       # default statement
+%prod.some.query = select * from Products                                 # will be used in PROD mode
+%test.some.query = select * from Products where category = 'Beverages'    # will be used in TEST mode
+%dev.some.query = select * from Products where category = 'Condiments'    # will be used in DEV mode
+---FIXED---
+
+#### DaoClasspathStatementProvider
+
+Iciql ships with one useful implementation of a DaoStatementProvider: `DaoClasspathStatementProvider`.
+
+This provider will load a single external statement resource from the classpath, if found. It tries to locate one of the following classpath resources and loads the first one identified using the `java.util.Properties` class.
+
+1. `/iciql.properties`
+2. `/iciql.xml`
+3. `/conf/iciql.properties`
+4. `/conf/iciql.xml`
+
+Every `@SqlQuery` and `@SqlStatement` method will ask the `DaoStatementProvider` for the statement to execute based on the annotation value and the runtime mode.  For the `DaoClasspathStatementProvider`, if the annotation value is not a key in the resource file it is assumed to be a statement and is returned to the DAO object for execution.  This allows you to externalize a handful of statements - or all of them if you do not want to hard-code anything.

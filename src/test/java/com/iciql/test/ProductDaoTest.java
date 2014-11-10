@@ -26,7 +26,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.iciql.Dao;
+import com.iciql.DaoClasspathStatementProvider;
 import com.iciql.Db;
+import com.iciql.Iciql.Mode;
 import com.iciql.IciqlException;
 import com.iciql.test.DataTypeAdapterTest.SerializedObjectTypeAdapterTest;
 import com.iciql.test.DataTypeAdapterTest.SupportedTypesAdapter;
@@ -48,6 +50,7 @@ public class ProductDaoTest extends Assert {
 		db = IciqlSuite.openNewDb();
 		db.insertAll(Product.getList());
 		db.insertAll(Order.getList());
+		db.setDaoStatementProvider(new DaoClasspathStatementProvider());
 	}
 
 	@After
@@ -273,6 +276,47 @@ public class ProductDaoTest extends Assert {
 		assertTrue(obj1.equivalentTo(obj2));
 	}
 
+	@Test
+	public void testDefaultProdResourceQueryReturnModels() {
+
+		ProductDao dao = db.open(ProductDao.class);
+
+		Product[] products = dao.getProductsFromResourceQuery();
+		assertEquals(10, products.length);
+	}
+
+	@Test
+	public void testDevResourceQueryReturnModels() {
+
+		Db db = IciqlSuite.openNewDb(Mode.DEV);
+		db.insertAll(Product.getList());
+		db.insertAll(Order.getList());
+		db.setDaoStatementProvider(new DaoClasspathStatementProvider());
+
+		ProductDao dao = db.open(ProductDao.class);
+
+		Product[] products = dao.getProductsFromResourceQuery();
+		assertEquals(5, products.length);
+
+		db.close();
+	}
+
+	@Test
+	public void testTestResourceQueryReturnModels() {
+
+		Db db = IciqlSuite.openNewDb(Mode.TEST);
+		db.insertAll(Product.getList());
+		db.insertAll(Order.getList());
+		db.setDaoStatementProvider(new DaoClasspathStatementProvider());
+
+		ProductDao dao = db.open(ProductDao.class);
+
+		Product[] products = dao.getProductsFromResourceQuery();
+		assertEquals(2, products.length);
+
+		db.close();
+	}
+
 	/**
 	 * Define the Product DAO interface.
 	 */
@@ -320,7 +364,8 @@ public class ProductDaoTest extends Assert {
 		@SqlQuery("select productId from Product where category = :category")
 		long[] getProductIdsForCategory(@Bind("category") String cat);
 
-		@SqlQuery("select orderDate from Orders order by orderDate desc limit 1")
+		// will break ResultSet iteration after retrieving first value
+		@SqlQuery("select orderDate from Orders order by orderDate desc")
 		Date getMostRecentOrder();
 
 		@SqlStatement("update Product set productName = 'test' where productId = 1")
@@ -335,12 +380,16 @@ public class ProductDaoTest extends Assert {
 		@SqlStatement("update Product set category = :newCategory where category = :oldCategory")
 		int renameProductCategoryReturnsCount(@Bind("oldCategory") String oldCategory, @Bind("newCategory") String newCategory);
 
-		@SqlQuery("select obj from dataTypeAdapters limit 1")
+		// will break ResultSet iteration after retrieving first value
+		@SqlQuery("select obj from dataTypeAdapters")
 		@SupportedTypesAdapter
 		SupportedTypes getCustomDataType();
 
 		@SqlStatement("update dataTypeAdapters set obj=:2 where id=:1")
 		boolean setSupportedTypes(long id, @SupportedTypesAdapter SupportedTypes obj);
+
+		@SqlQuery("get.products")
+		Product[] getProductsFromResourceQuery();
 
 	}
 }
