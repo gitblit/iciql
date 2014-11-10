@@ -73,7 +73,7 @@ public class DataTypeAdapterTest extends Assert {
 	public static class SerializedObjectTypeAdapterTest {
 
 		@IQColumn(autoIncrement = true, primaryKey = true)
-		private long id;
+		public long id;
 
 		@IQColumn
 		public java.util.Date received;

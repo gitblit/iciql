@@ -233,47 +233,68 @@ public class ProductDaoTest extends Assert {
 	@Test
 	public void testQueryWithDataTypeAdapter() {
 
+		final SupportedTypes obj0 = SupportedTypes.createList().get(1);
+
 		// insert our custom serialized object
 		SerializedObjectTypeAdapterTest row = new SerializedObjectTypeAdapterTest();
 		row.received = new java.util.Date();
-		row.obj = SupportedTypes.createList().get(1);
-		db.insert(row);
+		row.obj = obj0;
+		final long id = db.insertAndGetKey(row);
 
-		ProductDao dao = db.open(ProductDao.class);
+		SerializedObjectTypeAdapterTest row1 = db.from(row).selectFirst();
+
+		// validate retrieved object
+		final SupportedTypes obj1a = row1.obj;
+		assertNotNull(obj1a);
+		assertTrue(obj0.equivalentTo(obj1a));
+
+		// validate the primary keys match
+		assertEquals("The returned primary key should match the object primary key", id, row1.id);
 
 		// retrieve our object with automatic data type conversion
-		SupportedTypes obj = dao.getCustomDataType();
-		assertNotNull(obj);
-		assertTrue(row.obj.equivalentTo(obj));
+		ProductDao dao = db.open(ProductDao.class);
+		final SupportedTypes obj1 = dao.getCustomDataType(id);
+		assertNotNull(obj1);
+		assertTrue(obj0.equivalentTo(obj1));
 	}
 
 	@Test
 	public void testUpdateWithDataTypeAdapter() {
 
+		final SupportedTypes obj0 = SupportedTypes.createList().get(1);
+
 		// insert our custom serialized object
 		SerializedObjectTypeAdapterTest row = new SerializedObjectTypeAdapterTest();
 		row.received = new java.util.Date();
-		row.obj = SupportedTypes.createList().get(1);
-		db.insert(row);
+		row.obj = obj0;
 
+		final long id = db.insertAndGetKey(row);
+
+		SerializedObjectTypeAdapterTest row1 = db.from(row).selectFirst();
+
+		// validate retrieved object
+		final SupportedTypes obj1a = row1.obj;
+		assertNotNull(obj1a);
+		assertTrue(obj0.equivalentTo(obj1a));
+
+		// validate the primary keys match
+		assertEquals("The returned primary key should match the object primary key", id, row1.id);
+
+		// validate the alternate retrieved object is equivalent
 		ProductDao dao = db.open(ProductDao.class);
-
-		final SupportedTypes obj0 = dao.getCustomDataType();
-		assertNotNull(obj0);
-		assertTrue(row.obj.equivalentTo(obj0));
+		final SupportedTypes obj1b = dao.getCustomDataType(id);
+		assertNotNull(obj1b);
+		assertTrue(obj1a.equivalentTo(obj1b));
 
 		// update the stored object
-		final SupportedTypes obj1 = SupportedTypes.createList().get(1);
-		obj1.myString = "dta update successful";
-		dao.setSupportedTypes(1, obj1);
+		obj1b.myString = "dta update successful";
+		dao.setSupportedTypes(id, obj1b);
 
-		// retrieve and validate the update took place
-		final SupportedTypes obj2 = dao.getCustomDataType();
-
+		// confirm the update took place
+		final SupportedTypes obj2 = dao.getCustomDataType(id);
 		assertNotNull(obj2);
 		assertEquals("dta update successful", obj2.myString);
-
-		assertTrue(obj1.equivalentTo(obj2));
+		assertTrue(obj1b.equivalentTo(obj2));
 	}
 
 	@Test
@@ -380,10 +401,9 @@ public class ProductDaoTest extends Assert {
 		@SqlStatement("update Product set category = :newCategory where category = :oldCategory")
 		int renameProductCategoryReturnsCount(@Bind("oldCategory") String oldCategory, @Bind("newCategory") String newCategory);
 
-		// will break ResultSet iteration after retrieving first value
-		@SqlQuery("select obj from dataTypeAdapters")
+		@SqlQuery("select obj from dataTypeAdapters where id=:1")
 		@SupportedTypesAdapter
-		SupportedTypes getCustomDataType();
+		SupportedTypes getCustomDataType(long id);
 
 		@SqlStatement("update dataTypeAdapters set obj=:2 where id=:1")
 		boolean setSupportedTypes(long id, @SupportedTypesAdapter SupportedTypes obj);
