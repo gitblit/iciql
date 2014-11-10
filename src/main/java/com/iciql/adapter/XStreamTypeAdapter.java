@@ -17,6 +17,7 @@
 package com.iciql.adapter;
 
 import com.iciql.Iciql.DataTypeAdapter;
+import com.iciql.Iciql.Mode;
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -24,8 +25,15 @@ import com.thoughtworks.xstream.XStream;
  */
 public class XStreamTypeAdapter implements DataTypeAdapter<Object> {
 
+	protected Mode mode;
+
 	protected XStream xstream() {
 		return new XStream();
+	}
+
+	@Override
+	public void setMode(Mode mode) {
+		this.mode = mode;
 	}
 
 	@Override

@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.iciql.Iciql.ConstraintDeleteType;
 import com.iciql.Iciql.ConstraintUpdateType;
 import com.iciql.Iciql.DataTypeAdapter;
+import com.iciql.Iciql.Mode;
 import com.iciql.TableDefinition.ConstraintForeignKeyDefinition;
 import com.iciql.TableDefinition.ConstraintUniqueDefinition;
 import com.iciql.TableDefinition.FieldDefinition;
@@ -50,6 +51,7 @@ public class SQLDialectDefault implements SQLDialect {
 	int databaseMinorVersion;
 	String databaseName;
 	String productVersion;
+	Mode mode;
 	Map<Class<? extends DataTypeAdapter<?>>, DataTypeAdapter<?>> typeAdapters;
 
 	public SQLDialectDefault() {
@@ -76,6 +78,8 @@ public class SQLDialectDefault implements SQLDialect {
 		} catch (SQLException e) {
 			throw new IciqlException(e, "failed to retrieve database metadata!");
 		}
+
+		mode = db.getMode();
 	}
 
 	@Override
@@ -446,12 +450,13 @@ public class SQLDialectDefault implements SQLDialect {
 
 	@Override
 	public DataTypeAdapter<?> getAdapter(Class<? extends DataTypeAdapter<?>> typeAdapter) {
-		DataTypeAdapter<?> dtt = typeAdapters.get(typeAdapter);
-		if (dtt == null) {
-			dtt = Utils.newObject(typeAdapter);
-			typeAdapters.put(typeAdapter, dtt);
+		DataTypeAdapter<?> dta = typeAdapters.get(typeAdapter);
+		if (dta == null) {
+			dta = Utils.newObject(typeAdapter);
+			typeAdapters.put(typeAdapter, dta);
 		}
-		return dtt;
+		dta.setMode(mode);
+		return dta;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -462,19 +467,19 @@ public class SQLDialectDefault implements SQLDialect {
 			return value;
 		}
 
-		DataTypeAdapter<T> dtt = (DataTypeAdapter<T>) getAdapter(typeAdapter);
-		return dtt.serialize(value);
+		DataTypeAdapter<T> dta = (DataTypeAdapter<T>) getAdapter(typeAdapter);
+		return dta.serialize(value);
 	}
 
 	@Override
 	public Object deserialize(Object value, Class<? extends DataTypeAdapter<?>> typeAdapter) {
-		DataTypeAdapter<?> dtt = typeAdapters.get(typeAdapter);
-		if (dtt == null) {
-			dtt = Utils.newObject(typeAdapter);
-			typeAdapters.put(typeAdapter, dtt);
+		if (typeAdapter == null) {
+			// pass-through
+			return value;
 		}
 
-		return dtt.deserialize(value);
+		DataTypeAdapter<?> dta = getAdapter(typeAdapter);
+		return dta.deserialize(value);
 	}
 
 	@Override

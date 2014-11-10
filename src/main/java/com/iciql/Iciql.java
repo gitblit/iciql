@@ -727,6 +727,25 @@ public interface Iciql {
 	}
 
 	/**
+	 * The runtime mode for Iciql.
+	 */
+	public static enum Mode {
+
+		DEV, TEST, PROD;
+
+		public static Mode fromValue(String value) {
+
+			for (Mode mode : values()) {
+				if (mode.name().equalsIgnoreCase(value)) {
+					return mode;
+				}
+			}
+
+			return PROD;
+		}
+	}
+
+	/**
 	 * This method is called to let the table define the primary key, indexes,
 	 * and the table name.
 	 */
@@ -766,6 +785,18 @@ public interface Iciql {
 		 * @return the Java domain type
 		 */
 		Class<T> getJavaType();
+
+
+		/**
+		 * Set the runtime mode.
+		 * <p>
+		 * Allows type adapters to adapt type mappings based on the runtime
+		 * mode.
+		 * </p>
+		 *
+		 * @param mode
+		 */
+		void setMode(Mode mode);
 
 		/**
 		 * Serializes your Java object into a JDBC object.

@@ -18,6 +18,7 @@ package com.iciql.adapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.iciql.Iciql.DataTypeAdapter;
+import com.iciql.Iciql.Mode;
 
 /**
  * Base class for inserting/retrieving a Java Object (de)serialized as JSON
@@ -39,8 +40,15 @@ import com.iciql.Iciql.DataTypeAdapter;
  */
 public abstract class GsonTypeAdapter<T> implements DataTypeAdapter<T> {
 
+	protected Mode mode;
+
 	protected Gson gson() {
 		return new GsonBuilder().create();
+	}
+
+	@Override
+	public void setMode(Mode mode) {
+		this.mode = mode;
 	}
 
 	@Override

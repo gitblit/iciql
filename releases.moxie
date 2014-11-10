@@ -14,6 +14,7 @@ r23: {
     - Improved automatic date conversions
     - Revised data type adapters to be specified separately with the @TypeAdapter annotation
     additions:
+    - Add runtime mode support (DEV, TEST, & PROD)
     - Add a DAO feature similar to JDBI
     - Added Gson, XStream, and SnakeYaml type adapters
     dependencyChanges: ~

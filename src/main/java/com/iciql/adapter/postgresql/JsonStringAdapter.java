@@ -20,11 +20,19 @@ import java.sql.SQLException;
 import org.postgresql.util.PGobject;
 
 import com.iciql.Iciql.DataTypeAdapter;
+import com.iciql.Iciql.Mode;
 
 /**
  * Handles transforming raw strings to/from the Postgres JSON data type.
  */
 public class JsonStringAdapter implements DataTypeAdapter<String> {
+
+	protected Mode mode;
+
+	@Override
+	public void setMode(Mode mode) {
+		this.mode = mode;
+	}
 
 	@Override
 	public String getDataType() {

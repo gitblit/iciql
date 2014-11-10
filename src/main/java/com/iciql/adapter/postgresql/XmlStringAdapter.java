@@ -20,11 +20,19 @@ import java.sql.SQLException;
 import org.postgresql.util.PGobject;
 
 import com.iciql.Iciql.DataTypeAdapter;
+import com.iciql.Iciql.Mode;
 
 /**
  * Handles transforming raw strings to/from the Postgres XML data type.
  */
 public class XmlStringAdapter implements DataTypeAdapter<String> {
+
+	protected Mode mode;
+
+	@Override
+	public void setMode(Mode mode) {
+		this.mode = mode;
+	}
 
 	@Override
 	public String getDataType() {

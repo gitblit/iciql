@@ -35,6 +35,13 @@ Let's take a look at *InvoiceAdapterImpl*.
 ---JAVA---
 public class InvoiceAdapterImpl implements DataTypeAdapter<Invoice> {
 
+    Mode mode;
+    
+    @Override
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
     @Override
     public String getDataType() {
         return "jsonb";
@@ -75,6 +82,10 @@ public class InvoiceAdapterImpl implements DataTypeAdapter<Invoice> {
 ---JAVA---
 
 Here you can see how the *InvoiceTypeAdapter* defines a [Postgres JSONB data type](http://www.postgresql.org/docs/9.4/static/datatype-json.html) and automatically handles JSON (de)serialization with [Google Gson](https://code.google.com/p/google-gson) so that the database gets the content in a form that it requires but we can continue to work with objects in Java.
+
+### Runtime Mode
+
+Data type adapters can respond to the Iciql runtime mode (`DEV`, `TEST`, or `PROD`) allowing them to change their behavior. This is useful for targetting a data type that might be available in your production database but may not be available in your development or testing database.
 
 ### Custom annotations
 

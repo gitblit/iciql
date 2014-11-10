@@ -25,9 +25,9 @@ import java.io.ObjectOutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
 
-import com.iciql.Iciql;
-import com.iciql.IciqlException;
 import com.iciql.Iciql.DataTypeAdapter;
+import com.iciql.Iciql.Mode;
+import com.iciql.IciqlException;
 
 /**
  * Base class for inserting/retrieving a Java Object as a BLOB field using Java Serialization.
@@ -43,6 +43,13 @@ import com.iciql.Iciql.DataTypeAdapter;
  * @param <T>
  */
 public abstract class JavaSerializationTypeAdapter<T> implements DataTypeAdapter<T> {
+
+	protected Mode mode;
+
+	@Override
+	public void setMode(Mode mode) {
+		this.mode = mode;
+	}
 
 	@Override
 	public final String getDataType() {

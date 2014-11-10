@@ -41,6 +41,7 @@ import com.iciql.DbUpgrader.DefaultDbUpgrader;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IQVersion;
 import com.iciql.Iciql.IQView;
+import com.iciql.Iciql.Mode;
 import com.iciql.util.IciqlLogger;
 import com.iciql.util.JdbcUtils;
 import com.iciql.util.StringUtils;
@@ -64,6 +65,7 @@ public class Db implements AutoCloseable {
 	private static final Map<String, Class<? extends SQLDialect>> DIALECTS;
 
 	private final Connection conn;
+	private final Mode mode;
 	private final Map<Class<?>, TableDefinition<?>> classMap = Collections
 			.synchronizedMap(new HashMap<Class<?>, TableDefinition<?>>());
 	private final SQLDialect dialect;
@@ -88,8 +90,9 @@ public class Db implements AutoCloseable {
 	    DIALECTS.put("SQLite", SQLDialectSQLite.class);
 	}
 
-	private Db(Connection conn) {
+	private Db(Connection conn, Mode mode) {
 		this.conn = conn;
+		this.mode = mode;
 		String databaseName = null;
 		try {
 			DatabaseMetaData data = conn.getMetaData();
@@ -148,30 +151,46 @@ public class Db implements AutoCloseable {
 	}
 
 	public static Db open(String url) {
+		return open(url, Mode.PROD);
+	}
+
+	public static Db open(String url, Mode mode) {
 		try {
 			Connection conn = JdbcUtils.getConnection(null, url, null, null);
-			return new Db(conn);
+			return new Db(conn, mode);
 		} catch (SQLException e) {
 			throw new IciqlException(e);
 		}
 	}
 
 	public static Db open(String url, String user, String password) {
+		return open(url, user, password, Mode.PROD);
+	}
+
+	public static Db open(String url, String user, String password, Mode mode) {
 		try {
 			Connection conn = JdbcUtils.getConnection(null, url, user, password);
-			return new Db(conn);
+			return new Db(conn, mode);
 		} catch (SQLException e) {
 			throw new IciqlException(e);
 		}
 	}
 
 	public static Db open(String url, String user, char[] password) {
+		return open(url, user, password, Mode.PROD);
+	}
+
+	public static Db open(String url, String user, char[] password, Mode mode) {
 		try {
 			Connection conn = JdbcUtils.getConnection(null, url, user, password == null ? null : new String(password));
-			return new Db(conn);
+			return new Db(conn, mode);
 		} catch (SQLException e) {
 			throw new IciqlException(e);
 		}
+	}
+
+	public static Db open(DataSource ds) {
+		return open(ds, Mode.PROD);
 	}
 
 	/**
@@ -180,18 +199,33 @@ public class Db implements AutoCloseable {
 	 *
 	 * @param ds
 	 *            the data source
+	 * @param mode
+	 *            the runtime mode
 	 * @return the database instance.
 	 */
-	public static Db open(DataSource ds) {
+	public static Db open(DataSource ds, Mode mode) {
 		try {
-			return new Db(ds.getConnection());
+			return new Db(ds.getConnection(), mode);
 		} catch (SQLException e) {
 			throw new IciqlException(e);
 		}
 	}
 
 	public static Db open(Connection conn) {
-		return new Db(conn);
+		return open(conn, Mode.PROD);
+	}
+
+	public static Db open(Connection conn, Mode mode) {
+		return new Db(conn, mode);
+	}
+
+	/**
+	 * Returns the Iciql runtime mode.
+	 *
+	 * @return the runtime mode
+	 */
+	public Mode getMode() {
+		return mode;
 	}
 
 	/**
@@ -806,4 +840,17 @@ public class Db implements AutoCloseable {
 		return this.autoSavePoint;
 	}
 
+	/**
+	 *
+	 * @author James Moger
+	 *
+	 */
+	class NoExternalDaoStatements implements DaoStatementProvider {
+
+		@Override
+		public String getStatement(String idOrStatement) {
+			return idOrStatement;
+		}
+
+	}
 }

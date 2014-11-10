@@ -21,14 +21,22 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Tag;
 
 import com.iciql.Iciql.DataTypeAdapter;
+import com.iciql.Iciql.Mode;
 
 /**
  * Base class for inserting/retrieving a Java Object (de)serialized as YAML using SnakeYaml.
  */
 public abstract class SnakeYamlTypeAdapter<T> implements DataTypeAdapter<T> {
 
+	protected Mode mode;
+
 	protected Yaml yaml() {
 		return new Yaml();
+	}
+
+	@Override
+	public void setMode(Mode mode) {
+		this.mode = mode;
 	}
 
 	@Override
