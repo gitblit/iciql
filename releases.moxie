@@ -9,7 +9,8 @@ r23: {
     html: ~
     text: ~
     security: ~
-    fixes: ~
+    fixes:
+    - Fix SQLite INTEGER PRIMARY KEY AUTOINCREMENT mapping
     changes:
     - Improved automatic date conversions
     - Revised data type adapters to be specified separately with the @TypeAdapter annotation

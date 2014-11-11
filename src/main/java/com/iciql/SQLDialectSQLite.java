@@ -50,6 +50,29 @@ public class SQLDialectSQLite extends SQLDialectDefault {
 	}
 
 	@Override
+	public String convertSqlType(String sqlType) {
+		if (isIntegerType(sqlType)) {
+			return "INTEGER";
+		}
+		return sqlType;
+	}
+
+	@Override
+	protected boolean prepareColumnDefinition(StatementBuilder buff, String dataType,
+			boolean isAutoIncrement, boolean isPrimaryKey) {
+		String convertedType = convertSqlType(dataType);
+		buff.append(convertedType);
+		if (isPrimaryKey) {
+			buff.append(" PRIMARY KEY");
+			if (isAutoIncrement) {
+				buff.append(" AUTOINCREMENT");
+			}
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	public <T> void prepareDropView(SQLStatement stat, TableDefinition<T> def) {
 		StatementBuilder buff = new StatementBuilder("DROP VIEW IF EXISTS "
 				+ prepareTableName(def.schemaName, def.tableName));

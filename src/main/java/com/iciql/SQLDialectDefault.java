@@ -337,11 +337,15 @@ public class SQLDialectDefault implements SQLDialect {
 	protected boolean isIntegerType(String dataType) {
 		if ("INT".equals(dataType)) {
 			return true;
-		} else if ("BIGINT".equals(dataType)) {
+		} else if ("INTEGER".equals(dataType)) {
 			return true;
 		} else if ("TINYINT".equals(dataType)) {
 			return true;
 		} else if ("SMALLINT".equals(dataType)) {
+			return true;
+		} else if ("MEDIUMINT".equals(dataType)) {
+			return true;
+		} else if ("BIGINT".equals(dataType)) {
 			return true;
 		}
 		return false;
