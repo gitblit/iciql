@@ -44,10 +44,13 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='model_classes.html'>models</a></li>
-<li><a href='table_versioning.html'>versioning</a></li>
-<li><a href='usage.html'>usage</a></li>
-<li><a href='examples.html'>examples</a></li>
+<li><a href='model_classes.html'>table model classes</a></li>
+<li><a href='dta.html'>data type adapters (DTA)</a></li>
+<li><a href='dao.html'>data access object (DAO) usage</a></li>
+<li><a href='table_versioning.html'>database and table versioning</a></li>
+<li class='divider'></li>
+<li><a href='usage.html'>SQL DSL usage</a></li>
+<li><a href='examples.html'>SQL DSL examples</a></li>
 <li><a href='tools.html'>tools</a></li>
 </ul></li> <!-- End Menu -->
 <li><a href='building.html'>building</a></li>
@@ -56,7 +59,7 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.4.0/iciql-1.4.0.zip'>iciql-1.4.0</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.5.0/iciql-1.5.0.zip'>iciql-1.5.0</a></li>
 <li class='divider'></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
@@ -83,6 +86,37 @@
 	<table class="table">
 		<tbody>
 		<!-- RELEASE HISTORY -->
+		<tr id="1.5.0">
+			<td style="width:100px" id="1.5.0">
+				<b><a href="#1.5.0">1.5.0</a></b><br/>
+				2014-11-10
+			</td>
+			<td>		<p class="lead">Iciql 1.5.0 released</p>		
+	
+	
+
+
+   	<h4>fixes</h4>
+	<ul>
+		<li>Fix SQLite INTEGER PRIMARY KEY AUTOINCREMENT mapping</li>
+	</ul>
+   	<h4>changes</h4>
+	<ul>
+		<li>Improved automatic date conversions</li>
+		<li>Revised data type adapters to be specified separately with the @TypeAdapter annotation</li>
+	</ul>
+   	<h4>additions</h4>
+	<ul>
+		<li>Add runtime mode support (DEV, TEST, &amp; PROD)</li>
+		<li>Add a DAO feature similar to JDBI</li>
+		<li>Added Gson, XStream, and SnakeYaml type adapters</li>
+	</ul>
+   	<h4>contributors</h4>
+	<ul>
+		<li>James Moger</li>
+	</ul>
+</td>
+		</tr>
 		<tr id="1.4.0">
 			<td style="width:100px" id="1.4.0">
 				<b><a href="#1.4.0">1.4.0</a></b><br/>
@@ -652,7 +686,7 @@ Iciql artifacts may now be retrieved by your favorite Maven 2-compatible build t
 	</table>
 
 <!-- End Markdown -->
-<footer class="footer"><p class="pull-right">generated 2014-11-05</p>
+<footer class="footer"><p class="pull-right">generated 2014-11-10</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>

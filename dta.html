@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- Begin Header -->
+<title>Iciql</title>
+<meta charset="utf-8">
+<meta name="ROBOTS" content="INDEX">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+<link rel='shortcut icon' type='image/png' href='./iciql-favicon.png' />
+<link rel="stylesheet" href="./prettify/googlecode.css" /><link rel="alternate" type="application/rss+xml" title="Iciql RSS 2.0" href="./rss.xml" />
+<link rel="alternate" type="application/atom+xml" title="Iciql Atom" href="./atom.xml" />
+
+<!-- Google Plus One -->
+<link rel="canonical" href="http://iciql.com" />
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+<style type="text/css"> div.gplusone { margin-top:12px; } </style>
+
+<script src="./prettify/prettify.js"></script>
+<script src="./bootstrap/js/jquery.js"></script>
+<script src="./bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body onload='prettyPrint()'>		<!-- Navigation Bar -->
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+          			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+          			</a>
+          			<a class="brand" href="./"><img src="./iciql_white.png" alt="Iciql"></img></a>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>about<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='index.html'>overview</a></li>
+<li><a href='performance.html'>performance</a></li>
+<li><a href='jaqu_comparison.html'>jaqu comparison</a></li>
+</ul></li> <!-- End Menu -->
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='model_classes.html'>table model classes</a></li>
+<li><a href='dta.html'>data type adapters (DTA)</a></li>
+<li><a href='dao.html'>data access object (DAO) usage</a></li>
+<li><a href='table_versioning.html'>database and table versioning</a></li>
+<li class='divider'></li>
+<li><a href='usage.html'>SQL DSL usage</a></li>
+<li><a href='examples.html'>SQL DSL examples</a></li>
+<li><a href='tools.html'>tools</a></li>
+</ul></li> <!-- End Menu -->
+<li><a href='building.html'>building</a></li>
+<li><a href='javadoc.html'>javadoc</a></li>
+<li><a href='releasenotes.html'>release notes</a></li>
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.5.0/iciql-1.5.0.zip'>iciql-1.5.0</a></li>
+<li class='divider'></li>
+<li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
+</ul></li> <!-- End Menu -->
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>links<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='https://github.com/gitblit/iciql'>Github</a></li>
+<li><a href='https://github.com/gitblit/iciql/issues'>Issues</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
+</ul></li> <!-- End Menu -->
+<li class='divider-vertical'></li>
+<li><div class='gplusone'><g:plusone size='small' href='http://iciql.com'></g:plusone></div></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div><!-- end Navigation Bar -->
+<div class='container'>
+<!-- Begin Markdown -->
+<h2 class="section" id='H1'><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Data Type Adapters</h2><p>Data type adapters allow you to extend Iciql's support for field data types.</p><p>For example, you might want to take advantage of the <a href="http://www.postgresql.org/docs/9.4/static/datatype-json.html">Postgres JSON/JSONB support</a> in 9.3/9.4 but instead of directly handling JSON text documents you might want to represent that JSON as a domain object and serialize/deserialize to JSON only when executing an SQL operation.</p><p>Data type adapters give you this flexibility.</p><p><strong>NOTE:</strong> Data type adapters are reused within a Db instance and are not inherently thread-safe. You must handle thread-safety on your own, if it is an issue.</p>
+<h3 class="section" id='H2'><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>An example</h3><p>Consider the following model class.</p><p><pre class='prettyprint lang-java'>
+@IQTable
+public class Invoices {
+    
+    @IQColumn(primaryKey = true, autoIncrement = true)
+    public long _id;
+    
+    @IQColumn
+    Date received;
+    
+    @IQColumn
+    @TypeAdapter(InvoiceAdapterImpl.class)
+    Invoice invoice;
+}
+</pre></p><p>This is a really simple table with three columns, but the third column uses a type adapter to map our <em>invoice</em> object field to an SQL type. You can use the <code>@TypeAdapter</code> annotation either on the field definition or on the class definition of your domain model.</p><p>Let's take a look at <em>InvoiceAdapterImpl</em>.</p><p><pre class='prettyprint lang-java'>
+public class InvoiceAdapterImpl implements DataTypeAdapter&lt;Invoice&gt; {
+
+    Mode mode;
+    
+    @Override
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
+    @Override
+    public String getDataType() {
+        return &quot;jsonb&quot;;
+    }
+
+    @Override
+    public Class&lt;Invoice&gt; getJavaType() {
+        return Invoice.class;
+    }
+
+    Gson gson() {
+        return new GsonBuilder().create();
+    }
+
+    @Override
+    public Object serialize(Invoice value) {
+        String json = gson().toJson(value);
+        PGobject pg = new PGobject();
+        pg.setType(getDataType());
+        try {
+            pg.setValue(json);
+        } catch (SQLException e) {
+            // ignore, never thrown
+        }
+        return pg;
+    }
+
+    @Override
+    public Invoice deserialize(Object value) {
+
+        // the incoming object is always represented as a string
+        final String json = value.toString();
+        final Invoice invoice = gson().fromJson(json, getJavaType());
+
+        return invoice;
+    }
+}
+</pre></p><p>Here you can see how the <em>InvoiceTypeAdapter</em> defines a <a href="http://www.postgresql.org/docs/9.4/static/datatype-json.html">Postgres JSONB data type</a> and automatically handles JSON (de)serialization with <a href="https://code.google.com/p/google-gson">Google Gson</a> so that the database gets the content in a form that it requires but we can continue to work with objects in Java.</p>
+<h3 class="section" id='H3'><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>Runtime Mode</h3><p>Data type adapters can respond to the Iciql runtime mode (<code>DEV</code>, <code>TEST</code>, or <code>PROD</code>) allowing them to change their behavior. This is useful for targetting a data type that might be available in your production database but may not be available in your development or testing database.</p>
+<h3 class="section" id='H4'><a href="#H4" class="sectionlink"><i class="icon-share-alt"> </i></a>Custom annotations</h3><p>It is a little verbose to repeat <code>@TypeAdapter(InvoiceAdapterImpl.class)</code> everywhere you want to use your adapter.</p><p>To simplify this, you can implement your own annotation which specifies your type adapter.</p><p><pre class='prettyprint lang-java'>
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@TypeAdapter(InvoiceAdapterImpl.class)
+public @interface InvoiceAdapter { }
+</pre></p>
+<h3 class="section" id='H5'><a href="#H5" class="sectionlink"><i class="icon-share-alt"> </i></a>Included Data Type Adapters</h3><p>The following adapters are included in Iciql. They may require an optional dependency such as Gson, XStream, or SnakeYaml.</p>
+<table class="table">
+<tr><td colspan="4"><b>Common Type Adapters</b></tr>
+<tr><td><i>Adapter</i></td><td><i>Java</i></td><td><i>SQL</i></td><td><i>Description</i></td></tr>
+
+<tr><td>com.iciql.adapter.JavaSerializationTypeAdapter</td><td>Object</td><td>BLOB</td><td>Uses Java serialization to (de)serialize your object</td></tr>
+
+<tr><td>com.iciql.adapter.GsonTypeAdapter&lt;T&gt;</td><td>&lt;T&gt;</td><td>TEXT</td><td>
+Uses Google Gson to (de)serialize your object as JSON</td></tr>
+
+<tr><td>com.iciql.adapter.XStreamTypeAdapter</td><td>Object</td><td>TEXT</td><td>
+Uses XStream to (de)serialize your object as XML</td></tr>
+
+<tr><td>com.iciql.adapter.SnakeYamlTypeAdapter&lt;T&gt;</td><td>&lt;T&gt;</td><td>TEXT</td><td>
+Uses SnakeYaml to (de)serialize your object as YAML</td></tr>
+
+<tr><td colspan="4"><b>PostgreSQL Type Adapters</b></tr>
+<tr><td><i>Object Adapters</i></td><td><i>Java</i></td><td><i>SQL</i></td><td><i>Description</i></td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.JsonObjectAdapter&lt;T&gt;</td><td>&lt;T&gt;</td><td>JSON</td><td>
+Uses Google Gson to (de)serialize your object as JSON</td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.JsonbObjectAdapter&lt;T&gt;</td><td>&lt;T&gt;</td><td>JSONB</td><td>
+Uses Google Gson to (de)serialize your object as JSONB</td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.XmlObjectAdapter</td><td>Object</td><td>XML</td><td>
+Uses XStream to (de)serialize your object as XML</td></tr>
+
+<tr><td colspan="4"><i>String Adapters</i></td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.JsonStringAdapter</td><td>String</td><td>JSON</td><td>
+Maps the JSON data type to a java.lang.String</td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.JsonbStringAdapter</td><td>String</td><td>JSONB</td><td>
+Maps the JSONB data type to a java.lang.String</td></tr>
+
+<tr><td>com.iciql.adapter.postgresql.XmlStringAdapter</td><td>String</td><td>XML</td><td>
+Maps the XML data type to a java.lang.String</td></tr>
+
+</table>
+<!-- End Markdown -->
+<div ><ul class="pager"><li class="previous"><a href="model_classes.html">&larr; table model classes</a></li> <li class="next"><a href="dao.html">data access object (DAO) usage &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-11-10</p>
+<p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
+</footer>
+</div>
+</body>
+</html>

@@ -44,10 +44,13 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='model_classes.html'>models</a></li>
-<li><a href='table_versioning.html'>versioning</a></li>
-<li><a href='usage.html'>usage</a></li>
-<li><a href='examples.html'>examples</a></li>
+<li><a href='model_classes.html'>table model classes</a></li>
+<li><a href='dta.html'>data type adapters (DTA)</a></li>
+<li><a href='dao.html'>data access object (DAO) usage</a></li>
+<li><a href='table_versioning.html'>database and table versioning</a></li>
+<li class='divider'></li>
+<li><a href='usage.html'>SQL DSL usage</a></li>
+<li><a href='examples.html'>SQL DSL examples</a></li>
 <li><a href='tools.html'>tools</a></li>
 </ul></li> <!-- End Menu -->
 <li><a href='building.html'>building</a></li>
@@ -56,7 +59,7 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.4.0/iciql-1.4.0.zip'>iciql-1.4.0</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.5.0/iciql-1.5.0.zip'>iciql-1.5.0</a></li>
 <li class='divider'></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
@@ -78,30 +81,29 @@
 <!-- Begin Markdown -->
 
 <!-- CURRENT RELEASE -->
-	<h3 id="1.4.0" class="section"><a href="#1.4.0" class="sectionlink"><i class="icon-share-alt"> </i></a>Current Release (1.4.0) <small>this is the current stable release</small></h3>
+	<h3 id="1.5.0" class="section"><a href="#1.5.0" class="sectionlink"><i class="icon-share-alt"> </i></a>Current Release (1.5.0) <small>this is the current stable release</small></h3>
 	<table class="table">
 		<tbody>
 			<tr>
-				<td style="background-color:inherit;width:100px">2014-11-05</td>
+				<td style="background-color:inherit;width:100px">2014-11-10</td>
 				<td style="background-color:inherit;">	
 	
 
 
+   	<h4>fixes</h4>
+	<ul>
+		<li>Fix SQLite INTEGER PRIMARY KEY AUTOINCREMENT mapping</li>
+	</ul>
    	<h4>changes</h4>
 	<ul>
-		<li>Table constraints are now defined as part of CREATE TABLE instead of afterwards with indivudual ALTER TABLE statements. This is more portable across database backends.</li>
+		<li>Improved automatic date conversions</li>
+		<li>Revised data type adapters to be specified separately with the @TypeAdapter annotation</li>
 	</ul>
    	<h4>additions</h4>
 	<ul>
-		<li>Support for specifying custom data type adapters in @IQColumn and Define.typeAdapter()</li>
-		<li>Added com.iciql.SQLDialectPostgreSQL.JsonStringAdapter</li>
-		<li>Added com.iciql.SQLDialectPostgreSQL.XmlStringAdapter</li>
-		<li>Added com.iciql.JavaSerializationTypeAdapter to (de)serialize objects into a BLOB column</li>
-		<li>Added an SQLite dialect</li>
-	</ul>
-   	<h4>dependency changes</h4>
-	<ul>
-		<li>SQLite 3.8.7</li>
+		<li>Add runtime mode support (DEV, TEST, &amp; PROD)</li>
+		<li>Add a DAO feature similar to JDBI</li>
+		<li>Added Gson, XStream, and SnakeYaml type adapters</li>
 	</ul>
    	<h4>contributors</h4>
 	<ul>
@@ -113,19 +115,6 @@
 	</table>
 
 <!-- NEXT RELEASE -->
-	<h3 id="1.5.0-SNAPSHOT" class="section"><a href="#1.5.0-SNAPSHOT" class="sectionlink"><i class="icon-share-alt"> </i></a>Next Release (1.5.0-SNAPSHOT) <small>these changes are queued for an upcoming release</small></h3>
-	<table class="table">
-		<tbody>
-			<tr>
-				<td style="background-color:inherit;width:100px">PENDING</td>
-				<td style="background-color:inherit;">	
-	
-
-
-</td>
-			</tr>
-		</tbody>
-	</table>
 
 <div>
 	<ul class="pager">
@@ -134,7 +123,7 @@
 </div>
 
 <!-- End Markdown -->
-<footer class="footer"><p class="pull-right">generated 2014-11-05</p>
+<footer class="footer"><p class="pull-right">generated 2014-11-10</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>

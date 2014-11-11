@@ -44,10 +44,13 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='model_classes.html'>models</a></li>
-<li><a href='table_versioning.html'>versioning</a></li>
-<li><a href='usage.html'>usage</a></li>
-<li><a href='examples.html'>examples</a></li>
+<li><a href='model_classes.html'>table model classes</a></li>
+<li><a href='dta.html'>data type adapters (DTA)</a></li>
+<li><a href='dao.html'>data access object (DAO) usage</a></li>
+<li><a href='table_versioning.html'>database and table versioning</a></li>
+<li class='divider'></li>
+<li><a href='usage.html'>SQL DSL usage</a></li>
+<li><a href='examples.html'>SQL DSL examples</a></li>
 <li><a href='tools.html'>tools</a></li>
 </ul></li> <!-- End Menu -->
 <li><a href='building.html'>building</a></li>
@@ -56,7 +59,7 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.4.0/iciql-1.4.0.zip'>iciql-1.4.0</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.5.0/iciql-1.5.0.zip'>iciql-1.5.0</a></li>
 <li class='divider'></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
@@ -76,13 +79,13 @@
 		</div><!-- end Navigation Bar -->
 <div class='container'>
 <!-- Begin Markdown -->
-<h2 class="section" id='H1'><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Usage</h2><p>Aside from this brief usage guide, please consult the <a href="examples.html">examples</a>, the <a href="javadoc.html">javadoc</a> and the <a href="https://github.com/gitblit/iciql">source code</a>.</p>
-<h3 class="section" id='H2'><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>Instantiating a Db</h3><p>Use one of the static utility methods to instantiate a Db instance:</p>
-<pre><code>Db.open(String url, String user, String password);
+<h2 class="section" id='H1'><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>SQL DSL Usage</h2><p>Aside from this brief usage guide, please consult the <a href="examples.html">DSL examples</a>, the <a href="javadoc.html">javadoc</a> and the <a href="https://github.com/gitblit/iciql">source code</a>.</p>
+<h3 class="section" id='H2'><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>Instantiating a Db</h3><p>Use one of the static utility methods to instantiate a Db instance:</p><p><pre class='prettyprint lang-java'>
+Db.open(String url, String user, String password);
 Db.open(String url, String user, char[] password);
 Db.open(Connection conn);
 Db.open(DataSource dataSource);
-</code></pre>
+</pre></p>
 <h3 class="section" id='H3'><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>Compile-Time Statements</h3><p>You compose your statements using the builder pattern where each method call returns an object that is used to specify the next part of the statement. Through clever usage of generics, pioneered by the original JaQu project, compile-time safety flows through the statement.</p><p><pre class='prettyprint lang-java'>
 Db db = Db.open(&quot;jdbc:h2:mem:&quot;, &quot;sa&quot;, &quot;sa&quot;);
 db.insertAll(Product.getList());
@@ -176,7 +179,7 @@ db.from(product).where(product.productId).exceeds(3L)
 // select from the replaced view
 products = db.from(view).select();
 </pre></p>
-<h3 class="section" id='H10'><a href="#H10" class="sectionlink"><i class="icon-share-alt"> </i></a>Natural Syntax</h3><p><span class="warning">work-in-progress</span></p><p>The original JaQu source offers partial support for Java expressions in <em>where</em> clauses.</p><p>This works by decompiling a Java expression, at runtime, to an SQL condition. The expression is written as an anonymous inner class implementation of the <code>com.iciql.Filter</code> interface.<br/>A proof-of-concept decompiler is included, but is incomplete.</p><p>The proposed syntax is:<br/><pre class='prettyprint lang-java'>
+<h3 class="section" id='H10'><a href="#H10" class="sectionlink"><i class="icon-share-alt"> </i></a>Natural Syntax</h3><p><span class="alert alert-warning">Not Actively Developed</span></p><p>The original JaQu source offers partial support for Java expressions in <em>where</em> clauses.</p><p>This works by decompiling a Java expression, at runtime, to an SQL condition. The expression is written as an anonymous inner class implementation of the <code>com.iciql.Filter</code> interface.</p><p>A proof-of-concept decompiler is included, but is incomplete.</p><p>The proposed syntax is:<br/><pre class='prettyprint lang-java'>
 long count = db.from(co).
     where(new Filter() { public boolean where() {
         return co.id == x
@@ -264,7 +267,7 @@ for (int i = 0; i &lt; 5; i++) {
 </td></tr>
 </table>
 <!-- End Markdown -->
-<div ><ul class="pager"><li class="previous"><a href="table_versioning.html">&larr; versioning</a></li> <li class="next"><a href="examples.html">examples &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-11-05</p>
+<div ><ul class="pager"> <li class="next"><a href="examples.html">SQL DSL examples &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-11-10</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>

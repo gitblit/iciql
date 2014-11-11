@@ -44,10 +44,13 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='model_classes.html'>models</a></li>
-<li><a href='table_versioning.html'>versioning</a></li>
-<li><a href='usage.html'>usage</a></li>
-<li><a href='examples.html'>examples</a></li>
+<li><a href='model_classes.html'>table model classes</a></li>
+<li><a href='dta.html'>data type adapters (DTA)</a></li>
+<li><a href='dao.html'>data access object (DAO) usage</a></li>
+<li><a href='table_versioning.html'>database and table versioning</a></li>
+<li class='divider'></li>
+<li><a href='usage.html'>SQL DSL usage</a></li>
+<li><a href='examples.html'>SQL DSL examples</a></li>
 <li><a href='tools.html'>tools</a></li>
 </ul></li> <!-- End Menu -->
 <li><a href='building.html'>building</a></li>
@@ -56,7 +59,7 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.4.0/iciql-1.4.0.zip'>iciql-1.4.0</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.5.0/iciql-1.5.0.zip'>iciql-1.5.0</a></li>
 <li class='divider'></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
@@ -87,9 +90,34 @@
 <ul>
   <li><code>DbUpgrader.upgradeDatabase(db, fromVersion, toVersion)</code></li>
   <li><code>DbUpgrader.upgradeTable(db, schema, table, fromVersion, toVersion)</code></li>
-</ul><p>both of which allow for non-linear upgrades. If the upgrade method call is successful and returns <em>true</em>, iciql will update the <em>iq_versions</em> table with the annotated version number.</p><p>The actual upgrade procedure is beyond the scope of iciql and is your responsibility to implement. This is simply a mechanism to automatically identify when an upgrade is necessary.</p><p><strong>NOTE:</strong><br/><br/>The database entry of the <em>iq_versions</em> table is specified as SCHEMANAME='' and TABLENAME=''.
+</ul><p>both of which allow for non-linear upgrades. If the upgrade method call is successful and returns <em>true</em>, iciql will update the <em>iq_versions</em> table with the annotated version number.</p><p>The actual upgrade procedure is beyond the scope of iciql and is your responsibility to implement. This is simply a mechanism to automatically identify when an upgrade is necessary.</p><p><strong>NOTE:</strong><br/><br/>The database entry of the <em>iq_versions</em> table is specified as SCHEMANAME='' and TABLENAME=''.</p>
+<h3 class="section" id='H3'><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>Effective use of Versioning with a DAO</h3><p>When Iciql identifies that a version upgrade is necessary it will call the appropriate method and give you a <code>Db</code> instance. With the <code>Db</code> instance you may open a version-specific <a href="dao.html">DAO</a> instance that could give you a clean way to define all your upgrade commands.</p><p><pre class='prettyprint lang-java'>
+public interface V2Upgrade extends Dao {
+
+    @SqlStatement(&quot;ALTER TABLE PRODUCT ADD COLUMN TEST INT DEFAULT 0&quot;)
+    void updateProductTable();
+    
+    @SqlStatement(&quot;UPDATE PRODUCT SET CATEGORY = :new WHERE CATEGORY = :old&quot;&quot;)
+    void renameCategory(@Bind(&quot;old&quot;) String oldName, @Bind(&quot;new&quot;) String newName);
+}
+
+public class MyUpgrader implements DbUpgrader {
+
+    public boolean upgradeDatabase(Db db, int fromVersion, int toVersion) {
+    
+        if (2 == toVersion) {
+            V2Upgrade dao = db.open(V2Upgrade.class);
+            dao.updateProductTable();
+            dao.renameCategory(&quot;Condiments&quot;, &quot;Dressings&quot;);
+            return true;
+        }
+        
+        return false;
+    }
+
+</pre>
 <!-- End Markdown -->
-<div ><ul class="pager"><li class="previous"><a href="model_classes.html">&larr; models</a></li> <li class="next"><a href="usage.html">usage &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-11-05</p>
+<div ><ul class="pager"><li class="previous"><a href="dao.html">&larr; data access object (DAO) usage</a></li> </ul></div><footer class="footer"><p class="pull-right">generated 2014-11-10</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>

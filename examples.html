@@ -44,10 +44,13 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='model_classes.html'>models</a></li>
-<li><a href='table_versioning.html'>versioning</a></li>
-<li><a href='usage.html'>usage</a></li>
-<li><a href='examples.html'>examples</a></li>
+<li><a href='model_classes.html'>table model classes</a></li>
+<li><a href='dta.html'>data type adapters (DTA)</a></li>
+<li><a href='dao.html'>data access object (DAO) usage</a></li>
+<li><a href='table_versioning.html'>database and table versioning</a></li>
+<li class='divider'></li>
+<li><a href='usage.html'>SQL DSL usage</a></li>
+<li><a href='examples.html'>SQL DSL examples</a></li>
 <li><a href='tools.html'>tools</a></li>
 </ul></li> <!-- End Menu -->
 <li><a href='building.html'>building</a></li>
@@ -56,7 +59,7 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.4.0/iciql-1.4.0.zip'>iciql-1.4.0</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.5.0/iciql-1.5.0.zip'>iciql-1.5.0</a></li>
 <li class='divider'></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
@@ -76,7 +79,8 @@
 		</div><!-- end Navigation Bar -->
 <div class='container'>
 <!-- Begin Markdown -->
-<h2 class="section" id='H1'><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Select Statements</h2><p><pre class='prettyprint lang-java'>
+<h2 class="section" id='H1'><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>SQL DSL Examples</h2><p>Here are some examples of using the Iciql SQL DSL.</p>
+<h3 class="section" id='H2'><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>Select Statements</h3><p><pre class='prettyprint lang-java'>
 // select * from products
 List&lt;Product&gt; allProducts = db.from(p).select();
 
@@ -100,7 +104,7 @@ List&lt;ProductPrice&gt; productPrices =
         price = p.unitPrice;
     }});
 </pre></p>
-<h2 class="section" id='H2'><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>Insert Statements</h2><p><pre class='prettyprint lang-java'>
+<h3 class="section" id='H3'><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>Insert Statements</h3><p><pre class='prettyprint lang-java'>
 // single record insertion
 db.insert(singleProduct);
 
@@ -113,7 +117,7 @@ db.insertAll(myProducts);
 // batch insertion with primary key retrieval
 List&lt;Long&gt; myKeys = db.insertAllAndGetKeys(list);
 </pre></p>
-<h2 class="section" id='H3'><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>Update Statements</h2><p><pre class='prettyprint lang-java'>
+<h3 class="section" id='H4'><a href="#H4" class="sectionlink"><i class="icon-share-alt"> </i></a>Update Statements</h3><p><pre class='prettyprint lang-java'>
 // single record update
 db.update(singleProduct);
 
@@ -130,13 +134,13 @@ db.from(p).set(p.productName).to(&quot;updated&quot;)
 String q = db.from(p).set(p.productName).toParameter().where(p.productId).is(1).toSQL();
 db.executeUpdate(q, &quot;Lettuce&quot;);
 </pre></p>
-<h2 class="section" id='H4'><a href="#H4" class="sectionlink"><i class="icon-share-alt"> </i></a>Merge Statements</h2><p>Merge statements currently generate the <a href="http://h2database.com/html/grammar.html#merge">H2 merge syntax</a>.</p><p><pre class='prettyprint lang-java'>
+<h3 class="section" id='H5'><a href="#H5" class="sectionlink"><i class="icon-share-alt"> </i></a>Upsert/Merge Statements</h3><p>The Upsert or Merge methods will insert a new object if the primary key does not already exist or will update the record for the primary key.</p><p><pre class='prettyprint lang-java'>
 Product pChang = db.from(p).where(p.productName).is(&quot;Chang&quot;).selectFirst();
 pChang.unitPrice = 19.5;
 pChang.unitsInStock = 16;
 db.merge(pChang);
 </pre></p>
-<h2 class="section" id='H5'><a href="#H5" class="sectionlink"><i class="icon-share-alt"> </i></a>Delete Statements</h2><p><pre class='prettyprint lang-java'>
+<h3 class="section" id='H6'><a href="#H6" class="sectionlink"><i class="icon-share-alt"> </i></a>Delete Statements</h3><p><pre class='prettyprint lang-java'>
 // single record deletion
 db.delete(singleProduct);  
 
@@ -146,7 +150,7 @@ db.deleteAll(myProducts);
 // delete query
 db.from(p).where(p.productId).atLeast(10).delete();
 </pre></p>
-<h2 class="section" id='H6'><a href="#H6" class="sectionlink"><i class="icon-share-alt"> </i></a>Inner Join Statements</h2><p><pre class='prettyprint lang-java'>
+<h3 class="section" id='H7'><a href="#H7" class="sectionlink"><i class="icon-share-alt"> </i></a>Inner Join Statements</h3><p><pre class='prettyprint lang-java'>
 final Customer c = new Customer();
 final Order o = new Order();
 
@@ -167,7 +171,7 @@ List&lt;CustOrder&gt; orders =
         total = o.total;
     }});
 </pre></p>
-<h2 class="section" id='H7'><a href="#H7" class="sectionlink"><i class="icon-share-alt"> </i></a>View Statements</h2><p><pre class='prettyprint lang-java'>
+<h3 class="section" id='H8'><a href="#H8" class="sectionlink"><i class="icon-share-alt"> </i></a>View Statements</h3><p><pre class='prettyprint lang-java'>
 // the view named &quot;ProductView&quot; is created from the &quot;Products&quot; table
 @IQView(viewTableName = &quot;Products&quot;)
 public class ProductView {
@@ -218,7 +222,7 @@ db.from(p).where(p.id).atLeast(250L).and(p.id).lessThan(350L).replaceView(Produc
 // now drop the view from the database
 db.dropView(ProductViewInherited.class);
 </pre></p>
-<h2 class="section" id='H8'><a href="#H8" class="sectionlink"><i class="icon-share-alt"> </i></a>Dynamic Queries</h2><p>Dynamic queries skip all field type checking and, depending on which approach you use, may skip model class/table name checking too.</p><p><pre class='prettyprint lang-java'>
+<h3 class="section" id='H9'><a href="#H9" class="sectionlink"><i class="icon-share-alt"> </i></a>Dynamic Queries</h3><p>Dynamic queries skip all field type checking and, depending on which approach you use, may skip model class/table name checking too.</p><p><pre class='prettyprint lang-java'>
 // where fragment with object parameters
 List&lt;Product&gt; restock = db.from(p).where(&quot;unitsInStock=? and productName like ? order by productId&quot;, 0, &quot;Chef%&quot;).select();
 
@@ -242,7 +246,7 @@ List&lt;Product&gt; allProducts = db.buildObjects(Product.class, rs);
 JdbcUtils.closeSilently(rs, true);
 </pre>
 <!-- End Markdown -->
-<div ><ul class="pager"><li class="previous"><a href="usage.html">&larr; usage</a></li> <li class="next"><a href="tools.html">tools &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-11-05</p>
+<div ><ul class="pager"><li class="previous"><a href="usage.html">&larr; SQL DSL usage</a></li> <li class="next"><a href="tools.html">tools &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-11-10</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>

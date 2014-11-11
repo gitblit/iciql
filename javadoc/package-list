@@ -1,4 +1,6 @@
 com.iciql
+com.iciql.adapter
+com.iciql.adapter.postgresql
 com.iciql.bytecode
 com.iciql.util
 java.lang

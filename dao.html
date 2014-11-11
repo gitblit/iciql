@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- Begin Header -->
+<title>Iciql</title>
+<meta charset="utf-8">
+<meta name="ROBOTS" content="INDEX">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
+<link rel='shortcut icon' type='image/png' href='./iciql-favicon.png' />
+<link rel="stylesheet" href="./prettify/googlecode.css" /><link rel="alternate" type="application/rss+xml" title="Iciql RSS 2.0" href="./rss.xml" />
+<link rel="alternate" type="application/atom+xml" title="Iciql Atom" href="./atom.xml" />
+
+<!-- Google Plus One -->
+<link rel="canonical" href="http://iciql.com" />
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+<style type="text/css"> div.gplusone { margin-top:12px; } </style>
+
+<script src="./prettify/prettify.js"></script>
+<script src="./bootstrap/js/jquery.js"></script>
+<script src="./bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body onload='prettyPrint()'>		<!-- Navigation Bar -->
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+          			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+            			<span class="icon-bar"></span>
+          			</a>
+          			<a class="brand" href="./"><img src="./iciql_white.png" alt="Iciql"></img></a>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>about<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='index.html'>overview</a></li>
+<li><a href='performance.html'>performance</a></li>
+<li><a href='jaqu_comparison.html'>jaqu comparison</a></li>
+</ul></li> <!-- End Menu -->
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='model_classes.html'>table model classes</a></li>
+<li><a href='dta.html'>data type adapters (DTA)</a></li>
+<li><a href='dao.html'>data access object (DAO) usage</a></li>
+<li><a href='table_versioning.html'>database and table versioning</a></li>
+<li class='divider'></li>
+<li><a href='usage.html'>SQL DSL usage</a></li>
+<li><a href='examples.html'>SQL DSL examples</a></li>
+<li><a href='tools.html'>tools</a></li>
+</ul></li> <!-- End Menu -->
+<li><a href='building.html'>building</a></li>
+<li><a href='javadoc.html'>javadoc</a></li>
+<li><a href='releasenotes.html'>release notes</a></li>
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.5.0/iciql-1.5.0.zip'>iciql-1.5.0</a></li>
+<li class='divider'></li>
+<li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
+</ul></li> <!-- End Menu -->
+<li class='dropdown'> <!-- Menu -->
+<a class='dropdown-toggle' href='#' data-toggle='dropdown'>links<b class='caret'></b></a>
+<ul class='dropdown-menu'>
+<li><a href='https://github.com/gitblit/iciql'>Github</a></li>
+<li><a href='https://github.com/gitblit/iciql/issues'>Issues</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
+</ul></li> <!-- End Menu -->
+<li class='divider-vertical'></li>
+<li><div class='gplusone'><g:plusone size='small' href='http://iciql.com'></g:plusone></div></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div><!-- end Navigation Bar -->
+<div class='container'>
+<!-- Begin Markdown -->
+<h2 class="section" id='H1'><a href="#H1" class="sectionlink"><i class="icon-share-alt"> </i></a>Data Access Object (DAO)</h2><p><a href="http://jdbi.org">JDBI</a> brings an interesting feature to the table with dynamic generation of an annotation-based, partially type-safe DAO. This is a great idea and one that Iciql has absorbed into it's featureset.</p><p>The Iciql implementation is quite different, but the usage is very similar. Iciql does not aim to recreate all features and capabilities of JDBI's DAO.</p>
+<h3 class="section" id='H2'><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>Instantiating a DAO</h3><p>Once you have a Db instance, you may generate a dynamic DAO instance which is backed by it.</p><p><pre class='prettyprint lang-java'>
+Db db = Db.open(&quot;jdbc:h2:mem:iciql&quot;);
+db.open(MyDao.class);
+</pre></p><p>A minimal DAO is an <em>interface</em> that extends the <code>Dao</code> interface. This gives your DAO instance access to the standard Iciql CRUD methods for interacting with your database models, the <code>db()</code> method to retrieve the underlying db instance, and the <code>close()</code> method for closing the underlying JDBC connection.</p><p><pre class='prettyprint lang-java'>
+public interface MyDao extends Dao {
+}
+</pre></p><p>Your <code>Dao</code> instance is also auto-closable so you may use the Java 7 try-with-resources syntax.</p><p><strong>Note:</strong> You never implement the DAO methods - that is taken care of for you through the magic of <code>java.lang.reflect.Proxy</code> and <code>com.iciql.DaoProxy</code>.</p>
+<h3 class="section" id='H3'><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>@SqlQuery</h3><p>DAO queries are method declarations annotated with <code>@SqlQuery</code>.</p>
+<h4 class="section" id='H4'><a href="#H4" class="sectionlink"><i class="icon-share-alt"> </i></a>Return types</h4>
+<ol>
+  <li>An <code>@SqlQuery</code> method must specify a non-void return a type.</li>
+  <li>The return type may not be a <code>java.util.Collection</code>, but it may be an array [] type. This is due to generic type erasure by javac whereas arrays preserve their component type information.<br/><strong>NOTE:</strong> Iciql will always return a 0-length array instead of a null when there are no results so you won't have to worry about null checks.</li>
+  <li>An <code>@SqlQuery</code> method may specify a data type adapter using the <code>@TypeAdapter</code> annotation if the returned value is a field, not a row.</li>
+</ol>
+<h5 class="section" id='H5'><a href="#H5" class="sectionlink"><i class="icon-share-alt"> </i></a>Returning a field with @TypeAdapter</h5><p>Normally, Iciql will map the fields in a query ResultSet to your return type object. However, if you are querying a single field from a table then you may specify a <code>@TypeAdapter</code> on an <code>@SqlQuery</code> method allowing you to deserialize complex data into an object.</p><p>For example, if you are using the Postgres JSON/JSONB column type in your table then you might want to directly deserialize the raw JSON stored in Postgres into an object rather than just retrieving the JSON document and manually transforming it. You can use a <code>@TypeAdapter</code> to perform this work for you.</p>
+<h4 class="section" id='H6'><a href="#H6" class="sectionlink"><i class="icon-share-alt"> </i></a>Method Argument->Statement Parameter mapping</h4><p><code>@SqlQuery</code> supports 6 techniques for mapping method arguments to statement parameters.</p>
+<ol>
+  <li><code>:?</code> where the method argument order implicitly determines statement parameter order. This is similar to a PreparedStatement.</li>
+  <li><code>:arg0</code> where you specify the 0-based index of the method argument.</li>
+  <li><code>:1</code> where you specify the 1-based index of the method argument.</li>
+  <li><code>:name</code> automatic Java 8 method parameter naming, assuming you are compiling on Java 8 with the <code>-parameters</code> javac flag.</li>
+  <li><code>@Bind(&quot;name&quot;) + :name</code> argument annotation where you explicitly name the statement parameter.</li>
+  <li><code>@BindBean(&quot;prefix&quot;) + :prefix.property</code> argument annotation which flags the argument as a JavaBean. This allows you to access JavaBean properties from your statement.<br/><strong>NOTE:</strong> If the prefix is empty, your JavaBean properties will be directly accessible. (e.g. <code>:property</code> not <code>:p.property</code>)</li>
+</ol>
+<h4 class="section" id='H7'><a href="#H7" class="sectionlink"><i class="icon-share-alt"> </i></a>Example @SqlQuery usage</h4><p><pre class='prettyprint lang-java'>
+public interface MyDao extends Dao {
+
+    @SqlQuery(&quot;select * from Product&quot;)
+    Product [] getAllProducts();
+    
+    // Named parameters
+    @SqlQuery(&quot;select * from Product where productId = :id&quot;)
+    Product getProduct(@Bind(&quot;id&quot;) long id);
+    
+    // Reflection-style 0-indexed args
+    @SqlQuery(&quot;select * from Product where productId = :arg0&quot;)
+    Product getProduct2(long id);
+
+    // JDBC-style 1-indexed parameters
+    @SqlQuery(&quot;select * from Product where productId = :1&quot;)
+    Product getProduct2(long id);
+
+    // If you are compiling on Java 8 with -parameters
+    @SqlQuery(&quot;select * from Product where productId = :id&quot;)
+    Product getProduct2(long id);
+    
+    // demonstrates how to use bean binding
+    @SqlQuery(&quot;select productId from Product where category = :p.category and unitsInStock &gt;= :p.unitsInStock&quot;)
+    long [] getSimilarInStockItemIds(@BindBean(&quot;p&quot;) Product p);
+
+    // You can extract a field with full standard type mapping
+    @SqlQuery(&quot;select orderDate from Orders order by orderDate desc limit 1&quot;)
+    Date getMostRecentOrderDate();
+    
+    // You can extract a field that requires a data type adapter (e.g. a Postgres JSON/JSONB, BLOB, etc)
+    @SqlQuery(&quot;select invoice from Invoices order by received desc limit 1&quot;)
+    @TypeAdapter(InvoiceAdapterImpl.class)
+    Invoice getMostRecentInvoice();
+
+}
+</pre></p>
+<h3 class="section" id='H8'><a href="#H8" class="sectionlink"><i class="icon-share-alt"> </i></a>@SqlStatement</h3><p>DAO statements are method declarations annotated with <code>@SqlStatement</code>.</p>
+<h4 class="section" id='H9'><a href="#H9" class="sectionlink"><i class="icon-share-alt"> </i></a>Return types</h4><p>Statements to now return a ResultSet so <code>@SqlStatement</code> methods have three acceptable return types:</p>
+<ol>
+  <li><em>void</em></li>
+  <li><em>boolean</em>, if the affected row count is non-zero, true is returned, otherwise false</li>
+  <li><em>int</em>, returns the affected row count</li>
+</ol><p><code>@TypeAdapter</code> may not be annotated on a <code>@SqlStatement</code> method. However it may be used on the method arguments.</p>
+<h4 class="section" id='H10'><a href="#H10" class="sectionlink"><i class="icon-share-alt"> </i></a>Method Argument->Statement Parameter mapping</h4><p>The parameter mapping rules are exactly the same as for <code>@SqlQuery</code>.</p>
+<h4 class="section" id='H11'><a href="#H11" class="sectionlink"><i class="icon-share-alt"> </i></a>Example @SqlStatement usage</h4><p><pre class='prettyprint lang-java'>
+public interface MyDao extends Dao {
+
+    // this statement does not return anything
+    @SqlStatement(&quot;update Product set productName = :name where productId = :id&quot;)
+    void setProductName(@Bind(&quot;id&quot;) long id, @Bind(&quot;name&quot;) String name);
+
+    // this statement returns true if at least one row was affected
+    @SqlStatement(&quot;update Product set productName = :name where productId = :id&quot;)
+    boolean renameProduct(@Bind(&quot;id&quot;) long id, @Bind(&quot;name&quot;) String name);
+
+    // this statement returns the number of affected rows
+    @SqlStatement(&quot;update Product set category = :new where category = :old&quot;)
+    int renameProductCategory(@Bind(&quot;old&quot;) String oldCategory, @Bind(&quot;new&quot;) String newCategory);
+    
+    // You can update a field that requires a data type adapter
+    @SqlStatement(&quot;update Invoices set invoice = :2 where id = :1&quot;)
+    boolean setInvoice(long id, @TypeAdapter(InvoiceAdapterImpl.class) Invoice invoice);
+
+}
+</pre></p>
+<h3 class="section" id='H12'><a href="#H12" class="sectionlink"><i class="icon-share-alt"> </i></a>Runtime Mode & External Statements</h3><p>Sometimes you may need to specify a slightly different SQL statement for a database engine you might be using in development but not in production. For example, you might develop with H2 and deploy with PostgreSQL.</p><p>Being able to switch the DAO statements executed based on the runtime mode would be helpful for some scenarios. Iciql supports this use-case with a <code>DaoStatementProvider</code> and provides three mode options: <code>DEV</code>, <code>TEST</code>, and <code>PROD</code>.</p>
+<h4 class="section" id='H13'><a href="#H13" class="sectionlink"><i class="icon-share-alt"> </i></a>External Statement DAO Example</h4><p><pre class='prettyprint lang-java'>
+public interface MyDao extends Dao {
+    @SqlQuery(&quot;some.query&quot;)
+    Product [] getProductsWithRuntimeModeDependentQuery();
+}
+
+Db db = Db.open(&quot;jdbc:h2:mem:iciql&quot;);
+// set a classpath statement resource provider
+db.setDaoStatementProvider(new DaoClasspathStatementProvider());
+
+// open the dao and retrieve the products
+MyDao dao = db.open(MyDao.class);
+Product [] products = dao.getProductsWithRuntimeModeDependentQuery();
+</pre></p>
+<h4 class="section" id='H14'><a href="#H14" class="sectionlink"><i class="icon-share-alt"> </i></a>External Statement Resource Example</h4><p><pre>some.query = select * from Products                                       # default statement
+%prod.some.query = select * from Products                                 # will be used in PROD mode
+%test.some.query = select * from Products where category = 'Beverages'    # will be used in TEST mode
+%dev.some.query = select * from Products where category = 'Condiments'    # will be used in DEV mode
+</pre></p>
+<h4 class="section" id='H15'><a href="#H15" class="sectionlink"><i class="icon-share-alt"> </i></a>DaoClasspathStatementProvider</h4><p>Iciql ships with one useful implementation of a DaoStatementProvider: <code>DaoClasspathStatementProvider</code>.</p><p>This provider will load a single external statement resource from the classpath, if found. It tries to locate one of the following classpath resources and loads the first one identified using the <code>java.util.Properties</code> class.</p>
+<ol>
+  <li><code>/iciql.properties</code></li>
+  <li><code>/iciql.xml</code></li>
+  <li><code>/conf/iciql.properties</code></li>
+  <li><code>/conf/iciql.xml</code></li>
+</ol><p>Every <code>@SqlQuery</code> and <code>@SqlStatement</code> method will ask the <code>DaoStatementProvider</code> for the statement to execute based on the annotation value and the runtime mode. For the <code>DaoClasspathStatementProvider</code>, if the annotation value is not a key in the resource file it is assumed to be a statement and is returned to the DAO object for execution. This allows you to externalize a handful of statements - or all of them if you do not want to hard-code anything.
+<!-- End Markdown -->
+<div ><ul class="pager"><li class="previous"><a href="dta.html">&larr; data type adapters (DTA)</a></li> <li class="next"><a href="table_versioning.html">database and table versioning &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-11-10</p>
+<p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
+</footer>
+</div>
+</body>
+</html>

@@ -44,10 +44,13 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>getting started<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='model_classes.html'>models</a></li>
-<li><a href='table_versioning.html'>versioning</a></li>
-<li><a href='usage.html'>usage</a></li>
-<li><a href='examples.html'>examples</a></li>
+<li><a href='model_classes.html'>table model classes</a></li>
+<li><a href='dta.html'>data type adapters (DTA)</a></li>
+<li><a href='dao.html'>data access object (DAO) usage</a></li>
+<li><a href='table_versioning.html'>database and table versioning</a></li>
+<li class='divider'></li>
+<li><a href='usage.html'>SQL DSL usage</a></li>
+<li><a href='examples.html'>SQL DSL examples</a></li>
 <li><a href='tools.html'>tools</a></li>
 </ul></li> <!-- End Menu -->
 <li><a href='building.html'>building</a></li>
@@ -56,7 +59,7 @@
 <li class='dropdown'> <!-- Menu -->
 <a class='dropdown-toggle' href='#' data-toggle='dropdown'>downloads<b class='caret'></b></a>
 <ul class='dropdown-menu'>
-<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.4.0/iciql-1.4.0.zip'>iciql-1.4.0</a></li>
+<li><a href='http://gitblit.github.io/iciql/maven/com/iciql/iciql/1.5.0/iciql-1.5.0.zip'>iciql-1.5.0</a></li>
 <li class='divider'></li>
 <li><a href='http://gitblit.github.io/iciql/maven'>Maven Repository</a></li>
 </ul></li> <!-- End Menu -->
@@ -81,36 +84,76 @@
   <li>a model-based, database access wrapper for JDBC</li>
   <li>for modest database schemas and basic statement generation</li>
   <li>for those who want to write code, instead of SQL, using IDE completion and compile-time type-safety</li>
-  <li>small (200KB) with debug symbols and no runtime dependencies</li>
+  <li>small (&lt;250KB) with debug symbols and no runtime dependencies</li>
   <li>pronounced <em>icicle</em> (although it could be French: <em>ici ql</em> - here query language)</li>
-  <li>a friendly fork of the H2 <a href="http://h2database.com/html/jaqu.html" title="H2 JaQu project">JaQu</a> project</li>
+  <li>a friendly fork of the H2 <a href="http://h2database.com/html/jaqu.html" title="H2 JaQu project">JaQu</a> subproject</li>
 </ul><p>iciql <strong>is not</strong>...</p>
 <ul>
   <li>a complete alternative to JDBC</li>
-  <li>designed to compete with more powerful database query tools like <a href="http://jooq.sourceforge.net" title="jOOQ">jOOQ</a> or <a href="http://source.mysema.com/display/querydsl/Querydsl" title="Querydsl">QueryDSL</a></li>
+  <li>designed to compete with more powerful database query tools like <a href="http://jooq.sourceforge.net" title="jOOQ">jOOQ</a> or <a href="http://source.mysema.com/display/querydsl/Querydsl" title="QueryDSL">QueryDSL</a></li>
   <li>designed to compete with enterprise <a href="http://en.wikipedia.org/wiki/Object-relational_mapping" title="Object Relational Mapping">ORM</a> tools like <a href="http://www.hibernate.org" title="Hibernate">Hibernate</a> or <a href="http://www.mybatis.org" title="mybatis">mybatis</a></li>
 </ul>
-<h3 class="section" id='H2'><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>Example Usage</h3>
-<table class="table">
-<tr>
-<th>iciql</th><th>sql</th>
-</tr>
-<tr>
-<td>
-<pre class='prettyprint lang-java'>
-Product p = new Product();
-List&lt;Product&gt; restock = db.from(p).where(p.unitsInStock).is(0).select();
-List&lt;Product&gt; all = db.executeQuery(Product.class, &quot;select * from products&quot;);
-</pre>
+<h3 class="section" id='H2'><a href="#H2" class="sectionlink"><i class="icon-share-alt"> </i></a>fluent, type-safe SQL DSL with rich object mapping</h3><p>Born from the unfinished <a href="http://h2database.com/html/jaqu.html" title="H2 JaQu project">JaQu</a> subproject of H2 in August 2011, Iciql has <a href="jaqu_comparison.html">advanced the codebase</a> &amp; DSL greatly. It supports more SQL syntax, more SQL data types, and all standard JDBC object types.</p><p><pre class='prettyprint lang-java'>
+try (Db db = Db.open(&quot;jdbc:h2:mem:iciql&quot;)) {
 
-</td><td>
-<br/>
-select * from products p where p.unitsInStock = 0<br/>
-select * from products
-</td>
-</tr>
-</table>
-<h3 class="section" id='H3'><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>Supported Databases (Unit-Tested)</h3>
+    db.insertAll(Product.getList());
+    Product p = new Product();
+    List&lt;Product&gt; restock = db.from(p).where(p.unitsInStock).is(0).select();
+    List&lt;Product&gt; all = db.executeQuery(Product.class, &quot;select * from products&quot;);
+    
+}
+</pre></p>
+<h3 class="section" id='H3'><a href="#H3" class="sectionlink"><i class="icon-share-alt"> </i></a>dynamic, annotated DAO with standard crud operations</h3><p>Inspired by JDBI, Iciql offers a similar <a href="dao.html">DAO feature</a>. There are some clear benefits to using SQL directly rather than SQL-through-a-DSL so use each one where it makes the mose sense.</p><p><pre class='prettyprint lang-java'>
+// Define your DAO with SQL annotations and optional type adapters
+public interface MyDao extends Dao {
+
+    @SqlQuery(&quot;select * from Product where unitsInStock = 0&quot;)
+    Product[] getProductsOutOfStock();
+
+    @SqlQuery(&quot;select * from Product where productId = :id&quot;)
+    Product getProduct(@Bind(&quot;id&quot;) long id);
+ 
+    // retrieve a custom type from the matched row in the Invoices table
+    @SqlQuery(&quot;select invoice from Invoices where id = :arg0&quot;)
+    @InvoiceAdapter
+    Invoice getInvoice(long id);
+
+    // retrieve a custom type from the matched row in the Invoices table
+    @SqlQuery(&quot;select invoice from Invoices where id = :p.invoiceId&quot;)
+    @InvoiceAdapter
+    Invoice getInvoice(@BindBean(&quot;p&quot;) Product product);
+
+    // update a custom type for the matched row in the Invoices table
+    @SqlStatement(&quot;update Invoices set invoice = :2 where id = :1&quot;)
+    boolean updateInvoice(long id, @InvoiceAdapter Invoice invoice);
+
+}
+
+// Define a type adapter annotation for the Invoice object
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@TypeAdapter(InvoiceAdapterImpl.class)
+public @interface InvoiceAdapter { }
+
+// Create a DAO instance with your Db and work more clearly
+try (Db db = Db.open(&quot;jdbc:h2:mem:iciql&quot;)) {
+
+    MyDao dao = db.open(MyDao.class);
+    dao.insertAll(Product.getList());
+    Product[] outofstock = dao.getProductsOutOfStock();
+    Product p = dao.getProduct(1);
+    Invoice i123 = dao.getInvoice(123);
+    i123.approved = true;
+    dao.updateInvoice(123, i123);
+    
+    // use the underlying Db instance for full-power
+    dao.db().dropTable(Product.class);
+
+}
+</pre></p>
+<h3 class="section" id='H4'><a href="#H4" class="sectionlink"><i class="icon-share-alt"> </i></a>flexible field data types</h3><p>The <a href="dta.html">Data Type Adapter feature</a> allows you to customize how your SQL column data types map to/from Java objects.</p><p>This is very useful for mapping your field domain models to SQL without having to flatten them out to additional columns within your table. In other words, you can use your database as an object store at the column level by implementing a <code>@TypeAdapter</code> (de)serialization step.</p><p>You might use this to take advantage of the underlying database's type system. For example, PostgreSQL ships with the compelling JSON/JSONB/XML data types. Iciql provides String and Object adapters to facilitate use of those data types.</p>
+<h3 class="section" id='H5'><a href="#H5" class="sectionlink"><i class="icon-share-alt"> </i></a>runtime mode support</h3><p>Mode support allows you to tweak the behavior of your <code>@TypeAdapter</code> and <code>DAO</code> implementations to adapt to runtime conditions such as developing on a different database than you deploy on.</p>
+<h3 class="section" id='H6'><a href="#H6" class="sectionlink"><i class="icon-share-alt"> </i></a>Supported Databases (Unit-Tested)</h3>
 <ul>
   <li><a href="http://h2database.com">H2</a> 1.4.181</li>
   <li><a href="http://hsqldb.org">HSQLDB</a> 2.3.2</li>
@@ -119,10 +162,10 @@ select * from products
   <li><a href="http://postgresql.org">PostgreSQL</a> 9.3</li>
   <li><a href="http://www.sqlite.org">SQLite</a> 3.8.7</li>
 </ul><p>Support for others is possible and may only require creating a simple "dialect" class.</p>
-<h3 class="section" id='H4'><a href="#H4" class="sectionlink"><i class="icon-share-alt"> </i></a>Java Runtime Requirement</h3><p>iciql requires a Java 6 Runtime Environment (JRE) or a Java 6 Development Kit (JDK).</p>
-<h3 class="section" id='H5'><a href="#H5" class="sectionlink"><i class="icon-share-alt"> </i></a>License</h3><p>iciql is distributed under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0">Apache Software Foundation license, version 2.0</a>
+<h3 class="section" id='H7'><a href="#H7" class="sectionlink"><i class="icon-share-alt"> </i></a>Java Runtime Requirement</h3><p>iciql requires a Java 6 Runtime Environment (JRE) or a Java 6 Development Kit (JDK).</p>
+<h3 class="section" id='H8'><a href="#H8" class="sectionlink"><i class="icon-share-alt"> </i></a>License</h3><p>iciql is distributed under the terms of the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0">Apache Software Foundation license, version 2.0</a>
 <!-- End Markdown -->
-<div ><ul class="pager"> <li class="next"><a href="performance.html">performance &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-11-05</p>
+<div ><ul class="pager"> <li class="next"><a href="performance.html">performance &rarr;</a></li></ul></div><footer class="footer"><p class="pull-right">generated 2014-11-10</p>
 <p>The content of this page is licensed under the <a href="http://creativecommons.org/licenses/by/3.0">Creative Commons Attribution 3.0 License</a>.</p>
 </footer>
 </div>

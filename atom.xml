@@ -1,8 +1,8 @@
 <?xml version="1.0" standalone='yes'?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-	<generator uri="http://iciql.com" version="1.5.0-SNAPSHOT">Iciql</generator>
+	<generator uri="http://iciql.com" version="1.5.0">Iciql</generator>
 	<title><![CDATA[Iciql]]></title>
-	<updated>2014-11-05</updated>
+	<updated>2014-11-10</updated>
 	<entry>
 		<content type="text/plain" />
    		<title type="text"><![CDATA[Iciql 0.5.0 Released]]></title>
@@ -158,5 +158,12 @@
    		<link href="http://iciql.com/history.html#1.4.0" rel="via" />
    		<guid isPermaLink="true">http://iciql.com/history.html#1.4.0</guid>
    		<published>2014-11-05T00:00:00-0500</published>
+	</entry>
+	<entry>
+		<content type="text/plain" />
+   		<title type="text"><![CDATA[Iciql 1.5.0 released]]></title>
+   		<link href="http://iciql.com/history.html#1.5.0" rel="via" />
+   		<guid isPermaLink="true">http://iciql.com/history.html#1.5.0</guid>
+   		<published>2014-11-10T00:00:00-0500</published>
 	</entry>
 </feed>
