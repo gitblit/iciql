@@ -115,7 +115,7 @@ iciql is distributed under the terms of the [Apache Software Foundation license,
 [jaqu]: http://h2database.com/html/jaqu.html "H2 JaQu project"
 [orm]: http://en.wikipedia.org/wiki/Object-relational_mapping "Object Relational Mapping"
 [jooq]: http://jooq.sourceforge.net "jOOQ"
-[querydsl]: http://source.mysema.com/display/querydsl/Querydsl "QueryDSL"
+[querydsl]: http://www.querydsl.com/ "QueryDSL"
 [hibernate]: http://www.hibernate.org "Hibernate"
 [mybatis]: http://www.mybatis.org "mybatis"
 [github]: http://github.com/gitblit/iciql "iciql git repository"
