@@ -353,7 +353,7 @@ public class IciqlSuite {
 		// Header
 		out.println(dividerMajor);
 		out.println(MessageFormat.format("{0} {1} ({2}) testing {3} database configurations", Constants.NAME,
-				Constants.VERSION, Constants.VERSION_DATE, TEST_DBS.length));
+				Constants.getVersion(), Constants.getBuildDate(), TEST_DBS.length));
 		out.println(dividerMajor);
 		out.println();
 
@@ -432,7 +432,7 @@ public class IciqlSuite {
 		out.println();
 		out.println(dividerMajor);
 		out.println(MessageFormat.format("{0} {1} ({2}) test suite performance results", Constants.NAME,
-				Constants.VERSION, Constants.VERSION_DATE));
+				Constants.getVersion(), Constants.getBuildDate()));
 
 		StringBuilder compressedSystem = new StringBuilder();
 		compressedSystem.append("      on ");
@@ -496,7 +496,7 @@ public class IciqlSuite {
 	}
 
 	private static void usage(JCommander jc, ParameterException t) {
-		System.out.println(Constants.NAME + " test suite v" + Constants.VERSION);
+		System.out.println(Constants.NAME + " test suite v" + Constants.getVersion());
 		System.out.println();
 		if (t != null) {
 			System.out.println(t.getMessage());
