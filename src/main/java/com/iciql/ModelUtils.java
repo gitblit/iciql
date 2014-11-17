@@ -189,6 +189,10 @@ class ModelUtils {
 		sqlType = sqlType.toUpperCase();
 		// XXX dropping "UNSIGNED" or parts like that could be trouble
 		sqlType = sqlType.split(" ")[0].trim();
+		if (sqlType.indexOf('(') > -1) {
+			// strip out length or precision
+			sqlType = sqlType.substring(0, sqlType.indexOf('('));
+		}
 
 		if (SQL_TYPES.containsKey(sqlType)) {
 			// convert the sqlType to a standard type
