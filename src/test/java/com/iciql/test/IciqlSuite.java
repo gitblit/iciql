@@ -100,20 +100,20 @@ import com.iciql.util.Utils;
 public class IciqlSuite {
 	private final static File baseFolder = new File(System.getProperty("user.dir"), "/testdbs");
 	private static final TestDb[] TEST_DBS = {
-			new TestDb("H2", true, true, "jdbc:h2:mem:iciql"),
-			new TestDb("H2", true, false, "jdbc:h2:file:"
+			new TestDb("H2", "memory", "jdbc:h2:mem:iciql"),
+			new TestDb("H2", "file", "jdbc:h2:file:"
 					+ new File(baseFolder, "/h2/iciql").getAbsolutePath()),
-			new TestDb("H2", false, false, "jdbc:h2:tcp://localhost/"
+			new TestDb("H2", "tcp", "jdbc:h2:tcp://localhost/"
 					+ new File(baseFolder, "/h2tcp/iciql").getAbsolutePath()),
-			new TestDb("HSQL", true, true, "jdbc:hsqldb:mem:iciql"),
-			new TestDb("HSQL", true, false, "jdbc:hsqldb:file:testdbs/hsql/iciql"),
-			new TestDb("HSQL", false, false, "jdbc:hsqldb:hsql://localhost/iciql"),
-			new TestDb("Derby", true, true, "jdbc:derby:memory:iciql;create=true"),
-			new TestDb("Derby", true, false, "jdbc:derby:directory:testdbs/derby/iciql;create=true"),
-			new TestDb("MySQL", false, false, "jdbc:mysql://localhost:3306/iciql", "sa", "sa"),
-			new TestDb("PostgreSQL", false, false, "jdbc:postgresql://localhost:5432/iciql", "sa", "sa"),
-			new TestDb("SQLite", true, true, "jdbc:sqlite:file:iciql?mode=memory&cache=shared"),
-			new TestDb("SQLite", true, false, "jdbc:sqlite:"
+			new TestDb("HSQL", "memory", "jdbc:hsqldb:mem:iciql"),
+			new TestDb("HSQL", "file", "jdbc:hsqldb:file:testdbs/hsql/iciql"),
+			new TestDb("HSQL", "tcp", "jdbc:hsqldb:hsql://localhost/iciql"),
+			new TestDb("Derby", "memory", "jdbc:derby:memory:iciql;create=true"),
+			new TestDb("Derby", "file", "jdbc:derby:directory:testdbs/derby/iciql;create=true"),
+			new TestDb("MySQL", "tcp", "jdbc:mysql://localhost:3306/iciql", "sa", "sa"),
+			new TestDb("PostgreSQL", "tcp", "jdbc:postgresql://localhost:5432/iciql", "sa", "sa"),
+			new TestDb("SQLite", "memory", "jdbc:sqlite:file:iciql?mode=memory&cache=shared"),
+			new TestDb("SQLite", "delete,full sync", "jdbc:sqlite:"
 					+ new File(baseFolder, "/sqlite/iciql.db").getAbsolutePath())
 			};
 
@@ -451,24 +451,24 @@ public class IciqlSuite {
 		List<TestDb> dbs = Arrays.asList(TEST_DBS);
 		Collections.sort(dbs);
 
-		out.println(MessageFormat.format("{0} {1} {2} {3} {4}", StringUtils.pad("Name", 11, " ", true),
-				StringUtils.pad("Type", 5, " ", true), StringUtils.pad("Version", 23, " ", true),
-				StringUtils.pad("Stats/Sec", 10, " ", true), "Runtime"));
+		out.println(MessageFormat.format("{0} {1} {2} {3} {4}",
+				StringUtils.pad("Name", 11, " ", true),
+				StringUtils.pad("Config", 16, " ", true),
+				StringUtils.pad("Version", 25, " ", true),
+				StringUtils.pad("Stats/sec", 10, " ", true),
+				"Runtime"));
 		out.println(dividerMinor);
 		for (TestDb testDb : dbs) {
 			DecimalFormat df = new DecimalFormat("0.0");
-			out.println(MessageFormat.format("{0} {1} {2}   {3} {4} {5}s  ({6,number,0.0}x)",
-					StringUtils.pad(testDb.name, 11, " ", true), testDb.isEmbedded ? "E" : "T",
-					testDb.isMemory ? "M" : "F", StringUtils.pad(testDb.getVersion(), 21, " ", true),
-					StringUtils.pad("" + testDb.getStatementRate(), 10, " ", false),
-					StringUtils.pad(df.format(testDb.getRuntime()), 8, " ", false), ((double) testDb.runtime)
-							/ quickestDatabase));
+			out.println(MessageFormat.format("{0} {1} {2} {3} {4}s  ({5,number,0.0}x)",
+					StringUtils.pad(testDb.name, 11, " ", true),
+					StringUtils.pad(testDb.config, 16, " ", true),
+					StringUtils.pad(testDb.getVersion(), 23, " ", true),
+					StringUtils.pad("" + testDb.getStatementRate(), 7, " ", false),
+					StringUtils.pad(df.format(testDb.getRuntime()), 8, " ", false),
+					((double) testDb.runtime) / quickestDatabase));
 		}
 		out.println(dividerMinor);
-		out.println("  E = embedded connection");
-		out.println("  T = tcp/ip connection");
-		out.println("  M = memory database");
-		out.println("  F = file/persistent database");
 
 		// cleanup
 		for (PoolableConnectionFactory factory : connectionFactories.values()) {
@@ -567,8 +567,7 @@ public class IciqlSuite {
 	 */
 	private static class TestDb implements Comparable<TestDb> {
 		final String name;
-		boolean isEmbedded;
-		boolean isMemory;
+		final String config;
 		final String url;
 		final String username;
 		final String password;
@@ -576,14 +575,13 @@ public class IciqlSuite {
 		long runtime;
 		long statements;
 
-		TestDb(String name, boolean isEmbedded, boolean isMemory, String url) {
-			this(name, isEmbedded, isMemory, url, "sa", "");
+		TestDb(String name, String config, String url) {
+			this(name, config, url, "sa", "");
 		}
 
-		TestDb(String name, boolean isEmbedded, boolean isMemory, String url, String username, String password) {
+		TestDb(String name, String config, String url, String username, String password) {
 			this.name = name;
-			this.isEmbedded = isEmbedded;
-			this.isMemory = isMemory;
+			this.config = config;
 			this.url = url;
 			this.username = username;
 			this.password = password;
