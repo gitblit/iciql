@@ -95,6 +95,8 @@ dependencies:
 - provided 'com.h2database:h2:${h2.version}'
 - provided 'org.hsqldb:hsqldb:${hsqldb.version}'
 - provided 'org.apache.derby:derby:${derby.version}'
+- provided 'org.apache.derby:derbyclient:${derby.version}'
+- provided 'org.apache.derby:derbynet:${derby.version}'
 - provided 'mysql:mysql-connector-java:5.1.33'
 - provided 'org.postgresql:postgresql:9.4-1201-jdbc41'
 - provided 'org.xerial:sqlite-jdbc:${sqlite.version}'

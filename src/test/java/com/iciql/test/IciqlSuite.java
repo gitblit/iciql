@@ -33,6 +33,7 @@ import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.derby.drda.NetworkServerControl;
 import org.hsqldb.persist.HsqlProperties;
 import org.junit.Assert;
 import org.junit.runner.JUnitCore;
@@ -110,6 +111,7 @@ public class IciqlSuite {
 			new TestDb("HSQL", "tcp", "jdbc:hsqldb:hsql://localhost/iciql"),
 			new TestDb("Derby", "memory", "jdbc:derby:memory:iciql;create=true"),
 			new TestDb("Derby", "file", "jdbc:derby:directory:testdbs/derby/iciql;create=true"),
+			new TestDb("Derby", "tcp", "jdbc:derby://localhost:1527/testdbs/derby/iciql;create=true", "sa", "sa"),
 			new TestDb("MySQL", "tcp", "jdbc:mysql://localhost:3306/iciql", "sa", "sa"),
 			new TestDb("PostgreSQL", "tcp", "jdbc:postgresql://localhost:5432/iciql", "sa", "sa"),
 			new TestDb("SQLite", "memory", "jdbc:sqlite:file:iciql?mode=memory&cache=shared"),
@@ -318,9 +320,10 @@ public class IciqlSuite {
 		deleteRecursively(baseFolder);
 		new File(baseFolder, "/sqlite").mkdirs();
 
-		// Start the HSQL and H2 servers in-process
+		// Start the HSQL, H2, and Derby servers in-process
 		org.hsqldb.Server hsql = startHSQL();
 		org.h2.tools.Server h2 = startH2();
+		NetworkServerControl derby = startDerby();
 
 		// Statement logging
 		final FileWriter statementWriter;
@@ -482,6 +485,7 @@ public class IciqlSuite {
 		}
 		hsql.stop();
 		h2.stop();
+		derby.shutdown();
 		System.exit(0);
 	}
 
@@ -560,6 +564,18 @@ public class IciqlSuite {
 		org.h2.tools.Server server = org.h2.tools.Server.createTcpServer();
 		server.start();
 		return server;
+	}
+
+	/**
+	 * Start the Derby tcp server.
+	 *
+	 * @return an Derby server instance
+	 * @throws Exception
+	 */
+	private static NetworkServerControl startDerby() throws Exception {
+		NetworkServerControl serverControl = new NetworkServerControl();
+		serverControl.start(null);
+		return serverControl;
 	}
 
 	/**

@@ -6,6 +6,8 @@
 	<classpathentry kind="lib" path="ext/h2-1.4.186.jar" sourcepath="ext/src/h2-1.4.186.jar" />
 	<classpathentry kind="lib" path="ext/hsqldb-2.3.2.jar" sourcepath="ext/src/hsqldb-2.3.2.jar" />
 	<classpathentry kind="lib" path="ext/derby-10.11.1.1.jar" />
+	<classpathentry kind="lib" path="ext/derbyclient-10.11.1.1.jar" />
+	<classpathentry kind="lib" path="ext/derbynet-10.11.1.1.jar" />
 	<classpathentry kind="lib" path="ext/mysql-connector-java-5.1.33.jar" />
 	<classpathentry kind="lib" path="ext/postgresql-9.4-1201-jdbc41.jar" sourcepath="ext/src/postgresql-9.4-1201-jdbc41.jar" />
 	<classpathentry kind="lib" path="ext/sqlite-jdbc-3.8.7.jar" sourcepath="ext/src/sqlite-jdbc-3.8.7.jar" />
