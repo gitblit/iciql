@@ -78,7 +78,7 @@ final class DaoProxy<X extends Dao> implements InvocationHandler, Dao {
 			throw new IciqlException("Dao {0} must be an interface!", daoInterface.getName());
 		}
 
-		ClassLoader classLoader = db.getClass().getClassLoader();
+		ClassLoader classLoader = daoInterface.getClassLoader();
 
 		Set<Class<?>> interfaces = new HashSet<Class<?>>();
 		interfaces.add(Dao.class);
