@@ -474,8 +474,8 @@ public interface Iciql {
 
 		/**
 		 * The inherit columns allows this model class to inherit columns from
-		 * its super class. Any IQTable annotation present on the super class is
-		 * ignored. Default: false.
+		 * its super class. IQTable and IQView annotations present on the super
+		 * class or above are honored. Default: false.
 		 */
 		boolean inheritColumns() default false;
 
@@ -549,8 +549,8 @@ public interface Iciql {
 
 		/**
 		 * The inherit columns allows this model class to inherit columns from
-		 * its super class. Any IQTable annotation present on the super class is
-		 * ignored. Default: false.
+		 * its super class. IQTable and IQView annotations present on the super
+		 * class or above are honored. Default: false.
 		 */
 		boolean inheritColumns() default false;
 
