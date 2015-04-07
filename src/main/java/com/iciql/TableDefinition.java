@@ -439,28 +439,7 @@ public class TableDefinition<T> {
 			inheritColumns = viewAnnotation.inheritColumns();
 		}
 
-		List<Field> classFields = Utils.newArrayList();
-		classFields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-		if (inheritColumns) {
-			Class<?> superClass = clazz.getSuperclass();
-			classFields.addAll(Arrays.asList(superClass.getDeclaredFields()));
-
-			if (superClass.isAnnotationPresent(IQView.class)) {
-				IQView superView = superClass.getAnnotation(IQView.class);
-				if (superView.inheritColumns()) {
-					// inherit columns from super.super.class
-					Class<?> superSuperClass = superClass.getSuperclass();
-					classFields.addAll(Arrays.asList(superSuperClass.getDeclaredFields()));
-				}
-			} else if (superClass.isAnnotationPresent(IQTable.class)) {
-				IQTable superTable = superClass.getAnnotation(IQTable.class);
-				if (superTable.inheritColumns()) {
-					// inherit columns from super.super.class
-					Class<?> superSuperClass = superClass.getSuperclass();
-					classFields.addAll(Arrays.asList(superSuperClass.getDeclaredFields()));
-				}
-			}
-		}
+		List<Field> classFields = classFields(inheritColumns);
 
 		Set<FieldDefinition> uniqueFields = new LinkedHashSet<FieldDefinition>();
 		T defaultObject = Db.instance(clazz);
@@ -604,6 +583,27 @@ public class TableDefinition<T> {
 		if (primaryKey.size() > 0) {
 			setPrimaryKey(primaryKey);
 		}
+	}
+
+	private List<Field> classFields(boolean inheritColumns) {
+		List<Field> classFields = Utils.newArrayList();
+		classFields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+		Class<?> superClass = clazz;
+		while (inheritColumns) {
+			superClass = superClass.getSuperclass();
+			classFields.addAll(Arrays.asList(superClass.getDeclaredFields()));
+
+			if (superClass.isAnnotationPresent(IQView.class)) {
+				IQView superView = superClass.getAnnotation(IQView.class);
+				inheritColumns = superView.inheritColumns();
+			} else if (superClass.isAnnotationPresent(IQTable.class)) {
+				IQTable superTable = superClass.getAnnotation(IQTable.class);
+				inheritColumns = superTable.inheritColumns();
+			} else {
+				inheritColumns = false;
+			}
+		}
+		return classFields;
 	}
 
 	void checkMultipleBooleans() {
