@@ -37,21 +37,20 @@ public interface SQLDialect {
 	void registerAdapter(DataTypeAdapter<?> typeAdapter);
 
 	/**
-	 * Returns the registered instance of the type adapter.
+	 * Returns the registered instance of the type adapter for the specified object class.
 	 *
-	 * @param typeAdapter
+	 * @param objectClass
 	 * @return the type adapter instance
 	 */
-	DataTypeAdapter<?> getAdapter(Class<? extends DataTypeAdapter<?>> typeAdapter);
+	DataTypeAdapter<?> getAdapter(Class<?> objectClass);
 
 	/**
 	 * Serialize the Java object into a type or format that the database will accept.
 	 *
 	 * @param value
-	 * @param typeAdapter
 	 * @return the serialized object
 	 */
-	<T> Object serialize(T value, Class<? extends DataTypeAdapter<?>> typeAdapter);
+	<T> Object serialize(T value);
 
 	/**
 	 * Deserialize the object received from the database into a Java type.
@@ -59,10 +58,9 @@ public interface SQLDialect {
 	 * @param rs
 	 * @param columnIndex
 	 * @param targetType
-	 * @param typeAdapter
 	 * @return the deserialized object
 	 */
-	Object deserialize(ResultSet rs, int columnIndex, Class<?> targetType, Class<? extends DataTypeAdapter<?>> typeAdapter);
+	Object deserialize(ResultSet rs, int columnIndex, Class<?> targetType);
 
 	/**
 	 * Configure the dialect.

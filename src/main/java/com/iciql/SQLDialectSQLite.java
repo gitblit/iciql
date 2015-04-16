@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 
-import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.IciqlLogger;
@@ -135,7 +134,7 @@ public class SQLDialectSQLite extends SQLDialectDefault {
 			buff.appendExceptFirst(", ");
 			buff.append('?');
 			Object value = def.getValue(obj, field);
-			Object parameter = serialize(value, field.typeAdapter);
+			Object parameter = serialize(value);
 			stat.addParameter(parameter);
 		}
 		buff.append(')');
@@ -143,11 +142,11 @@ public class SQLDialectSQLite extends SQLDialectDefault {
 	}
 
 	@Override
-	public Object deserialize(ResultSet rs, int columnIndex, Class<?> targetType, Class<? extends DataTypeAdapter<?>> typeAdapter) {
+	public Object deserialize(ResultSet rs, int columnIndex, Class<?> targetType) {
 		try {
-			return super.deserialize(rs, columnIndex, targetType, typeAdapter);
+			return super.deserialize(rs, columnIndex, targetType);
 		} catch (IciqlException e) {
-			if (typeAdapter == null && e.getMessage().startsWith("Can not convert")) {
+			if (e.getMessage().startsWith("Can not convert")) {
 				try {
 					// give the SQLite JDBC driver an opportunity to deserialize DateTime objects
 					if (Timestamp.class.equals(targetType)) {

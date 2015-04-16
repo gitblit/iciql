@@ -475,8 +475,9 @@ public class TableDefinition<T> {
 			}
 
 			if (typeAdapter != null) {
-				DataTypeAdapter<?> dtt = db.getDialect().getAdapter(typeAdapter);
-				dataType = dtt.getDataType();
+				DataTypeAdapter<?> dta = Utils.newObject(typeAdapter);
+				dataType = dta.getDataType();
+				db.getDialect().registerAdapter(dta);
 			}
 
 			boolean hasAnnotation = f.isAnnotationPresent(IQColumn.class);
@@ -673,7 +674,7 @@ public class TableDefinition<T> {
 				// try to interpret and instantiate a default value
 				value = ModelUtils.getDefaultValue(field, db.getDialect().getDateTimeClass());
 			}
-			Object parameter = db.getDialect().serialize(value, field.typeAdapter);
+			Object parameter = db.getDialect().serialize(value);
 			stat.addParameter(parameter);
 		}
 		buff.append(')');
@@ -709,7 +710,7 @@ public class TableDefinition<T> {
 				// try to interpret and instantiate a default value
 				value = ModelUtils.getDefaultValue(field, db.getDialect().getDateTimeClass());
 			}
-			Object parameter = db.getDialect().serialize(value, field.typeAdapter);
+			Object parameter = db.getDialect().serialize(value);
 			stat.addParameter(parameter);
 		}
 		buff.append(')');
@@ -784,7 +785,7 @@ public class TableDefinition<T> {
 				buff.appendExceptFirst(", ");
 				buff.append(db.getDialect().prepareColumnName(field.columnName));
 				buff.append(" = ?");
-				Object parameter = db.getDialect().serialize(value, field.typeAdapter);
+				Object parameter = db.getDialect().serialize(value);
 				stat.addParameter(parameter);
 			}
 		}
@@ -1177,7 +1178,7 @@ public class TableDefinition<T> {
 				}
 				o = Utils.convertEnum(obj, targetType, def.enumType);
 			} else {
-				o = dialect.deserialize(rs, columns[i], targetType, def.typeAdapter);
+				o = dialect.deserialize(rs, columns[i], targetType);
 			}
 			def.setValue(item, o);
 		}

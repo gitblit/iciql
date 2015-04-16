@@ -423,9 +423,13 @@ public class Query<T> {
 		ResultSet rs = stat.executeQuery();
 		List<X> result = Utils.newArrayList();
 		Class<? extends DataTypeAdapter<?>> typeAdapter = Utils.getDataTypeAdapter(x.getClass().getAnnotations());
+		if (typeAdapter != null) {
+			DataTypeAdapter<?> dta = Utils.newObject(typeAdapter);
+			db.getDialect().registerAdapter(dta);
+		}
 		try {
 			while (rs.next()) {
-				X value = (X) db.getDialect().deserialize(rs, 1, x.getClass(), typeAdapter);
+				X value = (X) db.getDialect().deserialize(rs, 1, x.getClass());
 				result.add(value);
 			}
 		} catch (Exception e) {
@@ -840,8 +844,7 @@ public class Query<T> {
 			stat.addParameter(y);
 		} else if (col != null) {
 			// object
-			Class<? extends DataTypeAdapter<?>> typeAdapter = col.getFieldDefinition().typeAdapter;
-			Object parameter = db.getDialect().serialize(value, typeAdapter);
+			Object parameter = db.getDialect().serialize(value);
 			stat.addParameter(parameter);
 		} else {
 			// primitive

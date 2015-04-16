@@ -55,10 +55,10 @@ public class SQLDialectDefault implements SQLDialect {
 	String databaseName;
 	String productVersion;
 	Mode mode;
-	Map<Class<? extends DataTypeAdapter<?>>, DataTypeAdapter<?>> typeAdapters;
+	Map<Class<?>, DataTypeAdapter<?>> typeAdapters;
 
 	public SQLDialectDefault() {
-		typeAdapters = new ConcurrentHashMap<Class<? extends DataTypeAdapter<?>>, DataTypeAdapter<?>>();
+		typeAdapters = new ConcurrentHashMap<Class<?>, DataTypeAdapter<?>>();
 	}
 
 	@Override
@@ -420,7 +420,7 @@ public class SQLDialectDefault implements SQLDialect {
 			buff.appendExceptFirst(", ");
 			buff.append('?');
 			Object value = def.getValue(obj, field);
-			Object parameter = serialize(value, field.typeAdapter);
+			Object parameter = serialize(value);
 			stat.addParameter(parameter);
 		}
 		buff.append(" FROM ");
@@ -432,7 +432,7 @@ public class SQLDialectDefault implements SQLDialect {
 				buff.appendExceptFirst(" AND ");
 				buff.append(MessageFormat.format("{0} = ?", prepareColumnName(field.columnName)));
 				Object value = def.getValue(obj, field);
-				Object parameter = serialize(value, field.typeAdapter);
+				Object parameter = serialize(value);
 				stat.addParameter(parameter);
 			}
 		}
@@ -452,35 +452,33 @@ public class SQLDialectDefault implements SQLDialect {
 
 	@Override
 	public void registerAdapter(DataTypeAdapter<?> typeAdapter) {
-		typeAdapters.put((Class<? extends DataTypeAdapter<?>>) typeAdapter.getClass(), typeAdapter);
+		typeAdapters.put(typeAdapter.getJavaType(), typeAdapter);
 	}
 
 	@Override
-	public DataTypeAdapter<?> getAdapter(Class<? extends DataTypeAdapter<?>> typeAdapter) {
-		DataTypeAdapter<?> dta = typeAdapters.get(typeAdapter);
-		if (dta == null) {
-			dta = Utils.newObject(typeAdapter);
-			typeAdapters.put(typeAdapter, dta);
+	public DataTypeAdapter<?> getAdapter(Class<?> objectClass) {
+		DataTypeAdapter<?> dta = typeAdapters.get(objectClass);
+		if (dta != null) {
+			dta.setMode(mode);
 		}
-		dta.setMode(mode);
 		return dta;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Object serialize(T value, Class<? extends DataTypeAdapter<?>> typeAdapter) {
-		if (typeAdapter == null) {
+	public <T> Object serialize(T value) {
+		DataTypeAdapter dta = getAdapter(value.getClass());
+		if (dta == null) {
 			// pass-through
 			return value;
 		}
-
-		DataTypeAdapter<T> dta = (DataTypeAdapter<T>) getAdapter(typeAdapter);
 		return dta.serialize(value);
 	}
 
 	@Override
-	public Object deserialize(ResultSet rs, int columnIndex, Class<?> targetType, Class<? extends DataTypeAdapter<?>> typeAdapter) {
-		if (typeAdapter == null) {
+	public Object deserialize(ResultSet rs, int columnIndex, Class<?> targetType) {
+		DataTypeAdapter<?> dta = getAdapter(targetType);
+		if (dta == null) {
 			// standard object deserialization
 			Object value = null;
 			try {
@@ -501,7 +499,6 @@ public class SQLDialectDefault implements SQLDialect {
 			return value;
 		} else {
 			// custom object deserialization with a DataTypeAdapter
-			DataTypeAdapter<?> dta = getAdapter(typeAdapter);
 			Object object = null;
 			try {
 				object = rs.getObject(columnIndex);

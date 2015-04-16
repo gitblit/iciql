@@ -193,13 +193,18 @@ final class DaoProxy<X extends Dao> implements InvocationHandler, Dao {
 		} else {
 
 			// query of (array of) standard Java type or a DataTypeAdapter type
+			if (adapter != null) {
+				DataTypeAdapter<?> dta = Utils.newObject(adapter);
+				db.getDialect().registerAdapter(dta);
+			}
+
 			objects = Utils.newArrayList();
 			ResultSet rs = db.executeQuery(preparedSql.sql, preparedSql.parameters);
 			try {
 
 				while (rs.next()) {
 
-					Object value = db.getDialect().deserialize(rs, 1, returnType, adapter);
+					Object value = db.getDialect().deserialize(rs, 1, returnType);
 					objects.add(value);
 
 					if (!isArray) {
@@ -683,8 +688,13 @@ final class DaoProxy<X extends Dao> implements InvocationHandler, Dao {
 					typeAdapter = Utils.getDataTypeAdapter(methodArg.getClass().getAnnotations());
 				}
 
+				if (typeAdapter != null) {
+					DataTypeAdapter<?> dta = Utils.newObject(typeAdapter);
+					db.getDialect().registerAdapter(dta);
+				}
+
 				// prepare the parameter
-				parameters[i] = db.getDialect().serialize(value, typeAdapter);
+				parameters[i] = db.getDialect().serialize(value);
 
 			}
 

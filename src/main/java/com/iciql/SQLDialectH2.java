@@ -127,7 +127,7 @@ public class SQLDialectH2 extends SQLDialectDefault {
 			buff.appendExceptFirst(", ");
 			buff.append('?');
 			Object value = def.getValue(obj, field);
-			Object parameter = serialize(value, field.typeAdapter);
+			Object parameter = serialize(value);
 			stat.addParameter(parameter);
 		}
 		buff.append(')');
