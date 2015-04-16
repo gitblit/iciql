@@ -18,6 +18,8 @@
 
 package com.iciql;
 
+import java.sql.ResultSet;
+
 import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.TableDefinition.IndexDefinition;
 
@@ -54,11 +56,13 @@ public interface SQLDialect {
 	/**
 	 * Deserialize the object received from the database into a Java type.
 	 *
-	 * @param value
+	 * @param rs
+	 * @param columnIndex
+	 * @param targetType
 	 * @param typeAdapter
 	 * @return the deserialized object
 	 */
-	Object deserialize(Object value, Class<? extends DataTypeAdapter<?>> typeAdapter);
+	Object deserialize(ResultSet rs, int columnIndex, Class<?> targetType, Class<? extends DataTypeAdapter<?>> typeAdapter);
 
 	/**
 	 * Configure the dialect.

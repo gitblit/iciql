@@ -24,6 +24,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Blob;
@@ -44,6 +45,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.Iciql.EnumId;
 import com.iciql.Iciql.EnumType;
+import com.iciql.Iciql.IQEnum;
 import com.iciql.Iciql.TypeAdapter;
 import com.iciql.IciqlException;
 
@@ -352,6 +354,59 @@ public class Utils {
 		throw new IciqlException("Can not convert the value {0} from {1} to {2}", o, currentType, targetType);
 	}
 
+	/**
+	 * Identify the EnumType for the field.
+	 *
+	 * @param f
+	 * @return null or the EnumType
+	 */
+	public static EnumType getEnumType(Field f) {
+		EnumType enumType = null;
+		if (f.getType().isEnum()) {
+			enumType = EnumType.DEFAULT_TYPE;
+			if (f.getType().isAnnotationPresent(IQEnum.class)) {
+				// enum definition is annotated for all instances
+				IQEnum iqenum = f.getType().getAnnotation(IQEnum.class);
+				enumType = iqenum.value();
+			}
+			if (f.isAnnotationPresent(IQEnum.class)) {
+				// this instance of the enum is annotated
+				IQEnum iqenum = f.getAnnotation(IQEnum.class);
+				enumType = iqenum.value();
+			}
+		}
+		return enumType;
+	}
+
+	/**
+	 * Identify the EnumType from the annotations.
+	 *
+	 * @param annotations
+	 * @return null or the EnumType
+	 */
+	public static EnumType getEnumType(Annotation [] annotations) {
+		EnumType enumType = null;
+		if (annotations != null) {
+			for (Annotation annotation : annotations) {
+				if (annotation instanceof IQEnum) {
+					enumType = ((IQEnum) annotation).value();
+					break;
+				}
+			}
+		}
+		return enumType;
+	}
+
+	public static Class<?> getEnumTypeClass(Field f) {
+		if (f.getType().isEnum()) {
+			if (EnumId.class.isAssignableFrom(f.getType())) {
+				// custom enumid mapping
+				return ((EnumId<?>) f.getType().getEnumConstants()[0]).enumIdClass();
+			}
+		}
+		return null;
+	}
+
 	public static Object convertEnum(Enum<?> o, EnumType type) {
 		if (o == null) {
 			return null;
@@ -540,7 +595,7 @@ public class Utils {
 	 * Identify the data type adapter class in the annotations.
 	 *
 	 * @param annotations
-	 * @return null or the dtaa type adapter class
+	 * @return null or the data type adapter class
 	 */
 	public static Class<? extends DataTypeAdapter<?>> getDataTypeAdapter(Annotation [] annotations) {
 		Class<? extends DataTypeAdapter<?>> typeAdapter = null;

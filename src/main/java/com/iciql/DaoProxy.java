@@ -38,7 +38,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.iciql.Iciql.DataTypeAdapter;
-import com.iciql.Iciql.TypeAdapter;
 import com.iciql.util.JdbcUtils;
 import com.iciql.util.StringUtils;
 import com.iciql.util.Utils;
@@ -175,18 +174,9 @@ final class DaoProxy<X extends Dao> implements InvocationHandler, Dao {
 				|| java.util.Date.class.isAssignableFrom(returnType)
 				|| byte[].class.isAssignableFrom(returnType);
 
-		// determine the return type adapter, if any
-		DataTypeAdapter<?> adapter = null;
-		for (Annotation annotation : method.getAnnotations()) {
-			if (annotation.annotationType() == TypeAdapter.class) {
-				TypeAdapter typeAdapter = (TypeAdapter) annotation;
-				adapter = db.getDialect().getAdapter(typeAdapter.value());
-				break;
-			} else if (annotation.annotationType().isAnnotationPresent(TypeAdapter.class)) {
-				TypeAdapter typeAdapter = annotation.annotationType().getAnnotation(TypeAdapter.class);
-				adapter = db.getDialect().getAdapter(typeAdapter.value());
-				break;
-			}
+		Class<? extends DataTypeAdapter<?>> adapter = Utils.getDataTypeAdapter(method.getAnnotations());
+		if (adapter == null) {
+			adapter = Utils.getDataTypeAdapter(returnType.getAnnotations());
 		}
 
 		/*
@@ -209,17 +199,7 @@ final class DaoProxy<X extends Dao> implements InvocationHandler, Dao {
 
 				while (rs.next()) {
 
-					Object o = rs.getObject(1);
-					Object value;
-
-					if (adapter == null) {
-						// use internal Iciql type conversion
-						value = Utils.convert(o, returnType);
-					} else {
-						// use the type adapter to convert the JDBC object to a domain type
-						value = adapter.deserialize(o);
-					}
-
+					Object value = db.getDialect().deserialize(rs, 1, returnType, adapter);
 					objects.add(value);
 
 					if (!isArray) {
@@ -704,37 +684,11 @@ final class DaoProxy<X extends Dao> implements InvocationHandler, Dao {
 				}
 
 				// prepare the parameter
-				parameters[i] = prepareParameter(db, value, typeAdapter);
+				parameters[i] = db.getDialect().serialize(value, typeAdapter);
 
 			}
 
 			return new PreparedSql(sql, parameters);
-
-		}
-
-		/**
-		 * Prepares a method argument to an sql parameter for transmission to a
-		 * database.
-		 *
-		 * @param db
-		 * @param arg
-		 * @param typeAdapter
-		 * @return a prepared parameter
-		 */
-		private Object prepareParameter(Db db, Object arg, Class<? extends DataTypeAdapter<?>> typeAdapter) {
-
-			if (typeAdapter != null) {
-
-				// use a type adapter to serialize the method argument
-				Object o = db.getDialect().serialize(arg, typeAdapter);
-				return o;
-
-			} else {
-
-				// use the method argument
-				return arg;
-
-			}
 
 		}
 

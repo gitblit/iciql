@@ -18,8 +18,6 @@
 package com.iciql;
 
 import java.lang.reflect.Field;
-import java.sql.Blob;
-import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,6 +26,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 
+import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.Iciql.EnumType;
 import com.iciql.NestedConditions.And;
 import com.iciql.NestedConditions.Or;
@@ -115,7 +114,6 @@ public class Query<T> {
 		return select(true);
 	}
 
-	@SuppressWarnings("unchecked")
 	public <X, Z> X selectFirst(Z x) {
 		List<X> list = limit(1).select(x);
 		return list.isEmpty() ? null : list.get(0);
@@ -424,18 +422,10 @@ public class Query<T> {
 		appendFromWhere(stat);
 		ResultSet rs = stat.executeQuery();
 		List<X> result = Utils.newArrayList();
+		Class<? extends DataTypeAdapter<?>> typeAdapter = Utils.getDataTypeAdapter(x.getClass().getAnnotations());
 		try {
 			while (rs.next()) {
-				X value;
-				Object o = rs.getObject(1);
-				// Convert CLOB and BLOB now because we close the resultset
-				if (Clob.class.isAssignableFrom(o.getClass())) {
-					value = (X) Utils.convert(o, String.class);
-				} else if (Blob.class.isAssignableFrom(o.getClass())) {
-					value = (X) Utils.convert(o, byte[].class);
-				} else {
-					value = (X) o;
-				}
+				X value = (X) db.getDialect().deserialize(rs, 1, x.getClass(), typeAdapter);
 				result.add(value);
 			}
 		} catch (Exception e) {
@@ -850,7 +840,8 @@ public class Query<T> {
 			stat.addParameter(y);
 		} else if (col != null) {
 			// object
-			Object parameter = db.getDialect().serialize(value, col.getFieldDefinition().typeAdapter);
+			Class<? extends DataTypeAdapter<?>> typeAdapter = col.getFieldDefinition().typeAdapter;
+			Object parameter = db.getDialect().serialize(value, typeAdapter);
 			stat.addParameter(parameter);
 		} else {
 			// primitive

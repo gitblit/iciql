@@ -42,7 +42,6 @@ import com.iciql.Iciql.IQContraintForeignKey;
 import com.iciql.Iciql.IQContraintUnique;
 import com.iciql.Iciql.IQContraintsForeignKey;
 import com.iciql.Iciql.IQContraintsUnique;
-import com.iciql.Iciql.IQEnum;
 import com.iciql.Iciql.IQIgnore;
 import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQIndexes;
@@ -134,25 +133,17 @@ public class TableDefinition<T> {
 
 		private Object initWithNewObject(Object obj) {
 			Object o = Utils.newObject(field.getType());
-			setValue(null, obj, o);
+			setValue(obj, o);
 			return o;
 		}
 
-		private void setValue(SQLDialect dialect, Object obj, Object o) {
+		private void setValue(Object obj, Object o) {
 			try {
 				if (!field.isAccessible()) {
 					field.setAccessible(true);
 				}
-				Class<?> targetType = field.getType();
-				if (targetType.isEnum()) {
-					o = Utils.convertEnum(o, targetType, enumType);
-				} else if (dialect != null && typeAdapter != null) {
-					o = dialect.deserialize(o, typeAdapter);
-				} else {
-					o = Utils.convert(o, targetType);
-				}
 
-				if (targetType.isPrimitive() && o == null) {
+				if (field.getType().isPrimitive() && o == null) {
 					// do not attempt to set a primitive to null
 					return;
 				}
@@ -161,14 +152,6 @@ public class TableDefinition<T> {
 			} catch (IciqlException e) {
 				throw e;
 			} catch (Exception e) {
-				throw new IciqlException(e);
-			}
-		}
-
-		private Object read(ResultSet rs, int columnIndex) {
-			try {
-				return rs.getObject(columnIndex);
-			} catch (SQLException e) {
 				throw new IciqlException(e);
 			}
 		}
@@ -457,32 +440,14 @@ public class TableDefinition<T> {
 			int scale = 0;
 			boolean trim = false;
 			boolean nullable = !f.getType().isPrimitive();
-			EnumType enumType = null;
-			Class<?> enumTypeClass = null;
 			String defaultValue = "";
 			String constraint = "";
 			String dataType = null;
 			Class<? extends DataTypeAdapter<?>> typeAdapter = null;
 
 			// configure Java -> SQL enum mapping
-			if (f.getType().isEnum()) {
-				enumType = EnumType.DEFAULT_TYPE;
-				if (f.getType().isAnnotationPresent(IQEnum.class)) {
-					// enum definition is annotated for all instances
-					IQEnum iqenum = f.getType().getAnnotation(IQEnum.class);
-					enumType = iqenum.value();
-				}
-				if (f.isAnnotationPresent(IQEnum.class)) {
-					// this instance of the enum is annotated
-					IQEnum iqenum = f.getAnnotation(IQEnum.class);
-					enumType = iqenum.value();
-				}
-
-				if (EnumId.class.isAssignableFrom(f.getType())) {
-					// custom enumid mapping
-					enumTypeClass = ((EnumId<?>) f.getType().getEnumConstants()[0]).enumIdClass();
-				}
-			}
+			EnumType enumType = Utils.getEnumType(f);
+			Class<?> enumTypeClass = Utils.getEnumTypeClass(f);
 
 			// try using default object
 			try {
@@ -1201,9 +1166,20 @@ public class TableDefinition<T> {
 	void readRow(SQLDialect dialect, Object item, ResultSet rs, int[] columns) {
 		for (int i = 0; i < fields.size(); i++) {
 			FieldDefinition def = fields.get(i);
-			int index = columns[i];
-			Object o = def.read(rs, index);
-			def.setValue(dialect, item, o);
+			Class<?> targetType = def.field.getType();
+			Object o;
+			if (targetType.isEnum()) {
+				Object obj;
+				try {
+					obj = rs.getObject(columns[i]);
+				} catch (SQLException e) {
+					throw new IciqlException(e);
+				}
+				o = Utils.convertEnum(obj, targetType, def.enumType);
+			} else {
+				o = dialect.deserialize(rs, columns[i], targetType, def.typeAdapter);
+			}
+			def.setValue(item, o);
 		}
 	}
 
