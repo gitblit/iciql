@@ -16,6 +16,13 @@
 
 package com.iciql;
 
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+
+import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.IciqlLogger;
@@ -135,4 +142,42 @@ public class SQLDialectSQLite extends SQLDialectDefault {
 		stat.setSQL(buff.toString());
 	}
 
+	@Override
+	public Object deserialize(ResultSet rs, int columnIndex, Class<?> targetType, Class<? extends DataTypeAdapter<?>> typeAdapter) {
+		try {
+			return super.deserialize(rs, columnIndex, targetType, typeAdapter);
+		} catch (IciqlException e) {
+			if (typeAdapter == null && e.getMessage().startsWith("Can not convert")) {
+				try {
+					// give the SQLite JDBC driver an opportunity to deserialize DateTime objects
+					if (Timestamp.class.equals(targetType)) {
+						return rs.getTimestamp(columnIndex);
+					} else if (Time.class.equals(targetType)) {
+						return rs.getTime(columnIndex);
+					} else if (Date.class.equals(targetType)) {
+						return rs.getDate(columnIndex);
+					} else if (java.util.Date.class.equals(targetType)) {
+						Timestamp timestamp = rs.getTimestamp(columnIndex);
+						return new java.util.Date(timestamp.getTime());
+					}
+				} catch (SQLException x) {
+					throw new IciqlException(x, "Can not convert the value at column {0} to {1}",
+							columnIndex, targetType.getName());
+				}
+			}
+
+			// rethrow e
+			throw e;
+		}
+	}
+
+	@Override
+	public String prepareStringParameter(Object o) {
+		if (o instanceof Boolean) {
+			// SQLite does not have an explicit BOOLEAN type
+			Boolean bool = (Boolean) o;
+			return bool ? "1" : "0";
+		}
+		return super.prepareStringParameter(o);
+	}
 }
