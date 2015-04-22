@@ -477,39 +477,32 @@ public class SQLDialectDefault implements SQLDialect {
 
 	@Override
 	public Object deserialize(ResultSet rs, int columnIndex, Class<?> targetType) {
-		DataTypeAdapter<?> dta = getAdapter(targetType);
-		if (dta == null) {
-			// standard object deserialization
-			Object value = null;
-			try {
-				// use internal Iciql type conversion
+		Object value = null;
+		try {
+			DataTypeAdapter<?> dta = getAdapter(targetType);
+			if (dta == null) {
+				// standard object deserialization
 				Object o = rs.getObject(columnIndex);
-				if (Clob.class.isAssignableFrom(o.getClass())) {
+				if (o == null) {
+					// no-op
+					value = null;
+				} else if (Clob.class.isAssignableFrom(o.getClass())) {
 					value = Utils.convert(o, String.class);
 				} else if (Blob.class.isAssignableFrom(o.getClass())) {
 					value = Utils.convert(o, byte[].class);
 				} else {
 					value = Utils.convert(o, targetType);
 				}
-			} catch (SQLException e) {
-				throw new IciqlException(e, "Can not convert the value at column {0} to {1}",
-						columnIndex, targetType.getName());
+			} else {
+				// custom object deserialization with a DataTypeAdapter
+				Object object = rs.getObject(columnIndex);
+				value = dta.deserialize(object);
 			}
-
-			return value;
-		} else {
-			// custom object deserialization with a DataTypeAdapter
-			Object object = null;
-			try {
-				object = rs.getObject(columnIndex);
-			} catch (SQLException e) {
-				throw new IciqlException(e, "Can not convert the value at column {0} to {1}",
-						columnIndex, targetType.getName());
-			}
-
-			Object value = dta.deserialize(object);
-			return value;
+		} catch (SQLException e) {
+			throw new IciqlException(e, "Can not convert the value at column {0} to {1}",
+					columnIndex, targetType.getName());
 		}
+		return value;
 	}
 
 	@Override
