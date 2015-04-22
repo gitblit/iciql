@@ -248,11 +248,14 @@ public class Query<T> {
 		appendFromWhere(stat);
 		ResultSet rs = stat.executeQuery();
 		try {
-			int[] columns = def.mapColumns(false, rs);
-			while (rs.next()) {
-				T item = from.newObject();
-				def.readRow(db.getDialect(), item, rs, columns);
-				result.add(item);
+			// SQLite returns pre-closed ResultSets for query results with 0 rows
+			if (!rs.isClosed()) {
+				int[] columns = def.mapColumns(false, rs);
+				while (rs.next()) {
+					T item = from.newObject();
+					def.readRow(db.getDialect(), item, rs, columns);
+					result.add(item);
+				}
 			}
 		} catch (SQLException e) {
 			throw IciqlException.fromSQL(stat.getSQL(), e);
@@ -401,11 +404,14 @@ public class Query<T> {
 		appendFromWhere(stat);
 		ResultSet rs = stat.executeQuery();
 		try {
-			int[] columns = def.mapColumns(false, rs);
-			while (rs.next()) {
-				X row = Utils.newObject(clazz);
-				def.readRow(db.getDialect(), row, rs, columns);
-				result.add(row);
+			// SQLite returns pre-closed ResultSets for query results with 0 rows
+			if (!rs.isClosed()) {
+				int[] columns = def.mapColumns(false, rs);
+				while (rs.next()) {
+					X row = Utils.newObject(clazz);
+					def.readRow(db.getDialect(), row, rs, columns);
+					result.add(row);
+				}
 			}
 		} catch (SQLException e) {
 			throw IciqlException.fromSQL(stat.getSQL(), e);
@@ -428,9 +434,12 @@ public class Query<T> {
 			db.getDialect().registerAdapter(dta);
 		}
 		try {
-			while (rs.next()) {
-				X value = (X) db.getDialect().deserialize(rs, 1, x.getClass());
-				result.add(value);
+			// SQLite returns pre-closed ResultSets for query results with 0 rows
+			if (!rs.isClosed()) {
+				while (rs.next()) {
+					X value = (X) db.getDialect().deserialize(rs, 1, x.getClass());
+					result.add(value);
+				}
 			}
 		} catch (Exception e) {
 			throw IciqlException.fromSQL(stat.getSQL(), e);

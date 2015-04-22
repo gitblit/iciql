@@ -414,11 +414,14 @@ public class Db implements AutoCloseable {
 		List<T> result = new ArrayList<T>();
 		TableDefinition<T> def = (TableDefinition<T>) define(modelClass);
 		try {
-			int[] columns = def.mapColumns(wildcardSelect, rs);
-			while (rs.next()) {
-				T item = Utils.newObject(modelClass);
-				def.readRow(dialect, item, rs, columns);
-				result.add(item);
+			// SQLite returns pre-closed ResultSets for query results with 0 rows
+			if (!rs.isClosed()) {
+				int[] columns = def.mapColumns(wildcardSelect, rs);
+				while (rs.next()) {
+					T item = Utils.newObject(modelClass);
+					def.readRow(dialect, item, rs, columns);
+					result.add(item);
+				}
 			}
 		} catch (SQLException e) {
 			throw new IciqlException(e);
