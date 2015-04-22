@@ -82,7 +82,7 @@ dependencyDirectory: ext
 repositories: central
 
 properties: {
-	h2.version : 1.4.186
+	h2.version : 1.4.187
 	hsqldb.version : 2.3.2
 	derby.version : 10.11.1.1
 	mysql.version : 5.6
