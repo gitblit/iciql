@@ -87,7 +87,7 @@ properties: {
 	derby.version : 10.11.1.1
 	mysql.version : 5.6
 	postgresql.version : 9.3
-	sqlite.version : 3.8.7
+	sqlite.version : 3.8.9
 }
 
 dependencies:

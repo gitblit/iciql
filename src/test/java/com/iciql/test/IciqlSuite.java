@@ -114,9 +114,42 @@ public class IciqlSuite {
 			new TestDb("Derby", "tcp", "jdbc:derby://localhost:1527/testdbs/derby/iciql;create=true", "sa", "sa"),
 			new TestDb("MySQL", "tcp", "jdbc:mysql://localhost:3306/iciql", "sa", "sa"),
 			new TestDb("PostgreSQL", "tcp", "jdbc:postgresql://localhost:5432/iciql", "sa", "sa"),
-			new TestDb("SQLite", "memory", "jdbc:sqlite:file:iciql?mode=memory&cache=shared"),
-			new TestDb("SQLite", "delete,full sync", "jdbc:sqlite:"
-					+ new File(baseFolder, "/sqlite/iciql.db").getAbsolutePath())
+
+			//
+			// SQLite Memory
+			//
+			new TestDb("SQLite", "memory", "jdbc:sqlite:file::memory:?cache=shared&foreign_keys=ON"),
+
+			//
+			// SQLite DELETE rollback journal (default)
+			//
+			new TestDb("SQLite", "delete,full_sync", "jdbc:sqlite:"
+					+ new File(baseFolder, "/sqlite/iciql.db").getAbsolutePath()
+					+ "?foreign_keys=ON&journal_mode=DELETE&synchronous=FULL"),
+
+			new TestDb("SQLite", "delete,norm_sync", "jdbc:sqlite:"
+					+ new File(baseFolder, "/sqlite/iciql.db").getAbsolutePath()
+					+ "?foreign_keys=ON&journal_mode=DELETE&synchronous=NORMAL"),
+
+			new TestDb("SQLite", "delete,no_sync", "jdbc:sqlite:"
+					+ new File(baseFolder, "/sqlite/iciql.db").getAbsolutePath()
+					+ "?foreign_keys=ON&journal_mode=DELETE&synchronous=OFF"),
+
+			//
+			// SQLite WAL
+			//
+			new TestDb("SQLite", "wal,full_sync", "jdbc:sqlite:"
+					+ new File(baseFolder, "/sqlite/iciql.db").getAbsolutePath()
+					+ "?foreign_keys=ON&journal_mode=WAL&synchronous=FULL"),
+
+			new TestDb("SQLite", "wal,norm_sync", "jdbc:sqlite:"
+					+ new File(baseFolder, "/sqlite/iciql.db").getAbsolutePath()
+					+ "?foreign_keys=ON&journal_mode=WAL&synchronous=NORMAL"),
+
+			new TestDb("SQLite", "wal,no_sync", "jdbc:sqlite:"
+					+ new File(baseFolder, "/sqlite/iciql.db").getAbsolutePath()
+					+ "?foreign_keys=ON&journal_mode=WAL&synchronous=OFF"),
+
 			};
 
 	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[0];
