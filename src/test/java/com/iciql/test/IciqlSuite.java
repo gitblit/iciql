@@ -290,6 +290,9 @@ public class IciqlSuite {
 		} else if (isMySQL(db)) {
 			// MySQL does not have schemas
 			return null;
+		} else if (isSQLite(db)) {
+			// SQLite does not have schemas
+			return null;
 		}
 
 		return "PUBLIC";

@@ -17,9 +17,9 @@
 
 package com.iciql.test;
 
+import static com.iciql.test.IciqlSuite.assertEqualsIgnoreCase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static com.iciql.test.IciqlSuite.assertEqualsIgnoreCase;
 
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -69,10 +69,11 @@ public class ModelsTest {
 
 	@Test
 	public void testValidateModels() {
+		// SQLite metadata mapping in the JDBC driver needs improvement
 		String schemaName = IciqlSuite.getDefaultSchema(db);
 		DbInspector inspector = new DbInspector(db);
-		validateModel(inspector, schemaName, new ProductAnnotationOnly(), 2);
-		validateModel(inspector, schemaName, new ProductMixedAnnotation(), 4);
+		validateModel(inspector, schemaName, new ProductAnnotationOnly(), IciqlSuite.isSQLite(db) ? 5 : 2);
+		validateModel(inspector, schemaName, new ProductMixedAnnotation(), IciqlSuite.isSQLite(db) ? 6 : 4);
 	}
 
 	private void validateModel(DbInspector inspector, String schemaName, Object o, int expected) {
@@ -89,7 +90,9 @@ public class ModelsTest {
 			}
 		}
 
-		if (StringUtils.isNullOrEmpty(schemaName)) {
+		if (IciqlSuite.isSQLite(db)) {
+			assertEquals(sb.toString(), expected, remarks.size());
+		} else  if (StringUtils.isNullOrEmpty(schemaName)) {
 			// no schema expected
 			assertEquals(sb.toString(), expected - 1, remarks.size());
 		} else {
@@ -137,6 +140,8 @@ public class ModelsTest {
 			// MySQL uses timestamp default values like
 			// 0000-00-00 00:00:00 and CURRENT_TIMESTAMP
 			assertEquals(1673, models.get(0).length());
+		} else if (dbName.equals("SQLite")) {
+			assertEquals(1566, models.get(0).length());
 		} else {
 			// unknown database
 			assertEquals(0, models.get(0).length());

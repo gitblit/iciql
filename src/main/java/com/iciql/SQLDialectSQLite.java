@@ -35,14 +35,13 @@ public class SQLDialectSQLite extends SQLDialectDefault {
 
 	@Override
 	public boolean supportsSavePoints() {
-		return false;
-	}
-
-	@Override
-	public void configureDialect(Db db) {
-		super.configureDialect(db);
-		// enable foreign key constraint enforcement
-		db.executeUpdate("PRAGMA foreign_keys = ON;");
+		// SAVEPOINT support was added after the 3.8.7 release
+		String [] chunks = productVersion.split("\\.");
+		if (Integer.parseInt(chunks[0]) > 3) {
+			return true;
+		}
+		float f = Float.parseFloat(chunks[1] + "." + chunks[2]);
+		return (f > 8.7);
 	}
 
 	@Override
@@ -104,8 +103,6 @@ public class SQLDialectSQLite extends SQLDialectDefault {
 		buff.append("INDEX IF NOT EXISTS ");
 		buff.append(index.indexName);
 		buff.append(" ON ");
-		// FIXME maybe we can use schemaName ?
-		// buff.append(prepareTableName(schemaName, tableName));
 		buff.append(tableName);
 		buff.append("(");
 		for (String col : index.columnNames) {

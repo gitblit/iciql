@@ -30,13 +30,13 @@ import com.iciql.Iciql.IndexType;
  * A table containing product data.
  */
 
-@IQTable(name = "AnnotatedProduct", primaryKey = "id")
+@IQTable(name = "AnnotatedProduct")
 @IQIndexes({ @IQIndex({ "name", "cat" }), @IQIndex(name = "nameidx", type = IndexType.HASH, value = "name") })
 public class ProductAnnotationOnly {
 
 	public String unmappedField;
 
-	@IQColumn(name = "id", autoIncrement = true)
+	@IQColumn(name = "id", autoIncrement = true, primaryKey = true)
 	public Long productId;
 
 	@IQColumn(name = "cat", length = 15, trim = true)
@@ -87,6 +87,7 @@ public class ProductAnnotationOnly {
 		return Arrays.asList(list);
 	}
 
+	@Override
 	public String toString() {
 		return productName + ": " + unitsInStock;
 	}
