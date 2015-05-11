@@ -22,7 +22,7 @@ Supported Databases (Unit-Tested)
 - [Derby](http://db.apache.org/derby) 10.11
 - [MySQL](http://mysql.com) 5.6
 - [PostgreSQL](http://postgresql.org) 9.3
-- [SQLite](http://www.sqlite.org) 3.8
+- [SQLite](http://www.sqlite.org) 3.10
 
 Support for others is possible and may only require creating a simple "dialect" class.
 
