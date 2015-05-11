@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="ext/derbynet-10.11.1.1.jar" />
 	<classpathentry kind="lib" path="ext/mysql-connector-java-5.1.33.jar" />
 	<classpathentry kind="lib" path="ext/postgresql-9.4-1201-jdbc41.jar" sourcepath="ext/src/postgresql-9.4-1201-jdbc41.jar" />
-	<classpathentry kind="lib" path="ext/sqlite-jdbc-3.8.9.jar" />
+	<classpathentry kind="lib" path="ext/sqlite-jdbc-3.8.9.1.jar" sourcepath="ext/src/sqlite-jdbc-3.8.9.1.jar" />
 	<classpathentry kind="lib" path="ext/slf4j-api-1.7.12.jar" sourcepath="ext/src/slf4j-api-1.7.12.jar" />
 	<classpathentry kind="lib" path="ext/commons-pool-1.5.6.jar" sourcepath="ext/src/commons-pool-1.5.6.jar" />
 	<classpathentry kind="lib" path="ext/commons-dbcp-1.4.jar" sourcepath="ext/src/commons-dbcp-1.4.jar" />
