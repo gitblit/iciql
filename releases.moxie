@@ -5,15 +5,23 @@ r25: {
     title: ${project.name} ${project.version} released
     id: ${project.version}
     date: ${project.buildDate}
-    note: ~
+    note: Re-spin of 1.6.0
     html: ~
     text: ~
     security: ~
-    fixes: ~
-    changes: ~
+    fixes:
+    - Fix column inheritance from superclasses (pr-14)
+    - Use webapp classloader rather than global classloader (pr-12)
+    changes:
+    - Improve SQLite dialect based on upstream JDBC improvements
     additions: ~
-    dependencyChanges: ~
-    contributors: ~
+    dependencyChanges:
+    - SQLite 3.8.10
+    contributors:
+    - James Moger
+    - Pierre Templier
+    - Maaartinus
+    - Constantin Nickel
 }
 
 #
@@ -27,11 +35,19 @@ r24: {
     html: ~
     text: ~
     security: ~
-    fixes: ~
-    changes: ~
+    fixes:
+    - Fix column inheritance from superclasses (pr-14)
+    - Use webapp classloader rather than global classloader (pr-12)
+    changes:
+    - Improve SQLite dialect based on upstream JDBC improvements
     additions: ~
-    dependencyChanges: ~
-    contributors: ~
+    dependencyChanges:
+    - SQLite 3.8.10
+    contributors:
+    - James Moger
+    - Pierre Templier
+    - Maaartinus
+    - Constantin Nickel
 }
 
 #
