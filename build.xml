@@ -101,7 +101,7 @@
 		Build the iciql website
 		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	-->
-	<target name="buildSite" depends="build" description="Build the iciql website">
+	<target name="buildSite" description="Build the iciql website">
 		<!-- ensure we have performance data -->
 		<mx:if>
 			<not>
