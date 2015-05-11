@@ -91,7 +91,7 @@ public class SQLDialectHSQL extends SQLDialectDefault {
 			}
 			buff.append(')');
 			Object value = def.getValue(obj, field);
-			Object parameter = serialize(value);
+			Object parameter = serialize(value, field.typeAdapter);
 			stat.addParameter(parameter);
 		}
 

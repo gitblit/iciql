@@ -77,7 +77,7 @@ public class SQLDialectMySQL extends SQLDialectDefault {
 			buff.appendExceptFirst(", ");
 			buff.append('?');
 			Object value = def.getValue(obj, field);
-			Object parameter = serialize(value);
+			Object parameter = serialize(value, field.typeAdapter);
 			stat.addParameter(parameter);
 		}
 		buff.append(") ON DUPLICATE KEY UPDATE ");

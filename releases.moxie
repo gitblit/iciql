@@ -9,7 +9,8 @@ r26: {
     html: ~
     text: ~
     security: ~
-    fixes: ~
+    fixes:
+    - Reverted change which keyed DataTypeAdapters by the target Java type
     changes: ~
     additions: ~
     dependencyChanges: ~
@@ -30,8 +31,13 @@ r25: {
     fixes:
     - Fix column inheritance from superclasses (pr-14)
     - Use webapp classloader rather than global classloader (pr-12)
+    - Fix deserialization of null values
     changes:
     - Improve SQLite dialect based on upstream JDBC improvements
+    - Key DataTypeAdapters by target Java type
+    - Drop precision and length from SQL->Java type determination
+    - Improve readability of the generated performance benchmark table
+    - Added Derby TCP benchmark test
     additions: ~
     dependencyChanges:
     - SQLite 3.8.10
@@ -56,8 +62,13 @@ r24: {
     fixes:
     - Fix column inheritance from superclasses (pr-14)
     - Use webapp classloader rather than global classloader (pr-12)
+    - Fix deserialization of null values
     changes:
     - Improve SQLite dialect based on upstream JDBC improvements
+    - Key DataTypeAdapters by target Java type
+    - Drop precision and length from SQL->Java type determination
+    - Improve readability of the generated performance benchmark table
+    - Added Derby TCP benchmark test
     additions: ~
     dependencyChanges:
     - SQLite 3.8.10
