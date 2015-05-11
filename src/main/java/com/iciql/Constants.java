@@ -32,11 +32,7 @@ public class Constants {
 	public static final String API_CURRENT = "15";
 
 	public static String getVersion() {
-		String v = Constants.class.getPackage().getImplementationVersion();
-		if (v == null) {
-			return "0.0.0-SNAPSHOT";
-		}
-		return v;
+		return getManifestValue("implementation-version", "0.0.0-SNAPSHOT");
 	}
 
 	public static String getBuildDate() {
@@ -47,12 +43,14 @@ public class Constants {
 		Class<?> clazz = Constants.class;
 		String className = clazz.getSimpleName() + ".class";
 		String classPath = clazz.getResource(className).toString();
-		if (!classPath.startsWith("jar")) {
-			// Class not from JAR
-			return defaultValue;
-		}
 		try {
-			String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+			String manifestPath;
+			if (classPath.indexOf('!') > -1) {
+				manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+			} else {
+				String pkgPath = "/" + clazz.getPackage().getName().replace('.', '/');
+				manifestPath = classPath.substring(0, classPath.indexOf(pkgPath))  + "/META-INF/MANIFEST.MF";
+			}
 			Manifest manifest = new Manifest(new URL(manifestPath).openStream());
 			Attributes attr = manifest.getMainAttributes();
 			String value = attr.getValue(attrib);
