@@ -16,6 +16,7 @@
 
 package com.iciql;
 
+import com.iciql.TableDefinition.FieldDefinition;
 import com.iciql.TableDefinition.IndexDefinition;
 import com.iciql.util.StatementBuilder;
 
@@ -99,6 +100,37 @@ public class SQLDialectPostgreSQL extends SQLDialectDefault {
 		buff.append(") ");
 
 		stat.setSQL(buff.toString().trim());
+	}
+
+	@Override
+	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName,
+			TableDefinition<T> def, Object obj) {
+
+		if (databaseVersion < 9.5f) {
+			// simulated UPSERT for <= 9.4 release
+			super.prepareMerge(stat, schemaName, tableName, def, obj);
+			return;
+		}
+
+		// official UPSERT added in 9.5 release
+		StatementBuilder buff = new StatementBuilder("INSERT INTO ");
+		buff.append(prepareTableName(schemaName, tableName)).append(" (");
+		buff.resetCount();
+		for (FieldDefinition field : def.fields) {
+			buff.appendExceptFirst(", ");
+			buff.append(field.columnName);
+		}
+		buff.resetCount();
+		buff.append(") VALUES (");
+		for (FieldDefinition field : def.fields) {
+			buff.appendExceptFirst(", ");
+			buff.append('?');
+			Object value = def.getValue(obj, field);
+			Object parameter = serialize(value, field.typeAdapter);
+			stat.addParameter(parameter);
+		}
+		buff.append(") ON CONFLICT DO UPDATE SET");
+		stat.setSQL(buff.toString());
 	}
 
 }

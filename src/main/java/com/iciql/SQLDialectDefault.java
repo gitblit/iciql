@@ -49,13 +49,13 @@ public class SQLDialectDefault implements SQLDialect {
 
 	final String LITERAL = "'";
 
-	float databaseVersion;
-	int databaseMajorVersion;
-	int databaseMinorVersion;
-	String databaseName;
-	String productVersion;
-	Mode mode;
-	Map<Class<? extends DataTypeAdapter<?>>, DataTypeAdapter<?>> typeAdapters;
+	protected float databaseVersion;
+	protected int databaseMajorVersion;
+	protected int databaseMinorVersion;
+	protected String databaseName;
+	protected String productVersion;
+	protected Mode mode;
+	protected Map<Class<? extends DataTypeAdapter<?>>, DataTypeAdapter<?>> typeAdapters;
 
 	public SQLDialectDefault() {
 		typeAdapters = new ConcurrentHashMap<Class<? extends DataTypeAdapter<?>>, DataTypeAdapter<?>>();

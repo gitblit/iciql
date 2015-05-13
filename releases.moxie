@@ -10,10 +10,12 @@ r27: {
     text: ~
     security: ~
     fixes: ~
-    changes: ~
+    changes:
+    - Add support for PostgreSQL 9.5 UPSERT syntax
     additions: ~
     dependencyChanges: ~
-    contributors: ~
+    contributors:
+    - James Moger
 }
 
 #
@@ -32,7 +34,8 @@ r26: {
     changes: ~
     additions: ~
     dependencyChanges: ~
-    contributors: ~
+    contributors:
+    - James Moger
 }
 
 #
