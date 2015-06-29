@@ -799,8 +799,7 @@ public class Db implements AutoCloseable {
 				}
 				rs = stat.executeQuery();
 			}
-			boolean wildcardSelect = sql.toLowerCase().startsWith("select *")
-					|| sql.toLowerCase().startsWith("select distinct *");
+			boolean wildcardSelect = sql.toLowerCase().matches("select .*\\*.+");
 			return buildObjects(modelClass, wildcardSelect, rs);
 		} catch (SQLException e) {
 			throw new IciqlException(e);

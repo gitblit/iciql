@@ -9,7 +9,8 @@ r27: {
     html: ~
     text: ~
     security: ~
-    fixes: ~
+    fixes:
+    - Fix column mapping on wildcard select JOIN statements
     changes:
     - Add support for PostgreSQL 9.5 UPSERT syntax
     additions: ~
