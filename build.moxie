@@ -10,13 +10,13 @@ name: Iciql
 description: 'a model-based database access wrapper for JDBC'
 groupId: com.iciql
 artifactId: iciql
-version: 1.6.4-SNAPSHOT
+version: 1.6.4
 packaging: jar+zip
 inceptionYear: 2011
 
 # Current stable release
-releaseVersion: 1.6.3
-releaseDate: 2015-06-29
+releaseVersion: 1.6.4
+releaseDate: 2015-06-30
 
 # Project urls
 url: 'http://iciql.com'
