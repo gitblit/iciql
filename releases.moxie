@@ -11,9 +11,11 @@ r28: {
     security: ~
     fixes: ~
     changes: ~
-    additions: ~
+    additions:
+    - Support Set, List, and Map types for columns when used with DataTypeAdapter
     dependencyChanges: ~
-    contributors: ~
+    contributors:
+    - James Moger
 }
 
 #

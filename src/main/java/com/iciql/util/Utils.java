@@ -37,7 +37,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -191,6 +193,15 @@ public class Utils {
 		} else if (clazz == java.util.UUID.class) {
 			COUNTER.getAndIncrement();
 			return (T) UUID.randomUUID();
+		} else if (Set.class == clazz) {
+			COUNTER.getAndIncrement();
+			return (T) new HashSet();
+		} else if (List.class == clazz) {
+			COUNTER.getAndIncrement();
+			return (T) new ArrayList();
+		} else if (Map.class == clazz) {
+			COUNTER.getAndIncrement();
+			return (T) new HashMap();
 		}
 		try {
 			return clazz.newInstance();
