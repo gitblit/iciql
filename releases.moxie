@@ -9,11 +9,13 @@ r29: {
     html: ~
     text: ~
     security: ~
-    fixes: ~
+    fixes:
+    - Strip column identifiers from specified column names when mapping JDBC ResultSets to fields
     changes: ~
     additions: ~
     dependencyChanges: ~
-    contributors: ~
+    contributors:
+    - James Moger
 }
 
 #

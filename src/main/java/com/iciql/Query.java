@@ -250,7 +250,7 @@ public class Query<T> {
 		try {
 			// SQLite returns pre-closed ResultSets for query results with 0 rows
 			if (!rs.isClosed()) {
-				int[] columns = def.mapColumns(false, rs);
+				int[] columns = def.mapColumns(db.getDialect(), false, rs);
 				while (rs.next()) {
 					T item = from.newObject();
 					def.readRow(db.getDialect(), item, rs, columns);
@@ -406,7 +406,7 @@ public class Query<T> {
 		try {
 			// SQLite returns pre-closed ResultSets for query results with 0 rows
 			if (!rs.isClosed()) {
-				int[] columns = def.mapColumns(false, rs);
+				int[] columns = def.mapColumns(db.getDialect(), false, rs);
 				while (rs.next()) {
 					X row = Utils.newObject(clazz);
 					def.readRow(db.getDialect(), row, rs, columns);

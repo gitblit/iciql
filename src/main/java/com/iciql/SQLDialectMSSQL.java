@@ -22,6 +22,11 @@ package com.iciql;
  */
 public class SQLDialectMSSQL extends SQLDialectDefault {
 
+	@Override
+	public String extractColumnName(String name) {
+		return super.extractColumnName(name).replace('[', ' ').replace(']', ' ').trim();
+	}
+
   /**
    * Append limit and offset rows
    *

@@ -416,7 +416,7 @@ public class Db implements AutoCloseable {
 		try {
 			// SQLite returns pre-closed ResultSets for query results with 0 rows
 			if (!rs.isClosed()) {
-				int[] columns = def.mapColumns(wildcardSelect, rs);
+				int[] columns = def.mapColumns(dialect, wildcardSelect, rs);
 				while (rs.next()) {
 					T item = Utils.newObject(modelClass);
 					def.readRow(dialect, item, rs, columns);

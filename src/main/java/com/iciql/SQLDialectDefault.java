@@ -120,6 +120,11 @@ public class SQLDialectDefault implements SQLDialect {
 	}
 
 	@Override
+	public String extractColumnName(String name) {
+		return name.replace('\"', ' ').replace('\'', ' ').trim();
+	}
+
+	@Override
 	public <T> void prepareDropTable(SQLStatement stat, TableDefinition<T> def) {
 		StatementBuilder buff = new StatementBuilder("DROP TABLE IF EXISTS "
 				+ prepareTableName(def.schemaName, def.tableName));

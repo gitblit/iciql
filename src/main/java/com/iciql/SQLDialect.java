@@ -215,4 +215,13 @@ public interface SQLDialect {
 	 */
 	String prepareStringParameter(Object o);
 
+	/**
+	 * Returns the name of a formatted column identifier for the dialect.
+	 *
+	 * @param name
+	 *            the column name
+	 * @return the column name without formatting syntax
+	 */
+	String extractColumnName(String name);
+
 }

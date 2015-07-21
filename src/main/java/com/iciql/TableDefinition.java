@@ -1140,7 +1140,7 @@ public class TableDefinition<T> {
 	 * @param rs
 	 * @return
 	 */
-	int[] mapColumns(boolean wildcardSelect, ResultSet rs) {
+	int[] mapColumns(SQLDialect dialect, boolean wildcardSelect, ResultSet rs) {
 		int[] columns = new int[fields.size()];
 		for (int i = 0; i < fields.size(); i++) {
 			try {
@@ -1149,7 +1149,7 @@ public class TableDefinition<T> {
 				if (wildcardSelect) {
 					// select *
 					// create column index by field name
-					columnIndex = rs.findColumn(def.columnName);
+					columnIndex = rs.findColumn(dialect.extractColumnName(def.columnName));
 				} else {
 					// select alpha, beta, gamma, etc
 					// explicit select order
