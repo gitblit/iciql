@@ -5,7 +5,7 @@ r30: {
     title: ${project.name} ${project.version} released
     id: ${project.version}
     date: ${project.buildDate}
-    note: ~
+    note: 'The groupId has changed to com.gitblit.iciql'
     html: ~
     text: ~
     security: ~
