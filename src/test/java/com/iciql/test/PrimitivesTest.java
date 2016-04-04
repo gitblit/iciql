@@ -99,4 +99,21 @@ public class PrimitivesTest {
 		}
 		db.close();
 	}
+
+	@Test
+	public void testPrimitiveColumnSelection() {
+		Db db = IciqlSuite.openNewDb();
+
+		// insert random models in reverse order
+		List<PrimitivesModel> models = PrimitivesModel.getList();
+		PrimitivesModel model = models.get(0);
+		Collections.reverse(models);
+		// insert them in reverse order
+		db.insertAll(models);
+
+		PrimitivesModel p = new PrimitivesModel();
+		List<Long> list = db.from(p)/*.orderByDesc(p.myLong)*/.select(p.myLong);
+		assertEquals(models.size(), list.size());
+		assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]", list.toString());
+	}
 }

@@ -160,4 +160,19 @@ public class ModelsTest {
 		SupportedTypes s2 = db.from(SupportedTypes.SAMPLE).where(SupportedTypes.SAMPLE.id).is(1).selectFirst();
 		assertEquals(40, s2.myString.length());
 	}
+
+	@Test
+	public void testColumnSelection() {
+		List<SupportedTypes> original = SupportedTypes.createList();
+		db.insertAll(original);
+		List<String> myStrings = db.from(SupportedTypes.SAMPLE)
+				.select(SupportedTypes.SAMPLE.myString);
+		assertEquals(10, myStrings.size());
+
+		List<Integer> ids = db.from(SupportedTypes.SAMPLE)
+				.orderByDesc(SupportedTypes.SAMPLE.id)
+				.selectDistinct(SupportedTypes.SAMPLE.id);
+		assertEquals(10, ids.size());
+		assertEquals("[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]", ids.toString());
+	}
 }

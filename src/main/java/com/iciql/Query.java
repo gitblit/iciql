@@ -389,9 +389,21 @@ public class Query<T> {
 	@SuppressWarnings("unchecked")
 	private <X, Z> List<X> select(Z x, boolean distinct) {
 		Class<?> clazz = x.getClass();
-		if (Utils.isSimpleType(clazz)) {
-			return selectSimple((X) x, distinct);
+		if (Db.isToken(x)) {
+			// selecting a function
+			return selectFunction((X) x, distinct);
+		} else {
+			// selecting a column
+			SelectColumn<T> col = getColumnByReference(x);
+			if (col == null) {
+				col = getColumnByReference(getPrimitiveAliasByValue(x));
+			}
+			if (col != null) {
+				return (List<X>) selectColumn(col, clazz, distinct);
+			}
 		}
+
+		// selecting into a new object type
 		Class<?> enclosingClass = clazz.getEnclosingClass();
 		if (enclosingClass != null) {
 			// anonymous inner class
@@ -426,18 +438,41 @@ public class Query<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <X> List<X> selectSimple(X x, boolean distinct) {
+	private <X> List<X> selectFunction(X x, boolean distinct) {
 		SQLStatement stat = getSelectStatement(distinct);
 		appendSQL(stat, null, x);
 		appendFromWhere(stat);
 		ResultSet rs = stat.executeQuery();
 		List<X> result = Utils.newArrayList();
-		Class<? extends DataTypeAdapter<?>> typeAdapter = Utils.getDataTypeAdapter(x.getClass().getAnnotations());
 		try {
 			// SQLite returns pre-closed ResultSets for query results with 0 rows
 			if (!rs.isClosed()) {
 				while (rs.next()) {
-					X value = (X) db.getDialect().deserialize(rs, 1, x.getClass(), typeAdapter);
+					X value = (X) rs.getObject(1);
+					result.add(value);
+				}
+			}
+		} catch (Exception e) {
+			throw IciqlException.fromSQL(stat.getSQL(), e);
+		} finally {
+			JdbcUtils.closeSilently(rs, true);
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <X> List<X> selectColumn(SelectColumn<T> col, Class<X> clazz, boolean distinct) {
+		SQLStatement stat = getSelectStatement(distinct);
+		col.appendSQL(stat);
+		appendFromWhere(stat);
+		ResultSet rs = stat.executeQuery();
+		List<X> result = Utils.newArrayList();
+		Class<? extends DataTypeAdapter<?>> typeAdapter = col.getFieldDefinition().typeAdapter;
+		try {
+			// SQLite returns pre-closed ResultSets for query results with 0 rows
+			if (!rs.isClosed()) {
+				while (rs.next()) {
+					X value = (X) db.getDialect().deserialize(rs, 1, clazz, typeAdapter);
 					result.add(value);
 				}
 			}

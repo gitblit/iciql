@@ -140,6 +140,10 @@ public class Db implements AutoCloseable {
 		return x;
 	}
 
+	static <X> boolean isToken(X x) {
+		return TOKENS.containsKey(x);
+	}
+
 	static Token getToken(Object x) {
 		return TOKENS.get(x);
 	}

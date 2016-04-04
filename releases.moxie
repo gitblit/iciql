@@ -15,6 +15,7 @@ r30: {
     changes: ~
     additions:
     - Added groupBy methods to QueryWhere (issue-20)
+    - Allow selecting a column from a table
     dependencyChanges: ~
     contributors:
     - James Moger
