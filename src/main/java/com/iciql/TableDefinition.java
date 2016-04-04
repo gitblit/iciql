@@ -543,7 +543,7 @@ public class TableDefinition<T> {
 		if (primitiveBoolean > 1) {
 			multiplePrimitiveBools = true;
 			IciqlLogger
-					.warn("Model {0} has multiple primitive booleans! Possible where,set,join clause problem!");
+					.warn("Model {0} has multiple primitive booleans! Possible where,set,join clause problem!", tableName);
 		}
 		if (primaryKey.size() > 0) {
 			setPrimaryKey(primaryKey);
