@@ -147,4 +147,17 @@ public class ModelsTest {
 			assertEquals(0, models.get(0).length());
 		}
 	}
+
+	@Test
+	public void testDiscreteUpdateStringTrimming() {
+		List<SupportedTypes> original = SupportedTypes.createList();
+		db.insertAll(original);
+		SupportedTypes s1 = db.from(SupportedTypes.SAMPLE).where(SupportedTypes.SAMPLE.id).is(1).selectFirst();
+		db.from(SupportedTypes.SAMPLE)
+				.set(SupportedTypes.SAMPLE.myString)
+				.to(s1.myString + s1.myString + s1.myString + s1.myString)
+				.update();
+		SupportedTypes s2 = db.from(SupportedTypes.SAMPLE).where(SupportedTypes.SAMPLE.id).is(1).selectFirst();
+		assertEquals(40, s2.myString.length());
+	}
 }

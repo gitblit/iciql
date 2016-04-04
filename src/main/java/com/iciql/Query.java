@@ -847,13 +847,24 @@ public class Query<T> {
 		SelectColumn<T> col = getColumnByReference(alias);
 		if (col != null && value != null && value.getClass().isEnum()) {
 			// enum
-			EnumType type = col.getFieldDefinition().enumType;
+			TableDefinition.FieldDefinition field = col.getFieldDefinition();
+			EnumType type = field.enumType;
 			Enum<?> anEnum = (Enum<?>) value;
 			Object y = Utils.convertEnum(anEnum, type);
 			stat.addParameter(y);
 		} else if (col != null) {
 			// object
-			Class<? extends DataTypeAdapter<?>> typeAdapter = col.getFieldDefinition().typeAdapter;
+			TableDefinition.FieldDefinition field = col.getFieldDefinition();
+			Class<? extends DataTypeAdapter<?>> typeAdapter = field.typeAdapter;
+			if (value != null && value instanceof String) {
+				if (field.trim && field.length > 0) {
+					// clip strings (issue-15)
+					String s = (String) value;
+					if (s.length() > field.length) {
+						value = s.substring(0, field.length);
+					}
+				}
+			}
 			Object parameter = db.getDialect().serialize(value, typeAdapter);
 			stat.addParameter(parameter);
 		} else {

@@ -89,7 +89,7 @@ public class SupportedTypes implements Serializable {
 	@IQColumn(length = 10, scale = 5)
 	private BigDecimal myBigDecimal;
 
-	@IQColumn(length = 40)
+	@IQColumn(length = 40, trim = true)
 	public String myString;
 
 	@IQColumn
