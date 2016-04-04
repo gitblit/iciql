@@ -19,10 +19,10 @@ Supported Databases (Unit-Tested)
 -------
 - [H2](http://h2database.com) 1.4
 - [HSQLDB](http://hsqldb.org) 2.3
-- [Derby](http://db.apache.org/derby) 10.11
+- [Derby](http://db.apache.org/derby) 10.12
 - [MySQL](http://mysql.com) 5.6
-- [PostgreSQL](http://postgresql.org) 9.3
-- [SQLite](http://www.sqlite.org) 3.10
+- [PostgreSQL](http://postgresql.org) 9.5
+- [SQLite](http://www.sqlite.org) 3.8
 
 Support for others is possible and may only require creating a simple "dialect" class.
 
@@ -43,10 +43,24 @@ Binaries @ [Iciql Maven Repository](http://gitblit.github.io/iciql/maven/)
 
 Building iciql
 ----------------
-[Eclipse](http://eclipse.org) is recommended for development as the project settings are preconfigured.
 
-1. Import the iciql project into your Eclipse workspace.<br/>
-*There will be lots of build errors.*
-2. Using Ant, execute the `build.xml` script in the project root.<br/>
-*This will download all necessary build dependencies.*
-3. Select your iciql project root and **Refresh** the project, this should correct all build problems.
+## Maven
+
+You may use Maven to build the project:
+
+    mvn clean package
+    
+You may use Maven to run the test suite on the default database:
+
+    mvn clean test
+
+## Ant
+
+You may also use Ant to build this project.
+
+    ant clean build
+    
+You execute the full test suite against all tested databases:
+ 
+     ant testsuite
+

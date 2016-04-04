@@ -33,10 +33,9 @@ developers:
 - {
   id: james
   name: 'James Moger'
-  url: 'https://plus.google.com/u/0/116428776452027956920'
-  organization: VAS
-  organizationUrl: 'http://www.vas.com'
-  roles: developer
+  email: 'james.moger@gmail.com'
+  organization: 'gitblit.com'
+  organizationUrl: 'https://github.com/gitblit'
   }
 
 scm: {
@@ -83,12 +82,12 @@ dependencyDirectory: ext
 repositories: central
 
 properties: {
-	h2.version : 1.4.187
-	hsqldb.version : 2.3.2
-	derby.version : 10.11.1.1
+	h2.version : 1.4.191
+	hsqldb.version : 2.3.3
+	derby.version : 10.12.1.1
 	mysql.version : 5.6
-	postgresql.version : 9.3
-	sqlite.version : 3.8.10.1
+	postgresql.version : 9.5
+	sqlite.version : 3.8.11.2
 }
 
 dependencies:
@@ -98,14 +97,14 @@ dependencies:
 - provided 'org.apache.derby:derby:${derby.version}'
 - provided 'org.apache.derby:derbyclient:${derby.version}'
 - provided 'org.apache.derby:derbynet:${derby.version}'
-- provided 'mysql:mysql-connector-java:5.1.33'
-- provided 'org.postgresql:postgresql:9.4-1201-jdbc41'
+- provided 'mysql:mysql-connector-java:5.1.38'
+- provided 'org.postgresql:postgresql:9.4.1208'
 - provided 'org.xerial:sqlite-jdbc:${sqlite.version}'
-- provided 'org.slf4j:slf4j-api:1.7.12'
+- provided 'org.slf4j:slf4j-api:1.7.20'
 - provided 'commons-pool:commons-pool:1.5.6'
 - provided 'commons-dbcp:commons-dbcp:1.4'
 - provided 'com.google.code.gson:gson:2.3'
-- provided 'com.thoughtworks.xstream:xstream:1.4.8'
-- provided 'org.yaml:snakeyaml:1.15'
+- provided 'com.thoughtworks.xstream:xstream:1.4.9'
+- provided 'org.yaml:snakeyaml:1.17'
 - test 'junit'
 - build 'jacoco'
