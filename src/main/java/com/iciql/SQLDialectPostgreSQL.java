@@ -106,7 +106,14 @@ public class SQLDialectPostgreSQL extends SQLDialectDefault {
 	public <T> void prepareMerge(SQLStatement stat, String schemaName, String tableName,
 			TableDefinition<T> def, Object obj) {
 
-		if (databaseVersion < 9.5f) {
+		FieldDefinition primaryKey = null;
+		for (FieldDefinition field : def.fields) {
+			if (field.isPrimaryKey) {
+				primaryKey = field;
+			}
+		}
+
+		if (primaryKey == null || databaseVersion < 9.5f) {
 			// simulated UPSERT for <= 9.4 release
 			super.prepareMerge(stat, schemaName, tableName, def, obj);
 			return;
@@ -129,7 +136,25 @@ public class SQLDialectPostgreSQL extends SQLDialectDefault {
 			Object parameter = serialize(value, field.typeAdapter);
 			stat.addParameter(parameter);
 		}
-		buff.append(") ON CONFLICT DO UPDATE SET");
+
+		buff.append(") ON CONFLICT (");
+		buff.resetCount();
+		for (FieldDefinition field : def.fields) {
+			if (field.isPrimaryKey) {
+				buff.appendExceptFirst(", ");
+				buff.append(field.columnName);
+			}
+		}
+		buff.append(") DO UPDATE SET ");
+		buff.resetCount();
+		for (FieldDefinition field : def.fields) {
+			buff.appendExceptFirst(", ");
+			buff.append(field.columnName);
+			buff.append("=?");
+			Object value = def.getValue(obj, field);
+			Object parameter = serialize(value, field.typeAdapter);
+			stat.addParameter(parameter);
+		}
 		stat.setSQL(buff.toString());
 	}
 

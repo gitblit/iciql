@@ -11,11 +11,13 @@ r30: {
     security: ~
     fixes:
     - Fixed setting null column values (issue-22)
+    - Fixed Postgres 9.5 Upsert syntax (issue-23)
     changes: ~
     additions:
     - Added groupBy methods to QueryWhere (issue-20)
     dependencyChanges: ~
-    contributors: ~
+    contributors:
+    - James Moger
 }
 
 #
