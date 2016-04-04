@@ -532,6 +532,101 @@ public class QueryWhere<T> {
 		return this;
 	}
 
+	/**
+	 * Group by primitive boolean field
+	 *
+	 * @param field
+	 *            a primitive boolean field
+	 * @return the query
+	 */
+	public QueryWhere<T> groupBy(boolean field) {
+		query.getFrom().getAliasDefinition().checkMultipleBooleans();
+		return groupByPrimitive(field);
+	}
+
+	/**
+	 * Group by primitive byte field
+	 *
+	 * @param field
+	 *            a primitive byte field
+	 * @return the query
+	 */
+	public QueryWhere<T> groupBy(byte field) {
+		return groupByPrimitive(field);
+	}
+
+	/**
+	 * Group by primitive short field
+	 *
+	 * @param field
+	 *            a primitive short field
+	 * @return the query
+	 */
+	public QueryWhere<T> groupBy(short field) {
+		return groupByPrimitive(field);
+	}
+
+	public QueryWhere<T> groupBy(int field) {
+		return groupByPrimitive(field);
+	}
+
+	/**
+	 * Group by primitive long field
+	 *
+	 * @param field
+	 *            a primitive long field
+	 * @return the query
+	 */
+	public QueryWhere<T> groupBy(long field) {
+		return groupByPrimitive(field);
+	}
+
+	/**
+	 * Group by primitive float field
+	 *
+	 * @param field
+	 *            a primitive float field
+	 * @return the query
+	 */
+	public QueryWhere<T> groupBy(float field) {
+		return groupByPrimitive(field);
+	}
+
+	/**
+	 * Group by primitive double field
+	 *
+	 * @param field
+	 *            a primitive double field
+	 * @return the query
+	 */
+	public QueryWhere<T> groupBy(double field) {
+		return groupByPrimitive(field);
+	}
+
+	private QueryWhere<T> groupByPrimitive(Object field) {
+		query.groupByPrimitive(field);
+		return this;
+	}
+
+	public QueryWhere<T> groupBy(Object field) {
+		query.getFrom().getAliasDefinition().checkMultipleEnums(field);
+		query.groupBy(field);
+		return this;
+	}
+
+	/**
+	 * Group by a number of Object columns.
+	 *
+	 * @param expressions
+	 *            the group by expressions
+	 * @return the query
+	 */
+
+	public QueryWhere<T> groupBy(Object... expressions) {
+		query.groupBy(expressions);
+		return this;
+	}
+
 	public int delete() {
 		return query.delete();
 	}

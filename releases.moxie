@@ -11,7 +11,8 @@ r30: {
     security: ~
     fixes: ~
     changes: ~
-    additions: ~
+    additions:
+    - Added groupBy methods to QueryWhere
     dependencyChanges: ~
     contributors: ~
 }
