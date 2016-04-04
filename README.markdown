@@ -1,5 +1,9 @@
 iciql
 =================
+
+[![Maven Central](http://img.shields.io/maven-central/v/com.gitblit.iciql/iciql.svg)](http://search.maven.org/#search|ga|1|com.gitblit.iciql)
+[![Maven Central](https://img.shields.io/github/license/gitblit/iciql.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
+
 iciql **is**...
 
 - a model-based, database access wrapper for JDBC
@@ -26,6 +30,23 @@ Supported Databases (Unit-Tested)
 
 Support for others is possible and may only require creating a simple "dialect" class.
 
+Downloading
+-----------
+
+As of 2.0.0 iciql is now distributed through Maven Central and it's coordinates have changed slightly.
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.gitblit.iciql</groupId>
+        <artifactId>iciql</artifactId>
+        <version>2.0.0/version>
+    </dependency>
+</dependencies>
+```
+
+Older releases are available from the [Iciql Maven Repository](http://gitblit.github.io/iciql/maven/). 
+
 License
 -------
 iciql is distributed under the terms of the [Apache Software Foundation license, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).<br/>
@@ -38,8 +59,7 @@ iciql requires a Java 6 Runtime Environment (JRE) or a Java 6 Development Kit (J
 Getting help
 -------
 Read the online documentation available at the [iciql website](http://iciql.com)<br/>
-Issues & sources @ [GitHub](http://github.com/gitblit/iciql)
-Binaries @ [Iciql Maven Repository](http://gitblit.github.io/iciql/maven/)
+Issues & source code @ [GitHub](http://github.com/gitblit/iciql)
 
 Building iciql
 ----------------
@@ -56,11 +76,11 @@ You may use Maven to run the test suite on the default database:
 
 ## Ant
 
-You may also use Ant to build this project.
+You may use Ant to build this project:
 
     ant clean build
     
-You execute the full test suite against all tested databases:
+You may execute the full test suite against all tested databases:
  
      ant testsuite
 
