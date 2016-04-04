@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java" />
 	<classpathentry kind="src" path="src/test/java" output="bin/test-classes" />
+	<classpathentry kind="src" path="src/test/resources" output="bin/test-classes" />
 	<classpathentry kind="lib" path="ext/jcommander-1.17.jar" sourcepath="ext/src/jcommander-1.17.jar" />
 	<classpathentry kind="lib" path="ext/h2-1.4.187.jar" sourcepath="ext/src/h2-1.4.187.jar" />
 	<classpathentry kind="lib" path="ext/hsqldb-2.3.2.jar" sourcepath="ext/src/hsqldb-2.3.2.jar" />

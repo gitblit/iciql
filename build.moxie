@@ -55,6 +55,7 @@ sourceDirectories:
 - site 'src/site'
 
 resourceDirectories:
+- test 'src/test/resources'
 - site 'src/site/resources'
 
 # compile for Java 6 class format

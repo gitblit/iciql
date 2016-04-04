@@ -152,7 +152,7 @@ public class IciqlSuite {
 
 			};
 
-	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[0];
+	private static final TestDb DEFAULT_TEST_DB = TEST_DBS[3];
 
 	private static final PrintStream ERR = System.err;
 
