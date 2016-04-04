@@ -1,9 +1,11 @@
+/.idea
 /bin
 /build
 /doclava
 /ext
 /javadoc
 /site
+/target
 /*.zip
 /*.jar
 /build.properties
@@ -14,3 +16,4 @@
 /testdbs
 /*.sh
 /*.ps1
+/*.iml
