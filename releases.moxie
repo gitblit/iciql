@@ -10,6 +10,7 @@ r30: {
     text: ~
     security: ~
     fixes:
+    - Fixed order by descending on primitives (issue-21)
     - Fixed setting null column values (issue-22)
     - Fixed Postgres 9.5 Upsert syntax (issue-23)
     changes: ~

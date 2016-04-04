@@ -736,6 +736,38 @@ public class Query<T> {
 		return this;
 	}
 
+	public Query<T> orderByDesc(byte field) {
+		return orderByDescPrimitive(field);
+	}
+
+	public Query<T> orderByDesc(short field) {
+		return orderByDescPrimitive(field);
+	}
+
+	public Query<T> orderByDesc(int field) {
+		return orderByDescPrimitive(field);
+	}
+
+	public Query<T> orderByDesc(long field) {
+		return orderByDescPrimitive(field);
+	}
+
+	public Query<T> orderByDesc(float field) {
+		return orderByDescPrimitive(field);
+	}
+
+	public Query<T> orderByDesc(double field) {
+		return orderByDescPrimitive(field);
+	}
+
+	Query<T> orderByDescPrimitive(Object field) {
+		Object alias = getPrimitiveAliasByValue(field);
+		if (alias == null) {
+			return orderByDesc(field);
+		}
+		return orderByDesc(alias);
+	}
+
 	public Query<T> orderByDesc(Object expr) {
 		OrderExpression<T> e = new OrderExpression<T>(this, expr, true, false, false);
 		addOrderBy(e);

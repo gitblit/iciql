@@ -173,6 +173,6 @@ public class ModelsTest {
 				.orderByDesc(SupportedTypes.SAMPLE.id)
 				.selectDistinct(SupportedTypes.SAMPLE.id);
 		assertEquals(10, ids.size());
-		assertEquals("[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]", ids.toString());
+		assertEquals("[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]", ids.toString());
 	}
 }

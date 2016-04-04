@@ -106,14 +106,13 @@ public class PrimitivesTest {
 
 		// insert random models in reverse order
 		List<PrimitivesModel> models = PrimitivesModel.getList();
-		PrimitivesModel model = models.get(0);
 		Collections.reverse(models);
 		// insert them in reverse order
 		db.insertAll(models);
 
 		PrimitivesModel p = new PrimitivesModel();
-		List<Long> list = db.from(p)/*.orderByDesc(p.myLong)*/.select(p.myLong);
+		List<Long> list = db.from(p).orderByDesc(p.myLong).select(p.myLong);
 		assertEquals(models.size(), list.size());
-		assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]", list.toString());
+		assertEquals("[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]", list.toString());
 	}
 }
