@@ -274,6 +274,10 @@ public class Query<T> {
 		return stat.executeUpdate();
 	}
 
+	public <A> Query<T> setNull(A field) {
+		return set(field).to(null);
+	}
+
 	public <A> UpdateColumnSet<T, A> set(A field) {
 		from.getAliasDefinition().checkMultipleEnums(field);
 		return new UpdateColumnSet<T, A>(this, field);
@@ -776,7 +780,7 @@ public class Query<T> {
 			token.appendSQL(stat, this);
 			return;
 		}
-		if (alias != null && value.getClass().isEnum()) {
+		if (alias != null && value != null && value.getClass().isEnum()) {
 			// special case:
 			// value is first enum constant which is also the alias object.
 			// the first enum constant is used as the alias because we can not
@@ -841,7 +845,7 @@ public class Query<T> {
 
 	private void addParameter(SQLStatement stat, Object alias, Object value) {
 		SelectColumn<T> col = getColumnByReference(alias);
-		if (col != null && value.getClass().isEnum()) {
+		if (col != null && value != null && value.getClass().isEnum()) {
 			// enum
 			EnumType type = col.getFieldDefinition().enumType;
 			Enum<?> anEnum = (Enum<?>) value;

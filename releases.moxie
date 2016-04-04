@@ -9,10 +9,11 @@ r30: {
     html: ~
     text: ~
     security: ~
-    fixes: ~
+    fixes:
+    - Fixed setting null column values (issue-22)
     changes: ~
     additions:
-    - Added groupBy methods to QueryWhere
+    - Added groupBy methods to QueryWhere (issue-20)
     dependencyChanges: ~
     contributors: ~
 }

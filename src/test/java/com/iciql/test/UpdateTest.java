@@ -19,6 +19,7 @@ package com.iciql.test;
 
 import static java.sql.Date.valueOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -154,6 +155,27 @@ public class UpdateTest {
 		db.from(p).increment(p.unitPrice).by(p.unitPrice).where(p.productId).is(1).update();
 		double unitPriceNew = db.from(p).where(p.productId).is(1).selectFirst().unitPrice;
 		assertEquals(unitPriceOld * 2, unitPriceNew, 0.001);
+
+	}
+
+	@Test
+	public void testSetNull() {
+		Product p = new Product();
+		Product original = db.from(p).where(p.productId).is(1).selectFirst();
+
+		String originalName = original.productName;
+		db.from(p).setNull(p.productName).update();
+
+		// confirm the data was properly updated
+		Product revised = db.from(p).where(p.productId).is(1).selectFirst();
+		assertNull(revised.productName);
+
+		// restore the data
+		db.from(p).set(p.productName).to(originalName).update();
+
+		// confirm the data was properly restored
+		Product restored = db.from(p).where(p.productId).is(1).selectFirst();
+		assertEquals(originalName, restored.productName);
 
 	}
 

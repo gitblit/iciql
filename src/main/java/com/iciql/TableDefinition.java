@@ -669,9 +669,11 @@ public class TableDefinition<T> {
 			buff.appendExceptFirst(", ");
 			buff.append('?');
 			Object value = getValue(obj, field);
-			if (value == null && !field.nullable) {
-				// try to interpret and instantiate a default value
-				value = ModelUtils.getDefaultValue(field, db.getDialect().getDateTimeClass());
+			if (value == null) {
+				if (!field.nullable) {
+					// try to interpret and instantiate a default value
+					value = ModelUtils.getDefaultValue(field, db.getDialect().getDateTimeClass());
+				}
 			}
 			Object parameter = db.getDialect().serialize(value, field.typeAdapter);
 			stat.addParameter(parameter);
@@ -737,14 +739,7 @@ public class TableDefinition<T> {
 			// conditionally skip insert of null
 			Object value = getValue(obj, field);
 			if (value == null) {
-				if (field.nullable) {
-					// skip null assignment, field is nullable
-					return true;
-				} else if (StringUtils.isNullOrEmpty(field.defaultValue)) {
-					IciqlLogger.warn("no default value, skipping null insert assignment for {0}.{1}",
-							tableName, field.columnName);
-					return true;
-				}
+				return !StringUtils.isNullOrEmpty(field.defaultValue);
 			}
 		}
 		return false;

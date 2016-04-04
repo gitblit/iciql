@@ -57,7 +57,8 @@ public class Customer {
 				new Customer("ANTON", "CA"),
 				new Customer("BROWN", "LA"),
 				new Customer("SMITH", "NY"),
-				new Customer("JONES", "ME"));
+				new Customer("JONES", "ME"),
+				new Customer(null, null));
 	}
 
 }
