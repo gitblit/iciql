@@ -170,8 +170,8 @@ public class ModelsTest {
 		assertEquals(10, myStrings.size());
 
 		List<Integer> ids = db.from(SupportedTypes.SAMPLE)
-				.orderByDesc(SupportedTypes.SAMPLE.id)
-				.selectDistinct(SupportedTypes.SAMPLE.id);
+				.orderByDesc(SupportedTypes.SAMPLE.myInteger)
+				.selectDistinct(SupportedTypes.SAMPLE.myInteger);
 		assertEquals(10, ids.size());
 		assertEquals("[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]", ids.toString());
 	}

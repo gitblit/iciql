@@ -74,7 +74,7 @@ public class SupportedTypes implements Serializable {
 	private Short myShort;
 
 	@IQColumn
-	private Integer myInteger;
+	public Integer myInteger;
 
 	@IQColumn
 	private Long myLong;
@@ -138,7 +138,9 @@ public class SupportedTypes implements Serializable {
 
 		long oneday = 24 * 60 * 60 * 1000L;
 		for (int i = 0; i < 10; i++) {
-			list.add(randomValue(now - (i * oneday)));
+			SupportedTypes s = randomValue(now - (i * oneday));
+			s.myInteger = i + 1;
+			list.add(s);
 		}
 		return list;
 	}
@@ -149,7 +151,6 @@ public class SupportedTypes implements Serializable {
 		s.myBool = new Boolean(rand.nextBoolean());
 		s.myByte = new Byte((byte) rand.nextInt(Byte.MAX_VALUE));
 		s.myShort = new Short((short) rand.nextInt(Short.MAX_VALUE));
-		s.myInteger = new Integer(rand.nextInt());
 		s.myLong = new Long(rand.nextLong());
 		s.myFloat = new Float(rand.nextFloat());
 		s.myDouble = new Double(rand.nextDouble());
