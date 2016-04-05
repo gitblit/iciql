@@ -74,4 +74,4 @@ You may use Maven to run the test suite on the default database:
 
 You may use Maven to run the test suite on all tested databases:
 
-    mvn clean exec:exec
+    mvn clean test-compile exec:exec
