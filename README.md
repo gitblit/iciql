@@ -64,8 +64,6 @@ Issues & source code @ [GitHub](http://github.com/gitblit/iciql)
 Building iciql
 ----------------
 
-## Maven
-
 You may use Maven to build the project:
 
     mvn clean package
@@ -74,13 +72,6 @@ You may use Maven to run the test suite on the default database:
 
     mvn clean test
 
-## Ant
+You may use Maven to run the test suite on all tested databases:
 
-You may use Ant to build this project:
-
-    ant clean build
-    
-You may execute the full test suite against all tested databases:
- 
-     ant testsuite
-
+    mvn clean exec:exec
