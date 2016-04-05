@@ -15,7 +15,7 @@ iciql **is not**...
 - designed to compete with more powerful database query tools like [jOOQ][jooq] or [QueryDSL][querydsl]
 - designed to compete with enterprise [ORM][orm] tools like [Hibernate][hibernate] or [mybatis][mybatis]
 
-### fluent, type-safe SQL DSL with rich object mapping
+### Fluent, type-safe SQL DSL with rich object mapping
 
 Born from the unfinished [JaQu][jaqu] subproject of H2 in August 2011, Iciql has [advanced the codebase](jaqu_comparison.html) & DSL greatly.  It supports more SQL syntax, more SQL data types, and all standard JDBC object types.
 
@@ -30,7 +30,7 @@ try (Db db = Db.open("jdbc:h2:mem:iciql")) {
 }
 ---JAVA---
 
-### dynamic, annotated DAO with standard crud operations
+### Dynamic, annotated DAO with standard crud operations
 
 Inspired by JDBI, Iciql offers a similar [DAO feature](dao.html).  There are some clear benefits to using SQL directly rather than SQL-through-a-DSL so use each one where it makes the mose sense.
 
@@ -83,7 +83,7 @@ try (Db db = Db.open("jdbc:h2:mem:iciql")) {
 }
 ---JAVA---
 
-### flexible field data types
+### Flexible field data types
 
 The [Data Type Adapter feature](dta.html) allows you to customize how your SQL column data types map to/from Java objects.
 
@@ -91,7 +91,7 @@ This is very useful for mapping your field domain models to SQL without having t
 
 You might use this to take advantage of the underlying database's type system.  For example, PostgreSQL ships with the compelling JSON/JSONB/XML data types.  Iciql provides String and Object adapters to facilitate use of those data types.
 
-### runtime mode support
+### Runtime mode support
 
 Mode support allows you to tweak the behavior of your `@TypeAdapter` and `DAO` implementations to adapt to runtime conditions such as developing on a different database than you deploy on.
 
@@ -104,6 +104,20 @@ Mode support allows you to tweak the behavior of your `@TypeAdapter` and `DAO` i
 - [SQLite](http://www.sqlite.org) ${sqlite.version}
 
 Support for others is possible and may only require creating a simple "dialect" class.
+
+### Downloading
+
+As of 2.0.0 iciql is now distributed through Maven Central and it's coordinates have changed slightly.
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.gitblit.iciql</groupId>
+        <artifactId>iciql</artifactId>
+        <version>2.0.0/version>
+    </dependency>
+</dependencies>
+```
 
 ### Java Runtime Requirement
 

@@ -10,7 +10,11 @@ List<Product> allProducts = db.from(p).select();
 
 // select * from customers where region='WA'
 Customer c = new Customer();
-List<Customer> waCustomers = db.from(c). where(c.region).is("WA").select();
+List<Customer> waCustomers = db.from(c).where(c.region).is("WA").select();
+
+// select distinct customerId from customers where region='WA'
+Customer c = new Customer();
+List<String> customerIds = db.from(c).where(c.region).is("WA").selectDistinct(c.customerId);
 
 public static class ProductPrice {
 	public String productName;
