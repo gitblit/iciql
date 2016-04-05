@@ -197,11 +197,24 @@
                     </arguments>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <implementation-version>${project.version}</implementation-version>
+                            <build-date>${maven.build.timestamp}</build-date>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <!-- Release plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5</version>
+                <version>2.5.3</version>
                 <configuration>
                     <!-- install next final version in local repo, so that tests on archetypes work -->
                     <preparationGoals>clean install</preparationGoals>
