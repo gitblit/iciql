@@ -1,3 +1,0 @@
-[submodule "maven"]
-	path = maven
-	url = https://github.com/gitblit/iciql-maven.git
