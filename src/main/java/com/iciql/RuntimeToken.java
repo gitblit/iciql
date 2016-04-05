@@ -15,43 +15,40 @@
  */
 package com.iciql;
 
-import java.text.MessageFormat;
-
 import com.iciql.util.StringUtils;
+
+import java.text.MessageFormat;
 
 /**
  * Represents a traditional PreparedStatment fragment like "id=?, name=?".
- * 
  */
 public class RuntimeToken implements Token {
 
-	final String fragment;
-	final Object[] args;
+    final String fragment;
+    final Object[] args;
 
-	public RuntimeToken(String fragment, Object... args) {
-		this.fragment = fragment;
-		this.args = args == null ? new Object[0] : args;
-	}
+    public RuntimeToken(String fragment, Object... args) {
+        this.fragment = fragment;
+        this.args = args == null ? new Object[0] : args;
+    }
 
-	/**
-	 * Append the SQL to the given statement using the given query.
-	 * 
-	 * @param stat
-	 *            the statement to append the SQL to
-	 * @param query
-	 *            the query to use
-	 */
-	@Override
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		int tokenCount = StringUtils.count('?', fragment);
-		if (tokenCount != args.length) {
-			throw new IciqlException(MessageFormat.format(
-					"Fragment \"{0}\" specifies {1} tokens but you supplied {2} args", fragment, tokenCount,
-					args.length));
-		}
-		stat.appendSQL(fragment);
-		for (Object arg : args) {
-			stat.addParameter(arg);
-		}
-	}
+    /**
+     * Append the SQL to the given statement using the given query.
+     *
+     * @param stat  the statement to append the SQL to
+     * @param query the query to use
+     */
+    @Override
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        int tokenCount = StringUtils.count('?', fragment);
+        if (tokenCount != args.length) {
+            throw new IciqlException(MessageFormat.format(
+                    "Fragment \"{0}\" specifies {1} tokens but you supplied {2} args", fragment, tokenCount,
+                    args.length));
+        }
+        stat.appendSQL(fragment);
+        for (Object arg : args) {
+            stat.addParameter(arg);
+        }
+    }
 }

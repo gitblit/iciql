@@ -15,11 +15,11 @@
  */
 package com.iciql.test.models;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Boolean types model.
@@ -27,72 +27,72 @@ import com.iciql.Iciql.IQTable;
 @IQTable(name = "BooleanTest")
 public class BooleanModel {
 
-	@IQColumn(primaryKey = true)
-	public Integer id;
+    @IQColumn(primaryKey = true)
+    public Integer id;
 
-	@IQColumn
-	public Boolean mybool;
+    @IQColumn
+    public Boolean mybool;
 
-	public BooleanModel() {
-	}
+    public BooleanModel() {
+    }
 
-	BooleanModel(int id, boolean val) {
-		this.id = id;
-		this.mybool = val;
-	}
+    BooleanModel(int id, boolean val) {
+        this.id = id;
+        this.mybool = val;
+    }
 
-	public static List<BooleanModel> getList() {
-		return Arrays.asList(new BooleanModel(1, true), new BooleanModel(2, false),
-				new BooleanModel(3, true), new BooleanModel(4, false));
-	}
+    public static List<BooleanModel> getList() {
+        return Arrays.asList(new BooleanModel(1, true), new BooleanModel(2, false),
+                new BooleanModel(3, true), new BooleanModel(4, false));
+    }
 
-	/**
-	 * Test boolean as Integer
-	 */
-	@IQTable(name = "BooleanTest")
-	public static class BooleanAsIntModel {
-		@IQColumn(primaryKey = true)
-		public Integer id;
+    /**
+     * Test boolean as Integer
+     */
+    @IQTable(name = "BooleanTest")
+    public static class BooleanAsIntModel {
+        @IQColumn(primaryKey = true)
+        public Integer id;
 
-		@IQColumn
-		public Integer mybool;
+        @IQColumn
+        public Integer mybool;
 
-		public BooleanAsIntModel() {
-		}
+        public BooleanAsIntModel() {
+        }
 
-		BooleanAsIntModel(int id, boolean val) {
-			this.id = id;
-			this.mybool = val ? 1 : 0;
-		}
+        BooleanAsIntModel(int id, boolean val) {
+            this.id = id;
+            this.mybool = val ? 1 : 0;
+        }
 
-		public static List<BooleanAsIntModel> getList() {
-			return Arrays.asList(new BooleanAsIntModel(1, true), new BooleanAsIntModel(2, false),
-					new BooleanAsIntModel(3, true), new BooleanAsIntModel(4, false));
-		}
-	}
+        public static List<BooleanAsIntModel> getList() {
+            return Arrays.asList(new BooleanAsIntModel(1, true), new BooleanAsIntModel(2, false),
+                    new BooleanAsIntModel(3, true), new BooleanAsIntModel(4, false));
+        }
+    }
 
-	/**
-	 * Test boolean as primitive short
-	 */
-	@IQTable(name = "BooleanTest")
-	public static class BooleanAsPrimitiveShortModel {
-		@IQColumn(primaryKey = true)
-		public Integer id;
+    /**
+     * Test boolean as primitive short
+     */
+    @IQTable(name = "BooleanTest")
+    public static class BooleanAsPrimitiveShortModel {
+        @IQColumn(primaryKey = true)
+        public Integer id;
 
-		@IQColumn
-		public short mybool;
+        @IQColumn
+        public short mybool;
 
-		public BooleanAsPrimitiveShortModel() {
-		}
+        public BooleanAsPrimitiveShortModel() {
+        }
 
-		BooleanAsPrimitiveShortModel(int id, boolean val) {
-			this.id = id;
-			this.mybool = (short) (val ? 1 : 0);
-		}
+        BooleanAsPrimitiveShortModel(int id, boolean val) {
+            this.id = id;
+            this.mybool = (short) (val ? 1 : 0);
+        }
 
-		public static List<BooleanAsPrimitiveShortModel> getList() {
-			return Arrays.asList(new BooleanAsPrimitiveShortModel(1, true), new BooleanAsPrimitiveShortModel(2, false),
-					new BooleanAsPrimitiveShortModel(3, true), new BooleanAsPrimitiveShortModel(4, false));
-		}
-	}
+        public static List<BooleanAsPrimitiveShortModel> getList() {
+            return Arrays.asList(new BooleanAsPrimitiveShortModel(1, true), new BooleanAsPrimitiveShortModel(2, false),
+                    new BooleanAsPrimitiveShortModel(3, true), new BooleanAsPrimitiveShortModel(4, false));
+        }
+    }
 }

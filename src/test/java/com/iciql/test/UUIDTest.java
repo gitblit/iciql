@@ -16,21 +16,20 @@
 
 package com.iciql.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+import com.iciql.Db;
+import com.iciql.Iciql.IQColumn;
+import com.iciql.Iciql.IQTable;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.iciql.Db;
-import com.iciql.Iciql.IQColumn;
-import com.iciql.Iciql.IQTable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests of UUID type.
@@ -39,77 +38,77 @@ import com.iciql.Iciql.IQTable;
  */
 public class UUIDTest {
 
-	Db db;
+    Db db;
 
-	@Before
-	public void setup() {
-		db = IciqlSuite.openNewDb();
-	}
+    @Before
+    public void setup() {
+        db = IciqlSuite.openNewDb();
+    }
 
-	@After
-	public void tearDown() {
-		db.close();
-	}
+    @After
+    public void tearDown() {
+        db.close();
+    }
 
-	@Test
-	public void testUUIDs() throws Exception {
-		// do not test non-H2 databases
-		Assume.assumeTrue(IciqlSuite.isH2(db));
+    @Test
+    public void testUUIDs() throws Exception {
+        // do not test non-H2 databases
+        Assume.assumeTrue(IciqlSuite.isH2(db));
 
-		List<UUIDRecord> originals = UUIDRecord.getList();
-		db.insertAll(originals);
-		UUIDRecord u = new UUIDRecord();
-		List<UUIDRecord> retrieved = db.from(u).orderBy(u.id).select();
-		assertEquals(originals.size(), retrieved.size());
-		for (int i = 0; i < originals.size(); i++) {
-			UUIDRecord a = originals.get(i);
-			UUIDRecord b = retrieved.get(i);
-			assertTrue(a.equivalentTo(b));
-		}
+        List<UUIDRecord> originals = UUIDRecord.getList();
+        db.insertAll(originals);
+        UUIDRecord u = new UUIDRecord();
+        List<UUIDRecord> retrieved = db.from(u).orderBy(u.id).select();
+        assertEquals(originals.size(), retrieved.size());
+        for (int i = 0; i < originals.size(); i++) {
+            UUIDRecord a = originals.get(i);
+            UUIDRecord b = retrieved.get(i);
+            assertTrue(a.equivalentTo(b));
+        }
 
-		UUIDRecord second = db.from(u).where(u.uuid).is(originals.get(1).uuid).selectFirst();
-		assertTrue(originals.get(1).equivalentTo(second));
-		db.dropTable(UUIDRecord.class);
-	}
+        UUIDRecord second = db.from(u).where(u.uuid).is(originals.get(1).uuid).selectFirst();
+        assertTrue(originals.get(1).equivalentTo(second));
+        db.dropTable(UUIDRecord.class);
+    }
 
-	/**
-	 * A simple class used in this test.
-	 */
-	@IQTable(name = "UUID_TEST")
-	public static class UUIDRecord {
+    /**
+     * A simple class used in this test.
+     */
+    @IQTable(name = "UUID_TEST")
+    public static class UUIDRecord {
 
-		@IQColumn(primaryKey = true)
-		public Integer id;
+        @IQColumn(primaryKey = true)
+        public Integer id;
 
-		@IQColumn()
-		public UUID uuid;
+        @IQColumn()
+        public UUID uuid;
 
-		public UUIDRecord() {
-			// public constructor
-		}
+        public UUIDRecord() {
+            // public constructor
+        }
 
-		private UUIDRecord(int id) {
-			this.id = id;
-			this.uuid = UUID.randomUUID();
-		}
+        private UUIDRecord(int id) {
+            this.id = id;
+            this.uuid = UUID.randomUUID();
+        }
 
-		public boolean equivalentTo(UUIDRecord b) {
-			boolean same = true;
-			same &= id == b.id;
-			same &= uuid.equals(b.uuid);
-			return same;
-		}
+        public boolean equivalentTo(UUIDRecord b) {
+            boolean same = true;
+            same &= id == b.id;
+            same &= uuid.equals(b.uuid);
+            return same;
+        }
 
-		public String toString() {
-			return id + ": " + uuid;
-		}
+        public String toString() {
+            return id + ": " + uuid;
+        }
 
-		public static List<UUIDRecord> getList() {
-			List<UUIDRecord> list = new ArrayList<UUIDRecord>();
-			for (int i = 0; i < 10; i++) {
-				list.add(new UUIDRecord(i + 1));
-			}
-			return list;
-		}
-	}
+        public static List<UUIDRecord> getList() {
+            List<UUIDRecord> list = new ArrayList<UUIDRecord>();
+            for (int i = 0; i < 10; i++) {
+                list.add(new UUIDRecord(i + 1));
+            }
+            return list;
+        }
+    }
 }

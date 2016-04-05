@@ -26,30 +26,30 @@ import com.iciql.Token;
  */
 public class Not implements Token {
 
-	private Token expr;
+    private Token expr;
 
-	private Not(Token expr) {
-		this.expr = expr;
-	}
+    private Not(Token expr) {
+        this.expr = expr;
+    }
 
-	static Token get(Token expr) {
-		if (expr instanceof Not) {
-			return ((Not) expr).expr;
-		} else if (expr instanceof Operation) {
-			return ((Operation) expr).reverse();
-		}
-		return new Not(expr);
-	}
+    static Token get(Token expr) {
+        if (expr instanceof Not) {
+            return ((Not) expr).expr;
+        } else if (expr instanceof Operation) {
+            return ((Operation) expr).reverse();
+        }
+        return new Not(expr);
+    }
 
-	Token not() {
-		return expr;
-	}
+    Token not() {
+        return expr;
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		// untested
-		stat.appendSQL("NOT(");
-		expr.appendSQL(stat, query);
-		stat.appendSQL(")");
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        // untested
+        stat.appendSQL("NOT(");
+        expr.appendSQL(stat, query);
+        stat.appendSQL(")");
+    }
 
 }

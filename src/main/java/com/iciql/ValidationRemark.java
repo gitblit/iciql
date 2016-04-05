@@ -28,100 +28,100 @@ import com.iciql.util.StringUtils;
  */
 public class ValidationRemark {
 
-	/**
-	 * The validation message level.
-	 */
-	public static enum Level {
-		CONSIDER, WARN, ERROR;
-	}
+    /**
+     * The validation message level.
+     */
+    public static enum Level {
+        CONSIDER, WARN, ERROR;
+    }
 
-	public final Level level;
-	public final String table;
-	public final String fieldType;
-	public final String fieldName;
-	public final String message;
+    public final Level level;
+    public final String table;
+    public final String fieldType;
+    public final String fieldName;
+    public final String message;
 
-	private ValidationRemark(Level level, String table, String type, String message) {
-		this.level = level;
-		this.table = table;
-		this.fieldType = type;
-		this.fieldName = "";
-		this.message = message;
-	}
+    private ValidationRemark(Level level, String table, String type, String message) {
+        this.level = level;
+        this.table = table;
+        this.fieldType = type;
+        this.fieldName = "";
+        this.message = message;
+    }
 
-	private ValidationRemark(Level level, String table, FieldDefinition field, String message) {
-		this.level = level;
-		this.table = table;
-		this.fieldType = field.dataType;
-		this.fieldName = field.columnName;
-		this.message = message;
-	}
+    private ValidationRemark(Level level, String table, FieldDefinition field, String message) {
+        this.level = level;
+        this.table = table;
+        this.fieldType = field.dataType;
+        this.fieldName = field.columnName;
+        this.message = message;
+    }
 
-	private ValidationRemark(Level level, String table, ColumnInspector col, String message) {
-		this.level = level;
-		this.table = table;
-		this.fieldType = col.type;
-		this.fieldName = col.name;
-		this.message = message;
-	}
+    private ValidationRemark(Level level, String table, ColumnInspector col, String message) {
+        this.level = level;
+        this.table = table;
+        this.fieldType = col.type;
+        this.fieldName = col.name;
+        this.message = message;
+    }
 
-	public static ValidationRemark consider(String table, String type, String message) {
-		return new ValidationRemark(Level.CONSIDER, table, type, message);
-	}
+    public static ValidationRemark consider(String table, String type, String message) {
+        return new ValidationRemark(Level.CONSIDER, table, type, message);
+    }
 
-	public static ValidationRemark consider(String table, ColumnInspector col, String message) {
-		return new ValidationRemark(Level.CONSIDER, table, col, message);
-	}
+    public static ValidationRemark consider(String table, ColumnInspector col, String message) {
+        return new ValidationRemark(Level.CONSIDER, table, col, message);
+    }
 
-	public static ValidationRemark warn(String table, ColumnInspector col, String message) {
-		return new ValidationRemark(Level.WARN, table, col, message);
-	}
+    public static ValidationRemark warn(String table, ColumnInspector col, String message) {
+        return new ValidationRemark(Level.WARN, table, col, message);
+    }
 
-	public static ValidationRemark warn(String table, String type, String message) {
-		return new ValidationRemark(Level.WARN, table, type, message);
-	}
+    public static ValidationRemark warn(String table, String type, String message) {
+        return new ValidationRemark(Level.WARN, table, type, message);
+    }
 
-	public static ValidationRemark error(String table, ColumnInspector col, String message) {
-		return new ValidationRemark(Level.ERROR, table, col, message);
-	}
+    public static ValidationRemark error(String table, ColumnInspector col, String message) {
+        return new ValidationRemark(Level.ERROR, table, col, message);
+    }
 
-	public static ValidationRemark error(String table, String type, String message) {
-		return new ValidationRemark(Level.ERROR, table, type, message);
-	}
+    public static ValidationRemark error(String table, String type, String message) {
+        return new ValidationRemark(Level.ERROR, table, type, message);
+    }
 
-	public static ValidationRemark error(String table, FieldDefinition field, String message) {
-		return new ValidationRemark(Level.ERROR, table, field, message);
-	}
+    public static ValidationRemark error(String table, FieldDefinition field, String message) {
+        return new ValidationRemark(Level.ERROR, table, field, message);
+    }
 
-	public ValidationRemark throwError(boolean throwOnError) {
-		if (throwOnError && isError()) {
-			throw new IciqlException(toString());
-		}
-		return this;
-	}
+    public ValidationRemark throwError(boolean throwOnError) {
+        if (throwOnError && isError()) {
+            throw new IciqlException(toString());
+        }
+        return this;
+    }
 
-	public boolean isError() {
-		return level.equals(Level.ERROR);
-	}
+    public boolean isError() {
+        return level.equals(Level.ERROR);
+    }
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(StringUtils.pad(level.name(), 9, " ", true));
-		sb.append(StringUtils.pad(table, 25, " ", true));
-		sb.append(StringUtils.pad(fieldName, 20, " ", true));
-		sb.append(' ');
-		sb.append(message);
-		return sb.toString();
-	}
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(StringUtils.pad(level.name(), 9, " ", true));
+        sb.append(StringUtils.pad(table, 25, " ", true));
+        sb.append(StringUtils.pad(fieldName, 20, " ", true));
+        sb.append(' ');
+        sb.append(message);
+        return sb.toString();
+    }
 
-	public String toCSVString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(level.name()).append(',');
-		sb.append(table).append(',');
-		sb.append(fieldType).append(',');
-		sb.append(fieldName).append(',');
-		sb.append(message);
-		return sb.toString();
-	}
+    public String toCSVString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(level.name()).append(',');
+        sb.append(table).append(',');
+        sb.append(fieldType).append(',');
+        sb.append(fieldName).append(',');
+        sb.append(message);
+        return sb.toString();
+    }
 
 }

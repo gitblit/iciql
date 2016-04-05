@@ -26,86 +26,86 @@ import com.iciql.Token;
  */
 class Operation implements Token {
 
-	/**
-	 * The operation type.
-	 */
-	enum Type {
-		EQUALS("=") {
-			Type reverse() {
-				return NOT_EQUALS;
-			}
-		},
-		NOT_EQUALS("<>") {
-			Type reverse() {
-				return EQUALS;
-			}
-		},
-		BIGGER(">") {
-			Type reverse() {
-				return SMALLER_EQUALS;
-			}
-		},
-		BIGGER_EQUALS(">=") {
-			Type reverse() {
-				return SMALLER;
-			}
-		},
-		SMALLER_EQUALS("<=") {
-			Type reverse() {
-				return BIGGER;
-			}
-		},
-		SMALLER("<") {
-			Type reverse() {
-				return BIGGER_EQUALS;
-			}
-		},
-		ADD("+"), SUBTRACT("-"), MULTIPLY("*"), DIVIDE("/"), MOD("%");
+    /**
+     * The operation type.
+     */
+    enum Type {
+        EQUALS("=") {
+            Type reverse() {
+                return NOT_EQUALS;
+            }
+        },
+        NOT_EQUALS("<>") {
+            Type reverse() {
+                return EQUALS;
+            }
+        },
+        BIGGER(">") {
+            Type reverse() {
+                return SMALLER_EQUALS;
+            }
+        },
+        BIGGER_EQUALS(">=") {
+            Type reverse() {
+                return SMALLER;
+            }
+        },
+        SMALLER_EQUALS("<=") {
+            Type reverse() {
+                return BIGGER;
+            }
+        },
+        SMALLER("<") {
+            Type reverse() {
+                return BIGGER_EQUALS;
+            }
+        },
+        ADD("+"), SUBTRACT("-"), MULTIPLY("*"), DIVIDE("/"), MOD("%");
 
-		private String name;
+        private String name;
 
-		Type(String name) {
-			this.name = name;
-		}
+        Type(String name) {
+            this.name = name;
+        }
 
-		public String toString() {
-			return name;
-		}
+        public String toString() {
+            return name;
+        }
 
-		Type reverse() {
-			return null;
-		}
+        Type reverse() {
+            return null;
+        }
 
-	}
+    }
 
-	private final Token left, right;
-	private final Type op;
+    private final Token left, right;
+    private final Type op;
 
-	private Operation(Token left, Type op, Token right) {
-		this.left = left;
-		this.op = op;
-		this.right = right;
-	}
+    private Operation(Token left, Type op, Token right) {
+        this.left = left;
+        this.op = op;
+        this.right = right;
+    }
 
-	static Token get(Token left, Type op, Token right) {
-		if (op == Type.NOT_EQUALS && "0".equals(right.toString())) {
-			return left;
-		}
-		return new Operation(left, op, right);
-	}
+    static Token get(Token left, Type op, Token right) {
+        if (op == Type.NOT_EQUALS && "0".equals(right.toString())) {
+            return left;
+        }
+        return new Operation(left, op, right);
+    }
 
-	public String toString() {
-		return left + " " + op + " " + right;
-	}
+    public String toString() {
+        return left + " " + op + " " + right;
+    }
 
-	public Token reverse() {
-		return get(left, op.reverse(), right);
-	}
+    public Token reverse() {
+        return get(left, op.reverse(), right);
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		left.appendSQL(stat, query);
-		stat.appendSQL(op.toString());
-		right.appendSQL(stat, query);
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        left.appendSQL(stat, query);
+        stat.appendSQL(op.toString());
+        right.appendSQL(stat, query);
+    }
 
 }

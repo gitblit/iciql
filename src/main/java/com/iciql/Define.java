@@ -28,31 +28,31 @@ import com.iciql.Iciql.IndexType;
 
 public class Define {
 
-	private static TableDefinition<?> currentTableDefinition;
-	private static Iciql currentTable;
+    private static TableDefinition<?> currentTableDefinition;
+    private static Iciql currentTable;
 
-	public static void skipCreate() {
-		checkInDefine();
-		currentTableDefinition.defineSkipCreate();
-	}
+    public static void skipCreate() {
+        checkInDefine();
+        currentTableDefinition.defineSkipCreate();
+    }
 
-	public static void index(IndexType type, Object... columns) {
-		checkInDefine();
-		currentTableDefinition.defineIndex(null, type, columns);
-	}
+    public static void index(IndexType type, Object... columns) {
+        checkInDefine();
+        currentTableDefinition.defineIndex(null, type, columns);
+    }
 
-	public static void index(String name, IndexType type, Object... columns) {
-		checkInDefine();
-		currentTableDefinition.defineIndex(name, type, columns);
-	}
+    public static void index(String name, IndexType type, Object... columns) {
+        checkInDefine();
+        currentTableDefinition.defineIndex(name, type, columns);
+    }
 
-	public static void constraintUnique(String name, Object... columns) {
-		checkInDefine();
-		currentTableDefinition.defineConstraintUnique(name, columns);
-	}
+    public static void constraintUnique(String name, Object... columns) {
+        checkInDefine();
+        currentTableDefinition.defineConstraintUnique(name, columns);
+    }
 
 	/*
-	 * The variable argument type Object can't be used twice :-)
+     * The variable argument type Object can't be used twice :-)
 	 */
 //	public static void constraintForeignKey(String name, String refTableName,
 //			ConstraintDeleteType deleteType, ConstraintUpdateType updateType,
@@ -61,91 +61,91 @@ public class Define {
 //		currentTableDefinition.defineForeignKey(name, columns, refTableName, Columns, deleteType, updateType, deferrabilityType);
 //	}
 
-	public static void primaryKey(Object... columns) {
-		checkInDefine();
-		currentTableDefinition.definePrimaryKey(columns);
-	}
+    public static void primaryKey(Object... columns) {
+        checkInDefine();
+        currentTableDefinition.definePrimaryKey(columns);
+    }
 
-	public static void schemaName(String schemaName) {
-		checkInDefine();
-		currentTableDefinition.defineSchemaName(schemaName);
-	}
+    public static void schemaName(String schemaName) {
+        checkInDefine();
+        currentTableDefinition.defineSchemaName(schemaName);
+    }
 
-	public static void tableName(String tableName) {
-		checkInDefine();
-		currentTableDefinition.defineTableName(tableName);
-	}
+    public static void tableName(String tableName) {
+        checkInDefine();
+        currentTableDefinition.defineTableName(tableName);
+    }
 
-	public static void viewTableName(String viewTableName) {
-		checkInDefine();
-		currentTableDefinition.defineViewTableName(viewTableName);
-	}
+    public static void viewTableName(String viewTableName) {
+        checkInDefine();
+        currentTableDefinition.defineViewTableName(viewTableName);
+    }
 
-	public static void memoryTable() {
-		checkInDefine();
-		currentTableDefinition.defineMemoryTable();
-	}
+    public static void memoryTable() {
+        checkInDefine();
+        currentTableDefinition.defineMemoryTable();
+    }
 
-	public static void columnName(Object column, String columnName) {
-		checkInDefine();
-		currentTableDefinition.defineColumnName(column, columnName);
-	}
+    public static void columnName(Object column, String columnName) {
+        checkInDefine();
+        currentTableDefinition.defineColumnName(column, columnName);
+    }
 
-	public static void autoIncrement(Object column) {
-		checkInDefine();
-		currentTableDefinition.defineAutoIncrement(column);
-	}
+    public static void autoIncrement(Object column) {
+        checkInDefine();
+        currentTableDefinition.defineAutoIncrement(column);
+    }
 
-	public static void length(Object column, int length) {
-		checkInDefine();
-		currentTableDefinition.defineLength(column, length);
-	}
+    public static void length(Object column, int length) {
+        checkInDefine();
+        currentTableDefinition.defineLength(column, length);
+    }
 
-	public static void scale(Object column, int scale) {
-		checkInDefine();
-		currentTableDefinition.defineScale(column, scale);
-	}
+    public static void scale(Object column, int scale) {
+        checkInDefine();
+        currentTableDefinition.defineScale(column, scale);
+    }
 
-	public static void trim(Object column) {
-		checkInDefine();
-		currentTableDefinition.defineTrim(column);
-	}
+    public static void trim(Object column) {
+        checkInDefine();
+        currentTableDefinition.defineTrim(column);
+    }
 
-	public static void nullable(Object column, boolean isNullable) {
-		checkInDefine();
-		currentTableDefinition.defineNullable(column, isNullable);
-	}
+    public static void nullable(Object column, boolean isNullable) {
+        checkInDefine();
+        currentTableDefinition.defineNullable(column, isNullable);
+    }
 
-	public static void defaultValue(Object column, String defaultValue) {
-		checkInDefine();
-		currentTableDefinition.defineDefaultValue(column, defaultValue);
-	}
+    public static void defaultValue(Object column, String defaultValue) {
+        checkInDefine();
+        currentTableDefinition.defineDefaultValue(column, defaultValue);
+    }
 
-	public static void constraint(Object column, String constraint) {
-		checkInDefine();
-		currentTableDefinition.defineConstraint(column, constraint);
-	}
+    public static void constraint(Object column, String constraint) {
+        checkInDefine();
+        currentTableDefinition.defineConstraint(column, constraint);
+    }
 
-	public static void typeAdapter(Object column, Class<? extends DataTypeAdapter<?>> typeAdapter) {
-		checkInDefine();
-		currentTableDefinition.defineTypeAdapter(column, typeAdapter);
-	}
+    public static void typeAdapter(Object column, Class<? extends DataTypeAdapter<?>> typeAdapter) {
+        checkInDefine();
+        currentTableDefinition.defineTypeAdapter(column, typeAdapter);
+    }
 
-	static synchronized <T> void define(TableDefinition<T> tableDefinition, Iciql table) {
-		currentTableDefinition = tableDefinition;
-		currentTable = table;
-		tableDefinition.mapObject(table);
-		table.defineIQ();
-		currentTable = null;
-		currentTableDefinition = null;
-	}
+    static synchronized <T> void define(TableDefinition<T> tableDefinition, Iciql table) {
+        currentTableDefinition = tableDefinition;
+        currentTable = table;
+        tableDefinition.mapObject(table);
+        table.defineIQ();
+        currentTable = null;
+        currentTableDefinition = null;
+    }
 
-	private static void checkInDefine() {
-		if (currentTable == null) {
-			throw new IciqlException("This method may only be called "
-					+ "from within the define() method, and the define() method "
-					+ "is called by the framework.");
-		}
-	}
+    private static void checkInDefine() {
+        if (currentTable == null) {
+            throw new IciqlException("This method may only be called "
+                    + "from within the define() method, and the define() method "
+                    + "is called by the framework.");
+        }
+    }
 
 }

@@ -23,33 +23,32 @@ import com.iciql.Iciql.IQTable;
 /**
  * A system table to track database and table versions.
  */
-@IQTable(name = "iq_versions", primaryKey = { "schemaName", "tableName" }, memoryTable = true)
+@IQTable(name = "iq_versions", primaryKey = {"schemaName", "tableName"}, memoryTable = true)
 public class DbVersion {
 
-	@IQColumn(length = 255)
-	String schemaName = "";
+    @IQColumn(length = 255)
+    String schemaName = "";
 
-	@IQColumn(length = 255)
-	String tableName = "";
+    @IQColumn(length = 255)
+    String tableName = "";
 
-	@IQColumn
-	Integer version;
+    @IQColumn
+    Integer version;
 
-	public DbVersion() {
-		// nothing to do
-	}
+    public DbVersion() {
+        // nothing to do
+    }
 
-	/**
-	 * Constructor for defining a version entry. Both the schema and the table
-	 * are empty strings, which means this is the row for the 'database'.
-	 * 
-	 * @param version
-	 *            the database version
-	 */
-	public DbVersion(int version) {
-		this.schemaName = "";
-		this.tableName = "";
-		this.version = version;
-	}
+    /**
+     * Constructor for defining a version entry. Both the schema and the table
+     * are empty strings, which means this is the row for the 'database'.
+     *
+     * @param version the database version
+     */
+    public DbVersion(int version) {
+        this.schemaName = "";
+        this.tableName = "";
+        this.version = version;
+    }
 
 }

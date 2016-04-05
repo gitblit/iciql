@@ -26,170 +26,170 @@ import java.util.regex.Pattern;
  */
 public class IciqlException extends RuntimeException {
 
-	public static final int CODE_UNMAPPED_FIELD = 1;
-	public static final int CODE_DUPLICATE_KEY = 2;
-	public static final int CODE_OBJECT_NOT_FOUND = 3;
-	public static final int CODE_OBJECT_ALREADY_EXISTS = 4;
-	public static final int CODE_CONSTRAINT_VIOLATION = 5;
-	public static final int CODE_UNCHARACTERIZED = 6;
+    public static final int CODE_UNMAPPED_FIELD = 1;
+    public static final int CODE_DUPLICATE_KEY = 2;
+    public static final int CODE_OBJECT_NOT_FOUND = 3;
+    public static final int CODE_OBJECT_ALREADY_EXISTS = 4;
+    public static final int CODE_CONSTRAINT_VIOLATION = 5;
+    public static final int CODE_UNCHARACTERIZED = 6;
 
-	private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|\\<\\>|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";
+    private static final String TOKEN_UNMAPPED_FIELD = "\\? (=|\\>|\\<|\\<\\>|!=|\\>=|\\<=|LIKE|BETWEEN) \\?";
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String sql;
+    private String sql;
 
-	private int iciqlCode;
+    private int iciqlCode;
 
-	public IciqlException(Throwable t) {
-		super(t.getMessage(), t);
-		configureCode(t);
-	}
+    public IciqlException(Throwable t) {
+        super(t.getMessage(), t);
+        configureCode(t);
+    }
 
-	public IciqlException(String message, Object... parameters) {
-		super(parameters.length > 0 ? MessageFormat.format(message, parameters) : message);
-	}
+    public IciqlException(String message, Object... parameters) {
+        super(parameters.length > 0 ? MessageFormat.format(message, parameters) : message);
+    }
 
-	public IciqlException(Throwable t, String message, Object... parameters) {
-		super(parameters.length > 0 ? MessageFormat.format(message, parameters) : message, t);
-		configureCode(t);
-	}
+    public IciqlException(Throwable t, String message, Object... parameters) {
+        super(parameters.length > 0 ? MessageFormat.format(message, parameters) : message, t);
+        configureCode(t);
+    }
 
-	public static void checkUnmappedField(String sql) {
-		if (Pattern.compile(IciqlException.TOKEN_UNMAPPED_FIELD).matcher(sql).find()) {
-			IciqlException e = new IciqlException("unmapped field in statement!");
-			e.sql = sql;
-			e.iciqlCode = CODE_UNMAPPED_FIELD;
-			throw e;
-		}
-	}
+    public static void checkUnmappedField(String sql) {
+        if (Pattern.compile(IciqlException.TOKEN_UNMAPPED_FIELD).matcher(sql).find()) {
+            IciqlException e = new IciqlException("unmapped field in statement!");
+            e.sql = sql;
+            e.iciqlCode = CODE_UNMAPPED_FIELD;
+            throw e;
+        }
+    }
 
-	public static IciqlException fromSQL(String sql, Throwable t) {
-		if (Pattern.compile(TOKEN_UNMAPPED_FIELD).matcher(sql).find()) {
-			IciqlException e = new IciqlException(t, "unmapped field in statement!");
-			e.sql = sql;
-			e.iciqlCode = CODE_UNMAPPED_FIELD;
-			return e;
-		} else {
-			IciqlException e = new IciqlException(t, t.getMessage());
-			e.sql = sql;
-			return e;
-		}
-	}
+    public static IciqlException fromSQL(String sql, Throwable t) {
+        if (Pattern.compile(TOKEN_UNMAPPED_FIELD).matcher(sql).find()) {
+            IciqlException e = new IciqlException(t, "unmapped field in statement!");
+            e.sql = sql;
+            e.iciqlCode = CODE_UNMAPPED_FIELD;
+            return e;
+        } else {
+            IciqlException e = new IciqlException(t, t.getMessage());
+            e.sql = sql;
+            return e;
+        }
+    }
 
-	public void setSQL(String sql) {
-		this.sql = sql;
-	}
+    public void setSQL(String sql) {
+        this.sql = sql;
+    }
 
-	public String getSQL() {
-		return sql;
-	}
+    public String getSQL() {
+        return sql;
+    }
 
-	public int getIciqlCode() {
-		return iciqlCode;
-	}
+    public int getIciqlCode() {
+        return iciqlCode;
+    }
 
-	private void configureCode(Throwable t) {
-		if (t == null) {
-			return;
-		}
-		if (t instanceof SQLException) {
-			// http://developer.mimer.com/documentation/html_92/Mimer_SQL_Mobile_DocSet/App_Return_Codes2.html
-			SQLException s = (SQLException) t;
-			String state = s.getSQLState();
-			if ("23000".equals(state)) {
-				// MySQL duplicate primary key on insert
-				iciqlCode = CODE_DUPLICATE_KEY;
-				if (s.getErrorCode() == 1217) {
-					iciqlCode = CODE_CONSTRAINT_VIOLATION;
-				}
-			} else if ("23505".equals(state)) {
-				// Derby duplicate primary key on insert
-				iciqlCode = CODE_DUPLICATE_KEY;
-			} else if ("42000".equals(state)) {
-				// MySQL duplicate unique index value on insert
-				iciqlCode = CODE_DUPLICATE_KEY;
-			} else if ("42Y07".equals(state)) {
-				// Derby schema not found
-				iciqlCode = CODE_OBJECT_NOT_FOUND;
-			} else if ("42X05".equals(state)) {
-				// Derby table not found
-				iciqlCode = CODE_OBJECT_NOT_FOUND;
-			} else if ("42Y55".equals(state)) {
-				// Derby table not found
-				iciqlCode = CODE_OBJECT_NOT_FOUND;
-			} else if ("42S02".equals(state)) {
-				// H2 table not found
-				iciqlCode = CODE_OBJECT_NOT_FOUND;
-			} else if ("42501".equals(state)) {
-				// HSQL table not found
-				iciqlCode = CODE_OBJECT_NOT_FOUND;
-			} else if ("42P01".equals(state)) {
-				// PostgreSQL table not found
-				iciqlCode = CODE_OBJECT_NOT_FOUND;
-			} else if ("X0X05".equals(state)) {
-				// Derby view/table not found exists
-				iciqlCode = CODE_OBJECT_NOT_FOUND;
-			} else if ("X0Y32".equals(state)) {
-				// Derby table already exists
-				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
-			} else if ("42P07".equals(state)) {
-				// PostgreSQL table or index already exists
-				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
-			} else if ("42S01".equals(state)) {
-				// MySQL view already exists
-				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
-			} else if ("42S11".equals(state)) {
-				// H2 index already exists
-				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
-			} else if ("42504".equals(state)) {
-				// HSQL index already exists
-				iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
-			} else if ("2BP01".equals(state)) {
-				// PostgreSQL constraint violation
-				iciqlCode = CODE_CONSTRAINT_VIOLATION;
-			} else if ("42533".equals(state)) {
-				// HSQL constraint violation
-				iciqlCode = CODE_CONSTRAINT_VIOLATION;
-			} else if ("X0Y25".equals(state)) {
-				// Derby constraint violation
-				iciqlCode = CODE_CONSTRAINT_VIOLATION;
-			} else if (s.getMessage().startsWith("[SQLITE")) {
-				// SQLite error codes
-				final String msg = s.getMessage();
-				switch (s.getErrorCode()) {
-				case 1:
-					iciqlCode = CODE_OBJECT_NOT_FOUND;
-					break;
-				case 19:
-					if (msg.contains("UNIQUE")) {
-						iciqlCode = CODE_DUPLICATE_KEY;
-					} else {
-						iciqlCode = CODE_CONSTRAINT_VIOLATION;
-					}
-					break;
-				default:
-					iciqlCode = s.getErrorCode();
-					break;
-				}
-			} else {
-				// uncharacterized SQL code, we can always rely on iciqlCode != 0 in IciqlException
-				iciqlCode = s.getErrorCode() == 0 ? CODE_UNCHARACTERIZED : s.getErrorCode();
-			}
-		}
-	}
+    private void configureCode(Throwable t) {
+        if (t == null) {
+            return;
+        }
+        if (t instanceof SQLException) {
+            // http://developer.mimer.com/documentation/html_92/Mimer_SQL_Mobile_DocSet/App_Return_Codes2.html
+            SQLException s = (SQLException) t;
+            String state = s.getSQLState();
+            if ("23000".equals(state)) {
+                // MySQL duplicate primary key on insert
+                iciqlCode = CODE_DUPLICATE_KEY;
+                if (s.getErrorCode() == 1217) {
+                    iciqlCode = CODE_CONSTRAINT_VIOLATION;
+                }
+            } else if ("23505".equals(state)) {
+                // Derby duplicate primary key on insert
+                iciqlCode = CODE_DUPLICATE_KEY;
+            } else if ("42000".equals(state)) {
+                // MySQL duplicate unique index value on insert
+                iciqlCode = CODE_DUPLICATE_KEY;
+            } else if ("42Y07".equals(state)) {
+                // Derby schema not found
+                iciqlCode = CODE_OBJECT_NOT_FOUND;
+            } else if ("42X05".equals(state)) {
+                // Derby table not found
+                iciqlCode = CODE_OBJECT_NOT_FOUND;
+            } else if ("42Y55".equals(state)) {
+                // Derby table not found
+                iciqlCode = CODE_OBJECT_NOT_FOUND;
+            } else if ("42S02".equals(state)) {
+                // H2 table not found
+                iciqlCode = CODE_OBJECT_NOT_FOUND;
+            } else if ("42501".equals(state)) {
+                // HSQL table not found
+                iciqlCode = CODE_OBJECT_NOT_FOUND;
+            } else if ("42P01".equals(state)) {
+                // PostgreSQL table not found
+                iciqlCode = CODE_OBJECT_NOT_FOUND;
+            } else if ("X0X05".equals(state)) {
+                // Derby view/table not found exists
+                iciqlCode = CODE_OBJECT_NOT_FOUND;
+            } else if ("X0Y32".equals(state)) {
+                // Derby table already exists
+                iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
+            } else if ("42P07".equals(state)) {
+                // PostgreSQL table or index already exists
+                iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
+            } else if ("42S01".equals(state)) {
+                // MySQL view already exists
+                iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
+            } else if ("42S11".equals(state)) {
+                // H2 index already exists
+                iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
+            } else if ("42504".equals(state)) {
+                // HSQL index already exists
+                iciqlCode = CODE_OBJECT_ALREADY_EXISTS;
+            } else if ("2BP01".equals(state)) {
+                // PostgreSQL constraint violation
+                iciqlCode = CODE_CONSTRAINT_VIOLATION;
+            } else if ("42533".equals(state)) {
+                // HSQL constraint violation
+                iciqlCode = CODE_CONSTRAINT_VIOLATION;
+            } else if ("X0Y25".equals(state)) {
+                // Derby constraint violation
+                iciqlCode = CODE_CONSTRAINT_VIOLATION;
+            } else if (s.getMessage().startsWith("[SQLITE")) {
+                // SQLite error codes
+                final String msg = s.getMessage();
+                switch (s.getErrorCode()) {
+                    case 1:
+                        iciqlCode = CODE_OBJECT_NOT_FOUND;
+                        break;
+                    case 19:
+                        if (msg.contains("UNIQUE")) {
+                            iciqlCode = CODE_DUPLICATE_KEY;
+                        } else {
+                            iciqlCode = CODE_CONSTRAINT_VIOLATION;
+                        }
+                        break;
+                    default:
+                        iciqlCode = s.getErrorCode();
+                        break;
+                }
+            } else {
+                // uncharacterized SQL code, we can always rely on iciqlCode != 0 in IciqlException
+                iciqlCode = s.getErrorCode() == 0 ? CODE_UNCHARACTERIZED : s.getErrorCode();
+            }
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getClass().getName());
-		String message = getLocalizedMessage();
-		if (message != null) {
-			sb.append(": ").append(message);
-		}
-		if (sql != null) {
-			sb.append('\n').append(sql);
-		}
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getName());
+        String message = getLocalizedMessage();
+        if (message != null) {
+            sb.append(": ").append(message);
+        }
+        if (sql != null) {
+            sb.append('\n').append(sql);
+        }
+        return sb.toString();
+    }
 }

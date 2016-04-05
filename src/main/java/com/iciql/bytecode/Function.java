@@ -26,22 +26,22 @@ import com.iciql.Token;
  */
 class Function implements Token {
 
-	private final String name;
-	private final Token expr;
+    private final String name;
+    private final Token expr;
 
-	Function(String name, Token expr) {
-		this.name = name;
-		this.expr = expr;
-	}
+    Function(String name, Token expr) {
+        this.name = name;
+        this.expr = expr;
+    }
 
-	public String toString() {
-		return name + "(" + expr + ")";
-	}
+    public String toString() {
+        return name + "(" + expr + ")";
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		// untested
-		stat.appendSQL(name + "(");
-		expr.appendSQL(stat, query);
-		stat.appendSQL(")");
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        // untested
+        stat.appendSQL(name + "(");
+        expr.appendSQL(stat, query);
+        stat.appendSQL(")");
+    }
 }

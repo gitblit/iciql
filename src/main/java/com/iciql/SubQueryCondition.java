@@ -18,24 +18,23 @@ package com.iciql;
 
 /**
  * A condition that contains a subquery.
- * 
- * @param <A>
- *            the operand type
+ *
+ * @param <A> the operand type
  */
 
 class SubQueryCondition<A, Y, Z> implements Token {
-	A x;
-	SubQuery<Y, Z> subquery;
+    A x;
+    SubQuery<Y, Z> subquery;
 
-	SubQueryCondition(A x, SubQuery<Y, Z> subquery) {
-		this.x = x;
-		this.subquery = subquery;
-	}
+    SubQueryCondition(A x, SubQuery<Y, Z> subquery) {
+        this.x = x;
+        this.subquery = subquery;
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		query.appendSQL(stat, null, x);
-		stat.appendSQL(" in (");
-		subquery.appendSQL(stat);
-		stat.appendSQL(")");
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        query.appendSQL(stat, null, x);
+        stat.appendSQL(" in (");
+        subquery.appendSQL(stat);
+        stat.appendSQL(")");
+    }
 }

@@ -25,46 +25,46 @@ import com.iciql.SQLStatement;
  */
 public class ConstantNumber implements Constant {
 
-	private final String value;
-	private final Type type;
-	private final long longValue;
+    private final String value;
+    private final Type type;
+    private final long longValue;
 
-	private ConstantNumber(String value, long longValue, Type type) {
-		this.value = value;
-		this.longValue = longValue;
-		this.type = type;
-	}
+    private ConstantNumber(String value, long longValue, Type type) {
+        this.value = value;
+        this.longValue = longValue;
+        this.type = type;
+    }
 
-	static ConstantNumber get(String v) {
-		return new ConstantNumber(v, 0, Type.STRING);
-	}
+    static ConstantNumber get(String v) {
+        return new ConstantNumber(v, 0, Type.STRING);
+    }
 
-	static ConstantNumber get(int v) {
-		return new ConstantNumber("" + v, v, Type.INT);
-	}
+    static ConstantNumber get(int v) {
+        return new ConstantNumber("" + v, v, Type.INT);
+    }
 
-	static ConstantNumber get(long v) {
-		return new ConstantNumber("" + v, v, Type.LONG);
-	}
+    static ConstantNumber get(long v) {
+        return new ConstantNumber("" + v, v, Type.LONG);
+    }
 
-	static ConstantNumber get(String s, long x, Type type) {
-		return new ConstantNumber(s, x, type);
-	}
+    static ConstantNumber get(String s, long x, Type type) {
+        return new ConstantNumber(s, x, type);
+    }
 
-	public int intValue() {
-		return (int) longValue;
-	}
+    public int intValue() {
+        return (int) longValue;
+    }
 
-	public String toString() {
-		return value;
-	}
+    public String toString() {
+        return value;
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		stat.appendSQL(toString());
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        stat.appendSQL(toString());
+    }
 
-	public Constant.Type getType() {
-		return type;
-	}
+    public Constant.Type getType() {
+        return type;
+    }
 
 }

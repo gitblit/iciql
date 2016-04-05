@@ -17,57 +17,57 @@
 
 package com.iciql.test.models;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQContraintUnique;
 import com.iciql.Iciql.IQIndex;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.IndexType;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * A table containing category data.
  */
 
 @IQTable(name = "AnnotatedCategory", primaryKey = "id")
-@IQIndex(value = "categ", type=IndexType.UNIQUE)
-@IQContraintUnique(uniqueColumns = { "categ" })
+@IQIndex(value = "categ", type = IndexType.UNIQUE)
+@IQContraintUnique(uniqueColumns = {"categ"})
 public class CategoryAnnotationOnly {
 
-	@IQColumn(name = "id", autoIncrement = true)
-	public Long categoryId;
+    @IQColumn(name = "id", autoIncrement = true)
+    public Long categoryId;
 
-	@IQColumn(name = "categ", length = 15, trim = true)
-	public String category;
+    @IQColumn(name = "categ", length = 15, trim = true)
+    public String category;
 
-	public CategoryAnnotationOnly() {
-		// public constructor
-	}
+    public CategoryAnnotationOnly() {
+        // public constructor
+    }
 
-	private CategoryAnnotationOnly(long categoryId, String category) {
-		this.categoryId = categoryId;
-		this.category = category;
-	}
+    private CategoryAnnotationOnly(long categoryId, String category) {
+        this.categoryId = categoryId;
+        this.category = category;
+    }
 
-	private static CategoryAnnotationOnly create(int categoryId, String category) {
-		return new CategoryAnnotationOnly(categoryId, category);
-	}
+    private static CategoryAnnotationOnly create(int categoryId, String category) {
+        return new CategoryAnnotationOnly(categoryId, category);
+    }
 
-	public static List<CategoryAnnotationOnly> getList() {
-		CategoryAnnotationOnly[] list = {
-				create(1, "Beverages"),
-				create(2, "Condiments"),
-				create(3, "Produce"),
-				create(4, "Meat/Poultry"),
-				create(5,"Seafood")
-		};
-		return Arrays.asList(list);
-	}
+    public static List<CategoryAnnotationOnly> getList() {
+        CategoryAnnotationOnly[] list = {
+                create(1, "Beverages"),
+                create(2, "Condiments"),
+                create(3, "Produce"),
+                create(4, "Meat/Poultry"),
+                create(5, "Seafood")
+        };
+        return Arrays.asList(list);
+    }
 
-	@Override
-	public String toString() {
-		return category;
-	}
+    @Override
+    public String toString() {
+        return category;
+    }
 
 }

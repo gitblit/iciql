@@ -17,16 +17,16 @@
 package com.iciql;
 
 public class SubQuery<T, Z> {
-	
-	final Query<T> query;
-	final Z z;
-	
-	public SubQuery(Query<T> query, Z x) {
-		this.query = query;
-		this.z = x;
-	}
 
-	public void appendSQL(SQLStatement stat) {		
-		stat.appendSQL(query.toSubQuery(z));
-	}
+    final Query<T> query;
+    final Z z;
+
+    public SubQuery(Query<T> query, Z x) {
+        this.query = query;
+        this.z = x;
+    }
+
+    public void appendSQL(SQLStatement stat) {
+        stat.appendSQL(query.toSubQuery(z));
+    }
 }

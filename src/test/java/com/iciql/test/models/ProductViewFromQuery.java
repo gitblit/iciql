@@ -24,19 +24,19 @@ import com.iciql.Iciql.IQView;
  */
 
 @IQView(name = "AnnotatedProductViewInherited", inheritColumns = true)
-public class ProductViewFromQuery  extends ProductAnnotationOnly {
+public class ProductViewFromQuery extends ProductAnnotationOnly {
 
-	public String unmappedField;
+    public String unmappedField;
 
-	@IQColumn(name = "id")
-	public Long productId;
+    @IQColumn(name = "id")
+    public Long productId;
 
-	public ProductViewFromQuery() {
-		// public constructor
-	}
+    public ProductViewFromQuery() {
+        // public constructor
+    }
 
-	public String toString() {
-		return productName + " (" + productId + ")";
-	}
+    public String toString() {
+        return productName + " (" + productId + ")";
+    }
 
 }

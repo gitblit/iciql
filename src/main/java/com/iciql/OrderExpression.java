@@ -19,37 +19,36 @@ package com.iciql;
 
 /**
  * An expression to order by in a query.
- * 
- * @param <T>
- *            the query data type
+ *
+ * @param <T> the query data type
  */
 
 class OrderExpression<T> {
-	private Query<T> query;
-	private Object expression;
-	private boolean desc;
-	private boolean nullsFirst;
-	private boolean nullsLast;
+    private Query<T> query;
+    private Object expression;
+    private boolean desc;
+    private boolean nullsFirst;
+    private boolean nullsLast;
 
-	OrderExpression(Query<T> query, Object expression, boolean desc, boolean nullsFirst, boolean nullsLast) {
-		this.query = query;
-		this.expression = expression;
-		this.desc = desc;
-		this.nullsFirst = nullsFirst;
-		this.nullsLast = nullsLast;
-	}
+    OrderExpression(Query<T> query, Object expression, boolean desc, boolean nullsFirst, boolean nullsLast) {
+        this.query = query;
+        this.expression = expression;
+        this.desc = desc;
+        this.nullsFirst = nullsFirst;
+        this.nullsLast = nullsLast;
+    }
 
-	void appendSQL(SQLStatement stat) {
-		query.appendSQL(stat, null, expression);
-		if (desc) {
-			stat.appendSQL(" DESC");
-		}
-		if (nullsLast) {
-			stat.appendSQL(" NULLS LAST");
-		}
-		if (nullsFirst) {
-			stat.appendSQL(" NULLS FIRST");
-		}
-	}
+    void appendSQL(SQLStatement stat) {
+        query.appendSQL(stat, null, expression);
+        if (desc) {
+            stat.appendSQL(" DESC");
+        }
+        if (nullsLast) {
+            stat.appendSQL(" NULLS LAST");
+        }
+        if (nullsFirst) {
+            stat.appendSQL(" NULLS FIRST");
+        }
+    }
 
 }

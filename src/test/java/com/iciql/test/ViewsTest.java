@@ -16,15 +16,6 @@
 
 package com.iciql.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.iciql.Db;
 import com.iciql.test.models.ProductAnnotationOnly;
 import com.iciql.test.models.ProductView;
@@ -32,83 +23,91 @@ import com.iciql.test.models.ProductViewFromQuery;
 import com.iciql.test.models.ProductViewInherited;
 import com.iciql.test.models.ProductViewInheritedComplex;
 import com.mysql.jdbc.StringUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test annotation processing.
  */
 public class ViewsTest {
 
-	/**
-	 * This object represents a database (actually a connection to the
-	 * database).
-	 */
+    /**
+     * This object represents a database (actually a connection to the
+     * database).
+     */
 
-	private Db db;
+    private Db db;
 
-	@Before
-	public void setUp() {
-		db = IciqlSuite.openNewDb();
-		db.insertAll(ProductAnnotationOnly.getList());
-	}
+    @Before
+    public void setUp() {
+        db = IciqlSuite.openNewDb();
+        db.insertAll(ProductAnnotationOnly.getList());
+    }
 
-	@After
-	public void tearDown() {
-		db.close();
-	}
+    @After
+    public void tearDown() {
+        db.close();
+    }
 
-	@Test
-	public void testProductView() {
-		ProductView view = new ProductView();
-		List<ProductView> products = db.from(view).select();
-		assertEquals(5, products.size());
-		for (int i = 0; i < products.size(); i++) {
-			assertEquals(3 + i, products.get(i).productId.intValue());
-		}
-	}
+    @Test
+    public void testProductView() {
+        ProductView view = new ProductView();
+        List<ProductView> products = db.from(view).select();
+        assertEquals(5, products.size());
+        for (int i = 0; i < products.size(); i++) {
+            assertEquals(3 + i, products.get(i).productId.intValue());
+        }
+    }
 
-	@Test
-	public void testProductViewInherited() {
-		ProductViewInherited view = new ProductViewInherited();
-		List<ProductViewInherited> products = db.from(view).select();
-		assertEquals(5, products.size());
-		for (int i = 0; i < products.size(); i++) {
-			assertEquals(3 + i, products.get(i).productId.intValue());
-		}
-	}
-	
-	@Test
-	public void testComplexInheritance() {
-		ProductViewInheritedComplex view = new ProductViewInheritedComplex();
-		List<ProductViewInheritedComplex> products = db.from(view).select();
-		assertEquals(5, products.size());
-		for (int i = 0; i < products.size(); i++) {
-			assertEquals(3 + i, products.get(i).productId.intValue());
-			assertTrue(!StringUtils.isNullOrEmpty(products.get(i).productName));
-		}
-	}
-	
-	@Test
-	public void testCreateViewFromQuery() {
-		// create view from query
-		ProductAnnotationOnly product = new ProductAnnotationOnly();
-		db.from(product).where(product.productId).exceeds(2L).and(product.productId).atMost(7L).createView(ProductViewFromQuery.class);
-		
-		// select from the created view
-		ProductViewFromQuery view = new ProductViewFromQuery();
-		List<ProductViewFromQuery> products = db.from(view).select();
-		assertEquals(5, products.size());
-		for (int i = 0; i < products.size(); i++) {
-			assertEquals(3 + i, products.get(i).productId.intValue());
-		}
-		
-		// replace the view
-		db.from(product).where(product.productId).exceeds(3L).and(product.productId).atMost(8L).replaceView(ProductViewFromQuery.class);
-		
-		// select from the replaced view
-		products = db.from(view).select();
-		assertEquals(5, products.size());
-		for (int i = 0; i < products.size(); i++) {
-			assertEquals(4 + i, products.get(i).productId.intValue());
-		}
-	}
+    @Test
+    public void testProductViewInherited() {
+        ProductViewInherited view = new ProductViewInherited();
+        List<ProductViewInherited> products = db.from(view).select();
+        assertEquals(5, products.size());
+        for (int i = 0; i < products.size(); i++) {
+            assertEquals(3 + i, products.get(i).productId.intValue());
+        }
+    }
+
+    @Test
+    public void testComplexInheritance() {
+        ProductViewInheritedComplex view = new ProductViewInheritedComplex();
+        List<ProductViewInheritedComplex> products = db.from(view).select();
+        assertEquals(5, products.size());
+        for (int i = 0; i < products.size(); i++) {
+            assertEquals(3 + i, products.get(i).productId.intValue());
+            assertTrue(!StringUtils.isNullOrEmpty(products.get(i).productName));
+        }
+    }
+
+    @Test
+    public void testCreateViewFromQuery() {
+        // create view from query
+        ProductAnnotationOnly product = new ProductAnnotationOnly();
+        db.from(product).where(product.productId).exceeds(2L).and(product.productId).atMost(7L).createView(ProductViewFromQuery.class);
+
+        // select from the created view
+        ProductViewFromQuery view = new ProductViewFromQuery();
+        List<ProductViewFromQuery> products = db.from(view).select();
+        assertEquals(5, products.size());
+        for (int i = 0; i < products.size(); i++) {
+            assertEquals(3 + i, products.get(i).productId.intValue());
+        }
+
+        // replace the view
+        db.from(product).where(product.productId).exceeds(3L).and(product.productId).atMost(8L).replaceView(ProductViewFromQuery.class);
+
+        // select from the replaced view
+        products = db.from(view).select();
+        assertEquals(5, products.size());
+        for (int i = 0; i < products.size(); i++) {
+            assertEquals(4 + i, products.get(i).productId.intValue());
+        }
+    }
 }

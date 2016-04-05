@@ -25,38 +25,38 @@ import com.thoughtworks.xstream.XStream;
  */
 public class XStreamTypeAdapter implements DataTypeAdapter<Object> {
 
-	protected Mode mode;
+    protected Mode mode;
 
-	protected XStream xstream() {
-		return new XStream();
-	}
+    protected XStream xstream() {
+        return new XStream();
+    }
 
-	@Override
-	public void setMode(Mode mode) {
-		this.mode = mode;
-	}
+    @Override
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
 
-	@Override
-	public String getDataType() {
-		return "TEXT";
-	}
+    @Override
+    public String getDataType() {
+        return "TEXT";
+    }
 
-	@Override
-	public Class<Object> getJavaType() {
-		return Object.class;
-	}
+    @Override
+    public Class<Object> getJavaType() {
+        return Object.class;
+    }
 
-	@Override
-	public Object serialize(Object value) {
-		return xstream().toXML(value);
-	}
+    @Override
+    public Object serialize(Object value) {
+        return xstream().toXML(value);
+    }
 
-	@Override
-	public Object deserialize(Object value) {
-		String xml = value.toString();
-		XStream xstream = xstream();
-		Object t = xstream.fromXML(xml);
-		return t;
-	}
+    @Override
+    public Object deserialize(Object value) {
+        String xml = value.toString();
+        XStream xstream = xstream();
+        Object t = xstream.fromXML(xml);
+        return t;
+    }
 
 }

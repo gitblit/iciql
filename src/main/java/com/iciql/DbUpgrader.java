@@ -27,55 +27,47 @@ import com.iciql.Iciql.IQVersion;
  */
 public interface DbUpgrader {
 
-	/**
-	 * Defines method interface to handle database upgrades. This method is only
-	 * called if your <i>DbUpgrader</i> implementation is annotated with
-	 * IQDatabase.
-	 * 
-	 * @param db
-	 *            the database
-	 * @param fromVersion
-	 *            the old version
-	 * @param toVersion
-	 *            the new version
-	 * @return true for successful upgrade. If the upgrade is successful, the
-	 *         version registry is automatically updated.
-	 */
-	boolean upgradeDatabase(Db db, int fromVersion, int toVersion);
+    /**
+     * Defines method interface to handle database upgrades. This method is only
+     * called if your <i>DbUpgrader</i> implementation is annotated with
+     * IQDatabase.
+     *
+     * @param db          the database
+     * @param fromVersion the old version
+     * @param toVersion   the new version
+     * @return true for successful upgrade. If the upgrade is successful, the
+     * version registry is automatically updated.
+     */
+    boolean upgradeDatabase(Db db, int fromVersion, int toVersion);
 
-	/**
-	 * Defines method interface to handle table upgrades.
-	 * 
-	 * @param db
-	 *            the database
-	 * @param schema
-	 *            the schema
-	 * @param table
-	 *            the table
-	 * @param fromVersion
-	 *            the old version
-	 * @param toVersion
-	 *            the new version
-	 * @return true for successful upgrade. If the upgrade is successful, the
-	 *         version registry is automatically updated.
-	 */
-	boolean upgradeTable(Db db, String schema, String table, int fromVersion, int toVersion);
+    /**
+     * Defines method interface to handle table upgrades.
+     *
+     * @param db          the database
+     * @param schema      the schema
+     * @param table       the table
+     * @param fromVersion the old version
+     * @param toVersion   the new version
+     * @return true for successful upgrade. If the upgrade is successful, the
+     * version registry is automatically updated.
+     */
+    boolean upgradeTable(Db db, String schema, String table, int fromVersion, int toVersion);
 
-	/**
-	 * The default database upgrader. It throws runtime exception instead of
-	 * handling upgrade requests.
-	 */
-	@IQVersion(0)
-	public static class DefaultDbUpgrader implements DbUpgrader {
+    /**
+     * The default database upgrader. It throws runtime exception instead of
+     * handling upgrade requests.
+     */
+    @IQVersion(0)
+    public static class DefaultDbUpgrader implements DbUpgrader {
 
-		public boolean upgradeDatabase(Db db, int fromVersion, int toVersion) {
-			throw new IciqlException("Please provide your own DbUpgrader implementation.");
-		}
+        public boolean upgradeDatabase(Db db, int fromVersion, int toVersion) {
+            throw new IciqlException("Please provide your own DbUpgrader implementation.");
+        }
 
-		public boolean upgradeTable(Db db, String schema, String table, int fromVersion, int toVersion) {
-			throw new IciqlException("Please provide your own DbUpgrader implementation.");
-		}
+        public boolean upgradeTable(Db db, String schema, String table, int fromVersion, int toVersion) {
+            throw new IciqlException("Please provide your own DbUpgrader implementation.");
+        }
 
-	}
+    }
 
 }

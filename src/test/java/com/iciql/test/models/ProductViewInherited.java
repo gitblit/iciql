@@ -27,18 +27,18 @@ import com.iciql.Iciql.IQView;
 @IQView(name = "AnnotatedProductViewInherited", inheritColumns = true)
 public class ProductViewInherited extends ProductAnnotationOnly {
 
-	public String unmappedField;
+    public String unmappedField;
 
-	@IQColumn(name = "id", autoIncrement = true)
-	@IQConstraint("this <= 7 AND this > 2")
-	public Long productId;
+    @IQColumn(name = "id", autoIncrement = true)
+    @IQConstraint("this <= 7 AND this > 2")
+    public Long productId;
 
-	public ProductViewInherited() {
-		// public constructor
-	}
+    public ProductViewInherited() {
+        // public constructor
+    }
 
-	public String toString() {
-		return productName + " (" + productId + ")";
-	}
+    public String toString() {
+        return productName + " (" + productId + ")";
+    }
 
 }

@@ -26,22 +26,22 @@ import com.iciql.Token;
  */
 public class Or implements Token {
 
-	private final Token left, right;
+    private final Token left, right;
 
-	private Or(Token left, Token right) {
-		this.left = left;
-		this.right = right;
-	}
+    private Or(Token left, Token right) {
+        this.left = left;
+        this.right = right;
+    }
 
-	static Or get(Token left, Token right) {
-		return new Or(left, right);
-	}
+    static Or get(Token left, Token right) {
+        return new Or(left, right);
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		// untested
-		left.appendSQL(stat, query);
-		stat.appendSQL(" OR ");
-		right.appendSQL(stat, query);
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        // untested
+        left.appendSQL(stat, query);
+        stat.appendSQL(" OR ");
+        right.appendSQL(stat, query);
+    }
 
 }

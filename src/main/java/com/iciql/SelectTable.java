@@ -17,96 +17,95 @@
 
 package com.iciql;
 
-import java.util.ArrayList;
-
 import com.iciql.util.Utils;
+
+import java.util.ArrayList;
 
 /**
  * This class represents a table in a query.
- * 
- * @param <T>
- *            the table class
+ *
+ * @param <T> the table class
  */
 
 class SelectTable<T> {
 
-	private Query<T> query;
-	private Class<T> clazz;
-	private T current;
-	private String as;
-	private TableDefinition<T> aliasDef;
-	private boolean outerJoin;
-	private ArrayList<Token> joinConditions = Utils.newArrayList();
-	private T alias;
+    private Query<T> query;
+    private Class<T> clazz;
+    private T current;
+    private String as;
+    private TableDefinition<T> aliasDef;
+    private boolean outerJoin;
+    private ArrayList<Token> joinConditions = Utils.newArrayList();
+    private T alias;
 
-	@SuppressWarnings("unchecked")
-	SelectTable(Db db, Query<T> query, T alias, boolean outerJoin) {
-		this.alias = alias;
-		this.query = query;
-		this.outerJoin = outerJoin;
-		aliasDef = (TableDefinition<T>) db.getTableDefinition(alias.getClass());
-		clazz = Utils.getClass(alias);
-		as = "T" + Utils.nextAsCount();
-	}
+    @SuppressWarnings("unchecked")
+    SelectTable(Db db, Query<T> query, T alias, boolean outerJoin) {
+        this.alias = alias;
+        this.query = query;
+        this.outerJoin = outerJoin;
+        aliasDef = (TableDefinition<T>) db.getTableDefinition(alias.getClass());
+        clazz = Utils.getClass(alias);
+        as = "T" + Utils.nextAsCount();
+    }
 
-	T getAlias() {
-		return alias;
-	}
+    T getAlias() {
+        return alias;
+    }
 
-	T newObject() {
-		return Utils.newObject(clazz);
-	}
+    T newObject() {
+        return Utils.newObject(clazz);
+    }
 
-	TableDefinition<T> getAliasDefinition() {
-		return aliasDef;
-	}
+    TableDefinition<T> getAliasDefinition() {
+        return aliasDef;
+    }
 
-	void appendSQL(SQLStatement stat) {
-		if (query.isJoin()) {
-			stat.appendTable(aliasDef.schemaName, aliasDef.tableName).appendSQL(" AS " + as);
-		} else {
-			stat.appendTable(aliasDef.schemaName, aliasDef.tableName);
-		}
-	}
+    void appendSQL(SQLStatement stat) {
+        if (query.isJoin()) {
+            stat.appendTable(aliasDef.schemaName, aliasDef.tableName).appendSQL(" AS " + as);
+        } else {
+            stat.appendTable(aliasDef.schemaName, aliasDef.tableName);
+        }
+    }
 
-	void appendSQLAsJoin(SQLStatement stat, Query<T> q) {
-		if (outerJoin) {
-			stat.appendSQL(" LEFT OUTER JOIN ");
-		} else {
-			stat.appendSQL(" INNER JOIN ");
-		}
-		appendSQL(stat);
-		if (!joinConditions.isEmpty()) {
-			stat.appendSQL(" ON ");
-			for (Token token : joinConditions) {
-				token.appendSQL(stat, q);
-				stat.appendSQL(" ");
-			}
-		}
-	}
+    void appendSQLAsJoin(SQLStatement stat, Query<T> q) {
+        if (outerJoin) {
+            stat.appendSQL(" LEFT OUTER JOIN ");
+        } else {
+            stat.appendSQL(" INNER JOIN ");
+        }
+        appendSQL(stat);
+        if (!joinConditions.isEmpty()) {
+            stat.appendSQL(" ON ");
+            for (Token token : joinConditions) {
+                token.appendSQL(stat, q);
+                stat.appendSQL(" ");
+            }
+        }
+    }
 
-	boolean getOuterJoin() {
-		return outerJoin;
-	}
+    boolean getOuterJoin() {
+        return outerJoin;
+    }
 
-	Query<T> getQuery() {
-		return query;
-	}
+    Query<T> getQuery() {
+        return query;
+    }
 
-	String getAs() {
-		return as;
-	}
+    String getAs() {
+        return as;
+    }
 
-	void addConditionToken(Token condition) {
-		joinConditions.add(condition);
-	}
+    void addConditionToken(Token condition) {
+        joinConditions.add(condition);
+    }
 
-	T getCurrent() {
-		return current;
-	}
+    T getCurrent() {
+        return current;
+    }
 
-	void setCurrent(T current) {
-		this.current = current;
-	}
+    void setCurrent(T current) {
+        this.current = current;
+    }
 
 }

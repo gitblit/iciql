@@ -18,43 +18,37 @@ package com.iciql;
 
 /**
  * This class represents a "between y and z" condition.
- * 
- * @param <T>
- *            the return type of the query
- * @param <A>
- *            the incomplete condition data type
+ *
+ * @param <T> the return type of the query
+ * @param <A> the incomplete condition data type
  */
 public class QueryBetween<T, A> {
 
-	private Query<T> query;
-	private A x;
-	private A y;
+    private Query<T> query;
+    private A x;
+    private A y;
 
-	/**
-	 * Construct a between condition.
-	 * 
-	 * @param query
-	 *            the query
-	 * @param x
-	 *            the alias
-	 * @param y
-	 *            the lower bound of the between condition
-	 */
-	public QueryBetween(Query<T> query, A x, A y) {
-		this.query = query;
-		this.x = x;
-		this.y = y;
-	}
+    /**
+     * Construct a between condition.
+     *
+     * @param query the query
+     * @param x     the alias
+     * @param y     the lower bound of the between condition
+     */
+    public QueryBetween(Query<T> query, A x, A y) {
+        this.query = query;
+        this.x = x;
+        this.y = y;
+    }
 
-	/**
-	 * Set the upper bound of the between condition.
-	 * 
-	 * @param z
-	 *            the upper bound of the between condition
-	 * @return the query
-	 */
-	public QueryWhere<T> and(A z) {
-		query.addConditionToken(new Condition<A>(x, y, z, CompareType.BETWEEN));
-		return new QueryWhere<T>(query);
-	}
+    /**
+     * Set the upper bound of the between condition.
+     *
+     * @param z the upper bound of the between condition
+     * @return the query
+     */
+    public QueryWhere<T> and(A z) {
+        query.addConditionToken(new Condition<A>(x, y, z, CompareType.BETWEEN));
+        return new QueryWhere<T>(query);
+    }
 }

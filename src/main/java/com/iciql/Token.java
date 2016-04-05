@@ -21,15 +21,13 @@ package com.iciql;
  * Classes implementing this interface can be used as a token in a statement.
  */
 public interface Token {
-	/**
-	 * Append the SQL to the given statement using the given query.
-	 * 
-	 * @param stat
-	 *            the statement to append the SQL to
-	 * @param query
-	 *            the query to use
-	 */
+    /**
+     * Append the SQL to the given statement using the given query.
+     *
+     * @param stat  the statement to append the SQL to
+     * @param query the query to use
+     */
 
-	<T> void appendSQL(SQLStatement stat, Query<T> query);
+    <T> void appendSQL(SQLStatement stat, Query<T> query);
 
 }

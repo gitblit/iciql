@@ -20,30 +20,29 @@ package com.iciql;
  * A runtime parameter is used to generate x=? conditions so that iciql can
  * build re-usable dynamic queries with parameter substitution done manually at
  * runtime.
- * 
- * @param <A>
- *            the operand type
+ *
+ * @param <A> the operand type
  */
 
 class RuntimeParameter<A> implements Token {
-	
-	public final static String PARAMETER = "";
-	
-	A x;
-	CompareType compareType;
 
-	RuntimeParameter(A x, CompareType type) {
-		this.x = x;
-		this.compareType = type;
-	}
+    public final static String PARAMETER = "";
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		query.appendSQL(stat, null, x);
-		stat.appendSQL(" ");
-		stat.appendSQL(compareType.getString());
-		if (compareType.hasRightExpression()) {
-			stat.appendSQL(" ");
-			query.appendSQL(stat, x, PARAMETER);
-		}
-	}
+    A x;
+    CompareType compareType;
+
+    RuntimeParameter(A x, CompareType type) {
+        this.x = x;
+        this.compareType = type;
+    }
+
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        query.appendSQL(stat, null, x);
+        stat.appendSQL(" ");
+        stat.appendSQL(compareType.getString());
+        if (compareType.hasRightExpression()) {
+            stat.appendSQL(" ");
+            query.appendSQL(stat, x, PARAMETER);
+        }
+    }
 }

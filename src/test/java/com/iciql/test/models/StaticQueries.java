@@ -15,73 +15,73 @@
  */
 package com.iciql.test.models;
 
-import java.sql.Timestamp;
-
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQEnum;
 import com.iciql.Iciql.IQTable;
 import com.iciql.test.models.EnumModels.Tree;
 
+import java.sql.Timestamp;
+
 /**
  * Static query models.
  */
 public class StaticQueries {
 
-	@IQTable(name = "StaticQueryTest1")
-	public static class StaticModel1 {
+    @IQTable(name = "StaticQueryTest1")
+    public static class StaticModel1 {
 
-		@IQColumn(primaryKey = true, autoIncrement = true)
-		public Integer id;
+        @IQColumn(primaryKey = true, autoIncrement = true)
+        public Integer id;
 
-		@IQColumn
-		@IQEnum(EnumType.NAME)
-		public Tree myTree;
+        @IQColumn
+        @IQEnum(EnumType.NAME)
+        public Tree myTree;
 
-		@IQColumn
-		public String myString;
+        @IQColumn
+        public String myString;
 
-		@IQColumn
-		public Boolean myBool;
+        @IQColumn
+        public Boolean myBool;
 
-		@IQColumn
-		public Timestamp myTimestamp;
+        @IQColumn
+        public Timestamp myTimestamp;
 
-		@IQColumn
-		public java.sql.Date myDate;
+        @IQColumn
+        public java.sql.Date myDate;
 
-		@IQColumn
-		public java.sql.Time myTime;
+        @IQColumn
+        public java.sql.Time myTime;
 
-		public StaticModel1() {
-		}
-	}
+        public StaticModel1() {
+        }
+    }
 
-	@IQTable(name = "StaticQueryTest2")
-	public static class StaticModel2 {
+    @IQTable(name = "StaticQueryTest2")
+    public static class StaticModel2 {
 
-		@IQColumn(primaryKey = true, autoIncrement = true)
-		public Integer id;
+        @IQColumn(primaryKey = true, autoIncrement = true)
+        public Integer id;
 
-		@IQColumn
-		@IQEnum(EnumType.ENUMID)
-		public Tree myTree;
+        @IQColumn
+        @IQEnum(EnumType.ENUMID)
+        public Tree myTree;
 
-		public StaticModel2() {
-		}
-	}
+        public StaticModel2() {
+        }
+    }
 
-	@IQTable(name = "StaticQueryTest3")
-	public static class StaticModel3 {
+    @IQTable(name = "StaticQueryTest3")
+    public static class StaticModel3 {
 
-		@IQColumn(primaryKey = true, autoIncrement = true)
-		public Integer id;
+        @IQColumn(primaryKey = true, autoIncrement = true)
+        public Integer id;
 
-		@IQColumn
-		@IQEnum(EnumType.ORDINAL)
-		public Tree myTree;
+        @IQColumn
+        @IQEnum(EnumType.ORDINAL)
+        public Tree myTree;
 
-		public StaticModel3() {
-		}
-	}
+        public StaticModel3() {
+        }
+    }
 }

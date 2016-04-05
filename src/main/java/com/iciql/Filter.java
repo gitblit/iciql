@@ -21,5 +21,5 @@ package com.iciql;
  * Represents the WHERE clause of a query.
  */
 public interface Filter {
-	boolean where();
+    boolean where();
 }

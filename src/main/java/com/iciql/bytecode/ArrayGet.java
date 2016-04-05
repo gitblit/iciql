@@ -26,24 +26,24 @@ import com.iciql.Token;
  */
 public class ArrayGet implements Token {
 
-	private final Token variable;
-	private final Token index;
+    private final Token variable;
+    private final Token index;
 
-	private ArrayGet(Token variable, Token index) {
-		this.variable = variable;
-		this.index = index;
-	}
+    private ArrayGet(Token variable, Token index) {
+        this.variable = variable;
+        this.index = index;
+    }
 
-	static ArrayGet get(Token variable, Token index) {
-		return new ArrayGet(variable, index);
-	}
+    static ArrayGet get(Token variable, Token index) {
+        return new ArrayGet(variable, index);
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		// untested
-		variable.appendSQL(stat, query);
-		stat.appendSQL("[");
-		index.appendSQL(stat, query);
-		stat.appendSQL("]");
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        // untested
+        variable.appendSQL(stat, query);
+        stat.appendSQL("[");
+        index.appendSQL(stat, query);
+        stat.appendSQL("]");
+    }
 
 }

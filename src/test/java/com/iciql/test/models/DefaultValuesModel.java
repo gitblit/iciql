@@ -15,13 +15,13 @@
  */
 package com.iciql.test.models;
 
-import java.util.Date;
-
 import com.iciql.Iciql.EnumType;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQEnum;
 import com.iciql.Iciql.IQTable;
 import com.iciql.test.models.EnumModels.Tree;
+
+import java.util.Date;
 
 /**
  * Default values model.
@@ -29,30 +29,30 @@ import com.iciql.test.models.EnumModels.Tree;
 @IQTable(name = "DefaultValuesTest")
 public class DefaultValuesModel {
 
-	@IQColumn(primaryKey = true, autoIncrement = true)
-	public Long myLong;
+    @IQColumn(primaryKey = true, autoIncrement = true)
+    public Long myLong;
 
-	@SuppressWarnings("deprecation")
-	@IQColumn
-	public Date myDate = new Date(100, 7, 1);
+    @SuppressWarnings("deprecation")
+    @IQColumn
+    public Date myDate = new Date(100, 7, 1);
 
-	@IQColumn
-	public Integer myInteger = 12345;
+    @IQColumn
+    public Integer myInteger = 12345;
 
-	@IQColumn
-	public Tree myEnumIdTree = Tree.WALNUT;
+    @IQColumn
+    public Tree myEnumIdTree = Tree.WALNUT;
 
-	@IQColumn
-	@IQEnum(EnumType.NAME)
-	public Tree myNameTree = Tree.MAPLE;
+    @IQColumn
+    @IQEnum(EnumType.NAME)
+    public Tree myNameTree = Tree.MAPLE;
 
-	@IQColumn
-	@IQEnum(EnumType.ORDINAL)
-	public Tree myOrdinalTree = Tree.PINE;
+    @IQColumn
+    @IQEnum(EnumType.ORDINAL)
+    public Tree myOrdinalTree = Tree.PINE;
 
-	@IQColumn(nullable = true)
-	public Tree myNullTree;
+    @IQColumn(nullable = true)
+    public Tree myNullTree;
 
-	public DefaultValuesModel() {
-	}
+    public DefaultValuesModel() {
+    }
 }

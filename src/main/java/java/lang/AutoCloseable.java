@@ -36,18 +36,18 @@ public interface AutoCloseable {
      * Closes this resource, relinquishing any underlying resources.
      * This method is invoked automatically by the {@code
      * try}-with-resources statement.
-     *
+     * <p>
      * <p>Classes implementing this method are strongly encouraged to
      * be declared to throw more specific exceptions (or no exception
      * at all, if the close cannot fail).
-     *
+     * <p>
      * <p>Note that unlike the {@link java.io.Closeable#close close}
      * method of {@link java.io.Closeable}, this {@code close} method
      * is <em>not</em> required to be idempotent.  In other words,
      * calling this {@code close} method more than once may have some
      * visible side effect, unlike {@code Closeable.close} which is
      * required to have no effect if called more than once.
-     *
+     * <p>
      * However, while not required to be idempotent, implementers of
      * this interface are strongly encouraged to make their {@code
      * close} methods idempotent.

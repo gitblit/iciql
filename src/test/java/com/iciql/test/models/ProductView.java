@@ -27,21 +27,21 @@ import com.iciql.Iciql.IQView;
 @IQView(name = "AnnotatedProductView", tableName = "AnnotatedProduct")
 public class ProductView {
 
-	public String unmappedField;
+    public String unmappedField;
 
-	@IQColumn(name = "id", autoIncrement = true)
-	@IQConstraint("this <= 7 AND this > 2")
-	public Long productId;
+    @IQColumn(name = "id", autoIncrement = true)
+    @IQConstraint("this <= 7 AND this > 2")
+    public Long productId;
 
-	@IQColumn(name = "name")
-	public String productName;
+    @IQColumn(name = "name")
+    public String productName;
 
-	public ProductView() {
-		// public constructor
-	}
+    public ProductView() {
+        // public constructor
+    }
 
-	public String toString() {
-		return productName + " (" + productId + ")";
-	}
+    public String toString() {
+        return productName + " (" + productId + ")";
+    }
 
 }

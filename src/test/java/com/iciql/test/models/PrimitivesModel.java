@@ -15,13 +15,13 @@
  */
 package com.iciql.test.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
 import com.iciql.test.IciqlSuite;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Primitive types model.
@@ -29,62 +29,62 @@ import com.iciql.test.IciqlSuite;
 @IQTable(name = "PrimitivesTest")
 public class PrimitivesModel {
 
-	@IQColumn(primaryKey = true)
-	public long myLong;
+    @IQColumn(primaryKey = true)
+    public long myLong;
 
-	@IQColumn
-	public int myInteger;
+    @IQColumn
+    public int myInteger;
 
-	@IQColumn
-	public short myShort;
+    @IQColumn
+    public short myShort;
 
-	@IQColumn
-	public byte myByte;
+    @IQColumn
+    public byte myByte;
 
-	@IQColumn
-	public boolean myBoolean;
+    @IQColumn
+    public boolean myBoolean;
 
-	@IQColumn
-	public double myDouble;
+    @IQColumn
+    public double myDouble;
 
-	@IQColumn
-	public float myFloat;
+    @IQColumn
+    public float myFloat;
 
-	public PrimitivesModel() {
-		Random rand = new Random();
-		myLong = rand.nextLong();
-		myInteger = rand.nextInt();
-		myShort = (short) rand.nextInt(Short.MAX_VALUE);
-		myByte = (byte) rand.nextInt(Byte.MAX_VALUE);
-		myBoolean = rand.nextInt(1) == 1;
-		myDouble = rand.nextDouble();
-		myFloat = rand.nextFloat();
-	}
+    public PrimitivesModel() {
+        Random rand = new Random();
+        myLong = rand.nextLong();
+        myInteger = rand.nextInt();
+        myShort = (short) rand.nextInt(Short.MAX_VALUE);
+        myByte = (byte) rand.nextInt(Byte.MAX_VALUE);
+        myBoolean = rand.nextInt(1) == 1;
+        myDouble = rand.nextDouble();
+        myFloat = rand.nextFloat();
+    }
 
-	public boolean equivalentTo(PrimitivesModel p) {
-		boolean same = true;
-		same &= myLong == p.myLong;
-		same &= myInteger == p.myInteger;
-		same &= myShort == p.myShort;
-		same &= myByte == p.myByte;
-		same &= myBoolean == p.myBoolean;
-		same &= IciqlSuite.equivalentTo(myDouble, p.myDouble);
-		same &= IciqlSuite.equivalentTo(myFloat, p.myFloat);
-		return same;
-	}
+    public boolean equivalentTo(PrimitivesModel p) {
+        boolean same = true;
+        same &= myLong == p.myLong;
+        same &= myInteger == p.myInteger;
+        same &= myShort == p.myShort;
+        same &= myByte == p.myByte;
+        same &= myBoolean == p.myBoolean;
+        same &= IciqlSuite.equivalentTo(myDouble, p.myDouble);
+        same &= IciqlSuite.equivalentTo(myFloat, p.myFloat);
+        return same;
+    }
 
-	public static List<PrimitivesModel> getList() {
-		List<PrimitivesModel> list = new ArrayList<PrimitivesModel>();
-		for (int i = 1; i <= 10; i++) {
-			PrimitivesModel p = new PrimitivesModel();
-			p.myLong = i;
-			list.add(p);
-		}
-		return list;
-	}
+    public static List<PrimitivesModel> getList() {
+        List<PrimitivesModel> list = new ArrayList<PrimitivesModel>();
+        for (int i = 1; i <= 10; i++) {
+            PrimitivesModel p = new PrimitivesModel();
+            p.myLong = i;
+            list.add(p);
+        }
+        return list;
+    }
 
-	@Override
-	public String toString() {
-		return String.valueOf(myLong);
-	}
+    @Override
+    public String toString() {
+        return String.valueOf(myLong);
+    }
 }

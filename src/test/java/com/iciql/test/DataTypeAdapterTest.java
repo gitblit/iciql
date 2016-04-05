@@ -16,23 +16,22 @@
 
 package com.iciql.test;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.Date;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.iciql.Db;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
 import com.iciql.Iciql.TypeAdapter;
 import com.iciql.adapter.JavaSerializationTypeAdapter;
 import com.iciql.test.models.SupportedTypes;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Date;
 
 /**
  * Tests insertion and retrieval of a custom data type that is automatically transformed
@@ -40,66 +39,66 @@ import com.iciql.test.models.SupportedTypes;
  */
 public class DataTypeAdapterTest extends Assert {
 
-	private Db db;
+    private Db db;
 
 
-	@Before
-	public void setUp() {
-		db = IciqlSuite.openNewDb();
-	}
+    @Before
+    public void setUp() {
+        db = IciqlSuite.openNewDb();
+    }
 
-	@After
-	public void tearDown() {
-		db.close();
-	}
+    @After
+    public void tearDown() {
+        db.close();
+    }
 
-	@Test
-	public void testSerializedObjectDataType() {
+    @Test
+    public void testSerializedObjectDataType() {
 
-		SerializedObjectTypeAdapterTest row = new SerializedObjectTypeAdapterTest();
-		row.received = new Date();
-		row.obj = SupportedTypes.createList().get(1);
-		db.insert(row);
+        SerializedObjectTypeAdapterTest row = new SerializedObjectTypeAdapterTest();
+        row.received = new Date();
+        row.obj = SupportedTypes.createList().get(1);
+        db.insert(row);
 
-		SerializedObjectTypeAdapterTest table = new SerializedObjectTypeAdapterTest();
-		SerializedObjectTypeAdapterTest q1 = db.from(table).selectFirst();
+        SerializedObjectTypeAdapterTest table = new SerializedObjectTypeAdapterTest();
+        SerializedObjectTypeAdapterTest q1 = db.from(table).selectFirst();
 
-		assertNotNull(q1);
-		assertTrue(row.obj.equivalentTo(q1.obj));
+        assertNotNull(q1);
+        assertTrue(row.obj.equivalentTo(q1.obj));
 
-	}
+    }
 
-	@IQTable(name="dataTypeAdapters")
-	public static class SerializedObjectTypeAdapterTest {
+    @IQTable(name = "dataTypeAdapters")
+    public static class SerializedObjectTypeAdapterTest {
 
-		@IQColumn(autoIncrement = true, primaryKey = true)
-		public long id;
+        @IQColumn(autoIncrement = true, primaryKey = true)
+        public long id;
 
-		@IQColumn
-		public java.util.Date received;
+        @IQColumn
+        public java.util.Date received;
 
-		@IQColumn
-		@SupportedTypesAdapter
-		public SupportedTypes obj;
+        @IQColumn
+        @SupportedTypesAdapter
+        public SupportedTypes obj;
 
-	}
+    }
 
-	/**
-	 * Maps a SupportedType instance to a BLOB using Java Object serialization.
-	 *
-	 */
-	public static class SupportedTypesAdapterImpl extends JavaSerializationTypeAdapter<SupportedTypes> {
+    /**
+     * Maps a SupportedType instance to a BLOB using Java Object serialization.
+     */
+    public static class SupportedTypesAdapterImpl extends JavaSerializationTypeAdapter<SupportedTypes> {
 
-		@Override
-		public Class<SupportedTypes> getJavaType() {
-			return SupportedTypes.class;
-		}
+        @Override
+        public Class<SupportedTypes> getJavaType() {
+            return SupportedTypes.class;
+        }
 
-	}
+    }
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
-	@TypeAdapter(SupportedTypesAdapterImpl.class)
-	public @interface SupportedTypesAdapter { }
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
+    @TypeAdapter(SupportedTypesAdapterImpl.class)
+    public @interface SupportedTypesAdapter {
+    }
 
 }

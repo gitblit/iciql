@@ -23,6 +23,6 @@ import com.iciql.Iciql.IQView;
  */
 
 @IQView(inheritColumns = true)
-public class ProductViewInheritedComplex  extends ProductViewInherited {
+public class ProductViewInheritedComplex extends ProductViewInherited {
 
 }

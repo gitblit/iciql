@@ -18,16 +18,16 @@
 package com.iciql;
 
 enum ConditionOpenClose implements Token {
-	OPEN("("), CLOSE(")");
+    OPEN("("), CLOSE(")");
 
-	private String text;
+    private String text;
 
-	ConditionOpenClose(String text) {
-		this.text = text;
-	}
+    ConditionOpenClose(String text) {
+        this.text = text;
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		stat.appendSQL(text);
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        stat.appendSQL(text);
+    }
 
 }

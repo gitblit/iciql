@@ -24,15 +24,15 @@ import com.iciql.Token;
  */
 public interface Constant extends Token {
 
-	/**
-	 * The constant pool type.
-	 */
-	enum Type {
-		STRING, INT, FLOAT, DOUBLE, LONG, CLASS_REF, STRING_REF, FIELD_REF, METHOD_REF, INTERFACE_METHOD_REF, NAME_AND_TYPE
-	}
+    /**
+     * The constant pool type.
+     */
+    enum Type {
+        STRING, INT, FLOAT, DOUBLE, LONG, CLASS_REF, STRING_REF, FIELD_REF, METHOD_REF, INTERFACE_METHOD_REF, NAME_AND_TYPE
+    }
 
-	Constant.Type getType();
+    Constant.Type getType();
 
-	int intValue();
+    int intValue();
 
 }

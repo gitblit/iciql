@@ -16,68 +16,67 @@
  */
 package com.iciql.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import com.iciql.Db;
+import com.iciql.IciqlException;
+import com.iciql.test.models.CategoryAnnotationOnly;
+import com.iciql.test.models.ProductAnnotationOnlyWithForeignKey;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.iciql.Db;
-import com.iciql.IciqlException;
-import com.iciql.test.models.CategoryAnnotationOnly;
-import com.iciql.test.models.ProductAnnotationOnlyWithForeignKey;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests of Foreign Keys.
  */
 public class ForeignKeyTest {
 
-	/**
-	 * This object represents a database (actually a connection to the
-	 * database).
-	 */
+    /**
+     * This object represents a database (actually a connection to the
+     * database).
+     */
 
-	private Db db;
+    private Db db;
 
-	@Before
-	public void setUp() {
-		db = IciqlSuite.openNewDb();
-		db.insertAll(CategoryAnnotationOnly.getList());
-		db.insertAll(ProductAnnotationOnlyWithForeignKey.getList());
-	}
+    @Before
+    public void setUp() {
+        db = IciqlSuite.openNewDb();
+        db.insertAll(CategoryAnnotationOnly.getList());
+        db.insertAll(ProductAnnotationOnlyWithForeignKey.getList());
+    }
 
-	@After
-	public void tearDown() {
-		db.dropTable(ProductAnnotationOnlyWithForeignKey.class);
-		db.dropTable(CategoryAnnotationOnly.class);
-		db.close();
-	}
+    @After
+    public void tearDown() {
+        db.dropTable(ProductAnnotationOnlyWithForeignKey.class);
+        db.dropTable(CategoryAnnotationOnly.class);
+        db.close();
+    }
 
-	@Test
-	public void testForeignKeyWithOnDeleteCascade() {
-		ProductAnnotationOnlyWithForeignKey p = new ProductAnnotationOnlyWithForeignKey();
-		long count1 = db.from(p).selectCount();
-		
-		// should remove 2 associated products
-		CategoryAnnotationOnly c = new CategoryAnnotationOnly();
-		db.from(c).where(c.categoryId).is(1L).delete();
-		
-		long count2 = db.from(p).selectCount();
-		
-		assertEquals(count1, count2 + 2L);
-	}
-	
-	@Test
-	@Ignore
-	public void testForeignKeyDropReferenceTable() {
-		try {
-			db.dropTable(CategoryAnnotationOnly.class);
-			assertTrue("Should not be able to drop reference table!", false);
-		} catch (IciqlException e) {
-			assertEquals(e.getMessage(), IciqlException.CODE_CONSTRAINT_VIOLATION, e.getIciqlCode());
-		}
-	}
+    @Test
+    public void testForeignKeyWithOnDeleteCascade() {
+        ProductAnnotationOnlyWithForeignKey p = new ProductAnnotationOnlyWithForeignKey();
+        long count1 = db.from(p).selectCount();
+
+        // should remove 2 associated products
+        CategoryAnnotationOnly c = new CategoryAnnotationOnly();
+        db.from(c).where(c.categoryId).is(1L).delete();
+
+        long count2 = db.from(p).selectCount();
+
+        assertEquals(count1, count2 + 2L);
+    }
+
+    @Test
+    @Ignore
+    public void testForeignKeyDropReferenceTable() {
+        try {
+            db.dropTable(CategoryAnnotationOnly.class);
+            assertTrue("Should not be able to drop reference table!", false);
+        } catch (IciqlException e) {
+            assertEquals(e.getMessage(), IciqlException.CODE_CONSTRAINT_VIOLATION, e.getIciqlCode());
+        }
+    }
 
 }

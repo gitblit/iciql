@@ -16,72 +16,70 @@
 
 package com.iciql.test;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.iciql.Db;
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
 import com.iciql.QueryWhere;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests of Joins.
  */
 public class JoinTest {
 
-	Db db;
+    Db db;
 
-	@Before
-	public void setup() {
-		db = IciqlSuite.openNewDb();
+    @Before
+    public void setup() {
+        db = IciqlSuite.openNewDb();
 
-		db.insertAll(UserId.getList());
-		db.insertAll(UserNote.getList());
-	}
+        db.insertAll(UserId.getList());
+        db.insertAll(UserNote.getList());
+    }
 
-	@After
-	public void tearDown() {
-		db.close();
-	}
+    @After
+    public void tearDown() {
+        db.close();
+    }
 
-	@Test
-	public void testPrimitiveJoin() throws Exception {
-		final UserId u = new UserId();
-		final UserNote n = new UserNote();
+    @Test
+    public void testPrimitiveJoin() throws Exception {
+        final UserId u = new UserId();
+        final UserNote n = new UserNote();
 
-		List<UserNote> notes = db.from(u).innerJoin(n).on(u.id).is(n.userId).where(u.id).is(2)
-				.select(new UserNote() {
-					{
-						userId = n.userId;
-						noteId = n.noteId;
-						text = n.text;
-					}
-				});
-		assertEquals(3, notes.size());
-	}
+        List<UserNote> notes = db.from(u).innerJoin(n).on(u.id).is(n.userId).where(u.id).is(2)
+                .select(new UserNote() {
+                    {
+                        userId = n.userId;
+                        noteId = n.noteId;
+                        text = n.text;
+                    }
+                });
+        assertEquals(3, notes.size());
+    }
 
-	@Test
-	public void testJoin() throws Exception {
-		final UserId u = new UserId();
-		final UserNote n = new UserNote();
+    @Test
+    public void testJoin() throws Exception {
+        final UserId u = new UserId();
+        final UserNote n = new UserNote();
 
-		// this query returns 1 UserId if the user has a note
-		// it's purpose is to confirm fluency/type-safety on a very simple
-		// join case where the main table is filtered/reduced by hits in a
-		// related table
+        // this query returns 1 UserId if the user has a note
+        // it's purpose is to confirm fluency/type-safety on a very simple
+        // join case where the main table is filtered/reduced by hits in a
+        // related table
 
-		List<UserId> users = db.from(u).innerJoin(n).on(u.id).is(n.userId).where(u.id).is(2).selectDistinct();
+        List<UserId> users = db.from(u).innerJoin(n).on(u.id).is(n.userId).where(u.id).is(2).selectDistinct();
 
-		assertEquals(1, users.size());
-		assertEquals(2, users.get(0).id);
-	}
+        assertEquals(1, users.size());
+        assertEquals(2, users.get(0).id);
+    }
 
     @Test
     public void testLeftJoin() throws Exception {
@@ -103,71 +101,71 @@ public class JoinTest {
         assertEquals(3, notes.size());
 
         // do not test MySQL on this statement because the databases
-		if (IciqlSuite.isMySQL(db)) {
-			assertEquals("SELECT * FROM UserId WHERE `id` in (SELECT `userId` FROM UserNote WHERE `userId` > 0 )", q.toSQL());
-		} else {
-			assertEquals("SELECT * FROM UserId WHERE id in (SELECT userId FROM UserNote WHERE userId > 0 )", q.toSQL());
-		}
+        if (IciqlSuite.isMySQL(db)) {
+            assertEquals("SELECT * FROM UserId WHERE `id` in (SELECT `userId` FROM UserNote WHERE `userId` > 0 )", q.toSQL());
+        } else {
+            assertEquals("SELECT * FROM UserId WHERE id in (SELECT userId FROM UserNote WHERE userId > 0 )", q.toSQL());
+        }
     }
-    
-	@IQTable
-	public static class UserId {
 
-		@IQColumn(primaryKey = true)
-		public int id;
+    @IQTable
+    public static class UserId {
 
-		@IQColumn(length = 10)
-		public String name;
+        @IQColumn(primaryKey = true)
+        public int id;
 
-		public UserId() {
-			// public constructor
-		}
+        @IQColumn(length = 10)
+        public String name;
 
-		public UserId(int id, String name) {
-			this.id = id;
-			this.name = name;
-		}
+        public UserId() {
+            // public constructor
+        }
 
-		public String toString() {
-			return name + " (" + id + ")";
-		}
+        public UserId(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
 
-		public static List<UserId> getList() {
-			UserId[] list = { new UserId(1, "Tom"), new UserId(2, "Dick"), new UserId(3, "Harry"), new UserId(4, "Jack") };
-			return Arrays.asList(list);
-		}
-	}
+        public String toString() {
+            return name + " (" + id + ")";
+        }
 
-	@IQTable
-	public static class UserNote {
+        public static List<UserId> getList() {
+            UserId[] list = {new UserId(1, "Tom"), new UserId(2, "Dick"), new UserId(3, "Harry"), new UserId(4, "Jack")};
+            return Arrays.asList(list);
+        }
+    }
 
-		@IQColumn(autoIncrement = true, primaryKey = true)
-		public int noteId;
+    @IQTable
+    public static class UserNote {
 
-		@IQColumn
-		public int userId;
+        @IQColumn(autoIncrement = true, primaryKey = true)
+        public int noteId;
 
-		@IQColumn(length = 10)
-		public String text;
+        @IQColumn
+        public int userId;
 
-		public UserNote() {
-			// public constructor
-		}
+        @IQColumn(length = 10)
+        public String text;
 
-		public UserNote(int userId, String text) {
-			this.userId = userId;
-			this.text = text;
-		}
+        public UserNote() {
+            // public constructor
+        }
 
-		public String toString() {
-			return text;
-		}
+        public UserNote(int userId, String text) {
+            this.userId = userId;
+            this.text = text;
+        }
 
-		public static List<UserNote> getList() {
-			UserNote[] list = { new UserNote(1, "A"), new UserNote(2, "B"), new UserNote(3, "C"),
-					new UserNote(1, "D"), new UserNote(2, "E"), new UserNote(3, "F"), new UserNote(1, "G"),
-					new UserNote(2, "H"), new UserNote(3, "I"), };
-			return Arrays.asList(list);
-		}
-	}
+        public String toString() {
+            return text;
+        }
+
+        public static List<UserNote> getList() {
+            UserNote[] list = {new UserNote(1, "A"), new UserNote(2, "B"), new UserNote(3, "C"),
+                    new UserNote(1, "D"), new UserNote(2, "E"), new UserNote(3, "F"), new UserNote(1, "G"),
+                    new UserNote(2, "H"), new UserNote(3, "I"),};
+            return Arrays.asList(list);
+        }
+    }
 }

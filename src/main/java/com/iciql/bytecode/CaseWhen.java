@@ -26,37 +26,37 @@ import com.iciql.Token;
  */
 public class CaseWhen implements Token {
 
-	private final Token condition, ifTrue, ifFalse;
+    private final Token condition, ifTrue, ifFalse;
 
-	private CaseWhen(Token condition, Token ifTrue, Token ifFalse) {
-		this.condition = condition;
-		this.ifTrue = ifTrue;
-		this.ifFalse = ifFalse;
-	}
+    private CaseWhen(Token condition, Token ifTrue, Token ifFalse) {
+        this.condition = condition;
+        this.ifTrue = ifTrue;
+        this.ifFalse = ifFalse;
+    }
 
-	static Token get(Token condition, Token ifTrue, Token ifFalse) {
-		if ("0".equals(ifTrue.toString()) && "1".equals(ifFalse.toString())) {
-			return Not.get(condition);
-		} else if ("1".equals(ifTrue.toString()) && "0".equals(ifFalse.toString())) {
-			return condition;
-		} else if ("0".equals(ifTrue.toString())) {
-			return And.get(Not.get(condition), ifFalse);
-		}
-		return new CaseWhen(condition, ifTrue, ifFalse);
-	}
+    static Token get(Token condition, Token ifTrue, Token ifFalse) {
+        if ("0".equals(ifTrue.toString()) && "1".equals(ifFalse.toString())) {
+            return Not.get(condition);
+        } else if ("1".equals(ifTrue.toString()) && "0".equals(ifFalse.toString())) {
+            return condition;
+        } else if ("0".equals(ifTrue.toString())) {
+            return And.get(Not.get(condition), ifFalse);
+        }
+        return new CaseWhen(condition, ifTrue, ifFalse);
+    }
 
-	public String toString() {
-		return "CASEWHEN(" + condition + ", " + ifTrue + ", " + ifFalse + ")";
-	}
+    public String toString() {
+        return "CASEWHEN(" + condition + ", " + ifTrue + ", " + ifFalse + ")";
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		stat.appendSQL("CASEWHEN ");
-		condition.appendSQL(stat, query);
-		stat.appendSQL(" THEN ");
-		ifTrue.appendSQL(stat, query);
-		stat.appendSQL(" ELSE ");
-		ifFalse.appendSQL(stat, query);
-		stat.appendSQL(" END");
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        stat.appendSQL("CASEWHEN ");
+        condition.appendSQL(stat, query);
+        stat.appendSQL(" THEN ");
+        ifTrue.appendSQL(stat, query);
+        stat.appendSQL(" ELSE ");
+        ifFalse.appendSQL(stat, query);
+        stat.appendSQL(" END");
+    }
 
 }

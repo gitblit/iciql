@@ -20,64 +20,63 @@ package com.iciql;
 
 /**
  * This class represents a query with join and an incomplete condition.
- * 
- * @param <A>
- *            the incomplete condition data type
+ *
+ * @param <A> the incomplete condition data type
  */
 
 public class QueryJoinCondition<T, A> {
 
-	private Query<T> query;
-	private SelectTable<T> join;
-	private A x;
+    private Query<T> query;
+    private SelectTable<T> join;
+    private A x;
 
-	QueryJoinCondition(Query<T> query, SelectTable<T> join, A x) {
-		this.query = query;
-		this.join = join;
-		this.x = x;
-	}
+    QueryJoinCondition(Query<T> query, SelectTable<T> join, A x) {
+        this.query = query;
+        this.join = join;
+        this.x = x;
+    }
 
-	public Query<T> is(boolean y) {
-		return addPrimitive(y);
-	}	
+    public Query<T> is(boolean y) {
+        return addPrimitive(y);
+    }
 
-	public Query<T> is(byte y) {
-		return addPrimitive(y);
-	}	
+    public Query<T> is(byte y) {
+        return addPrimitive(y);
+    }
 
-	public Query<T> is(short y) {
-		return addPrimitive(y);
-	}	
+    public Query<T> is(short y) {
+        return addPrimitive(y);
+    }
 
-	public Query<T> is(int y) {
-		return addPrimitive(y);
-	}
-	
-	public Query<T> is(long y) {
-		return addPrimitive(y);
-	}	
+    public Query<T> is(int y) {
+        return addPrimitive(y);
+    }
 
-	public Query<T> is(float y) {
-		return addPrimitive(y);
-	}	
+    public Query<T> is(long y) {
+        return addPrimitive(y);
+    }
 
-	public Query<T> is(double y) {
-		return addPrimitive(y);
-	}	
+    public Query<T> is(float y) {
+        return addPrimitive(y);
+    }
 
-	@SuppressWarnings("unchecked")
-	private Query<T> addPrimitive(Object o) {		
-		A alias = query.getPrimitiveAliasByValue((A) o);
-		if (alias == null) {
-			join.addConditionToken(new Condition<A>(x, (A) o, CompareType.EQUAL));
-		} else {
-			join.addConditionToken(new Condition<A>(x, alias, CompareType.EQUAL));
-		}
-		return query;		
-	}
+    public Query<T> is(double y) {
+        return addPrimitive(y);
+    }
 
-	public Query<T> is(A y) {
-		join.addConditionToken(new Condition<A>(x, y, CompareType.EQUAL));
-		return query;
-	}
+    @SuppressWarnings("unchecked")
+    private Query<T> addPrimitive(Object o) {
+        A alias = query.getPrimitiveAliasByValue((A) o);
+        if (alias == null) {
+            join.addConditionToken(new Condition<A>(x, (A) o, CompareType.EQUAL));
+        } else {
+            join.addConditionToken(new Condition<A>(x, alias, CompareType.EQUAL));
+        }
+        return query;
+    }
+
+    public Query<T> is(A y) {
+        join.addConditionToken(new Condition<A>(x, y, CompareType.EQUAL));
+        return query;
+    }
 }

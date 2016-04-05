@@ -15,49 +15,48 @@
  */
 package com.iciql.adapter.postgresql;
 
-import java.sql.SQLException;
-
-import org.postgresql.util.PGobject;
-
 import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.Iciql.Mode;
+import org.postgresql.util.PGobject;
+
+import java.sql.SQLException;
 
 /**
  * Handles transforming raw strings to/from the Postgres XML data type.
  */
 public class XmlStringAdapter implements DataTypeAdapter<String> {
 
-	protected Mode mode;
+    protected Mode mode;
 
-	@Override
-	public void setMode(Mode mode) {
-		this.mode = mode;
-	}
+    @Override
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
 
-	@Override
-	public String getDataType() {
-		return "xml";
-	}
+    @Override
+    public String getDataType() {
+        return "xml";
+    }
 
-	@Override
-	public Class<String> getJavaType() {
-		return String.class;
-	}
+    @Override
+    public Class<String> getJavaType() {
+        return String.class;
+    }
 
-	@Override
-	public Object serialize(String value) {
-		PGobject pg = new PGobject();
-		pg.setType(getDataType());
-		try {
-			pg.setValue(value);
-		} catch (SQLException e) {
-			// not thrown on base PGobject
-		}
-		return pg;
-	}
+    @Override
+    public Object serialize(String value) {
+        PGobject pg = new PGobject();
+        pg.setType(getDataType());
+        try {
+            pg.setValue(value);
+        } catch (SQLException e) {
+            // not thrown on base PGobject
+        }
+        return pg;
+    }
 
-	@Override
-	public String deserialize(Object value) {
-		return value.toString();
-	}
+    @Override
+    public String deserialize(Object value) {
+        return value.toString();
+    }
 }

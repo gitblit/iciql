@@ -19,45 +19,43 @@ package com.iciql;
 
 /**
  * This class represents "SET column = value" in an UPDATE statement.
- * 
- * @param <T>
- *            the query type
- * @param <A>
- *            the new value data type
+ *
+ * @param <T> the query type
+ * @param <A> the new value data type
  */
 
 public class UpdateColumnSet<T, A> implements UpdateColumn {
 
-	private Query<T> query;
-	private A x;
-	private A y;
-	private boolean isParameter;
+    private Query<T> query;
+    private A x;
+    private A y;
+    private boolean isParameter;
 
-	UpdateColumnSet(Query<T> query, A x) {
-		this.query = query;
-		this.x = x;
-	}
+    UpdateColumnSet(Query<T> query, A x) {
+        this.query = query;
+        this.x = x;
+    }
 
-	public Query<T> to(A y) {
-		query.addUpdateColumnDeclaration(this);
-		this.y = y;
-		return query;
-	}
+    public Query<T> to(A y) {
+        query.addUpdateColumnDeclaration(this);
+        this.y = y;
+        return query;
+    }
 
-	public Query<T> toParameter() {
-		query.addUpdateColumnDeclaration(this);
-		isParameter = true;
-		return query;
-	}
+    public Query<T> toParameter() {
+        query.addUpdateColumnDeclaration(this);
+        isParameter = true;
+        return query;
+    }
 
-	public void appendSQL(SQLStatement stat) {
-		query.appendSQL(stat, null, x);
-		stat.appendSQL(" = ");
-		if (isParameter) {			
-			query.appendSQL(stat, x, RuntimeParameter.PARAMETER);
-		} else {
-			query.appendSQL(stat, x, y);
-		}
-	}
+    public void appendSQL(SQLStatement stat) {
+        query.appendSQL(stat, null, x);
+        stat.appendSQL(" = ");
+        if (isParameter) {
+            query.appendSQL(stat, x, RuntimeParameter.PARAMETER);
+        } else {
+            query.appendSQL(stat, x, y);
+        }
+    }
 
 }

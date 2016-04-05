@@ -22,16 +22,16 @@ package com.iciql;
  */
 
 enum ConditionAndOr implements Token {
-	AND("AND"), OR("OR");
+    AND("AND"), OR("OR");
 
-	private String text;
+    private String text;
 
-	ConditionAndOr(String text) {
-		this.text = text;
-	}
+    ConditionAndOr(String text) {
+        this.text = text;
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		stat.appendSQL(text);
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        stat.appendSQL(text);
+    }
 
 }

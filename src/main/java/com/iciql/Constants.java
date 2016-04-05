@@ -25,38 +25,38 @@ import java.util.jar.Manifest;
  */
 public class Constants {
 
-	public static final String NAME = "iciql";
+    public static final String NAME = "iciql";
 
-	// The build script extracts this exact line so be careful editing it
-	// and only use A-Z a-z 0-9 .-_ in the string.
-	public static final String API_CURRENT = "15";
+    // The build script extracts this exact line so be careful editing it
+    // and only use A-Z a-z 0-9 .-_ in the string.
+    public static final String API_CURRENT = "15";
 
-	public static String getVersion() {
-		return getManifestValue("implementation-version", "0.0.0-SNAPSHOT");
-	}
+    public static String getVersion() {
+        return getManifestValue("implementation-version", "0.0.0-SNAPSHOT");
+    }
 
-	public static String getBuildDate() {
-		return getManifestValue("build-date", "PENDING");
-	}
+    public static String getBuildDate() {
+        return getManifestValue("build-date", "PENDING");
+    }
 
-	private static String getManifestValue(String attrib, String defaultValue) {
-		Class<?> clazz = Constants.class;
-		String className = clazz.getSimpleName() + ".class";
-		String classPath = clazz.getResource(className).toString();
-		try {
-			String manifestPath;
-			if (classPath.indexOf('!') > -1) {
-				manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
-			} else {
-				String pkgPath = "/" + clazz.getPackage().getName().replace('.', '/');
-				manifestPath = classPath.substring(0, classPath.indexOf(pkgPath))  + "/META-INF/MANIFEST.MF";
-			}
-			Manifest manifest = new Manifest(new URL(manifestPath).openStream());
-			Attributes attr = manifest.getMainAttributes();
-			String value = attr.getValue(attrib);
-			return value;
-		} catch (Exception e) {
-		}
-		return defaultValue;
-	}
+    private static String getManifestValue(String attrib, String defaultValue) {
+        Class<?> clazz = Constants.class;
+        String className = clazz.getSimpleName() + ".class";
+        String classPath = clazz.getResource(className).toString();
+        try {
+            String manifestPath;
+            if (classPath.indexOf('!') > -1) {
+                manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+            } else {
+                String pkgPath = "/" + clazz.getPackage().getName().replace('.', '/');
+                manifestPath = classPath.substring(0, classPath.indexOf(pkgPath)) + "/META-INF/MANIFEST.MF";
+            }
+            Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+            Attributes attr = manifest.getMainAttributes();
+            String value = attr.getValue(attrib);
+            return value;
+        } catch (Exception e) {
+        }
+        return defaultValue;
+    }
 }

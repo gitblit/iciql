@@ -16,6 +16,10 @@
 
 package com.iciql.adapter;
 
+import com.iciql.Iciql.DataTypeAdapter;
+import com.iciql.Iciql.Mode;
+import com.iciql.IciqlException;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,10 +28,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
-
-import com.iciql.Iciql.DataTypeAdapter;
-import com.iciql.Iciql.Mode;
-import com.iciql.IciqlException;
 
 /**
  * Base class for inserting/retrieving a Java Object as a BLOB field using Java Serialization.
@@ -40,68 +40,69 @@ import com.iciql.IciqlException;
  *    }
  * }
  * </pre>
+ *
  * @param <T>
  */
 public abstract class JavaSerializationTypeAdapter<T> implements DataTypeAdapter<T> {
 
-	protected Mode mode;
+    protected Mode mode;
 
-	@Override
-	public void setMode(Mode mode) {
-		this.mode = mode;
-	}
+    @Override
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
 
-	@Override
-	public final String getDataType() {
-		return "BLOB";
-	}
+    @Override
+    public final String getDataType() {
+        return "BLOB";
+    }
 
-	@Override
-	public final Object serialize(T value) {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		try {
-			new ObjectOutputStream(os).writeObject(value);
-			return os.toByteArray();
-		} catch (IOException e) {
-			throw new IciqlException(e);
-		} finally {
-			try {
-				os.close();
-			} catch (IOException e) {
-				throw new IciqlException (e);
-			}
-		}
-	}
+    @Override
+    public final Object serialize(T value) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            new ObjectOutputStream(os).writeObject(value);
+            return os.toByteArray();
+        } catch (IOException e) {
+            throw new IciqlException(e);
+        } finally {
+            try {
+                os.close();
+            } catch (IOException e) {
+                throw new IciqlException(e);
+            }
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public final T deserialize(Object value) {
-		InputStream is = null;
-		if (value instanceof Blob) {
-			Blob blob = (Blob) value;
-			try {
-				is = blob.getBinaryStream();
-			} catch (SQLException e) {
-				throw new IciqlException(e);
-			}
-		} else if (value instanceof byte[]) {
-			byte [] bytes = (byte []) value;
-			is = new ByteArrayInputStream(bytes);
-		}
+    @SuppressWarnings("unchecked")
+    @Override
+    public final T deserialize(Object value) {
+        InputStream is = null;
+        if (value instanceof Blob) {
+            Blob blob = (Blob) value;
+            try {
+                is = blob.getBinaryStream();
+            } catch (SQLException e) {
+                throw new IciqlException(e);
+            }
+        } else if (value instanceof byte[]) {
+            byte[] bytes = (byte[]) value;
+            is = new ByteArrayInputStream(bytes);
+        }
 
-		try {
-			T object = (T) new ObjectInputStream(is).readObject();
-			return object;
-		} catch (Exception e) {
-			throw new IciqlException(e);
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					throw new IciqlException (e);
-				}
-			}
-		}
-	}
+        try {
+            T object = (T) new ObjectInputStream(is).readObject();
+            return object;
+        } catch (Exception e) {
+            throw new IciqlException(e);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    throw new IciqlException(e);
+                }
+            }
+        }
+    }
 }

@@ -19,37 +19,35 @@ package com.iciql;
 
 /**
  * This class represents "SET column = (column + x)" in an UPDATE statement.
- * 
- * @param <T>
- *            the query type
- * @param <A>
- *            the new value data type
+ *
+ * @param <T> the query type
+ * @param <A> the new value data type
  */
 
 public class UpdateColumnIncrement<T, A> implements UpdateColumn {
 
-	private Query<T> query;
-	private A x;
-	private A y;
+    private Query<T> query;
+    private A x;
+    private A y;
 
-	UpdateColumnIncrement(Query<T> query, A x) {
-		this.query = query;
-		this.x = x;
-	}
+    UpdateColumnIncrement(Query<T> query, A x) {
+        this.query = query;
+        this.x = x;
+    }
 
-	public Query<T> by(A y) {
-		query.addUpdateColumnDeclaration(this);
-		this.y = y;
-		return query;
-	}
+    public Query<T> by(A y) {
+        query.addUpdateColumnDeclaration(this);
+        this.y = y;
+        return query;
+    }
 
-	public void appendSQL(SQLStatement stat) {
-		query.appendSQL(stat, null, x);
-		stat.appendSQL("=(");
-		query.appendSQL(stat, null, x);
-		stat.appendSQL("+");
-		query.appendSQL(stat, x, y);
-		stat.appendSQL(")");
-	}
+    public void appendSQL(SQLStatement stat) {
+        query.appendSQL(stat, null, x);
+        stat.appendSQL("=(");
+        query.appendSQL(stat, null, x);
+        stat.appendSQL("+");
+        query.appendSQL(stat, x, y);
+        stat.appendSQL(")");
+    }
 
 }

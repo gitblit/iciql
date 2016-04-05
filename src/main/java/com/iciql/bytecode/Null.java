@@ -26,19 +26,19 @@ import com.iciql.Token;
  */
 public class Null implements Token {
 
-	static final Null INSTANCE = new Null();
+    static final Null INSTANCE = new Null();
 
-	private Null() {
-		// don't allow to create new instances
-	}
+    private Null() {
+        // don't allow to create new instances
+    }
 
-	public String toString() {
-		return "null";
-	}
+    public String toString() {
+        return "null";
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		// untested
-		stat.appendSQL("NULL");
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        // untested
+        stat.appendSQL("NULL");
+    }
 
 }

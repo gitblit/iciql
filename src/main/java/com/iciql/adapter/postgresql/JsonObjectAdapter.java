@@ -15,38 +15,36 @@
  */
 package com.iciql.adapter.postgresql;
 
-import java.sql.SQLException;
-
+import com.iciql.adapter.GsonTypeAdapter;
 import org.postgresql.util.PGobject;
 
-import com.iciql.adapter.GsonTypeAdapter;
+import java.sql.SQLException;
 
 /**
  * Postgres JSON data type adapter maps a JSON column to a domain object using
  * Google GSON.
  *
- * @author James Moger
- *
  * @param <T>
+ * @author James Moger
  */
 public abstract class JsonObjectAdapter<T> extends GsonTypeAdapter<T> {
 
-	@Override
-	public String getDataType() {
-		return "json";
-	}
+    @Override
+    public String getDataType() {
+        return "json";
+    }
 
-	@Override
-	public Object serialize(T value) {
+    @Override
+    public Object serialize(T value) {
 
-		String json = gson().toJson(value);
-		PGobject pg = new PGobject();
-		pg.setType(getDataType());
-		try {
-			pg.setValue(json);
-		} catch (SQLException e) {
-			// not thrown on base PGobject
-		}
-		return pg;
-	}
+        String json = gson().toJson(value);
+        PGobject pg = new PGobject();
+        pg.setType(getDataType());
+        try {
+            pg.setValue(json);
+        } catch (SQLException e) {
+            // not thrown on base PGobject
+        }
+        return pg;
+    }
 }

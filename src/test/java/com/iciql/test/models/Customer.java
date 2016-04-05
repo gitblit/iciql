@@ -17,11 +17,11 @@
 
 package com.iciql.test.models;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.iciql.Iciql.IQColumn;
 import com.iciql.Iciql.IQTable;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A table containing customer data.
@@ -29,36 +29,36 @@ import com.iciql.Iciql.IQTable;
 @IQTable
 public class Customer {
 
-	@IQColumn(length = 25)
-	public String customerId;
+    @IQColumn(length = 25)
+    public String customerId;
 
-	@IQColumn(length = 2)
-	public String region;
+    @IQColumn(length = 2)
+    public String region;
 
-	public Customer() {
-		// public constructor
-	}
+    public Customer() {
+        // public constructor
+    }
 
-	public Customer(String customerId, String region) {
-		this.customerId = customerId;
-		this.region = region;
-	}
+    public Customer(String customerId, String region) {
+        this.customerId = customerId;
+        this.region = region;
+    }
 
-	@Override
-	public String toString() {
-		return customerId;
-	}
+    @Override
+    public String toString() {
+        return customerId;
+    }
 
-	public static List<Customer> getList() {
-		return Arrays.asList(
-				new Customer("ALFKI", "WA"),
-				new Customer("ANATR", "WA"),
-				new Customer("ASLAN", "CA"),
-				new Customer("ANTON", "CA"),
-				new Customer("BROWN", "LA"),
-				new Customer("SMITH", "NY"),
-				new Customer("JONES", "ME"),
-				new Customer(null, null));
-	}
+    public static List<Customer> getList() {
+        return Arrays.asList(
+                new Customer("ALFKI", "WA"),
+                new Customer("ANATR", "WA"),
+                new Customer("ASLAN", "CA"),
+                new Customer("ANTON", "CA"),
+                new Customer("BROWN", "LA"),
+                new Customer("SMITH", "NY"),
+                new Customer("JONES", "ME"),
+                new Customer(null, null));
+    }
 
 }

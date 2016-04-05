@@ -26,13 +26,13 @@ import com.iciql.Iciql.Mode;
  * <p>
  * You use this by creating a subclass which defines your object class.
  * </p>
- *
+ * <p>
  * <pre>
  * public class CustomObjectAdapter extends GsonTypeAdapter&lt;CustomObject&gt; {
  *
  * 	public Class&lt;CustomObject&gt; getJavaType() {
  * 		return CustomObject.class;
- * 	}
+ *    }
  * }
  * </pre>
  *
@@ -40,32 +40,32 @@ import com.iciql.Iciql.Mode;
  */
 public abstract class GsonTypeAdapter<T> implements DataTypeAdapter<T> {
 
-	protected Mode mode;
+    protected Mode mode;
 
-	protected Gson gson() {
-		return new GsonBuilder().create();
-	}
+    protected Gson gson() {
+        return new GsonBuilder().create();
+    }
 
-	@Override
-	public void setMode(Mode mode) {
-		this.mode = mode;
-	}
+    @Override
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
 
-	@Override
-	public String getDataType() {
-		return "TEXT";
-	}
+    @Override
+    public String getDataType() {
+        return "TEXT";
+    }
 
-	@Override
-	public Object serialize(T value) {
-		return gson().toJson(value);
-	}
+    @Override
+    public Object serialize(T value) {
+        return gson().toJson(value);
+    }
 
-	@Override
-	public T deserialize(Object value) {
-		String json = value.toString();
-		Gson gson = gson();
-		T t = gson.fromJson(json, getJavaType());
-		return t;
-	}
+    @Override
+    public T deserialize(Object value) {
+        String json = value.toString();
+        Gson gson = gson();
+        T t = gson.fromJson(json, getJavaType());
+        return t;
+    }
 }

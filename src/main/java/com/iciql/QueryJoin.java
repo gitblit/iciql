@@ -23,53 +23,53 @@ package com.iciql;
 
 public class QueryJoin<T> {
 
-	private Query<T> query;
-	private SelectTable<T> join;
+    private Query<T> query;
+    private SelectTable<T> join;
 
-	QueryJoin(Query<T> query, SelectTable<T> join) {
-		this.query = query;
-		this.join = join;
-	}
+    QueryJoin(Query<T> query, SelectTable<T> join) {
+        this.query = query;
+        this.join = join;
+    }
 
-	public QueryJoinCondition<T, Boolean> on(boolean x) {
-		query.getFrom().getAliasDefinition().checkMultipleBooleans();
-		return addPrimitive(x);
-	}
+    public QueryJoinCondition<T, Boolean> on(boolean x) {
+        query.getFrom().getAliasDefinition().checkMultipleBooleans();
+        return addPrimitive(x);
+    }
 
-	public QueryJoinCondition<T, Byte> on(byte x) {
-		return addPrimitive(x);
-	}
+    public QueryJoinCondition<T, Byte> on(byte x) {
+        return addPrimitive(x);
+    }
 
-	public QueryJoinCondition<T, Short> on(short x) {
-		return addPrimitive(x);
-	}
+    public QueryJoinCondition<T, Short> on(short x) {
+        return addPrimitive(x);
+    }
 
-	public QueryJoinCondition<T, Integer> on(int x) {
-		return addPrimitive(x);
-	}
+    public QueryJoinCondition<T, Integer> on(int x) {
+        return addPrimitive(x);
+    }
 
-	public QueryJoinCondition<T, Long> on(long x) {
-		return addPrimitive(x);
-	}
+    public QueryJoinCondition<T, Long> on(long x) {
+        return addPrimitive(x);
+    }
 
-	public QueryJoinCondition<T, Float> on(float x) {
-		return addPrimitive(x);
-	}
+    public QueryJoinCondition<T, Float> on(float x) {
+        return addPrimitive(x);
+    }
 
-	public QueryJoinCondition<T, Double> on(double x) {
-		return addPrimitive(x);
-	}
+    public QueryJoinCondition<T, Double> on(double x) {
+        return addPrimitive(x);
+    }
 
-	private <A> QueryJoinCondition<T, A> addPrimitive(A x) {
-		A alias = query.getPrimitiveAliasByValue(x);
-		if (alias == null) {
-			// this will result in an unmapped field exception
-			return new QueryJoinCondition<T, A>(query, join, x);
-		}
-		return new QueryJoinCondition<T, A>(query, join, alias);
-	}
+    private <A> QueryJoinCondition<T, A> addPrimitive(A x) {
+        A alias = query.getPrimitiveAliasByValue(x);
+        if (alias == null) {
+            // this will result in an unmapped field exception
+            return new QueryJoinCondition<T, A>(query, join, x);
+        }
+        return new QueryJoinCondition<T, A>(query, join, alias);
+    }
 
-	public <A> QueryJoinCondition<T, A> on(A x) {
-		return new QueryJoinCondition<T, A>(query, join, x);
-	}
+    public <A> QueryJoinCondition<T, A> on(A x) {
+        return new QueryJoinCondition<T, A>(query, join, x);
+    }
 }

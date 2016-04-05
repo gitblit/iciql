@@ -23,13 +23,12 @@ import com.iciql.adapter.XStreamTypeAdapter;
  * XStream.
  *
  * @author James Moger
- *
  */
 public abstract class XmlObjectAdapter extends XStreamTypeAdapter {
 
-	@Override
-	public String getDataType() {
-		return "xml";
-	}
+    @Override
+    public String getDataType() {
+        return "xml";
+    }
 
 }

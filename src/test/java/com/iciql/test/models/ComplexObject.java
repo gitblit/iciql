@@ -17,8 +17,7 @@
 
 package com.iciql.test.models;
 
-import static com.iciql.Define.length;
-import static com.iciql.Define.primaryKey;
+import com.iciql.Iciql;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -27,40 +26,41 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.iciql.Iciql;
+import static com.iciql.Define.length;
+import static com.iciql.Define.primaryKey;
 
 /**
  * A table containing all possible data types.
  */
 
 public class ComplexObject implements Iciql {
-	public Integer id;
-	public Long amount;
-	public String name;
-	public BigDecimal value;
-	public Date birthday;
-	public Time time;
-	public Timestamp created;
+    public Integer id;
+    public Long amount;
+    public String name;
+    public BigDecimal value;
+    public Date birthday;
+    public Time time;
+    public Timestamp created;
 
-	static ComplexObject build(Integer id, boolean isNull) {
-		ComplexObject obj = new ComplexObject();
-		obj.id = id;
-		obj.amount = isNull ? null : Long.valueOf(1);
-		obj.name = isNull ? null : "hello";
-		obj.value = isNull ? null : new BigDecimal("1");
-		obj.birthday = isNull ? null : java.sql.Date.valueOf("2001-01-01");
-		obj.time = isNull ? null : Time.valueOf("10:20:30");
-		obj.created = isNull ? null : Timestamp.valueOf("2002-02-02 02:02:02");
-		return obj;
-	}
+    static ComplexObject build(Integer id, boolean isNull) {
+        ComplexObject obj = new ComplexObject();
+        obj.id = id;
+        obj.amount = isNull ? null : Long.valueOf(1);
+        obj.name = isNull ? null : "hello";
+        obj.value = isNull ? null : new BigDecimal("1");
+        obj.birthday = isNull ? null : java.sql.Date.valueOf("2001-01-01");
+        obj.time = isNull ? null : Time.valueOf("10:20:30");
+        obj.created = isNull ? null : Timestamp.valueOf("2002-02-02 02:02:02");
+        return obj;
+    }
 
-	public void defineIQ() {
-		primaryKey(id);
-		length(name, 25);
-	}
+    public void defineIQ() {
+        primaryKey(id);
+        length(name, 25);
+    }
 
-	public static List<ComplexObject> getList() {
-		return Arrays.asList(new ComplexObject[] { build(0, true), build(1, false) });
-	}
+    public static List<ComplexObject> getList() {
+        return Arrays.asList(new ComplexObject[]{build(0, true), build(1, false)});
+    }
 
 }

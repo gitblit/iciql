@@ -26,21 +26,21 @@ import com.iciql.Token;
  */
 public class And implements Token {
 
-	private final Token left, right;
+    private final Token left, right;
 
-	private And(Token left, Token right) {
-		this.left = left;
-		this.right = right;
-	}
+    private And(Token left, Token right) {
+        this.left = left;
+        this.right = right;
+    }
 
-	static And get(Token left, Token right) {
-		return new And(left, right);
-	}
+    static And get(Token left, Token right) {
+        return new And(left, right);
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		left.appendSQL(stat, query);
-		stat.appendSQL(" AND ");
-		right.appendSQL(stat, query);
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        left.appendSQL(stat, query);
+        stat.appendSQL(" AND ");
+        right.appendSQL(stat, query);
+    }
 
 }

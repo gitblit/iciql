@@ -21,16 +21,15 @@ import com.iciql.Iciql.Mode;
  * Defines the interface for retrieving externalized DAO statements.
  *
  * @author James Moger
- *
  */
 public interface DaoStatementProvider {
 
-	/**
-	 * Returns the statement associated with the id.
-	 *
-	 * @param idOrStatement
-	 * @param mode
-	 * @return the statement
-	 */
-	String getStatement(String idOrStatement, Mode mode);
+    /**
+     * Returns the statement associated with the id.
+     *
+     * @param idOrStatement
+     * @param mode
+     * @return the statement
+     */
+    String getStatement(String idOrStatement, Mode mode);
 }

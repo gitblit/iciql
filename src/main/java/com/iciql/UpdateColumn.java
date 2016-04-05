@@ -23,13 +23,12 @@ package com.iciql;
  */
 public interface UpdateColumn {
 
-	/**
-	 * Append the SQL to the given statement using the given query.
-	 * 
-	 * @param stat
-	 *            the statement to append the SQL to
-	 */
+    /**
+     * Append the SQL to the given statement using the given query.
+     *
+     * @param stat the statement to append the SQL to
+     */
 
-	void appendSQL(SQLStatement stat);
+    void appendSQL(SQLStatement stat);
 
 }

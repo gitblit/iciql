@@ -16,48 +16,47 @@
 
 package com.iciql.adapter;
 
+import com.iciql.Iciql.DataTypeAdapter;
+import com.iciql.Iciql.Mode;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Tag;
-
-import com.iciql.Iciql.DataTypeAdapter;
-import com.iciql.Iciql.Mode;
 
 /**
  * Base class for inserting/retrieving a Java Object (de)serialized as YAML using SnakeYaml.
  */
 public abstract class SnakeYamlTypeAdapter<T> implements DataTypeAdapter<T> {
 
-	protected Mode mode;
+    protected Mode mode;
 
-	protected Yaml yaml() {
-		return new Yaml();
-	}
+    protected Yaml yaml() {
+        return new Yaml();
+    }
 
-	@Override
-	public void setMode(Mode mode) {
-		this.mode = mode;
-	}
+    @Override
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
 
-	@Override
-	public String getDataType() {
-		return "TEXT";
-	}
+    @Override
+    public String getDataType() {
+        return "TEXT";
+    }
 
-	@Override
-	public abstract Class<T> getJavaType();
+    @Override
+    public abstract Class<T> getJavaType();
 
-	@Override
-	public Object serialize(Object value) {
-		return yaml().dumpAs(value, Tag.MAP, FlowStyle.BLOCK);
-	}
+    @Override
+    public Object serialize(Object value) {
+        return yaml().dumpAs(value, Tag.MAP, FlowStyle.BLOCK);
+    }
 
-	@Override
-	public T deserialize(Object value) {
-		String yaml = value.toString();
-		Yaml processor = yaml();
-		T t = processor.loadAs(yaml, getJavaType());
-		return t;
-	}
+    @Override
+    public T deserialize(Object value) {
+        String yaml = value.toString();
+        Yaml processor = yaml();
+        T t = processor.loadAs(yaml, getJavaType());
+        return t;
+    }
 
 }

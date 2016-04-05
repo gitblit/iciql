@@ -15,81 +15,80 @@
  */
 package com.iciql;
 
+import com.iciql.Iciql.Mode;
+
 import java.io.InputStream;
 import java.util.Properties;
-
-import com.iciql.Iciql.Mode;
 
 /**
  * Loads DAO statements from Properties resource files the classpath.
  *
  * @author James Moger
- *
  */
 public class DaoClasspathStatementProvider implements DaoStatementProvider {
 
-	private final Properties externalStatements;
+    private final Properties externalStatements;
 
-	public DaoClasspathStatementProvider() {
-		externalStatements = load();
-	}
+    public DaoClasspathStatementProvider() {
+        externalStatements = load();
+    }
 
-	/**
-	 * Returns the list of statement resources to try locating.
-	 *
-	 * @return
-	 */
-	protected String[] getStatementResources() {
-		return new String[] { "/iciql.properties", "/iciql.xml", "/conf/iciql.properties", "/conf/iciql.xml" };
-	}
+    /**
+     * Returns the list of statement resources to try locating.
+     *
+     * @return
+     */
+    protected String[] getStatementResources() {
+        return new String[]{"/iciql.properties", "/iciql.xml", "/conf/iciql.properties", "/conf/iciql.xml"};
+    }
 
-	/**
-	 * Loads the first statement resource found on the classpath.
-	 *
-	 * @return the loaded statements
-	 */
-	private Properties load() {
+    /**
+     * Loads the first statement resource found on the classpath.
+     *
+     * @return the loaded statements
+     */
+    private Properties load() {
 
-		Properties props = new Properties();
-		for (String resource : getStatementResources()) {
+        Properties props = new Properties();
+        for (String resource : getStatementResources()) {
 
-			InputStream is = null;
+            InputStream is = null;
 
-			try {
-				is = DaoProxy.class.getResourceAsStream(resource);
+            try {
+                is = DaoProxy.class.getResourceAsStream(resource);
 
-				if (is != null) {
+                if (is != null) {
 
-					if (resource.toLowerCase().endsWith(".xml")) {
-						// load an .XML statements file
-						props.loadFromXML(is);
-					} else {
-						// load a .Properties statements file
-						props.load(is);
-					}
+                    if (resource.toLowerCase().endsWith(".xml")) {
+                        // load an .XML statements file
+                        props.loadFromXML(is);
+                    } else {
+                        // load a .Properties statements file
+                        props.load(is);
+                    }
 
-					break;
-				}
+                    break;
+                }
 
-			} catch (Exception e) {
-				throw new IciqlException(e, "Failed to parse {0}", resource);
-			} finally {
-				try {
-					is.close();
-				} catch (Exception e) {
-				}
-			}
+            } catch (Exception e) {
+                throw new IciqlException(e, "Failed to parse {0}", resource);
+            } finally {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                }
+            }
 
-		}
-		return props;
-	}
+        }
+        return props;
+    }
 
-	@Override
-	public String getStatement(String idOrStatement, Mode mode) {
-		final String modePrefix = "%" + mode.name().toLowerCase() + ".";
-		String value = externalStatements.getProperty(idOrStatement, idOrStatement);
-		value = externalStatements.getProperty(modePrefix + idOrStatement, value);
-		return value;
-	}
+    @Override
+    public String getStatement(String idOrStatement, Mode mode) {
+        final String modePrefix = "%" + mode.name().toLowerCase() + ".";
+        String value = externalStatements.getProperty(idOrStatement, idOrStatement);
+        value = externalStatements.getProperty(modePrefix + idOrStatement, value);
+        return value;
+    }
 
 }

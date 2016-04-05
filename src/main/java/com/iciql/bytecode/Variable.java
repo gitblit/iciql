@@ -26,26 +26,26 @@ import com.iciql.Token;
  */
 public class Variable implements Token {
 
-	static final Variable THIS = new Variable("this", null);
+    static final Variable THIS = new Variable("this", null);
 
-	private final String name;
-	private final Object obj;
+    private final String name;
+    private final Object obj;
 
-	private Variable(String name, Object obj) {
-		this.name = name;
-		this.obj = obj;
-	}
+    private Variable(String name, Object obj) {
+        this.name = name;
+        this.obj = obj;
+    }
 
-	static Variable get(String name, Object obj) {
-		return new Variable(name, obj);
-	}
+    static Variable get(String name, Object obj) {
+        return new Variable(name, obj);
+    }
 
-	public String toString() {
-		return name;
-	}
+    public String toString() {
+        return name;
+    }
 
-	public <T> void appendSQL(SQLStatement stat, Query<T> query) {
-		query.appendSQL(stat, null, obj);
-	}
+    public <T> void appendSQL(SQLStatement stat, Query<T> query) {
+        query.appendSQL(stat, null, obj);
+    }
 
 }

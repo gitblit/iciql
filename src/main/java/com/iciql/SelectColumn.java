@@ -21,37 +21,36 @@ import com.iciql.TableDefinition.FieldDefinition;
 
 /**
  * This class represents a column of a table in a query.
- * 
- * @param <T>
- *            the table data type
+ *
+ * @param <T> the table data type
  */
 
 class SelectColumn<T> {
-	private SelectTable<T> selectTable;
-	private FieldDefinition fieldDef;
+    private SelectTable<T> selectTable;
+    private FieldDefinition fieldDef;
 
-	SelectColumn(SelectTable<T> table, FieldDefinition fieldDef) {
-		this.selectTable = table;
-		this.fieldDef = fieldDef;
-	}
+    SelectColumn(SelectTable<T> table, FieldDefinition fieldDef) {
+        this.selectTable = table;
+        this.fieldDef = fieldDef;
+    }
 
-	void appendSQL(SQLStatement stat) {
-		if (selectTable.getQuery().isJoin()) {
-			stat.appendSQL(selectTable.getAs() + "." + fieldDef.columnName);
-		} else {
-			stat.appendColumn(fieldDef.columnName);
-		}
-	}
+    void appendSQL(SQLStatement stat) {
+        if (selectTable.getQuery().isJoin()) {
+            stat.appendSQL(selectTable.getAs() + "." + fieldDef.columnName);
+        } else {
+            stat.appendColumn(fieldDef.columnName);
+        }
+    }
 
-	FieldDefinition getFieldDefinition() {
-		return fieldDef;
-	}
+    FieldDefinition getFieldDefinition() {
+        return fieldDef;
+    }
 
-	SelectTable<T> getSelectTable() {
-		return selectTable;
-	}
+    SelectTable<T> getSelectTable() {
+        return selectTable;
+    }
 
-	Object getCurrentValue() {
-		return fieldDef.getValue(selectTable.getCurrent());
-	}
+    Object getCurrentValue() {
+        return fieldDef.getValue(selectTable.getCurrent());
+    }
 }
