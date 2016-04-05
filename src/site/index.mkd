@@ -109,7 +109,7 @@ Support for others is possible and may only require creating a simple "dialect" 
 
 As of 2.0.0 iciql is now distributed through Maven Central and it's coordinates have changed slightly.
 
-```xml
+---XML---
 <dependencies>
     <dependency>
         <groupId>com.gitblit.iciql</groupId>
@@ -117,7 +117,7 @@ As of 2.0.0 iciql is now distributed through Maven Central and it's coordinates 
         <version>2.0.0/version>
     </dependency>
 </dependencies>
-```
+---XML---
 
 ### Java Runtime Requirement
 

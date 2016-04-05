@@ -147,7 +147,6 @@
 				</menu>
 
 				<page name="building" src="building.mkd" out="building.html" />
-				<page name="javadoc" src="javadoc.mkd" out="javadoc.html" />
 
 				<page name="release notes" out="releasenotes.html">
 					<template src="releasecurrent.ftl" data="${releaselog}" />
@@ -157,16 +156,15 @@
 				</page>
 
 				<menu name="downloads">
-					<link name="${project.artifactId}-${project.releaseVersion}"
-						src="${gc.url}${project.artifactId}-${project.releaseVersion}.zip" />
+					<link name="Maven Central (2.0.0+)"
+						src="http://search.maven.org/#search|ga|1|com.gitblit.iciql" />
 					<divider />
-					<link name="Maven Repository" src="${project.mavenUrl}" />
+					<link name="Iciql Maven Repository (pre-2.0.0)" src="${project.mavenUrl}" />
 				</menu>
 
 				<menu name="links">
 					<link name="Github" src="${project.scmUrl}" />
 					<link name="Issues" src="${project.issuesUrl}" />
-					<link name="Maven Repository" src="${project.mavenUrl}" />
 				</menu>
 				<divider />
 			</structure>
