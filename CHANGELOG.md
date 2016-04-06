@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-### [2.1.0][unreleased]
+### [2.1.0] - 2016-04-06
 #### Added
 - Add methods to select counts of a group by field (*SELECT field, COUNT(*) FROM table [WHERE conditions] GROUP BY field*)
 
@@ -337,7 +337,8 @@ db.executeUpdate(q, new Date());
   QueryConditon.smaller => QueryCondition.lessThan
   QueryConditon.smallEqual => QueryCondition.atMost
 
-[unreleased]: https://github.com/gitblit/iciql/compare/release-2.0.0...HEAD
+[unreleased]: https://github.com/gitblit/iciql/compare/release-2.1.0...HEAD
+[2.1.0]: https://github.com/gitblit/iciql/compare/release-2.0.0...release-2.1.0
 [2.0.0]: https://github.com/gitblit/iciql/compare/v1.6.5...release-2.0.0
 [1.6.5]: https://github.com/gitblit/iciql/compare/v1.6.4...v1.6.5
 [1.6.4]: https://github.com/gitblit/iciql/compare/v1.6.3...v1.6.4
