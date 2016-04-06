@@ -19,6 +19,7 @@ package com.iciql.test;
 
 import com.iciql.Db;
 import com.iciql.DbInspector;
+import com.iciql.ValueCount;
 import com.iciql.ValidationRemark;
 import com.iciql.test.models.Product;
 import com.iciql.test.models.ProductAnnotationOnly;
@@ -174,4 +175,47 @@ public class ModelsTest {
         assertEquals(10, ids.size());
         assertEquals("[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]", ids.toString());
     }
+
+    @Test
+    public void testGroupByCount() {
+        Product products = new Product();
+
+        List<ValueCount<String>> categories = db.from(products)
+                .selectCount(products.category);
+        assertEquals(5, categories.size());
+        assertEquals("[Meat/Poultry=1, Produce=1, Seafood=1, Beverages=2, Condiments=5]", categories.toString());
+    }
+
+    @Test
+    public void testGroupByCountDesc() {
+        Product products = new Product();
+
+        List<ValueCount<String>> categories = db.from(products)
+                .selectCountDesc(products.category);
+        assertEquals(5, categories.size());
+        assertEquals("[Condiments=5, Beverages=2, Seafood=1, Produce=1, Meat/Poultry=1]", categories.toString());
+    }
+
+    @Test
+    public void testFilteredGroupByCount() {
+        Product products = new Product();
+
+        List<ValueCount<String>> categories = db.from(products)
+                .where(products.category).isNot("Seafood")
+                .selectCount(products.category);
+        assertEquals(4, categories.size());
+        assertEquals("[Meat/Poultry=1, Produce=1, Beverages=2, Condiments=5]", categories.toString());
+    }
+
+    @Test
+    public void testFilteredGroupByCountDesc() {
+        Product products = new Product();
+
+        List<ValueCount<String>> categories = db.from(products)
+                .where(products.category).isNot("Seafood")
+                .selectCountDesc(products.category);
+        assertEquals(4, categories.size());
+        assertEquals("[Condiments=5, Beverages=2, Produce=1, Meat/Poultry=1]", categories.toString());
+    }
+
 }

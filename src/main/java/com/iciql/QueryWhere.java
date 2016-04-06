@@ -605,4 +605,12 @@ public class QueryWhere<T> {
         return query.selectCount();
     }
 
+    public <X> List<ValueCount<X>> selectCount(X x) {
+        return query.selectCount(x, false);
+    }
+
+    public <X> List<ValueCount<X>> selectCountDesc(X x) {
+        return query.selectCount(x, true);
+    }
+
 }

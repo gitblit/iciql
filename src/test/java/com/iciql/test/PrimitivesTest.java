@@ -18,6 +18,7 @@ package com.iciql.test;
 
 import com.iciql.Db;
 import com.iciql.IciqlException;
+import com.iciql.ValueCount;
 import com.iciql.test.models.MultipleBoolsModel;
 import com.iciql.test.models.PrimitivesModel;
 import org.junit.Test;
@@ -114,4 +115,22 @@ public class PrimitivesTest {
         assertEquals(models.size(), list.size());
         assertEquals("[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]", list.toString());
     }
+
+    @Test
+    public void testPrimitiveGroupByCount() {
+        Db db = IciqlSuite.openNewDb();
+
+        // insert random models in reverse order
+        List<PrimitivesModel> models = PrimitivesModel.getList();
+        Collections.reverse(models);
+        // insert them in reverse order
+        db.insertAll(models);
+
+        PrimitivesModel primitives = new PrimitivesModel();
+        List<ValueCount<Integer>> types = db.from(primitives)
+                .selectCount(primitives.typeCode);
+        assertEquals(2, types.size());
+        assertEquals("[0=5, 1=5]", types.toString());
+    }
+
 }

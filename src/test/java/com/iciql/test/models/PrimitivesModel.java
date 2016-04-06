@@ -50,6 +50,9 @@ public class PrimitivesModel {
     @IQColumn
     public float myFloat;
 
+    @IQColumn
+    public int typeCode;
+
     public PrimitivesModel() {
         Random rand = new Random();
         myLong = rand.nextLong();
@@ -78,6 +81,7 @@ public class PrimitivesModel {
         for (int i = 1; i <= 10; i++) {
             PrimitivesModel p = new PrimitivesModel();
             p.myLong = i;
+            p.typeCode = i % 2;
             list.add(p);
         }
         return list;

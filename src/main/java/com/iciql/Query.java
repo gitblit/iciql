@@ -31,6 +31,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -98,6 +99,56 @@ public class Query<T> {
         } finally {
             JdbcUtils.closeSilently(rs, true);
         }
+    }
+
+    public <X> List<ValueCount<X>> selectCount(X x) {
+        return selectCount(x, false);
+    }
+
+    public <X> List<ValueCount<X>> selectCountDesc(X x) {
+        return selectCount(x, true);
+    }
+
+    <X> List<ValueCount<X>> selectCount(X x, boolean desc) {
+        List<ValueCount<X>> list = Utils.newArrayList();
+        SelectColumn<T> col = getColumnByReference(x);
+        X alias = x;
+        if (col == null) {
+            alias = getPrimitiveAliasByValue(x);
+            col = getColumnByReference(alias);
+        }
+        if (col == null) {
+            throw new IciqlException("Unmapped column reference!");
+        }
+        groupBy(alias);
+
+        SQLStatement stat = getSelectStatement(false);
+        col.appendSQL(stat);
+        stat.appendSQL(", COUNT(*)");
+        appendFromWhere(stat);
+
+        ResultSet rs = stat.executeQuery();
+        Class<? extends DataTypeAdapter<?>> typeAdapter = col.getFieldDefinition().typeAdapter;
+        Class<?> clazz = x.getClass();
+        try {
+            // SQLite returns pre-closed ResultSets for query results with 0 rows
+            if (!rs.isClosed()) {
+                while (rs.next()) {
+                    X value = (X) db.getDialect().deserialize(rs, 1, clazz, typeAdapter);
+                    long count = rs.getLong(2);
+                    list.add(new ValueCount<X>(value, count));
+                }
+            }
+            Collections.sort(list);
+            if (desc) {
+                Collections.reverse(list);
+            }
+        } catch (Exception e) {
+            throw IciqlException.fromSQL(stat.getSQL(), e);
+        } finally {
+            JdbcUtils.closeSilently(rs, true);
+        }
+        return list;
     }
 
     public List<T> select() {
