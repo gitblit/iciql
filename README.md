@@ -40,7 +40,7 @@ As of 2.0.0 iciql is now distributed through Maven Central and it's coordinates 
     <dependency>
         <groupId>com.gitblit.iciql</groupId>
         <artifactId>iciql</artifactId>
-        <version>2.1.0</version>
+        <version>2.1.1</version>
     </dependency>
 </dependencies>
 ```
