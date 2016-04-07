@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+### [2.1.1] - 2016-04-07
+#### Added
+- Add explicit `where(String)` method to help with non-Java language interop
+
 ### [2.1.0] - 2016-04-06
 #### Added
 - Add methods to select counts of a group by field (*SELECT field, COUNT(*) FROM table [WHERE conditions] GROUP BY field*)

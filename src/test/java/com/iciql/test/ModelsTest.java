@@ -218,4 +218,12 @@ public class ModelsTest {
         assertEquals("[Condiments=5, Beverages=2, Produce=1, Meat/Poultry=1]", categories.toString());
     }
 
+    @Test
+    public void testWhereByString() {
+        Product products = new Product();
+
+        List<Product> seafoodProducts = db.from(products).where(products.category).is("Seafood").select();
+        assertEquals(1, seafoodProducts.size());
+    }
+
 }

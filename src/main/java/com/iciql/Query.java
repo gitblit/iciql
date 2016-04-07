@@ -663,6 +663,16 @@ public class Query<T> {
         return new QueryWhere<T>(this);
     }
 
+    /**
+     * Begin an string field condition clause explicitly defined for interop clarity.
+     *
+     * @param x the mapped string to query
+     * @return a query condition to continue building the condition
+     */
+    public QueryCondition<T, String> where(String x) {
+        return new QueryCondition<T, String>(this, x);
+    }
+
     public QueryWhere<T> where(String fragment, List<?> args) {
         return this.where(fragment, args.toArray());
     }
