@@ -1,0 +1,5 @@
+[bugtraq "issues"]
+  url = "https://github.com/gitblit/gitblit/pull/%BUGID%"
+  loglinkregex = "[Ii]ssue[-#:\\s]{1}\\d+"
+  logregex = "\\d+"
+  loglinktext = issue-%BUGID%
