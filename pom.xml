@@ -4,7 +4,7 @@
 
     <groupId>com.gitblit.iciql</groupId>
     <artifactId>iciql</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2-SNAPSHOT</version>
     <name>Iciql</name>
     <description>a model-based database access wrapper for JDBC</description>
     <url>http://iciql.com</url>
@@ -21,7 +21,7 @@
         <connection>scm:git:git://github.com/gitblit/iciql.git</connection>
         <developerConnection>scm:git:https://github.com/gitblit/iciql.git</developerConnection>
         <url>https://github.com/gitblit/iciql</url>
-        <tag>release-2.1.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
