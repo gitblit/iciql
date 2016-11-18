@@ -60,7 +60,11 @@ public class QueryCondition<T, A> {
     }
 
     public QueryWhere<T> is(A y) {
-        query.addConditionToken(new Condition<A>(x, y, CompareType.EQUAL));
+        if (y == null) {
+            query.addConditionToken(new Condition<A>(x, CompareType.IS_NULL));
+        } else {
+            query.addConditionToken(new Condition<A>(x, y, CompareType.EQUAL));
+        }
         return new QueryWhere<T>(query);
     }
 
