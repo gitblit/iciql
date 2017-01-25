@@ -34,7 +34,7 @@ public class JdbcUtils {
 
     private static final String[] DRIVERS = {"h2:", "org.h2.Driver", "Cache:",
             "com.intersys.jdbc.CacheDriver", "daffodilDB://", "in.co.daffodil.db.rmi.RmiDaffodilDBDriver",
-            "daffodil", "in.co.daffodil.db.jdbc.DaffodilDBDriver", "db2:", "COM.ibm.db2.jdbc.net.DB2Driver",
+            "daffodil", "in.co.daffodil.db.jdbc.DaffodilDBDriver", "db2:", "com.ibm.db2.jcc.DB2Driver",
             "derby:net:", "org.apache.derby.jdbc.ClientDriver", "derby://",
             "org.apache.derby.jdbc.ClientDriver", "derby:", "org.apache.derby.jdbc.EmbeddedDriver",
             "FrontBase:", "com.frontbase.jdbc.FBJDriver", "firebirdsql:", "org.firebirdsql.jdbc.FBDriver",
