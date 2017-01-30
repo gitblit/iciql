@@ -22,7 +22,7 @@ import com.iciql.test.models.ProductView;
 import com.iciql.test.models.ProductViewFromQuery;
 import com.iciql.test.models.ProductViewInherited;
 import com.iciql.test.models.ProductViewInheritedComplex;
-import com.mysql.jdbc.StringUtils;
+import com.iciql.util.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
