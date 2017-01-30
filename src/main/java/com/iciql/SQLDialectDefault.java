@@ -529,4 +529,18 @@ public class SQLDialectDefault implements SQLDialect {
         return o.toString();
     }
 
+    @Override
+    public <T, A> void prepareBitwiseAnd(SQLStatement stat, Query<T> query, A x, A y) {
+        query.appendSQL(stat, null, x);
+        stat.appendSQL(" & ");
+        query.appendSQL(stat, x, y);
+    }
+
+    @Override
+    public <T, A> void prepareBitwiseXor(SQLStatement stat, Query<T> query, A x, A y) {
+        query.appendSQL(stat, null, x);
+        stat.appendSQL(" ^ ");
+        query.appendSQL(stat, x, y);
+    }
+
 }

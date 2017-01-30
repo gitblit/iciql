@@ -147,4 +147,17 @@ public class QueryCondition<T, A> {
         query.addConditionToken(new RuntimeParameter<A>(x, CompareType.LIKE));
         return new QueryWhere<T>(query);
     }
+
+    public Bitwise<A, T> bitAnd(A y) {
+        BitCondition<A, T> bitCondition = new BitCondition<A, T>(x, y, BitCondition.Bitwise.AND, query);
+        query.addConditionToken(bitCondition);
+        return bitCondition;
+    }
+
+    public Bitwise<A, T> bitXor(A y) {
+        BitCondition<A, T> bitCondition = new BitCondition<A, T>(x, y, BitCondition.Bitwise.XOR, query);
+        query.addConditionToken(bitCondition);
+        return bitCondition;
+    }
+
 }

@@ -147,4 +147,23 @@ public class SQLDialectHSQL extends SQLDialectDefault {
         buff.append(')');
         stat.setSQL(buff.toString());
     }
+
+    @Override
+    public <T, A> void prepareBitwiseAnd(SQLStatement stat, Query<T> query, A x, A y) {
+        stat.appendSQL("BITAND(");
+        query.appendSQL(stat, null, x);
+        stat.appendSQL(",");
+        query.appendSQL(stat, x, y);
+        stat.appendSQL(")");
+    }
+
+    @Override
+    public <T, A> void prepareBitwiseXor(SQLStatement stat, Query<T> query, A x, A y) {
+        stat.appendSQL("BITXOR(");
+        query.appendSQL(stat, null, x);
+        stat.appendSQL(",");
+        query.appendSQL(stat, x, y);
+        stat.appendSQL(")");
+    }
+
 }

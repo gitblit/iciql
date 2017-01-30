@@ -202,4 +202,8 @@ public interface SQLDialect {
      */
     String extractColumnName(String name);
 
+    <T, A> void prepareBitwiseAnd(SQLStatement stat, Query<T> query, A x, A y);
+
+    <T, A> void prepareBitwiseXor(SQLStatement stat, Query<T> query, A x, A y);
+
 }

@@ -177,4 +177,9 @@ public class SQLDialectSQLite extends SQLDialectDefault {
         }
         return super.prepareStringParameter(o);
     }
+
+    @Override
+    public <T, A> void prepareBitwiseXor(SQLStatement stat, Query<T> query, A x, A y) {
+        throw new IciqlException("{0} does not support bitwise operator XOR", databaseName);
+    }
 }

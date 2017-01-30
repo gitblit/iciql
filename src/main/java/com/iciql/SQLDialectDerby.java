@@ -68,4 +68,15 @@ public class SQLDialectDerby extends SQLDialectDefault {
         stat.setSQL(buff.toString());
         return;
     }
+
+    @Override
+    public <T, A> void prepareBitwiseAnd(SQLStatement stat, Query<T> query, A x, A y) {
+        throw new IciqlException("{0} does not support bitwise operator AND", databaseName);
+    }
+
+    @Override
+    public <T, A> void prepareBitwiseXor(SQLStatement stat, Query<T> query, A x, A y) {
+        throw new IciqlException("{0} does not support bitwise operator XOR", databaseName);
+    }
+
 }

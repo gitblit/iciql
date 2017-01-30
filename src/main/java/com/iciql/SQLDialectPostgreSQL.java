@@ -158,4 +158,10 @@ public class SQLDialectPostgreSQL extends SQLDialectDefault {
         stat.setSQL(buff.toString());
     }
 
+    @Override
+    public <T, A> void prepareBitwiseXor(SQLStatement stat, Query<T> query, A x, A y) {
+        query.appendSQL(stat, null, x);
+        stat.appendSQL(" # ");
+        query.appendSQL(stat, x, y);
+    }
 }
