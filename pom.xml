@@ -56,7 +56,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.192</version>
+            <version>1.4.193</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
