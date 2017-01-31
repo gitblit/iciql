@@ -407,9 +407,11 @@ class ModelUtils {
         if (isNullOrEmpty(defaultValue)) {
             return true;
         }
+        Pattern numericDefault = Pattern.compile("\\d+");
         Pattern literalDefault = Pattern.compile("'.*'");
         Pattern functionDefault = Pattern.compile("[^'].*[^']");
-        return literalDefault.matcher(defaultValue).matches()
+        return numericDefault.matcher(defaultValue).matches()
+                || literalDefault.matcher(defaultValue).matches()
                 || functionDefault.matcher(defaultValue).matches();
     }
 
@@ -430,6 +432,14 @@ class ModelUtils {
             // NULL (effectively)
             return true;
         }
+
+        // numeric value
+        Pattern numericDefault = Pattern.compile("\\d+");
+        if (numericDefault.matcher(defaultValue).matches()) {
+            // assume numeric values are legal
+            return true;
+        }
+
 
         // function / variable
         Pattern functionDefault = Pattern.compile("[^'].*[^']");
