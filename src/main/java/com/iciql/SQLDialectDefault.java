@@ -172,21 +172,9 @@ public class SQLDialectDefault implements SQLDialect {
                 hasIdentityColumn |= prepareColumnDefinition(buff, convertSqlType(dataType),
                         field.isAutoIncrement, field.isPrimaryKey);
             }
-
-            // default values
-            if (!field.isAutoIncrement && !field.isPrimaryKey) {
-                String dv = field.defaultValue;
-                if (!StringUtils.isNullOrEmpty(dv)) {
-                    if (ModelUtils.isProperlyFormattedDefaultValue(dv)
-                            && ModelUtils.isValidDefaultValue(field.field.getType(), dv)) {
-                        buff.append(" DEFAULT " + dv);
-                    }
-                }
-            }
-
-            if (!field.nullable) {
-                buff.append(" NOT NULL");
-            }
+            
+            buff.append(prepareColumnConstraint(field.isAutoIncrement, field.isPrimaryKey, field.nullable, field.field.getType(),
+                    field.dataType, field.defaultValue));
         }
 
         // if table does not have identity column then specify primary key
@@ -368,6 +356,27 @@ public class SQLDialectDefault implements SQLDialect {
         return false;
     }
 
+    @Override
+    public String prepareColumnConstraint(boolean isAutoIncrement, boolean isPrimaryKey, boolean nullable, Class<?> fieldType, String dataType, String defaultValue) {
+        StringBuilder sb = new StringBuilder();
+        if (!isAutoIncrement && !isPrimaryKey) {
+
+            if (nullable && (defaultValue == null || ((dataType.equals("TIMESTAMP") || dataType.equals("DATETIME")) && StringUtils.isNullOrEmpty(defaultValue)))) {
+                sb.append(" NULL");
+            } else if (!StringUtils.isNullOrEmpty(defaultValue)) {
+                if (ModelUtils.isProperlyFormattedDefaultValue(defaultValue)
+                        && ModelUtils.isValidDefaultValue(fieldType, defaultValue)) {
+                    sb.append(" DEFAULT ").append(defaultValue);
+                }
+            }
+        }
+
+        if (!nullable) {
+            sb.append(" NOT NULL");
+        }
+        return sb.toString();
+    }
+    
     @Override
     public void prepareCreateIndex(SQLStatement stat, String schemaName, String tableName,
                                    IndexDefinition index) {

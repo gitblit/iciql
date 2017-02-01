@@ -133,7 +133,7 @@ public class ModelsTest {
         } else if (dbName.equals("Apache Derby")) {
             // Derby uses java.sql.Timestamp not java.util.Date
             // Derby uses username as schema name
-            assertEquals(1601, models.get(0).length());
+            assertEquals(1643, models.get(0).length());
         } else if (dbName.equals("PostgreSQL")) {
             assertEquals(1643, models.get(0).length());
         } else if (dbName.equals("MySQL")) {

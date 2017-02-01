@@ -20,6 +20,7 @@ package com.iciql;
 
 import com.iciql.Iciql.DataTypeAdapter;
 import com.iciql.TableDefinition.IndexDefinition;
+import com.iciql.util.StatementBuilder;
 
 import java.sql.ResultSet;
 
@@ -205,5 +206,19 @@ public interface SQLDialect {
     <T, A> void prepareBitwiseAnd(SQLStatement stat, Query<T> query, A x, A y);
 
     <T, A> void prepareBitwiseXor(SQLStatement stat, Query<T> query, A x, A y);
+
+    /**
+     * Specifies the syntax for a column constraint.
+     *
+     * @param isAutoIncrement
+     * @param isPrimaryKey
+     * @param isNullable
+     * @param fieldType
+     * @param dataType
+     * @param defaultValue
+     * @return the column constraint
+     */
+    String prepareColumnConstraint(boolean isAutoIncrement, boolean isPrimaryKey, boolean isNullable,
+                                   Class<?> fieldType, String dataType, String defaultValue);
 
 }
