@@ -237,6 +237,7 @@ public class IciqlSuite {
         db.dropTable(ProductAnnotationOnlyWithForeignKey.class);
         db.dropTable(CategoryAnnotationOnly.class);
         db.dropTable(SerializedObjectTypeAdapterTest.class);
+        db.dropTable(ClobTest.StringRecord.class);
 
         return db;
     }
