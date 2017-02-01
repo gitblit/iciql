@@ -19,7 +19,7 @@
 
     <scm>
         <connection>scm:git:git://github.com/gitblit/iciql.git</connection>
-        <developerConnection>scm:git:https://github.com/gitblit/iciql.git</developerConnection>
+        <developerConnection>scm:git:git@github.com/gitblit/iciql.git</developerConnection>
         <url>https://github.com/gitblit/iciql</url>
         <tag>HEAD</tag>
     </scm>
