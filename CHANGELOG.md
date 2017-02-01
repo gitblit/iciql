@@ -2,9 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-### [Unreleased][unreleased]
+### [2.2.0] - 2017-01-31
 #### Added
 - Added bitwise AND and XOR DSL for where clauses
+- Update to MySQL 5.7
 
 ### [2.1.1] - 2016-04-07
 #### Added
@@ -345,7 +346,8 @@ db.executeUpdate(q, new Date());
   QueryConditon.smaller => QueryCondition.lessThan
   QueryConditon.smallEqual => QueryCondition.atMost
 
-[unreleased]: https://github.com/gitblit/iciql/compare/release-2.1.1...HEAD
+[unreleased]: https://github.com/gitblit/iciql/compare/release-2.2.0...HEAD
+[2.2.0]: https://github.com/gitblit/iciql/compare/release-2.2.0...release-2.1.1
 [2.1.1]: https://github.com/gitblit/iciql/compare/release-2.1.0...release-2.1.1
 [2.1.0]: https://github.com/gitblit/iciql/compare/release-2.0.0...release-2.1.0
 [2.0.0]: https://github.com/gitblit/iciql/compare/v1.6.5...release-2.0.0
