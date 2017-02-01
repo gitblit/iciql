@@ -139,7 +139,7 @@ public class ModelsTest {
         } else if (dbName.equals("MySQL")) {
             // MySQL uses timestamp default values like
             // 0000-00-00 00:00:00 and CURRENT_TIMESTAMP
-            assertEquals(1673, models.get(0).length());
+            assertEquals(1571, models.get(0).length());
         } else if (dbName.equals("SQLite")) {
             assertEquals(1566, models.get(0).length());
         } else {

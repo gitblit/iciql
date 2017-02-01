@@ -110,7 +110,7 @@ public class IciqlSuite {
             new TestDb("Derby", "memory", "jdbc:derby:memory:iciql;create=true"),
             new TestDb("Derby", "file", "jdbc:derby:directory:testdbs/derby/iciql;create=true"),
             new TestDb("Derby", "tcp", "jdbc:derby://localhost:1527/testdbs/derby/iciql;create=true", "sa", "sa"),
-            new TestDb("MySQL", "tcp", "jdbc:mysql://localhost:3306/iciql?useSSL=false", "sa", "sa"),
+            new TestDb("MySQL", "tcp", "jdbc:mysql://localhost:3306/iciql?useSSL=false&nullNamePatternMatchesAll=true&nullCatalogMeansCurrent=true", "sa", "sa"),
             new TestDb("PostgreSQL", "tcp", "jdbc:postgresql://localhost:5432/iciql", "sa", "sa"),
 
             //

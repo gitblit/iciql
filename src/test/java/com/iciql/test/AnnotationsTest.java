@@ -70,7 +70,7 @@ public class AnnotationsTest {
         boolean toUpper = meta.storesUpperCaseIdentifiers();
         boolean toLower = meta.storesLowerCaseIdentifiers();
         ResultSet rs = meta.getIndexInfo(null, prepName(schema, toUpper, toLower),
-                prepName("ANNOTATEDPRODUCT", toUpper, toLower), false, true);
+                prepName("AnnotatedProduct", toUpper, toLower), false, true);
 
         List<String> list = Utils.newArrayList();
         while (rs.next()) {
