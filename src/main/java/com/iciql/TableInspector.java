@@ -114,6 +114,9 @@ public class TableInspector {
             indexes = Utils.newHashMap();
             while (rs.next()) {
                 IndexInspector info = new IndexInspector(rs);
+                if(info.name == null) {
+                    continue;
+                }
                 if (info.type.equals(IndexType.UNIQUE)) {
                     String name = info.name.toLowerCase();
                     if (name.startsWith("primary") || name.startsWith("sys_idx_sys_pk")
