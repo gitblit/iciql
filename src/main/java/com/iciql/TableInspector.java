@@ -115,6 +115,7 @@ public class TableInspector {
             while (rs.next()) {
                 IndexInspector info = new IndexInspector(rs);
                 if (info.type.equals(IndexType.UNIQUE)) {
+                    if(info.name == null) continue;
                     String name = info.name.toLowerCase();
                     if (name.startsWith("primary") || name.startsWith("sys_idx_sys_pk")
                             || name.startsWith("sql") || name.endsWith("_pkey")) {
