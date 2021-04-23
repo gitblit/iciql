@@ -291,7 +291,11 @@ public class Query<T> {
         List<T> result = Utils.newArrayList();
         TableDefinition<T> def = from.getAliasDefinition();
         SQLStatement stat = getSelectStatement(distinct);
-        def.appendSelectList(stat);
+        if (isJoin()) {
+            def.appendSelectList(stat, from.getAs());
+        } else {
+            def.appendSelectList(stat);
+         }
         appendFromWhere(stat);
         ResultSet rs = stat.executeQuery();
         try {
