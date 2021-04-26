@@ -62,6 +62,10 @@ class ModelUtils {
         m.put(java.util.Date.class, "TIMESTAMP");
         m.put(java.sql.Date.class, "DATE");
         m.put(java.sql.Time.class, "TIME");
+        m.put(java.time.LocalDateTime.class, "TIMESTAMP");
+        m.put(java.time.ZonedDateTime.class, "TIMESTAMP");
+        m.put(java.time.LocalDate.class, "DATE");
+        m.put(java.time.LocalTime.class, "TIME");
         m.put(byte[].class, "BLOB");
         m.put(UUID.class, "UUID");
 

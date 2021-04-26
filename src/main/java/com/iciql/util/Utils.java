@@ -182,6 +182,14 @@ public class Utils {
             return (T) new java.sql.Timestamp(COUNTER.getAndIncrement());
         } else if (clazz == java.util.Date.class) {
             return (T) new java.util.Date(COUNTER.getAndIncrement());
+        } else if (clazz == java.time.LocalDate.class) {
+            return (T) new java.sql.Date(COUNTER.getAndIncrement()).toLocalDate();
+        } else if (clazz == java.time.LocalTime.class) {
+            return (T) new java.sql.Time(COUNTER.getAndIncrement()).toLocalTime();
+        } else if (clazz == java.time.LocalDateTime.class) {
+            return (T) new java.sql.Timestamp(COUNTER.getAndIncrement()).toLocalDateTime();
+        } else if (clazz == java.time.ZonedDateTime.class) {
+            return (T) new java.sql.Timestamp(COUNTER.getAndIncrement()).toInstant().atZone(java.time.ZoneId.systemDefault());
         } else if (clazz == byte[].class) {
             COUNTER.getAndIncrement();
             return (T) new byte[0];
@@ -334,6 +342,14 @@ public class Utils {
                 return new java.sql.Time(n.longValue());
             } else if (targetType == java.sql.Timestamp.class) {
                 return new java.sql.Timestamp(n.longValue());
+            } else if (targetType == java.time.LocalDateTime.class) {
+                return new java.sql.Timestamp(n.longValue()).toLocalDateTime();
+            } else if (targetType == java.time.ZonedDateTime.class) {
+                return new java.sql.Timestamp(n.longValue()).toInstant().atZone(java.time.ZoneId.systemDefault());
+            } else if (targetType == java.time.LocalDate.class) {
+                return new java.sql.Date(n.longValue()).toLocalDate();
+            } else if (targetType == java.time.LocalTime.class) {
+                return new java.sql.Time(n.longValue()).toLocalTime();
             }
         }
 
@@ -347,6 +363,14 @@ public class Utils {
                 return new java.sql.Time(d.getTime());
             } else if (targetType == java.sql.Timestamp.class) {
                 return new java.sql.Timestamp(d.getTime());
+            } else if (targetType == java.time.LocalDateTime.class) {
+                return new java.sql.Timestamp(d.getTime()).toLocalDateTime();
+            } else if (targetType == java.time.ZonedDateTime.class) {
+                return d.toInstant().atZone(java.time.ZoneId.systemDefault());
+            } else if (targetType == java.time.LocalDate.class) {
+                return new java.sql.Date(d.getTime()).toLocalDate();
+            } else if (targetType == java.time.LocalTime.class) {
+                return new java.sql.Time(d.getTime()).toLocalTime();
             }
         }
 
