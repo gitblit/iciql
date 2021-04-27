@@ -2,9 +2,9 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.gitblit.iciql</groupId>
+    <groupId>com.uchicom</groupId>
     <artifactId>iciql</artifactId>
-    <version>2.2.1-SNAPSHOT</version>
+    <version>2.3.0</version>
     <name>Iciql</name>
     <description>a model-based database access wrapper for JDBC</description>
     <url>http://iciql.com</url>
