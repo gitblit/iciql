@@ -73,6 +73,7 @@ public class JoinTest {
         List<UserId> userIds = db.from(u).innerJoin(n).on(u.id).is(n.userId).where(n.text).is("D")
                 .select();
         assertEquals(1, userIds.size());
+        assertEquals(1, userIds.get(0).id);
     }
 
     @Test
