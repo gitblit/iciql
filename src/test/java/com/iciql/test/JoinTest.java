@@ -58,11 +58,21 @@ public class JoinTest {
                 .select(new UserNote() {
                     {
                         userId = n.userId;
-                        noteId = n.noteId;
+                        id = n.id;
                         text = n.text;
                     }
                 });
         assertEquals(3, notes.size());
+    }
+
+    @Test
+    public void testPrimitiveJoinAndSimpleSelect() throws Exception {
+        final UserId u = new UserId();
+        final UserNote n = new UserNote();
+
+        List<UserId> userIds = db.from(u).innerJoin(n).on(u.id).is(n.userId).where(n.text).is("D")
+                .select();
+        assertEquals(1, userIds.size());
     }
 
     @Test
@@ -140,7 +150,7 @@ public class JoinTest {
     public static class UserNote {
 
         @IQColumn(autoIncrement = true, primaryKey = true)
-        public int noteId;
+        public int id;
 
         @IQColumn
         public int userId;
