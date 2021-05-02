@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+### [2.2.1] - 2021-05-02
+
+#### Fixed
+
+- Fix Oracle model generation #35
+- Improve simple JOIN #36
+- Several Dependabot updates
+
 ### [2.2.0] - 2017-01-31
 #### Added
 - Added bitwise AND and XOR DSL for where clauses
@@ -346,7 +354,8 @@ db.executeUpdate(q, new Date());
   QueryConditon.smaller => QueryCondition.lessThan
   QueryConditon.smallEqual => QueryCondition.atMost
 
-[unreleased]: https://github.com/gitblit/iciql/compare/release-2.2.0...HEAD
+[unreleased]: https://github.com/gitblit/iciql/compare/release-2.2.1...HEAD
+[2.2.1]: https://github.com/gitblit/iciql/compare/release-2.2.1...release-2.2.0
 [2.2.0]: https://github.com/gitblit/iciql/compare/release-2.2.0...release-2.1.1
 [2.1.1]: https://github.com/gitblit/iciql/compare/release-2.1.0...release-2.1.1
 [2.1.0]: https://github.com/gitblit/iciql/compare/release-2.0.0...release-2.1.0
