@@ -1150,6 +1150,17 @@ public class TableDefinition<T> {
         }
     }
 
+    void appendSelectList(SQLStatement stat, String as) {
+        for (int i = 0; i < fields.size(); i++) {
+            if (i > 0) {
+                stat.appendSQL(", ");
+            }
+            stat.appendSQL(as + ".");
+            FieldDefinition def = fields.get(i);
+            stat.appendColumn(def.columnName);
+        }
+    }
+
     <Y, X> void appendSelectList(SQLStatement stat, Query<Y> query, X x) {
         // select t0.col1, t0.col2, t0.col3...
         // select table1.col1, table1.col2, table1.col3...
