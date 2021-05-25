@@ -19,7 +19,7 @@
 
     <scm>
         <connection>scm:git:git://github.com/gitblit/iciql.git</connection>
-        <developerConnection>scm:git:git@github.com/gitblit/iciql.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:gitblit/iciql.git</developerConnection>
         <url>https://github.com/gitblit/iciql</url>
         <tag>HEAD</tag>
     </scm>
@@ -91,7 +91,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>6.0.5</version>
+            <version>8.0.16</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -140,7 +140,7 @@
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-            <version>1.4.9</version>
+            <version>1.4.16</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
@@ -155,7 +155,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.13.1</version>
             <type>jar</type>
             <scope>test</scope>
         </dependency>

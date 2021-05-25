@@ -163,7 +163,9 @@ public class TableInspector {
                     }
                 }
                 if (!col.isAutoIncrement) {
-                    col.defaultValue = rs.getString("COLUMN_DEF");
+                    if(rs.getType() != ResultSet.TYPE_FORWARD_ONLY) {
+                        col.defaultValue = rs.getString("COLUMN_DEF");
+                    }
                 }
                 columns.put(col.name.toLowerCase(), col);
             }

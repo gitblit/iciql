@@ -295,7 +295,7 @@ public class Query<T> {
             def.appendSelectList(stat, from.getAs());
         } else {
             def.appendSelectList(stat);
-         }
+        }
         appendFromWhere(stat);
         ResultSet rs = stat.executeQuery();
         try {
