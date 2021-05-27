@@ -4,7 +4,7 @@
 
     <groupId>com.uchicom</groupId>
     <artifactId>iciql</artifactId>
-    <version>2.3.0</version>
+    <version>2.2.1</version>
     <name>Iciql</name>
     <description>a model-based database access wrapper for JDBC</description>
     <url>http://iciql.com</url>
@@ -18,10 +18,10 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/gitblit/iciql.git</connection>
-        <developerConnection>scm:git:git@github.com:gitblit/iciql.git</developerConnection>
-        <url>https://github.com/gitblit/iciql</url>
-        <tag>HEAD</tag>
+        <connection>scm:git:git@github.com:uchicom/iciql.git</connection>
+        <developerConnection>scm:git:git@github.com:uchicom/iciql.git</developerConnection>
+        <url>https://github.com/uchicom/iciql</url>
+        <tag>java1.8</tag>
     </scm>
 
     <developers>
@@ -30,6 +30,10 @@
             <email>james.moger@gmail.com</email>
             <organization>gitblit.com</organization>
             <organizationUrl>https://github.com/gitblit</organizationUrl>
+        </developer>
+        <developer>
+            <name>Shigeki Uchiyama</name>
+            <organization>uchicom</organization>
         </developer>
     </developers>
 
