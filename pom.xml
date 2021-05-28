@@ -33,7 +33,9 @@
         </developer>
         <developer>
             <name>Shigeki Uchiyama</name>
+            <email>info@uchicom.com</email>
             <organization>uchicom</organization>
+            <organizationUrl>https://labs.uchicom.com</organizationUrl>
         </developer>
     </developers>
 
@@ -205,7 +207,6 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
-          			<finalName>com.uchicom.iciql</finalName>
                     <archive>
                         <manifestEntries>
                             <implementation-version>${project.version}</implementation-version>
