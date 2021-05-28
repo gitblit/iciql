@@ -213,8 +213,14 @@ class ModelUtils {
             }
         }
         if (mappedClass != null) {
-            if (mappedClass.equals(java.util.Date.class) || mappedClass.equals(java.sql.Timestamp.class)) {
+            if (mappedClass.equals(java.util.Date.class) || mappedClass.equals(java.sql.Timestamp.class) ||
+                mappedClass.equals(java.time.LocalDateTime.class) ||
+                mappedClass.equals(java.time.ZonedDateTime.class)) {
                 return dateTimeClass;
+            } else if (mappedClass.equals(java.time.LocalDate.class)) {
+                return java.sql.Date.class;
+            } else if (mappedClass.equals(java.time.LocalTime.class)) {
+                return java.sql.Time.class;
             }
             return mappedClass;
         }
