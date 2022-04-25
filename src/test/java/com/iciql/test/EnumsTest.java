@@ -130,10 +130,15 @@ public class EnumsTest {
             });
 
         assertEquals(5, enumJoinList.size());
+        assertEquals(enumJoinList.get(0).id.intValue(), 100);
         assertEquals(enumJoinList.get(0).genus, Genus.PINUS);
+        assertEquals(enumJoinList.get(1).id.intValue(), 200);
         assertEquals(enumJoinList.get(1).genus, Genus.QUERCUS);
+        assertEquals(enumJoinList.get(2).id.intValue(), 300);
         assertEquals(enumJoinList.get(2).genus, Genus.BETULA);
+        assertEquals(enumJoinList.get(3).id.intValue(), 400);
         assertEquals(enumJoinList.get(3).genus, Genus.JUGLANS);
+        assertEquals(enumJoinList.get(4).id.intValue(), 500);
         assertEquals(enumJoinList.get(4).genus, Genus.ACER);
 
     }
