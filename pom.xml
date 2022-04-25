@@ -6,7 +6,7 @@
 
 	<groupId>com.uchicom</groupId>
 	<artifactId>iciql</artifactId>
-	<version>2.2.1.1</version>
+	<version>2.2.1.2</version>
 	<name>Iciql</name>
 	<description>a model-based database access wrapper for JDBC</description>
 	<url>http://iciql.com</url>
