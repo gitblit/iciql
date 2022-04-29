@@ -20,7 +20,6 @@ import com.iciql.Db;
 import com.iciql.IciqlException;
 import com.iciql.test.models.EnumModels;
 import com.iciql.test.models.EnumModels.EnumIdModel;
-import com.iciql.test.models.EnumModels.EnumJoin;
 import com.iciql.test.models.EnumModels.EnumOrdinalModel;
 import com.iciql.test.models.EnumModels.EnumStringModel;
 import com.iciql.test.models.EnumModels.Genus;
@@ -60,7 +59,6 @@ public class EnumsTest {
         testIntEnums(new EnumOrdinalModel());
         testStringEnums(new EnumStringModel());
         testStringEnumIds(new EnumStringModel());
-        testStringEnumsSelectObject();
     }
 
     private void testIntEnums(EnumModels e) {
@@ -112,35 +110,6 @@ public class EnumsTest {
         // between is a string compare
         list = db.from(e).where(e.tree()).between(Tree.MAPLE).and(Tree.PINE).select();
         assertEquals(3, list.size());
-    }
-
-    private void testStringEnumsSelectObject() {
-        final EnumOrdinalModel eom = new EnumOrdinalModel();
-        final EnumStringModel esm = new EnumStringModel();
-        // ensure all records inserted
-        List<EnumJoin> enumJoinList = db.from(eom)
-                .innerJoin(esm).on(eom.id).is(esm.id)
-                .orderBy(eom.id)
-                .select(
-            new EnumJoin() {
-                {
-                    id = eom.id;
-                    genus = esm.genus();
-                }
-            });
-
-        assertEquals(5, enumJoinList.size());
-        assertEquals(enumJoinList.get(0).id.intValue(), 100);
-        assertEquals(enumJoinList.get(0).genus, Genus.PINUS);
-        assertEquals(enumJoinList.get(1).id.intValue(), 200);
-        assertEquals(enumJoinList.get(1).genus, Genus.QUERCUS);
-        assertEquals(enumJoinList.get(2).id.intValue(), 300);
-        assertEquals(enumJoinList.get(2).genus, Genus.BETULA);
-        assertEquals(enumJoinList.get(3).id.intValue(), 400);
-        assertEquals(enumJoinList.get(3).genus, Genus.JUGLANS);
-        assertEquals(enumJoinList.get(4).id.intValue(), 500);
-        assertEquals(enumJoinList.get(4).genus, Genus.ACER);
-
     }
 
     private void testStringEnumIds(EnumModels e) {

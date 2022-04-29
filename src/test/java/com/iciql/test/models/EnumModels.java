@@ -220,9 +220,4 @@ public abstract class EnumModels {
                     new EnumStringModel(100, Tree.PINE, Genus.PINUS));
         }
     }
-    
-    public static class EnumJoin {
-        public Integer id;
-        public Genus genus;
-    }
 }
