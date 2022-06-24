@@ -36,6 +36,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Blob;
 import java.sql.Clob;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -183,9 +184,9 @@ public class Utils {
         } else if (clazz == java.util.Date.class) {
             return (T) new java.util.Date(COUNTER.getAndIncrement());
         } else if (clazz == java.time.LocalDate.class) {
-            return (T) new java.sql.Date(COUNTER.getAndIncrement()).toLocalDate();
+            return (T) java.time.LocalDate.ofEpochDay(COUNTER.getAndIncrement());
         } else if (clazz == java.time.LocalTime.class) {
-            return (T) new java.sql.Time(COUNTER.getAndIncrement()).toLocalTime();
+            return (T) LocalTime.ofNanoOfDay(COUNTER.getAndIncrement());
         } else if (clazz == java.time.LocalDateTime.class) {
             return (T) new java.sql.Timestamp(COUNTER.getAndIncrement()).toLocalDateTime();
         } else if (clazz == java.time.ZonedDateTime.class) {
