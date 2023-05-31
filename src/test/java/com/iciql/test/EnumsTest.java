@@ -119,15 +119,15 @@ public class EnumsTest {
         final EnumStringModel esm = new EnumStringModel();
         // ensure all records inserted
         List<EnumJoin> enumJoinList = db.from(eom)
-                .innerJoin(esm).on(eom.id).is(esm.id)
-                .orderBy(eom.id)
-                .select(
-            new EnumJoin() {
-                {
-                    id = eom.id;
-                    genus = esm.genus();
-                }
-            });
+            .innerJoin(esm).on(eom.id).is(esm.id)
+            .orderBy(eom.id)
+            .select(
+                new EnumJoin() {
+                    {
+                        id = eom.id;
+                        genus = esm.genus();
+                    }
+                });
 
         assertEquals(5, enumJoinList.size());
         assertEquals(enumJoinList.get(0).id.intValue(), 100);
@@ -141,6 +141,36 @@ public class EnumsTest {
         assertEquals(enumJoinList.get(4).id.intValue(), 500);
         assertEquals(enumJoinList.get(4).genus, Genus.ACER);
 
+        List<EnumJoin> enumJoinWhereList = db.from(eom)
+            .innerJoin(esm).on(eom.id).is(esm.id)
+            .where(esm.tree()).is(Tree.OAK)
+            .select(
+                new EnumJoin() {
+                    {
+                        id = eom.id;
+                        genus = esm.genus();
+                    }
+                });
+        
+        assertEquals(1, enumJoinWhereList.size());
+        assertEquals(enumJoinWhereList.get(0).id.intValue(), 200);
+        assertEquals(enumJoinWhereList.get(0).genus, Genus.QUERCUS);
+    
+        List<EnumJoin> enumJoinGroupByList = db.from(eom)
+            .innerJoin(esm).on(eom.id).is(esm.id)
+            .where(esm.tree()).is(Tree.BIRCH)
+            .groupBy(eom.id, esm.genus())
+            .select(
+                new EnumJoin() {
+                    {
+                        id = eom.id;
+                        genus = esm.genus();
+                    }
+                });
+        
+        assertEquals(1, enumJoinGroupByList.size());
+        assertEquals(enumJoinGroupByList.get(0).id.intValue(), 300);
+        assertEquals(enumJoinGroupByList.get(0).genus, Genus.BETULA);
     }
 
     private void testStringEnumIds(EnumModels e) {

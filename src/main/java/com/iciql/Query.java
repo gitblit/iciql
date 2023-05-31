@@ -896,6 +896,46 @@ public class Query<T> {
             token.appendSQL(stat, this);
             return;
         }
+        if (alias != null && value != null && value.getClass().isEnum()) {
+            // special case:
+            // value is first enum constant which is also the alias object.
+            // the first enum constant is used as the alias because we can not
+            // instantiate an enum reflectively.
+            stat.appendSQL("?");
+            addParameter(stat, alias, value);
+            return;
+        }
+        SelectColumn<T> col = getColumnByReference(value);
+        if (col != null) {
+            col.appendSQL(stat);
+            return;
+        }
+        stat.appendSQL("?");
+        addParameter(stat, alias, value);
+    }
+
+    /**
+     * INTERNAL
+     *
+     * @param stat  the statement
+     * @param alias the alias object (can be null)
+     * @param value the value
+     */
+    public void appendSelectSQL(SQLStatement stat, Object alias, Object value) {
+        if (Function.count() == value) {
+            stat.appendSQL("COUNT(*)");
+            return;
+        }
+        if (RuntimeParameter.PARAMETER == value) {
+            stat.appendSQL("?");
+            addParameter(stat, alias, value);
+            return;
+        }
+        Token token = Db.getToken(value);
+        if (token != null) {
+            token.appendSQL(stat, this);
+            return;
+        }
         SelectColumn<T> col = getColumnByReference(value);
         if (col != null) {
             col.appendSQL(stat);
