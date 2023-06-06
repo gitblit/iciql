@@ -917,6 +917,37 @@ public class Query<T> {
     /**
      * INTERNAL
      *
+     * @param stat  the statement
+     * @param alias the alias object (can be null)
+     * @param value the value
+     */
+    public void appendSelectSQL(SQLStatement stat, Object alias, Object value) {
+        if (Function.count() == value) {
+            stat.appendSQL("COUNT(*)");
+            return;
+        }
+        if (RuntimeParameter.PARAMETER == value) {
+            stat.appendSQL("?");
+            addParameter(stat, alias, value);
+            return;
+        }
+        Token token = Db.getToken(value);
+        if (token != null) {
+            token.appendSQL(stat, this);
+            return;
+        }
+        SelectColumn<T> col = getColumnByReference(value);
+        if (col != null) {
+            col.appendSQL(stat);
+            return;
+        }
+        stat.appendSQL("?");
+        addParameter(stat, alias, value);
+    }
+
+    /**
+     * INTERNAL
+     *
      * @param stat        the statement
      * @param alias       the alias object (can be null)
      * @param valueLeft   the value on the left of the compound clause
