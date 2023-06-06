@@ -18,6 +18,18 @@
 
 package com.iciql;
 
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.iciql.Iciql.ConstraintDeleteType;
 import com.iciql.Iciql.ConstraintUpdateType;
 import com.iciql.Iciql.DataTypeAdapter;
@@ -31,22 +43,14 @@ import com.iciql.util.StatementBuilder;
 import com.iciql.util.StringUtils;
 import com.iciql.util.Utils;
 
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Default implementation of an SQL dialect.
  */
 public class SQLDialectDefault implements SQLDialect {
 
+    protected static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+    protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    protected static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     final String LITERAL = "'";
 
     protected float databaseVersion;
@@ -530,10 +534,18 @@ public class SQLDialectDefault implements SQLDialect {
             return LITERAL + o.toString() + LITERAL;
         } else if (o instanceof java.sql.Time) {
             return LITERAL + new SimpleDateFormat("HH:mm:ss").format(o) + LITERAL;
+        } else if (o instanceof java.time.LocalTime) {
+            return LITERAL + ((java.time.LocalTime)o).format(TIME_FORMATTER) + LITERAL;
         } else if (o instanceof java.sql.Date) {
             return LITERAL + new SimpleDateFormat("yyyy-MM-dd").format(o) + LITERAL;
+        } else if (o instanceof java.time.LocalDate) {
+            return LITERAL + ((java.time.LocalDate)o).format(DATE_FORMATTER) + LITERAL;
         } else if (o instanceof java.util.Date) {
             return LITERAL + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(o) + LITERAL;
+        } else if (o instanceof java.time.LocalDateTime) {
+            return LITERAL + ((java.time.LocalDateTime)o).format(DATETIME_FORMATTER) + LITERAL;
+        } else if (o instanceof java.time.ZonedDateTime) {
+            return LITERAL + ((java.time.ZonedDateTime)o).format(DATETIME_FORMATTER) + LITERAL;
         }
         return o.toString();
     }

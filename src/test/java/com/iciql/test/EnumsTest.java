@@ -20,7 +20,6 @@ import com.iciql.Db;
 import com.iciql.IciqlException;
 import com.iciql.test.models.EnumModels;
 import com.iciql.test.models.EnumModels.EnumIdModel;
-import com.iciql.test.models.EnumModels.EnumJoin;
 import com.iciql.test.models.EnumModels.EnumOrdinalModel;
 import com.iciql.test.models.EnumModels.EnumStringModel;
 import com.iciql.test.models.EnumModels.Genus;

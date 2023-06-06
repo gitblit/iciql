@@ -62,6 +62,10 @@ class ModelUtils {
         m.put(java.util.Date.class, "TIMESTAMP");
         m.put(java.sql.Date.class, "DATE");
         m.put(java.sql.Time.class, "TIME");
+        m.put(java.time.LocalDateTime.class, "TIMESTAMP");
+        m.put(java.time.ZonedDateTime.class, "TIMESTAMP");
+        m.put(java.time.LocalDate.class, "DATE");
+        m.put(java.time.LocalTime.class, "TIME");
         m.put(byte[].class, "BLOB");
         m.put(UUID.class, "UUID");
 
@@ -209,8 +213,14 @@ class ModelUtils {
             }
         }
         if (mappedClass != null) {
-            if (mappedClass.equals(java.util.Date.class) || mappedClass.equals(java.sql.Timestamp.class)) {
+            if (mappedClass.equals(java.util.Date.class) || mappedClass.equals(java.sql.Timestamp.class) ||
+                mappedClass.equals(java.time.LocalDateTime.class) ||
+                mappedClass.equals(java.time.ZonedDateTime.class)) {
                 return dateTimeClass;
+            } else if (mappedClass.equals(java.time.LocalDate.class)) {
+                return java.sql.Date.class;
+            } else if (mappedClass.equals(java.time.LocalTime.class)) {
+                return java.sql.Time.class;
             }
             return mappedClass;
         }
