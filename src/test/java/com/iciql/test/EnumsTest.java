@@ -20,6 +20,7 @@ import com.iciql.Db;
 import com.iciql.IciqlException;
 import com.iciql.test.models.EnumModels;
 import com.iciql.test.models.EnumModels.EnumIdModel;
+import com.iciql.test.models.EnumModels.EnumJoin;
 import com.iciql.test.models.EnumModels.EnumOrdinalModel;
 import com.iciql.test.models.EnumModels.EnumStringModel;
 import com.iciql.test.models.EnumModels.Genus;
@@ -59,6 +60,7 @@ public class EnumsTest {
         testIntEnums(new EnumOrdinalModel());
         testStringEnums(new EnumStringModel());
         testStringEnumIds(new EnumStringModel());
+        testStringEnumsSelectObject();
     }
 
     private void testIntEnums(EnumModels e) {
@@ -134,6 +136,65 @@ public class EnumsTest {
         List<EnumModels> list = db.from(e).where(e.genus()).isNot(Genus.BETULA).select();
         assertEquals(count - 1, list.size());
 
+    }
+
+    private void testStringEnumsSelectObject() {
+        final EnumOrdinalModel eom = new EnumOrdinalModel();
+        final EnumStringModel esm = new EnumStringModel();
+        // ensure all records inserted
+        List<EnumJoin> enumJoinList = db.from(eom)
+            .innerJoin(esm).on(eom.id).is(esm.id)
+            .orderBy(eom.id)
+            .select(
+                new EnumJoin() {
+                    {
+                        id = eom.id;
+                        genus = esm.genus();
+                    }
+                });
+
+        assertEquals(5, enumJoinList.size());
+        assertEquals(enumJoinList.get(0).id.intValue(), 100);
+        assertEquals(enumJoinList.get(0).genus, Genus.PINUS);
+        assertEquals(enumJoinList.get(1).id.intValue(), 200);
+        assertEquals(enumJoinList.get(1).genus, Genus.QUERCUS);
+        assertEquals(enumJoinList.get(2).id.intValue(), 300);
+        assertEquals(enumJoinList.get(2).genus, Genus.BETULA);
+        assertEquals(enumJoinList.get(3).id.intValue(), 400);
+        assertEquals(enumJoinList.get(3).genus, Genus.JUGLANS);
+        assertEquals(enumJoinList.get(4).id.intValue(), 500);
+        assertEquals(enumJoinList.get(4).genus, Genus.ACER);
+
+        List<EnumJoin> enumJoinWhereList = db.from(eom)
+            .innerJoin(esm).on(eom.id).is(esm.id)
+            .where(esm.tree()).is(Tree.OAK)
+            .select(
+                new EnumJoin() {
+                    {
+                        id = eom.id;
+                        genus = esm.genus();
+                    }
+                });
+
+        assertEquals(1, enumJoinWhereList.size());
+        assertEquals(enumJoinWhereList.get(0).id.intValue(), 200);
+        assertEquals(enumJoinWhereList.get(0).genus, Genus.QUERCUS);
+
+        List<EnumJoin> enumJoinGroupByList = db.from(eom)
+            .innerJoin(esm).on(eom.id).is(esm.id)
+            .where(esm.tree()).is(Tree.BIRCH)
+            .groupBy(eom.id, esm.genus())
+            .select(
+                new EnumJoin() {
+                    {
+                        id = eom.id;
+                        genus = esm.genus();
+                    }
+                });
+
+        assertEquals(1, enumJoinGroupByList.size());
+        assertEquals(enumJoinGroupByList.get(0).id.intValue(), 300);
+        assertEquals(enumJoinGroupByList.get(0).genus, Genus.BETULA);
     }
 
     @Test

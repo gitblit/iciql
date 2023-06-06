@@ -1185,10 +1185,10 @@ public class TableDefinition<T> {
             if (def.isPrimitive) {
                 Object obj = def.getValue(x);
                 Object alias = query.getPrimitiveAliasByValue(obj);
-                query.appendSQL(stat, x, alias);
+                query.appendSelectSQL(stat, x, alias);
             } else {
                 Object obj = def.getValue(x);
-                query.appendSQL(stat, x, obj);
+                query.appendSelectSQL(stat, x, obj);
             }
         }
     }
